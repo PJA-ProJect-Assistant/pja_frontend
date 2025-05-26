@@ -1,0 +1,39 @@
+.workspacecontainer {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+.wstitle {
+  display: flex;
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  margin-left: 50px;
+  margin-top: 30px;
+  margin-bottom: 0;
+  justify-content: flex-start;
+}
+.workspace-row {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+}
+.workspace-card {
+  flex: 0 0 auto;
+  width: 280px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 30px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+.workspace-card h3 {
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 8px;
+}
+.ws-moreicon {
+  display: flex;
+  justify-content: flex-end;
+}
