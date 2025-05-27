@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import MainPage from "./pages/mainpage/mainPage";
-import LoginPage from "./pages/loginpage/loginPage";
-
+import MainPage from "./pages/mainpage/MainPage";
+import LoginPage from "./pages/loginpage/LoginPage";
+import SignupPage from "./pages/signuppage/SignupPage";
 const Router = () => {
   return (
     <Routes>
@@ -11,7 +11,7 @@ const Router = () => {
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/main" element={<MainPage />} />
-
+      <Route path="/signup" element={<SignupPage />} />
       {/* 인증 필요 라우트 */}
       {/* <Route element={<PrivateRoute />}>
       </Route> */}
