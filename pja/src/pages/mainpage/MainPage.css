@@ -1,8 +1,9 @@
 .maincontainer {
+  position: absolute;
   background-color: white;
   display: flex;
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  padding: 3%;
+  padding: 2%;
 }

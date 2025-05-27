@@ -2,38 +2,88 @@
   background-color: white;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.ws-container-2 {
+  width: 70%;
 }
 .wstitle {
   display: flex;
   font-size: var(--font-size-3xl);
   font-weight: 600;
   margin-left: 50px;
-  margin-top: 30px;
-  margin-bottom: 0;
+  margin-top: 50px;
+  margin-bottom: 10px;
   justify-content: flex-start;
 }
-.workspace-row {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-}
 .workspace-card {
-  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 280px;
-  border: 1px solid #ccc;
+  height: 130px;
+  flex: 0 0 auto;
+  border: 1px solid #d9d9d6;
+  background-color: white;
   border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 12px;
-  margin: 30px;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 }
-.workspace-card h3 {
-  font-size: 18px;
+.workspace-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 8px;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin-left: 10px;
+  margin-top: 0;
 }
-.ws-moreicon {
+.ws-title-container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+}
+.workspace-team {
   display: flex;
   justify-content: flex-end;
+  font-size: var(--font-size-sm);
+  margin-right: 10px;
+}
+.workspace-more {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.workspace-scroll {
+  display: flex;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 30px;
+  padding: 10px 0 10px 0;
+  scrollbar-width: none;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: grab;
+  user-select: none;
+}
+.workspace-scroll:active {
+  cursor: grabbing;
+}
+.workspace-scroll::-webkit-scrollbar {
+  display: none;
+}
+.workspace-scroll button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9d9d6;
+  background-color: white;
+  margin: 10px;
+  border-radius: 50%;
+  width: 50px !important;
+  height: 50px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
