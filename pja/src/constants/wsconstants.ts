@@ -38,7 +38,7 @@ export const dummyWorkspaces: workspace[] = [
     is_completed: true,
   },
   {
-    workspace_id: 2,
+    workspace_id: 3,
     owner_id: 2,
     team_name: "CityVision Team",
     project_name: "Bus Stop Usage Optimization",
@@ -56,7 +56,7 @@ export const dummyWorkspaces: workspace[] = [
     is_completed: true,
   },
   {
-    workspace_id: 1,
+    workspace_id: 4,
     owner_id: 1,
     team_name: "SmartCity Team A",
     project_name: "Air Quality Monitoring",
@@ -74,7 +74,7 @@ export const dummyWorkspaces: workspace[] = [
     is_completed: false,
   },
   {
-    workspace_id: 1,
+    workspace_id: 5,
     owner_id: 1,
     team_name: "SmartCity Team A",
     project_name: "Air Quality Monitoring",
@@ -92,7 +92,7 @@ export const dummyWorkspaces: workspace[] = [
     is_completed: false,
   },
   {
-    workspace_id: 1,
+    workspace_id: 6,
     owner_id: 1,
     team_name: "SmartCity Team A",
     project_name: "Air Quality Monitoring",

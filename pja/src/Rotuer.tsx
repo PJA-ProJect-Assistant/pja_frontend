@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import MainPage from "./pages/mainpage/mainPage";
-import LoginPage from "./pages/loginpage/loginPage";
+import MainPage from "./pages/mainpage/MainPage";
+import LoginPage from "./pages/loginpage/LoginPage";
+import AddWSPage from "./pages/workspacepage/addworkspacepage/AddWSPage";
+import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
 
 const Router = () => {
   return (
@@ -10,11 +12,13 @@ const Router = () => {
 
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/main" element={<MainPage />} />
 
       {/* 인증 필요 라우트 */}
       {/* <Route element={<PrivateRoute />}>
       </Route> */}
+      <Route path="/main" element={<MainPage />} />
+      <Route path="/addws" element={<AddWSPage />} />
+      <Route path="/ws/:wsid" element={<MainWSPage />} />
     </Routes>
   );
 };

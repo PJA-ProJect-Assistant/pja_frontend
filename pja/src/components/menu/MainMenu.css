@@ -1,4 +1,4 @@
-.menu-overlay {
+.mainmenu-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -7,7 +7,6 @@
   background: rgba(0, 0, 0, 0.2); /* 약한 어둡기 */
   z-index: 999;
 }
-
 .mainmenu-container {
   position: fixed;
   top: 0;
@@ -18,4 +17,43 @@
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   z-index: 1000;
+}
+.mainmenu-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mainmenu-profile {
+  display: flex;
+  white-space: nowrap;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: var(--font-size-3xl);
+  background-color: #bbc9ec;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+}
+.mainmenu-username {
+  font-size: var(--font-size-xl);
+  margin: 10px;
+}
+.mainmenu-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
+}
+.mainmenu-list p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  margin: 0;
+  height: 40px;
+}
+.mainmenu-list p:hover {
+  background-color: #f0f2f7;
 }
