@@ -22,6 +22,9 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <div className="login-box">
+        <div className="login-logo">
+          <img src="/img/logo.png" alt="logo" className="logo-image"></img>
+        </div>
         <h1 className="login-title">로그인</h1>
 
         <div className="input-section">
@@ -127,9 +130,14 @@ const LoginPage = () => {
             </a>
           </div>
         </div>
-        <div className="google-login-section">
+        <div className="google-login-wrapper">
           <button className="google-login-button">
-            Google 계정으로 로그인
+            <img
+              src="/img/Google.png"
+              alt="Google logo"
+              className="google-logo"
+            />
+            <span className="google-text">Google 계정으로 로그인</span>
           </button>
         </div>
       </div>
