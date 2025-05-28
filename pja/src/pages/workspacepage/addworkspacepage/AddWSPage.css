@@ -1,0 +1,145 @@
+.addws-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  width: 100vw;
+  height: 100vh;
+}
+.addws-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 10px;
+  width: 30%;
+  height: 45%;
+  min-width: 300px;
+  min-height: 290px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+.addws-title {
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  align-items: center;
+  background-color: #00205b;
+  border-radius: 10px 10px 0 0;
+  height: 15%;
+  padding: 0 15px;
+}
+.addws-title p {
+  margin: 0;
+  color: white;
+  font-size: var(--font-size-lg);
+}
+.addws-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 10px 30px;
+  box-sizing: border-box;
+  height: 70%;
+}
+.addws-content p {
+  margin: 0;
+  margin-bottom: 5px;
+}
+.addws-content-input {
+  border-radius: 5px;
+  border: 1px solid #aaaaaa;
+  height: 35px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 5px;
+}
+.addws-content-input:focus {
+  border: 2px solid #00205b;
+}
+.addws-content-select {
+  border-radius: 5px;
+  border: 1px solid #aaaaaa;
+  height: 25px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 5px;
+}
+.addws-btn-container {
+  display: flex;
+  justify-content: space-around;
+  box-sizing: border-box;
+  height: 15%;
+  padding: 0 30px;
+}
+.addws-btn1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  width: 40%;
+  height: 80%;
+  border: none;
+  background-color: #00205b;
+  color: white;
+}
+.addws-btn2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  width: 40%;
+  height: 80%;
+  background-color: #d9d9d6;
+  border: none;
+  color: black;
+}
+.addws-email {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #aaaaaa;
+  border-radius: 5px;
+  padding: 8px 2px;
+  gap: 5px;
+}
+.invited-members {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 60px;
+  gap: 5px;
+}
+.addws-email input {
+  border-radius: 5px;
+  height: 30px;
+  box-sizing: border-box;
+  width: 100%;
+  border: none;
+}
+.addws-email input:focus {
+  outline: none;
+  border: none;
+}
+.invited-member-email {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80px;
+  padding: 0 5px;
+  background-color: #fe5000;
+  color: white;
+  border-radius: 10px;
+  font-size: var(--font-size-2xs);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.invited-member-email p {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+.delete-email-btn {
+  cursor: pointer;
+}

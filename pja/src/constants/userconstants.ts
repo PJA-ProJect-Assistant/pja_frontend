@@ -4,7 +4,7 @@ export const Users: users = {
   user_id: 1,
   email: "alice@example.com",
   password: "hashed_password_1", // 실제 사용 시에는 해시된 비밀번호여야 합니다
-  uid: "uid_abc123",
+  uid: "uid_abc123", //일반 아이디
   name: "Alice Kim",
   // profile_image: "https://example.com/profiles/alice.png",
 };

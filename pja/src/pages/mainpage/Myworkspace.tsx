@@ -4,6 +4,7 @@ import { Users } from "../../constants/userconstants";
 import { dummyWorkspaces } from "../../constants/wsconstants";
 import type { workspace } from "../../types/workspace";
 import { useNavigate } from "react-router-dom";
+import WsmenuModal from "../../components/modal/wsmenumodal";
 
 export function Myworkspace() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export function Myworkspace() {
   const [workspaces, setWorkspaces] = useState<workspace[]>(dummyWorkspaces);
   const [myWorkspaces, setMyWorkspaces] = useState<workspace[]>([]);
   const [completeWorkspaces, setCompleteWorkspaces] = useState<workspace[]>([]);
+  const [menuModalOpen, setMenuModalOpen] = useState<boolean>(false);
 
   const [editId, setEditId] = useState<number | null>(null);
   const [editName, setEditName] = useState<string>("");
@@ -154,7 +156,13 @@ export function Myworkspace() {
           </div>
           {wsMenuOpenId === ws.workspace_id && !ws.is_completed && (
             <div className="workspace-menu">
-              <div onClick={() => handleEdit(ws)}>
+              <div
+                onClick={() => {
+                  Users.user_id === ws.owner_id
+                    ? handleEdit(ws)
+                    : setMenuModalOpen(true);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
@@ -166,7 +174,13 @@ export function Myworkspace() {
                 </svg>
                 <p>워크스페이스 수정</p>
               </div>
-              <div onClick={() => handleComplete(ws.workspace_id, true)}>
+              <div
+                onClick={() => {
+                  Users.user_id === ws.owner_id
+                    ? handleComplete(ws.workspace_id, true)
+                    : setMenuModalOpen(true);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
@@ -178,7 +192,14 @@ export function Myworkspace() {
                 </svg>
                 <p>워크스페이스 완료</p>
               </div>
-              <div onClick={() => handleDelete(ws.workspace_id)}>
+              {/* 사용자권한 모달 확인을 위해 != 로 코드 변경 */}
+              <div
+                onClick={() => {
+                  Users.user_id != ws.owner_id
+                    ? handleDelete(ws.workspace_id)
+                    : setMenuModalOpen(true);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
@@ -194,7 +215,13 @@ export function Myworkspace() {
           )}
           {wsMenuOpenId === ws.workspace_id && ws.is_completed && (
             <div className="workspace-menu">
-              <div onClick={() => handleComplete(ws.workspace_id, false)}>
+              <div
+                onClick={() => {
+                  Users.user_id === ws.owner_id
+                    ? handleComplete(ws.workspace_id, false)
+                    : setMenuModalOpen(true);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
@@ -206,7 +233,13 @@ export function Myworkspace() {
                 </svg>
                 <p>완료 취소</p>
               </div>
-              <div onClick={() => handleDelete(ws.workspace_id)}>
+              <div
+                onClick={() => {
+                  Users.user_id === ws.owner_id
+                    ? handleDelete(ws.workspace_id)
+                    : setMenuModalOpen(true);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
@@ -260,7 +293,7 @@ export function Myworkspace() {
         <p className="wstitle">내 워크스페이스</p>
         <div className="workspace-scroll" ref={activeRef} {...activeHandlers}>
           {renderCards(myWorkspaces)}
-          <button>
+          <button onClick={() => navigate("/addws")}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -281,6 +314,7 @@ export function Myworkspace() {
           {renderCards(completeWorkspaces)}
         </div>
       </div>
+      {menuModalOpen && <WsmenuModal onClose={() => setMenuModalOpen(false)} />}
     </div>
   );
 }
