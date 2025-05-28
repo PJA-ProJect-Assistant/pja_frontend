@@ -1,7 +1,14 @@
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
 import type { IsClose } from "../../types/common";
 import "./WsSideBar.css";
+import { WSSidebarHeader } from "../header/WSSidebarHeader";
+
 export default function WsSidebar({ onClose }: IsClose) {
+  const selectedWS = useSelector(
+    (state: RootState) => state.workspace.selectedWS
+  );
   return (
     <motion.div
       className="wssidebar-container"
@@ -10,16 +17,8 @@ export default function WsSidebar({ onClose }: IsClose) {
       exit={{ x: "-100%", opacity: 0 }}
       transition={{ type: "tween", duration: 0.3 }}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="24px"
-        viewBox="0 -960 960 960"
-        width="24px"
-        fill="#000000"
-        onClick={onClose}
-      >
-        <path d="M440-280v-400L240-480l200 200Zm80 160h80v-720h-80v720Z" />
-      </svg>
+      <WSSidebarHeader onClose={onClose} />
+      <div></div>
     </motion.div>
   );
 }

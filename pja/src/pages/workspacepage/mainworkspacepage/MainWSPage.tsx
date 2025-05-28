@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import type { workspace } from "../../../types/workspace";
+import { setSelectedWS } from "../../../store/workspaceSlice";
 import { dummyWorkspaces } from "../../../constants/wsconstants";
-import WsSidebar from "../../../components/sidebar/WsSideBar";
+import WsSidebar from "../../../components/sidebar/WsSidebar";
 import "./MainWSPage.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { WSHeader } from "../../../components/header/WSHeader";
 
@@ -11,11 +13,18 @@ export default function MainWSPage() {
   const { wsid } = useParams<{
     wsid: string;
   }>();
-  const selectws: workspace | undefined = dummyWorkspaces.find(
-    (ws) => ws.workspace_id === Number(wsid)
-  );
+  const dispatch = useDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
+
+  useEffect(() => {
+    const selectws: workspace | undefined = dummyWorkspaces.find(
+      (ws) => ws.workspace_id === Number(wsid)
+    );
+    if (selectws) {
+      dispatch(setSelectedWS(selectws));
+    }
+  }, [wsid, dispatch]);
 
   return (
     <div className="mainws-container">
