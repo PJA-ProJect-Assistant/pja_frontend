@@ -1,0 +1,27 @@
+.mainws-container {
+  display: flex;
+  position: fixed;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+}
+.sidebar-icon {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9d9d6;
+  background-color: white;
+  bottom: 20px;
+  left: 20px;
+  border-radius: 50%;
+  width: 50px !important;
+  height: 50px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+.wscontent-container {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+}

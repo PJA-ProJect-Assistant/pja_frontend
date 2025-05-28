@@ -1,0 +1,10 @@
+.main-container {
+  position: absolute;
+  background-color: white;
+  display: flex;
+  width: 100vw;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding-top: 2%;
+}

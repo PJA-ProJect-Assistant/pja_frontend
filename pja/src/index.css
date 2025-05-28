@@ -1,4 +1,5 @@
 :root {
+  --font-size-2xs: 10px;
   --font-size-xs: 12px;
   --font-size-sm: 14px;
   --font-size-base: 16px;
@@ -6,4 +7,10 @@
   --font-size-xl: 20px;
   --font-size-2xl: 24px;
   --font-size-3xl: 30px;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }

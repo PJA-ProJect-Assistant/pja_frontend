@@ -1,0 +1,32 @@
+.mainheader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 30px;
+}
+.mainwsheader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: var(--font-size-xl);
+  background-color: #bbc9ec;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+}
+.div-left {
+  width: 60px;
+}
+.div-right {
+  width: 60px;
+}
