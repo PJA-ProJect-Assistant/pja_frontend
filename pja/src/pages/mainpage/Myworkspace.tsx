@@ -4,7 +4,9 @@ import { Users } from "../../constants/userconstants";
 import { dummyWorkspaces } from "../../constants/wsconstants";
 import type { workspace } from "../../types/workspace";
 import { useNavigate } from "react-router-dom";
-import WsmenuModal from "../../components/modal/wsmenumodal";
+import { WsmenuModal } from "../../components/modal/WsmenuModal";
+import { WscompleteModal } from "../../components/modal/WsmenuModal";
+import { progress } from "framer-motion";
 
 export function Myworkspace() {
   const navigate = useNavigate();
@@ -13,6 +15,7 @@ export function Myworkspace() {
   const [myWorkspaces, setMyWorkspaces] = useState<workspace[]>([]);
   const [completeWorkspaces, setCompleteWorkspaces] = useState<workspace[]>([]);
   const [menuModalOpen, setMenuModalOpen] = useState<boolean>(false);
+  const [completeModalOpen, setCompleteModalOpen] = useState<boolean>(false);
 
   const [editId, setEditId] = useState<number | null>(null);
   const [editName, setEditName] = useState<string>("");
@@ -24,11 +27,11 @@ export function Myworkspace() {
 
   useEffect(() => {
     const myWorkspaces = workspaces.filter(
-      (ws) => ws.owner_id === Users.user_id && ws.is_completed === false
+      (ws) => ws.owner_id === Users.user_id && ws.progress_step < 6
     );
     setMyWorkspaces(myWorkspaces);
     const completews = workspaces.filter(
-      (ws) => ws.owner_id === Users.user_id && ws.is_completed === true
+      (ws) => ws.owner_id === Users.user_id && ws.progress_step === 6
     );
     setCompleteWorkspaces(completews);
   }, [workspaces]);
@@ -70,20 +73,29 @@ export function Myworkspace() {
   const handleSave = (id: number) => {
     setWorkspaces((prev) =>
       prev.map((ws) =>
-        ws.workspace_id === id
+        ws.workspace_id === id && ws.progress_step
           ? { ...ws, project_name: editName, team_name: editTeam }
           : ws
       )
     );
     setEditId(null);
   };
-
-  const handleComplete = (id: number, completed: boolean) => {
-    setWorkspaces((prev) =>
-      prev.map((ws) =>
-        ws.workspace_id === id ? { ...ws, is_completed: completed } : ws
-      )
-    );
+  const handleComplete = (id: number, step: number) => {
+    if (step === 5) {
+      setWorkspaces((prev) =>
+        prev.map((ws) =>
+          ws.workspace_id === id ? { ...ws, progress_step: 6 } : ws
+        )
+      );
+    } else if (step === 6) {
+      setWorkspaces((prev) =>
+        prev.map((ws) =>
+          ws.workspace_id === id ? { ...ws, progress_step: 5 } : ws
+        )
+      );
+    } else {
+      setCompleteModalOpen(true);
+    }
     setWsMenuOpenId(null);
   };
   const handleDelete = (id: number) => {
@@ -154,13 +166,13 @@ export function Myworkspace() {
               <path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z" />
             </svg>
           </div>
-          {wsMenuOpenId === ws.workspace_id && !ws.is_completed && (
+          {wsMenuOpenId === ws.workspace_id && ws.progress_step < 6 && (
             <div className="workspace-menu">
               <div
                 onClick={() => {
                   Users.user_id === ws.owner_id
                     ? handleEdit(ws)
-                    : setMenuModalOpen(true);
+                    : (setMenuModalOpen(true), setWsMenuOpenId(null));
                 }}
               >
                 <svg
@@ -177,8 +189,8 @@ export function Myworkspace() {
               <div
                 onClick={() => {
                   Users.user_id === ws.owner_id
-                    ? handleComplete(ws.workspace_id, true)
-                    : setMenuModalOpen(true);
+                    ? handleComplete(ws.workspace_id, ws.progress_step)
+                    : (setMenuModalOpen(true), setWsMenuOpenId(null));
                 }}
               >
                 <svg
@@ -197,7 +209,7 @@ export function Myworkspace() {
                 onClick={() => {
                   Users.user_id != ws.owner_id
                     ? handleDelete(ws.workspace_id)
-                    : setMenuModalOpen(true);
+                    : (setMenuModalOpen(true), setWsMenuOpenId(null));
                 }}
               >
                 <svg
@@ -213,13 +225,13 @@ export function Myworkspace() {
               </div>
             </div>
           )}
-          {wsMenuOpenId === ws.workspace_id && ws.is_completed && (
+          {wsMenuOpenId === ws.workspace_id && ws.progress_step === 6 && (
             <div className="workspace-menu">
               <div
                 onClick={() => {
                   Users.user_id === ws.owner_id
-                    ? handleComplete(ws.workspace_id, false)
-                    : setMenuModalOpen(true);
+                    ? handleComplete(ws.workspace_id, ws.progress_step)
+                    : (setMenuModalOpen(true), setWsMenuOpenId(null));
                 }}
               >
                 <svg
@@ -237,7 +249,7 @@ export function Myworkspace() {
                 onClick={() => {
                   Users.user_id === ws.owner_id
                     ? handleDelete(ws.workspace_id)
-                    : setMenuModalOpen(true);
+                    : (setMenuModalOpen(true), setWsMenuOpenId(null));
                 }}
               >
                 <svg
@@ -288,9 +300,9 @@ export function Myworkspace() {
     ));
 
   return (
-    <div className="workspacecontainer">
+    <div className="workspace-container">
       <div className="ws-container-2">
-        <p className="wstitle">내 워크스페이스</p>
+        <p className="wstitle">진행 중인 워크스페이스</p>
         <div className="workspace-scroll" ref={activeRef} {...activeHandlers}>
           {renderCards(myWorkspaces)}
           <button onClick={() => navigate("/addws")}>
@@ -315,6 +327,9 @@ export function Myworkspace() {
         </div>
       </div>
       {menuModalOpen && <WsmenuModal onClose={() => setMenuModalOpen(false)} />}
+      {completeModalOpen && (
+        <WscompleteModal onClose={() => setCompleteModalOpen(false)} />
+      )}
     </div>
   );
 }
