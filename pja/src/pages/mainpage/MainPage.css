@@ -2,8 +2,9 @@
   position: absolute;
   background-color: white;
   display: flex;
+  width: 100vw;
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  padding: 2%;
+  padding-top: 2%;
 }

@@ -1,6 +1,7 @@
 import type { IsClose } from "../../types/common";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { Users } from "../../constants/userconstants";
 import "./MainMenu.css";
 
 export default function MainMenu({ onClose }: IsClose) {
@@ -18,7 +19,7 @@ export default function MainMenu({ onClose }: IsClose) {
     };
   }, [onClose]);
   return (
-    <div className="menu-overlay">
+    <div className="mainmenu-overlay">
       <motion.div
         className="mainmenu-container"
         ref={menuRef}
@@ -27,8 +28,16 @@ export default function MainMenu({ onClose }: IsClose) {
         exit={{ x: "-100%", opacity: 0 }}
         transition={{ type: "tween", duration: 0.3 }}
       >
-        <button onClick={onClose}>닫기</button>
-        <div>메인메뉴</div>
+        <div className="mainmenu-layout">
+          <div className="mainmenu-profile">{Users.name.charAt(0)}</div>
+          <p className="mainmenu-username">{Users.name}</p>
+          <div className="mainmenu-list">
+            <p>계정설정</p>
+            <p>공지</p>
+            <p>로그아웃</p>
+            <p>탈퇴</p>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

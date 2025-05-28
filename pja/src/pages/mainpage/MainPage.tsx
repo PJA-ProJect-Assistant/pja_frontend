@@ -6,7 +6,7 @@ import { AnimatePresence } from "framer-motion";
 import "./MainPage.css";
 
 export default function MainPage() {
-  const [openMenu, setOpenMenu] = useState(false);
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
   return (
     <>
       <div className="maincontainer">
