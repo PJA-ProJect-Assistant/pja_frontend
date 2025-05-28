@@ -1,16 +1,18 @@
+.signup-maincontainer {
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+}
 .signup-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
   min-height: 200px;
 }
-
 .signup-box {
-  margin-top: 30px;
   width: 450px;
   /* height: 30px; */
-  padding: 30px 25px;
+  padding: 0 25px;
 }
 .signup-logo {
   display: flex;

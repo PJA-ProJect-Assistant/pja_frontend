@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./SignupPage.css";
+import { SignupHeader } from "../../components/header/SignupHeader";
 
 const SignupPage = () => {
   const [id, setId] = useState("");
@@ -48,322 +49,332 @@ const SignupPage = () => {
   //const handleLogin = () => {};
 
   return (
-    <div className="signup-container">
-      <div className="signup-box">
-        <div className="signup-logo">
-          <img src="/img/logo.png" alt="logo" className="logo-image"></img>
-        </div>
-        <h1 className="signup-title">회원가입</h1>
-        <div className="id-title">아이디</div>
-
-        <div className="input-section">
-          <div className="input-wrapper">
-            <img
-              src="/img/person.png"
-              alt="person"
-              className="person-icon-inside"
-            />
-
-            <input
-              type="text"
-              placeholder="아이디"
-              className="id-input"
-              value={id}
-              onChange={handleIdChange}
-              onFocus={(e) => {
-                e.target.classList.add("input-focus");
-              }}
-              onBlur={(e) => {
-                e.target.classList.remove("input-focus");
-              }}
-            />
-            {id && (
-              <button
-                type="button"
-                onClick={handleClearId}
-                className="clear-icon"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M15 9l-6 6" />
-                  <path d="M9 9l6 6" />
-                </svg>
-              </button>
-            )}
+    <div className="signup-maincontainer">
+      <SignupHeader />
+      <div className="signup-container">
+        <div className="signup-box">
+          <div className="signup-logo">
+            <img src="/img/logo.png" alt="logo" className="logo-image"></img>
           </div>
-        </div>
-        <div className="name-title">이름</div>
-        <div className="input-section">
-          <div className="input-wrapper">
-            <img
-              src="/img/person.png"
-              alt="person"
-              className="person-icon-inside"
-            />
-            <input
-              type="text"
-              placeholder="이름"
-              className="name-input"
-              value={name}
-              onChange={handleNameChange}
-              onFocus={(e) => {
-                e.target.classList.add("input-focus");
-              }}
-              onBlur={(e) => {
-                e.target.classList.remove("input-focus");
-              }}
-            />
-            {name && (
-              <button
-                type="button"
-                onClick={handleClearName}
-                className="clear-icon"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M15 9l-6 6" />
-                  <path d="M9 9l6 6" />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="email-title">이메일</div>
-        <div className="input-section">
-          <div className="input-wrapper">
-            <img
-              src="/img/email.png"
-              alt="이메일"
-              className="email-icon-inside"
-            />
-            <input
-              type="text"
-              placeholder="이메일"
-              className="email-input"
-              value={email}
-              onChange={handleEmailChange}
-              onFocus={(e) => {
-                e.target.classList.add("input-focus");
-              }}
-              onBlur={(e) => {
-                e.target.classList.remove("input-focus");
-              }}
-            />
-            {email && (
-              <button
-                type="button"
-                onClick={handleClearEmail}
-                className="clear-icon"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M15 9l-6 6" />
-                  <path d="M9 9l6 6" />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
+          <h1>회원가입</h1>
+          <div className="id-title">아이디</div>
+          <div className="input-section">
+            <div className="input-wrapper">
+              <img
+                src="/img/person.png"
+                alt="person"
+                className="person-icon-inside"
+              />
 
-        <div className="pw-title">비밀번호</div>
-        <div className="input-section">
-          <div className="input-wrapper">
-            <img src="/img/lock.png" alt="lock" className="lock-icon-inside" />
-            <input
-              type={showPassword ? "text" : "password"} /*type 동적 변경*/
-              placeholder="비밀번호"
-              className="pw-input"
-              value={password}
-              onChange={handlePasswordChange}
-              onFocus={(e) => {
-                e.target.classList.add("input-focus");
-              }}
-              onBlur={(e) => {
-                e.target.classList.remove("input-focus");
-              }}
-            />
-            {/*비밀번호 보이기/숨기기 버튼*/}
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="visibility-toggle-icon" /* 새 CSS 클래스 */
-              aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-            >
-              {showPassword ? (
-                // 비밀번호가 보일 때 (숨기기 아이콘 - 예: 사선 그어진 눈)
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              <input
+                type="text"
+                placeholder="아이디"
+                className="id-input"
+                value={id}
+                onChange={handleIdChange}
+                onFocus={(e) => {
+                  e.target.classList.add("input-focus");
+                }}
+                onBlur={(e) => {
+                  e.target.classList.remove("input-focus");
+                }}
+              />
+              {id && (
+                <button
+                  type="button"
+                  onClick={handleClearId}
+                  className="clear-icon"
                 >
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              ) : (
-                // 비밀번호가 숨겨져 있을 때 (보이기 아이콘 - 예: 일반 눈)
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M15 9l-6 6" />
+                    <path d="M9 9l6 6" />
+                  </svg>
+                </button>
               )}
-            </button>
-
-            {password && (
-              <button
-                type="button"
-                onClick={handleClearPassword}
-                className="clear-icon"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M15 9l-6 6" />
-                  <path d="M9 9l6 6" />
-                </svg>
-              </button>
-            )}
+            </div>
           </div>
-        </div>
-
-        {/*비밀번호 확인*/}
-        <div className="pw-title">비밀번호 확인</div>
-        <div className="input-section">
-          <div className="input-wrapper">
-            <img src="/img/lock.png" alt="lock" className="lock-icon-inside" />
-            <input
-              type={showPassword ? "text" : "password"} /*type 동적 변경*/
-              placeholder="비밀번호"
-              className="pw-input"
-              value={passwordConfirm}
-              onChange={handlePasswordConfirmChange}
-              onFocus={(e) => {
-                e.target.classList.add("input-focus");
-              }}
-              onBlur={(e) => {
-                e.target.classList.remove("input-focus");
-              }}
-            />
-            {/*비밀번호 보이기/숨기기 버튼*/}
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="visibility-toggle-icon" /* 새 CSS 클래스 */
-              aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-            >
-              {showPassword ? (
-                // 비밀번호가 보일 때 (숨기기 아이콘 - 예: 사선 그어진 눈)
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+          <div className="name-title">이름</div>
+          <div className="input-section">
+            <div className="input-wrapper">
+              <img
+                src="/img/person.png"
+                alt="person"
+                className="person-icon-inside"
+              />
+              <input
+                type="text"
+                placeholder="이름"
+                className="name-input"
+                value={name}
+                onChange={handleNameChange}
+                onFocus={(e) => {
+                  e.target.classList.add("input-focus");
+                }}
+                onBlur={(e) => {
+                  e.target.classList.remove("input-focus");
+                }}
+              />
+              {name && (
+                <button
+                  type="button"
+                  onClick={handleClearName}
+                  className="clear-icon"
                 >
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              ) : (
-                // 비밀번호가 숨겨져 있을 때 (보이기 아이콘 - 예: 일반 눈)
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M15 9l-6 6" />
+                    <path d="M9 9l6 6" />
+                  </svg>
+                </button>
               )}
-            </button>
+            </div>
+          </div>
+          <div className="email-title">이메일</div>
+          <div className="input-section">
+            <div className="input-wrapper">
+              <img
+                src="/img/email.png"
+                alt="이메일"
+                className="email-icon-inside"
+              />
+              <input
+                type="text"
+                placeholder="이메일"
+                className="email-input"
+                value={email}
+                onChange={handleEmailChange}
+                onFocus={(e) => {
+                  e.target.classList.add("input-focus");
+                }}
+                onBlur={(e) => {
+                  e.target.classList.remove("input-focus");
+                }}
+              />
+              {email && (
+                <button
+                  type="button"
+                  onClick={handleClearEmail}
+                  className="clear-icon"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M15 9l-6 6" />
+                    <path d="M9 9l6 6" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
 
-            {password && (
+          <div className="pw-title">비밀번호</div>
+          <div className="input-section">
+            <div className="input-wrapper">
+              <img
+                src="/img/lock.png"
+                alt="lock"
+                className="lock-icon-inside"
+              />
+              <input
+                type={showPassword ? "text" : "password"} /*type 동적 변경*/
+                placeholder="비밀번호"
+                className="pw-input"
+                value={password}
+                onChange={handlePasswordChange}
+                onFocus={(e) => {
+                  e.target.classList.add("input-focus");
+                }}
+                onBlur={(e) => {
+                  e.target.classList.remove("input-focus");
+                }}
+              />
+              {/*비밀번호 보이기/숨기기 버튼*/}
               <button
                 type="button"
-                onClick={handleClearPasswordConfirm}
-                className="clear-icon"
+                onClick={togglePasswordVisibility}
+                className="visibility-toggle-icon" /* 새 CSS 클래스 */
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M15 9l-6 6" />
-                  <path d="M9 9l6 6" />
-                </svg>
+                {showPassword ? (
+                  // 비밀번호가 보일 때 (숨기기 아이콘 - 예: 사선 그어진 눈)
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                ) : (
+                  // 비밀번호가 숨겨져 있을 때 (보이기 아이콘 - 예: 일반 눈)
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                )}
               </button>
-            )}
+
+              {password && (
+                <button
+                  type="button"
+                  onClick={handleClearPassword}
+                  className="clear-icon"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M15 9l-6 6" />
+                    <path d="M9 9l6 6" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="agree-select-container">
-          <div className="agree-wrapper">
-            <input type="checkbox" className="agree-checkbox" />
-            (필수)인증약관 전체 동의
+
+          {/*비밀번호 확인*/}
+          <div className="pw-title">비밀번호 확인</div>
+          <div className="input-section">
+            <div className="input-wrapper">
+              <img
+                src="/img/lock.png"
+                alt="lock"
+                className="lock-icon-inside"
+              />
+              <input
+                type={showPassword ? "text" : "password"} /*type 동적 변경*/
+                placeholder="비밀번호"
+                className="pw-input"
+                value={passwordConfirm}
+                onChange={handlePasswordConfirmChange}
+                onFocus={(e) => {
+                  e.target.classList.add("input-focus");
+                }}
+                onBlur={(e) => {
+                  e.target.classList.remove("input-focus");
+                }}
+              />
+              {/*비밀번호 보이기/숨기기 버튼*/}
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="visibility-toggle-icon" /* 새 CSS 클래스 */
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+              >
+                {showPassword ? (
+                  // 비밀번호가 보일 때 (숨기기 아이콘 - 예: 사선 그어진 눈)
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                ) : (
+                  // 비밀번호가 숨겨져 있을 때 (보이기 아이콘 - 예: 일반 눈)
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                )}
+              </button>
+
+              {password && (
+                <button
+                  type="button"
+                  onClick={handleClearPasswordConfirm}
+                  className="clear-icon"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M15 9l-6 6" />
+                    <path d="M9 9l6 6" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="signup-button-container">
-          <button type="submit" className="signup-button">
-            회원가입
-          </button>
+          <div className="agree-select-container">
+            <div className="agree-wrapper">
+              <input type="checkbox" className="agree-checkbox" />
+              (필수)인증약관 전체 동의
+            </div>
+          </div>
+          <div className="signup-button-container">
+            <button type="submit" className="signup-button">
+              회원가입
+            </button>
+          </div>
         </div>
       </div>
     </div>
