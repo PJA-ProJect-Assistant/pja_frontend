@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./LoginPage.css"; // CSS 파일 연결
+import logoImage from "../../assets/img/logo.png";
+import GoogleImage from "../../assets/img/Google.png";
 
 const LoginPage = () => {
   const [id, setId] = useState("");
@@ -28,7 +30,7 @@ const LoginPage = () => {
     <div className="login-container">
       <div className="login-box">
         <div className="login-logo">
-          <img src="/img/logo.png" alt="logo" className="logo-image"></img>
+          <img src={logoImage} alt="logo" className="logo-image"></img>
         </div>
         <h1 className="login-title">로그인</h1>
 
@@ -175,11 +177,7 @@ const LoginPage = () => {
         </div>
         <div className="google-login-wrapper">
           <button className="google-login-button">
-            <img
-              src="/img/Google.png"
-              alt="Google logo"
-              className="google-logo"
-            />
+            <img src={GoogleImage} alt="Google logo" className="google-logo" />
             <span className="google-text">Google 계정으로 로그인</span>
           </button>
         </div>

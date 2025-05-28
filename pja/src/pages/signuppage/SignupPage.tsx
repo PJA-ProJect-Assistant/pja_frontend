@@ -1,5 +1,9 @@
 import { useState } from "react";
 import "./SignupPage.css";
+import logoImage from "../../assets/img/logo.png";
+import personIcon from "../../assets/img/person.png";
+import emailIcon from "../../assets/img/email.png";
+import lockIcon from "../../assets/img/lock.png";
 import { SignupHeader } from "../../components/header/SignupHeader";
 
 const SignupPage = () => {
@@ -54,14 +58,14 @@ const SignupPage = () => {
       <div className="signup-container">
         <div className="signup-box">
           <div className="signup-logo">
-            <img src="/img/logo.png" alt="logo" className="logo-image"></img>
+            <img src={logoImage} alt="logo" className="logo-image"></img>
           </div>
           <h1>회원가입</h1>
           <div className="id-title">아이디</div>
           <div className="input-section">
             <div className="input-wrapper">
               <img
-                src="/img/person.png"
+                src={personIcon}
                 alt="person"
                 className="person-icon-inside"
               />
@@ -107,7 +111,7 @@ const SignupPage = () => {
           <div className="input-section">
             <div className="input-wrapper">
               <img
-                src="/img/person.png"
+                src={personIcon}
                 alt="person"
                 className="person-icon-inside"
               />
@@ -151,11 +155,7 @@ const SignupPage = () => {
           <div className="email-title">이메일</div>
           <div className="input-section">
             <div className="input-wrapper">
-              <img
-                src="/img/email.png"
-                alt="이메일"
-                className="email-icon-inside"
-              />
+              <img src={emailIcon} alt="이메일" className="email-icon-inside" />
               <input
                 type="text"
                 placeholder="이메일"
@@ -197,11 +197,7 @@ const SignupPage = () => {
           <div className="pw-title">비밀번호</div>
           <div className="input-section">
             <div className="input-wrapper">
-              <img
-                src="/img/lock.png"
-                alt="lock"
-                className="lock-icon-inside"
-              />
+              <img src={lockIcon} alt="lock" className="lock-icon-inside" />
               <input
                 type={showPassword ? "text" : "password"} /*type 동적 변경*/
                 placeholder="비밀번호"
@@ -283,11 +279,7 @@ const SignupPage = () => {
           <div className="pw-title">비밀번호 확인</div>
           <div className="input-section">
             <div className="input-wrapper">
-              <img
-                src="/img/lock.png"
-                alt="lock"
-                className="lock-icon-inside"
-              />
+              <img src={lockIcon} alt="lock" className="lock-icon-inside" />
               <input
                 type={showPassword ? "text" : "password"} /*type 동적 변경*/
                 placeholder="비밀번호"
