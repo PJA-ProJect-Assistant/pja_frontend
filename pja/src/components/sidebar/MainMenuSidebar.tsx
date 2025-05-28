@@ -2,9 +2,9 @@ import type { IsClose } from "../../types/common";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Users } from "../../constants/userconstants";
-import "./MainMenu.css";
+import "./MainMenuSidebar.css";
 
-export default function MainMenu({ onClose }: IsClose) {
+export default function MainMenuSidebar({ onClose }: IsClose) {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
