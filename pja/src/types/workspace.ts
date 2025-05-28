@@ -1,3 +1,5 @@
+export type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
 export interface workspace {
   workspace_id: number;
   owner_id: number;
@@ -8,8 +10,8 @@ export interface workspace {
   project_description?: string;
   project_summary?: string;
   project_features?: string; //json형태라서 나중에 가져오는 데이터 보고 바꿔야함함
-  is_shared_agree: boolean;
-  is_completed: boolean;
+  is_public: boolean;
+  progress_step: Step;
 }
 
 export type Role = "OWNER" | "MEMBER" | "GUEST";

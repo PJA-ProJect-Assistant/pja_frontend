@@ -5,7 +5,7 @@ import type { IsOpen } from "../../types/common";
 export function MainHeader({ onMenuToggle }: IsOpen) {
   return (
     <>
-      <div className="mainheadercontainer">
+      <div className="mainheader-container">
         <div className="profile" onClick={onMenuToggle}>
           {Users.name.charAt(0)}
         </div>
