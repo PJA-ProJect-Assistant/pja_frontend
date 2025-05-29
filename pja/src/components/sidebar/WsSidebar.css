@@ -6,7 +6,38 @@
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   padding: 30px 20px;
 }
-.wssidebar-list {
+
+.wssidebar-list-container {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 15px 0;
 }
-.wssidebar-progress {
+
+.wssidebar-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 4% 10%;
+  gap: 10px;
+}
+
+.wssidebar-list:hover {
+  background-color: #D9D9D6;
+}
+
+.wssidebar-list p {
+  margin: 0;
+}
+
+.wssidebar-img {
+  width: 24px;
+  height: 24px;
+}
+
+.wssidebar-img img {
+  width: 22px;
+  height: 22px;
+  margin: 1px;
 }

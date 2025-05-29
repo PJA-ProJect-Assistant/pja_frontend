@@ -19,7 +19,7 @@ const Router = () => {
       </Route> */}
       <Route path="/main" element={<MainPage />} />
       <Route path="/addws" element={<AddWSPage />} />
-      <Route path="/ws/:wsid" element={<MainWSPage />} />
+      <Route path="/ws/:wsid/step/:stepNumber" element={<MainWSPage />} />
     </Routes>
   );
 };
