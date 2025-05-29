@@ -84,6 +84,7 @@
   margin-top: 20px;
   cursor: pointer;
 }
+/*모달창*/
 .modal-overlay {
   position: fixed;
   top: 0;

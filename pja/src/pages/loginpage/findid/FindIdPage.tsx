@@ -16,6 +16,7 @@ const FindIdPage = () => {
   const handleFindId = () => {
     setShowModal(true);
   };
+  /*모달창 추가*/
   const handleCloseModal = () => {
     setShowModal(false);
   };
