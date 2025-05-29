@@ -4,8 +4,8 @@ export const dummyWorkspaces: workspace[] = [
   {
     workspace_id: 1,
     owner_id: 1,
-    team_name: "SmartCity Team A",
-    project_name: "Air Quality Monitoring",
+    team_name: "SmartCity Team A1",
+    project_name: "Air Quality Monitoring1",
     created_at: new Date("2024-11-01T10:00:00Z"),
     is_public: true,
     progress_step: 0,
