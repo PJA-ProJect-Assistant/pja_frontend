@@ -1,6 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainPage from "./pages/mainpage/MainPage";
 import LoginPage from "./pages/loginpage/LoginPage";
+import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
+import FindIdPage from "./pages/loginpage/findid/FindIdPage";
+import SignupPage from "./pages/signuppage/SignupPage";
 import AddWSPage from "./pages/workspacepage/addworkspacepage/AddWSPage";
 import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
 
@@ -13,13 +16,22 @@ const Router = () => {
 
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
-
-      {/* 인증 필요 라우트 */}
-      {/* <Route element={<PrivateRoute />}>
-      </Route> */}
       <Route path="/main" element={<MainPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/find-id" element={<FindIdPage />} />
+      {/* 인증 필요 라우트 */}
+      {/* <Route element={<PrivateRoute />}*/}
+      {/*</Route> */}
+
       <Route path="/addws" element={<AddWSPage />} />
-      <Route path="/ws/:wsid/step/:stepNumber" element={<MainWSPage />} />
+
+      <Route path="/ws/:wsid" element={<MainWSPage />} />
+
+      {/*로그인 성공 후 리디렉션 처리용 페이지 */}
+      <Route path="/oauth2/success" element={<OAuth2Success />} />
+
+    
+
     </Routes>
   );
 };
