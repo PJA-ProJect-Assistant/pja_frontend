@@ -24,10 +24,14 @@ const Router = () => {
       {/*</Route> */}
 
       <Route path="/addws" element={<AddWSPage />} />
+
       <Route path="/ws/:wsid" element={<MainWSPage />} />
 
       {/*로그인 성공 후 리디렉션 처리용 페이지 */}
       <Route path="/oauth2/success" element={<OAuth2Success />} />
+
+    
+
     </Routes>
   );
 };

@@ -6,7 +6,6 @@ import type { workspace } from "../../types/workspace";
 import { useNavigate } from "react-router-dom";
 import { WsmenuModal } from "../../components/modal/WsmenuModal";
 import { WscompleteModal } from "../../components/modal/WsmenuModal";
-import { progress } from "framer-motion";
 
 export function Myworkspace() {
   const navigate = useNavigate();
@@ -148,7 +147,7 @@ export function Myworkspace() {
         key={ws.workspace_id}
         className="workspace-card"
         onDoubleClick={() => {
-          if (!editId) navigate(`/ws/${ws.workspace_id}`);
+          if (!editId) navigate(`/ws/${ws.workspace_id}/step/${ws.progress_step}`);
         }}
       >
         <div>

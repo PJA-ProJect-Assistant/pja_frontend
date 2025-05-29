@@ -4,18 +4,9 @@ export const dummyWorkspaces: workspace[] = [
   {
     workspace_id: 1,
     owner_id: 1,
-    team_name: "SmartCity Team A",
-    project_name: "Air Quality Monitoring",
+    team_name: "SmartCity Team A1",
+    project_name: "Air Quality Monitoring1",
     created_at: new Date("2024-11-01T10:00:00Z"),
-    project_target: "Improve urban air quality around bus stops.",
-    project_description:
-      "This project collects air quality data from various bus stops and analyzes it to improve environmental health conditions.",
-    project_summary: "An IoT and data-driven approach to urban air quality.",
-    project_features: JSON.stringify([
-      "Real-time PM10/PM2.5 sensors",
-      "Public dashboard",
-      "Alert system for poor air",
-    ]),
     is_public: true,
     progress_step: 0,
   },
