@@ -59,6 +59,7 @@ export default function AddWSName({ onClose }: IsClose) {
           </div>
         </div>
         <div className="addws-btn-container">
+          {/* 생성하기 누르면 db에 저장 시키기! */}
           <button
             onClick={onClose}
             disabled={!isValid}
