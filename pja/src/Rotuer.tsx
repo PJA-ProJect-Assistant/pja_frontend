@@ -3,6 +3,7 @@ import MainPage from "./pages/mainpage/MainPage";
 import LoginPage from "./pages/loginpage/LoginPage";
 import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
 import FindIdPage from "./pages/loginpage/findid/FindIdPage";
+import FindPwPage from "./pages/loginpage/findpw/FindPwPage";
 import SignupPage from "./pages/signuppage/SignupPage";
 import AddWSPage from "./pages/workspacepage/addworkspacepage/AddWSPage";
 import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
@@ -19,6 +20,7 @@ const Router = () => {
       <Route path="/main" element={<MainPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/find-id" element={<FindIdPage />} />
+      <Route path="/find-pw" element={<FindPwPage />} />
       {/* 인증 필요 라우트 */}
       {/* <Route element={<PrivateRoute />}*/}
       {/*</Route> */}
@@ -29,9 +31,6 @@ const Router = () => {
 
       {/*로그인 성공 후 리디렉션 처리용 페이지 */}
       <Route path="/oauth2/success" element={<OAuth2Success />} />
-
-    
-
     </Routes>
   );
 };

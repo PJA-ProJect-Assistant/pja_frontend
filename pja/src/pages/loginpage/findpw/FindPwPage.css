@@ -1,0 +1,164 @@
+.findpw-container {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 40px 20px;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.logo {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.email-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-wrapper .icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border: 1px solid #aaaaaa;
+  border-radius: 4px;
+}
+
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.button-group {
+  position: absolute;
+  display: flex;
+  right: -40%;
+  top: 0;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: #001e60;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn.small {
+  font-size: 14px;
+}
+
+.button-item {
+  position: absolute;
+  display: flex;
+  right: -35%;
+  top: 0;
+}
+.btn.confirm {
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.btn.reset {
+  margin-top: 30px;
+  width: 220px;
+  height: 50px;
+  font-size: 16px;
+  background-color: #001e60;
+}
+
+.bottom-check {
+  font-size: 12px;
+  color: #333;
+  margin-top: 10px;
+}
+
+.alert-icon {
+  width: 20px;
+  height: 15px;
+  cursor: pointer;
+}
+.find-id-input {
+  width: 400px;
+  height: 20px;
+  padding-left: 45px;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+
+  /* margin-left: 150px; */
+}
+.tooltip-text {
+  visibility: hidden;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 10px;
+  transform: translateX(-50%);
+  opacity: 0;
+}
+
+.tooltip-wrapper:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.findpw-clear-id-icon {
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  transform: translateY(-50%);
+  height: 100%; /* 입력창 높이에 맞춤 */
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+}
+
+.findpw-clear-email-icon {
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  transform: translateY(-50%);
+  height: 100%; /* 입력창 높이에 맞춤 */
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+}
