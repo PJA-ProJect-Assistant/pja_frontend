@@ -1,10 +1,12 @@
 .sidebarheader-container {
   display: flex;
   width: 100%;
+  box-sizing: border-box;
   justify-content: center;
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
+  height: 8%;
 }
 
 .sidebarheader-left {
