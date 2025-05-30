@@ -30,7 +30,11 @@
     margin-bottom: 8px;
     border: 1px solid #aaaaaa;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: var(--font-size-base);
+}
+
+.form-input-field::placeholder {
+    font-size: var(--font-size-sm);
 }
 
 .form-input-field:focus {
@@ -40,6 +44,7 @@
 
 textarea.form-input-field {
     resize: none;
+    min-height: 100px;
 }
 
 .form-add-button {
