@@ -62,7 +62,7 @@ export default function AddWSName({ onClose }: IsClose) {
           <button
             onClick={onClose}
             disabled={!isValid}
-            className={isValid ? "addws-btn1" : "addws-btn2"}
+            className="addws-btn1"
           >
             생성하기
           </button>
