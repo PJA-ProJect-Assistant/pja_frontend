@@ -16,7 +16,7 @@ const FindIdPage = () => {
   const handleFindId = () => {
     setShowModal(true);
   };
-  /*모달창 추가*/
+
   const handleCloseModal = () => {
     setShowModal(false);
   };
@@ -25,46 +25,49 @@ const FindIdPage = () => {
     <>
       <div className="findid-container">
         <div className="findid-box">
-          <div className="findid-wrapper">
-            <img src={logoImage} alt="logo" className="logo-image" />
-          </div>
+          <img src={logoImage} alt="logo" className="logo-image" />
+
           <h1 className="findid-title">아이디 찾기</h1>
-          <div className="input-wrapper">
-            <img
-              src={findEmailIcon}
-              alt="이메일"
-              className="findemail-icon-inside"
-            />
+
+          <div className="findid-input-wrapper">
             <div className="find-email-title">이메일</div>
-            <input
-              type="text"
-              placeholder="이메일"
-              className="find-email-input"
-              value={email}
-              onChange={handleEmailChange}
-            />
-            {email && (
-              <button
-                type="button"
-                onClick={handleClearEmail}
-                className="clear-icon findid-clear-icon"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+            <div className="findemail-wrapper">
+              <img
+                src={findEmailIcon}
+                alt="이메일"
+                className="findemail-icon-inside"
+              />
+
+              <input
+                type="text"
+                placeholder="이메일"
+                className="findid-email-input"
+                value={email}
+                onChange={handleEmailChange}
+              />
+              {email && (
+                <button
+                  type="button"
+                  onClick={handleClearEmail}
+                  className="findid-clear-icon "
                 >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M15 9l-6 6" />
-                  <path d="M9 9l6 6" />
-                </svg>
-              </button>
-            )}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M15 9l-6 6" />
+                    <path d="M9 9l6 6" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
           <div className="findid-section">
             <button

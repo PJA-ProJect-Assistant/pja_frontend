@@ -13,12 +13,6 @@
   align-items: center;
 }
 
-.findid-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .findid-title {
   display: flex;
   justify-content: center;
@@ -30,33 +24,19 @@
   height: 132px;
 }
 
-.findid-box .input-wrapper.input-wrapper {
+.findid-email-input {
   width: 100%;
-}
-.find-email-input {
-  width: 400px;
   height: 40px;
   padding-left: 45px;
   border: 1px solid #aaaaaa;
   border-radius: 5px;
   font-size: 15px;
-  margin-bottom: 20px; /*input와 button 중앙 정렬*/
-}
-
-.findemail-icon-inside {
-  position: absolute;
-  top: 50%;
-  left: 20px;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  pointer-events: none;
 }
 
 .findid-clear-icon {
   position: absolute;
   top: 50%;
-  right: 12px;
+  right: -30px;
   transform: translateY(-50%);
   height: 100%; /* 입력창 높이에 맞춤 */
   padding: 0;
@@ -65,6 +45,7 @@
   cursor: pointer;
 }
 
+/*아이디 찾기 버튼*/
 .findid-section {
   margin-top: 10px;
   display: flex;
@@ -84,7 +65,7 @@
   margin-top: 20px;
   cursor: pointer;
 }
-/*모달창*/
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -114,4 +95,28 @@
   background-color: #00205b;
   color: white;
   cursor: pointer;
+}
+.findid-input-wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+.findemail-wrapper {
+  position: relative; /*자기 자신을 기준으로 움직임*/
+  width: 100%;
+}
+.findemail-icon-inside {
+  position: absolute; /*부모 요소로 배치*/
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+.findid-email-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #aaaaaa;
+  border-radius: 5px;
+  font-size: 15px;
 }
