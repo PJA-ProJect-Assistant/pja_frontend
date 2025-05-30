@@ -18,8 +18,8 @@ export type Role = "OWNER" | "MEMBER" | "GUEST";
 
 export interface workspace_member {
   workspace_member_id: number;
-  role: Role;
-  joined_at: Date;
   user_id: number;
   workspace_id: number;
+  role: Role;
+  joined_at: Date;
 }
