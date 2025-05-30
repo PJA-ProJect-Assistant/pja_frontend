@@ -1,25 +1,33 @@
 import type { action, feature, feature_category } from "../types/list";
 
-const featureCategories: feature_category[] = [
+export const featureCategories: feature_category[] = [
     {
         feature_catefory_id: 1,
         name: "회원 관리",
         state: true,
         order: 1,
-        workspace_id: 101,
+        workspace_id: 3,
         has_test: true,
+    },
+    {
+        feature_catefory_id: 2,
+        name: "결제 시스템",
+        state: false,
+        order: 2,
+        workspace_id: 3,
+        has_test: false,
     },
     {
         feature_catefory_id: 2,
         name: "결제 시스템",
         state: true,
         order: 2,
-        workspace_id: 101,
+        workspace_id: 4,
         has_test: false,
     },
 ];
 
-const features: feature[] = [
+export const features: feature[] = [
     {
         feature_id: 1,
         name: "회원가입",
@@ -45,7 +53,7 @@ const features: feature[] = [
         has_test: true,
     },
 ];
-const actions: action[] = [
+export const actions: action[] = [
     {
         action_id: 1,
         name: "회원가입 폼 UI",
