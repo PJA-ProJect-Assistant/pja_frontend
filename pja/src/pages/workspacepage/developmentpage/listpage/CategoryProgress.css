@@ -1,11 +1,12 @@
 .categorypg-container {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: space-around;
     align-items: center;
-    width: 30%;
+    width: 40%;
     min-width: 350px;
     height: 100%;
+    max-height: 200px;
     margin: 20px 0;
     box-sizing: border-box;
     border: 1px solid #828282;
@@ -37,8 +38,25 @@
     margin: 0;
 }
 
+.categorypg-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 200px;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
 .categorypg-list p {
     font-size: var(--font-size-lg);
     font-weight: 500;
     margin: 0 0 8px 0;
+    flex-shrink: 0;
+}
+
+.categorypg-list ul {
+    overflow-y: auto;
+    max-height: 180px;
+    padding-left: 25px;
+    margin: 0;
 }

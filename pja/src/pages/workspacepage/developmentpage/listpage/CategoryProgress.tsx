@@ -62,8 +62,8 @@ export default function CategoryProgress() {
                 </div>
             </div>
             <div className="categorypg-list">
+                <p>카테고리</p>
                 <ul>
-                    <p>카테고리</p>
                     {wscategories
                         .filter(ws => !ws.state)
                         .map((ws, index) => (
@@ -77,6 +77,14 @@ export default function CategoryProgress() {
                                 {ws.name}
                             </li>
                         ))}
+                    <li>추가</li>
+                    <li>추가</li>
+                    <li>추가</li>
+                    <li>추가</li>
+                    <li>추가</li>
+                    <li>추가</li>
+                    <li>추가</li>
+
                 </ul>
             </div>
         </div >
