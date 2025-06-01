@@ -1,0 +1,50 @@
+.featurelist-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 58%;
+    min-width: 540px;
+    height: 100%;
+    min-height: 200px;
+    max-height: 200px;
+    margin: 20px 0 20px 10px;
+    box-sizing: border-box;
+    border: 1px solid #828282;
+    padding: 10px 30px;
+}
+
+.featurelist-container ul {
+    padding-top: 0;
+    overflow-y: auto;
+}
+
+.featurelist-container p {
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+    margin: 0 0 8px 0;
+    flex-shrink: 0;
+}
+
+.featurelist-container ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 두 열로 나눔 */
+    gap: 8px;
+    padding-left: 0;
+    margin: 0;
+}
+
+.featurelist-container li {
+    list-style-type: disc;
+    list-style-position: inside;
+    padding-left: 0;
+    margin-left: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    /* 넘치는 텍스트 숨김 */
+    text-overflow: ellipsis;
+    /* 말줄임표 */
+    max-width: 90%;
+    /* 말줄임 적용을 위한 최대 너비 */
+    cursor: default;
+}
