@@ -77,14 +77,6 @@ export default function CategoryProgress() {
                                 {ws.name}
                             </li>
                         ))}
-                    <li>추가</li>
-                    <li>추가</li>
-                    <li>추가</li>
-                    <li>추가</li>
-                    <li>추가</li>
-                    <li>추가</li>
-                    <li>추가</li>
-
                 </ul>
             </div>
         </div >
