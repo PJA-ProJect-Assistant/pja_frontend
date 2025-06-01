@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainPage from "./pages/mainpage/MainPage";
+import ApiPage from "./pages/mainpage/ApiPage";
 import LoginPage from "./pages/loginpage/LoginPage";
 import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
 import FindIdPage from "./pages/loginpage/findid/FindIdPage";
@@ -18,6 +19,7 @@ const Router = () => {
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/main" element={<MainPage />} />
+      <Route path="/apipage" element={<ApiPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/find-id" element={<FindIdPage />} />
       <Route path="/find-pw" element={<FindPwPage />} />
