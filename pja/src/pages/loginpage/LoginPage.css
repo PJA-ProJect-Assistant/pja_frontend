@@ -1,0 +1,188 @@
+/* 전체 로그인 페이지 컨테이너 */
+.login-container {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* 로그인 박스 */
+.login-box {
+  border-radius: 0.5rem;
+  /* border-top: 50px; */
+  width: 450px;
+  height: 30px;
+}
+.login-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logo-image {
+  width: 233px;
+  height: 132px;
+}
+/* 로그인 제목 */
+.login-title {
+  font-weight: bold;
+  text-align: center;
+  color: #1f2937;
+}
+
+/* 입력 필드 섹션 */
+.input-section {
+  margin-bottom: 1rem;
+}
+
+/* 입력 필드 wrapper */
+.input-wrapper {
+  position: relative;
+}
+
+/* 기본 입력 필드 스타일 */
+
+.id-input {
+  width: 450px;
+  height: 40px;
+  border: 1px solid #aaaaaa;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+.pw-input {
+  width: 450px;
+  height: 40px;
+  border: 1px solid #aaaaaa;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+/* 포커스 스타일 (JS에서 classList로 제어) */
+.id-input:focus {
+  border: 2px solid #00205b;
+  outline: none !important;
+}
+
+.pw-input:focus {
+  border: 2px solid #00205b;
+  outline: none !important;
+}
+/* 삭제 아이콘 버튼 */
+.clear-icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  transition: color 0.2s;
+}
+
+.clear-icon:hover {
+  color: #6b7280;
+}
+
+/* 로그인 버튼 */
+.button-section {
+  margin-top: 10px;
+}
+
+.login-button {
+  width: 455px;
+  height: 50px;
+  background-color: #00205b;
+  color: white;
+
+  border: none;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.google-login-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.google-login-button {
+  display: flex;
+  align-items: center;
+  width: 455px;
+  height: 50px;
+  border-radius: 5px;
+  border: 1px solid #d9d9d6;
+  background-color: white;
+}
+
+.google-logo {
+  margin-left: 40px;
+  margin-right: -60px;
+  width: 30px;
+  height: 30px;
+}
+
+.google-text {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.search-section {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.search-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  line-height: 1.25rem;
+}
+.search-group {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: 10px;
+}
+.search-link {
+  color: inherit;
+  text-decoration: none; /*기본 밑줄 제거*/
+}
+.search-link:hover {
+  color: #2563eb;
+  /* text-decoration-line: underline; */
+}
+
+/* 비밀번호 보이기/숨기기 토글 아이콘 */
+.visibility-toggle-icon {
+  position: absolute;
+  right: 12px; /* 입력창 오른쪽 가장자리로부터의 거리 */
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px; /* 아이콘 주변 클릭 영역 확보 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  color: #6b7280; /* 아이콘 색상 */
+}
+.visibility-toggle-icon svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
