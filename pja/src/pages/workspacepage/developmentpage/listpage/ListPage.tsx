@@ -1,6 +1,7 @@
 import "./ListPage.css"
 import CategoryProgress from "./CategoryProgress"
 import Featurelist from "./Featurelist"
+import ListTable from "./ListTable"
 
 export default function ListPage() {
     return (
@@ -10,7 +11,7 @@ export default function ListPage() {
                 <Featurelist />
             </div>
             <div className="list-table-box">
-
+                <ListTable />
             </div>
         </div>
     )

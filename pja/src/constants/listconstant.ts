@@ -4,7 +4,7 @@ export const featureCategories: feature_category[] = [
     {
         feature_catefory_id: 1,
         name: "회원 관리",
-        state: true,
+        state: false,
         order: 1,
         workspace_id: 3,
         has_test: true,
@@ -18,7 +18,7 @@ export const featureCategories: feature_category[] = [
         has_test: false,
     },
     {
-        feature_catefory_id: 2,
+        feature_catefory_id: 3,
         name: "결제 시스템",
         state: true,
         order: 2,

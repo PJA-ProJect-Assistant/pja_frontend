@@ -1,0 +1,109 @@
+.feature-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 20px 0;
+    font-size: var(--font-size-sm);
+}
+
+.feature-table th,
+.feature-table td {
+    border: 1px solid #ccc;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 열 너비 설정 (총합 100%) */
+.feature-table th:nth-child(1),
+/* 이름 */
+.feature-table td:nth-child(1) {
+    width: 30%;
+}
+
+.feature-table th:nth-child(2),
+/* 시작일 */
+.feature-table td:nth-child(2),
+.feature-table th:nth-child(3),
+/* 마감일 */
+.feature-table td:nth-child(3),
+.feature-table th:nth-child(4),
+/* 참여자 */
+.feature-table td:nth-child(4),
+.feature-table th:nth-child(6),
+/* 중요도 */
+.feature-table td:nth-child(6) {
+    width: 11%;
+}
+
+.feature-table th:nth-child(5),
+/* 상태 */
+.feature-table td:nth-child(5),
+.feature-table th:nth-child(7),
+/* 테스트 여부 */
+.feature-table td:nth-child(7) {
+    width: 8%;
+}
+
+.feature-table thead {
+    background-color: #F0F2F7;
+    font-weight: bold;
+}
+
+.cglist-name {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    min-width: 200px;
+}
+
+.cglist-icon {
+    background-color: #FE5000;
+    border-radius: 5px;
+    padding: 1px;
+}
+
+.ftlist-name {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0;
+    margin-left: 20px;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    min-width: 200px;
+}
+
+.ftlist-icon {
+    background-color: #FF8C57;
+    border-radius: 5px;
+    padding: 1px;
+}
+
+.list-completebtn {
+    width: 50%;
+    margin: 10px;
+    background-color: #FE5000;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.list-completebtn:enabled {
+    background-color: #d9d9d6;
+    border-radius: 5px;
+    color: black;
+    cursor: not-allowed;
+}
