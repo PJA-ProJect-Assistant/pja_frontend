@@ -4,6 +4,5 @@
   min-width: 500px;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   box-sizing: border-box;
 }

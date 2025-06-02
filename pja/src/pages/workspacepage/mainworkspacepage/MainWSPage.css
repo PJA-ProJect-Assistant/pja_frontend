@@ -2,10 +2,10 @@
   display: flex;
   position: fixed;
   flex-direction: row;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 .sidebar-icon {
@@ -28,6 +28,9 @@
 .wscontent-container {
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  min-height: 60%;
   box-sizing: border-box;
   padding: 0 20px;
+  overflow: auto;
 }
