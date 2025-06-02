@@ -2,20 +2,20 @@ import type { action, feature, feature_category } from "../types/list";
 
 export const featureCategories: feature_category[] = [
   {
-    feature_catefory_id: 1,
-    name: "회원 관리",
-    state: false,
-    order: 1,
-    workspace_id: 3,
-    has_test: true,
-  },
-  {
     feature_catefory_id: 2,
     name: "결제 시스템",
     state: false,
     order: 2,
     workspace_id: 3,
     has_test: false,
+  },
+  {
+    feature_catefory_id: 1,
+    name: "회원 관리",
+    state: false,
+    order: 1,
+    workspace_id: 3,
+    has_test: true,
   },
   {
     feature_catefory_id: 3,
@@ -81,8 +81,6 @@ export const actions: action[] = [
   {
     action_id: 3,
     name: "카드 결제 테스트 코드 작성",
-    start_date: new Date("2025-06-02"),
-    end_date: new Date("2025-06-07"),
     status: "COMPLETED",
     importance: 5,
     assignee_id: [1],

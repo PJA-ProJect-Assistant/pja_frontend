@@ -7,11 +7,17 @@
   font-size: var(--font-size-sm);
 }
 
-.feature-table th,
-.feature-table td {
+.feature-table th {
+  background-color: #f0f2f7;
+  font-weight: bold;
   border: 1px solid #ccc;
   text-align: left;
-  padding: 20px 0;
+  padding: 5px 2px;
+}
+.feature-table td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 10px 0;
 }
 
 /* 열 너비 설정 (총합 100%) */
@@ -44,12 +50,6 @@
 .feature-table td:nth-child(7) {
   width: 8%;
 }
-
-.feature-table thead {
-  background-color: #f0f2f7;
-  font-weight: bold;
-}
-
 .cglist-name {
   display: flex;
   flex-direction: row;
@@ -91,21 +91,29 @@
 }
 
 .list-completebtn {
-  width: 50%;
-  margin: 10px;
+  box-sizing: border-box;
   background-color: #fe5000;
-  border-radius: 5px;
+  border-radius: 3px;
+  font-size: var(--font-size-xs);
   color: white;
   cursor: pointer;
+  border: none;
 }
 
-.list-completebtn:enabled {
+.list-completebtn:disabled {
   background-color: #d9d9d6;
-  border-radius: 5px;
   color: black;
   cursor: not-allowed;
 }
 
+.list-completebtn.completed {
+  opacity: 0.5;
+}
+.cg-row.completed,
+.ft-row.completed,
+.ac-row.completed {
+  opacity: 0.5;
+}
 .aclist-name {
   display: flex;
   flex-direction: row;
