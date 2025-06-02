@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainPage from "./pages/mainpage/MainPage";
 import LoginPage from "./pages/loginpage/LoginPage";
-import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
+// import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
 import FindIdPage from "./pages/loginpage/findid/FindIdPage";
 import FindPwPage from "./pages/loginpage/findpw/FindPwPage";
 import SignupPage from "./pages/signuppage/SignupPage";
@@ -30,7 +30,7 @@ const Router = () => {
       <Route path="/ws/:wsid" element={<MainWSPage />} />
 
       {/*로그인 성공 후 리디렉션 처리용 페이지 */}
-      <Route path="/oauth2/success" element={<OAuth2Success />} />
+      {/* <Route path="/oauth2/success" element={<OAuth2Success />} /> */}
     </Routes>
   );
 };
