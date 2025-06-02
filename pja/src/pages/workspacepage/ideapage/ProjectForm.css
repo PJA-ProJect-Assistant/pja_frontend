@@ -1,88 +1,89 @@
 .form-container {
-    width: 80%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 16px;
-    overflow-y: auto;
-    height: 100vh;
-    background-color: white;
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  height: 100vh;
+  background-color: white;
 }
 
 .form-label {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    gap: 8px;
-    margin: 20px 5px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 8px;
+  margin: 20px 5px;
 }
 
 .form-label p {
-    font-size: var(--font-size-xl);
-    font-weight: bold;
-    margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+  margin: 0;
 }
 
 .form-input-field {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 8px;
-    height: 45px;
-    margin-bottom: 8px;
-    border: 1px solid #aaaaaa;
-    border-radius: 4px;
-    font-size: var(--font-size-base);
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+  height: 45px;
+  margin-bottom: 8px;
+  border: 1px solid #aaaaaa;
+  border-radius: 4px;
+  font-size: var(--font-size-base);
 }
 
 .form-input-field::placeholder {
-    font-size: var(--font-size-sm);
+  font-size: var(--font-size-sm);
 }
 
 .form-input-field:focus {
-    outline: none;
-    border: 2px solid #00205B !important;
+  outline: none;
+  border: 2px solid #00205b !important;
 }
 
 textarea.form-input-field {
-    resize: none;
-    min-height: 100px;
+  resize: none;
+  min-height: 100px;
 }
 
 .form-add-button {
-    display: block;
-    background-color: #d9d9d6;
-    border: none;
-    padding: 8px 12px;
-    margin-bottom: 16px;
-    cursor: pointer;
-    color: #333;
-    border-radius: 4px;
+  display: block;
+  background-color: #d9d9d6;
+  border: none;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  color: #333;
+  border-radius: 4px;
 }
 
 .form-add-button:hover {
-    background-color: #ddd;
+  background-color: #ddd;
 }
 
 .form-submit-wrapper {
-    text-align: center;
-    margin-top: 16px;
+  text-align: center;
+  margin-top: 16px;
 }
 
 .form-submit-button {
-    background-color: #FE5000;
-    color: #fff;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
+  background-color: #fe5000;
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .form-submit-button:disabled {
-    background-color: #d9d9d6;
-    color: black;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: no-drop;
+  background-color: #d9d9d6;
+  color: black;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: no-drop;
+  margin-bottom: 10px;
 }
