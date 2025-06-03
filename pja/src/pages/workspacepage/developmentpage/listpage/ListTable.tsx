@@ -6,12 +6,13 @@ import {
 } from "../../../../constants/listconstant";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../../store/store";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { feature_category, feature, action } from "../../../../types/list";
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DateSelectCell from "../../../../components/cells/DateSelectCell";
 import { ActionStatusCell } from "../../../../components/cells/ActionStatusCell";
+import { FeatureProgressCell } from "../../../../components/cells/FeatureProgessCell";
 
 export default function ListTable() {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
@@ -116,10 +117,14 @@ export default function ListTable() {
     setTestCheckAc(acCheck);
   }, [actions]);
 
-  const isCategoryCompletable = (categoryId: number) => {
-    const children = features.filter((ft) => ft.category_id === categoryId);
-    return children.every((ft) => ft.state === true);
-  };
+  const categoryCompletableMap = useMemo(() => {
+    const result: { [key: number]: boolean } = {};
+    for (const cg of categoryList) {
+      const children = featuresByCategoryId.get(cg.feature_catefory_id) || [];
+      result[cg.feature_catefory_id] = children.every((ft) => ft.state === true);
+    }
+    return result;
+  }, [featuresByCategoryId, categoryList]);
 
   const handleCompleteClick = (categoryId: number) => {
     const updatedList = categoryList.map((cg) =>
@@ -200,7 +205,7 @@ export default function ListTable() {
                     <button
                       className={`list-completebtn ${isCompleted ? "completed" : ""
                         }`}
-                      disabled={!isCategoryCompletable(cg.feature_catefory_id)}
+                      disabled={!categoryCompletableMap[cg.feature_catefory_id]}
                       onClick={() =>
                         handleCompleteClick(cg.feature_catefory_id)
                       }
@@ -270,7 +275,7 @@ export default function ListTable() {
                           <td />
                           <td />
                           <td />
-                          <td>{ft.state ? "✅" : "❌"}</td>
+                          <td><FeatureProgressCell actions={featureActions} /></td>
                           <td />
                           <td>
                             <input
@@ -349,6 +354,33 @@ export default function ListTable() {
 
                                       const newMap = new Map(prev);
                                       newMap.set(featureId, updatedActions);
+
+                                      // 모든 액션 완료 확인
+                                      const allCompleted = updatedActions.every(act => act.status === "COMPLETED");
+
+                                      if (allCompleted) {
+                                        setFeaturesByCategoryId((prevFeatures) => {
+                                          const updatedFeaturesByCategory = new Map(prevFeatures);
+                                          let hasChanged = false;
+
+                                          for (const [categoryId, ftList] of updatedFeaturesByCategory.entries()) {
+                                            const newFtList = ftList.map((ft) => {
+                                              if (ft.feature_id === featureId && ft.state !== true) {
+                                                hasChanged = true;
+                                                return { ...ft, state: true };
+                                              }
+                                              return ft;
+                                            });
+
+                                            if (hasChanged) {
+                                              updatedFeaturesByCategory.set(categoryId, newFtList);
+                                            }
+                                          }
+
+                                          return hasChanged ? updatedFeaturesByCategory : prevFeatures;
+                                        });
+                                      }
+
                                       return newMap;
                                     });
                                   }}
