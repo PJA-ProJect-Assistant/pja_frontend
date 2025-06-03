@@ -10,7 +10,8 @@ import { useEffect, useState } from "react";
 import type { feature_category, feature, action } from "../../../../types/list";
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import DateSelectCell from "../../../../utils/DateSelectCell";
+import DateSelectCell from "../../../../components/cells/DateSelectCell";
+import { ActionStatusCell } from "../../../../components/cells/ActionStatusCell";
 
 export default function ListTable() {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
@@ -20,6 +21,9 @@ export default function ListTable() {
   const [actionsByFeatureId, setActionsByFeatureId] = useState<Map<number, action[]>>(new Map());
   const [startDates, setStartDates] = useState<{ [key: number]: Date | null }>({});
   const [endDates, setEndDates] = useState<{ [key: number]: Date | null }>({});
+  const [testCheckCg, setTestCheckCg] = useState<{ [key: number]: boolean }>({});
+  const [testCheckFt, setTestCheckFt] = useState<{ [key: number]: boolean }>({});
+  const [testCheckAc, setTestCheckAc] = useState<{ [key: number]: boolean }>({});
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -29,6 +33,12 @@ export default function ListTable() {
     const category = featureCategories
       .filter((cg) => cg.workspace_id === selectedWS?.workspace_id)
       .sort((a, b) => Number(a.state) - Number(b.state));
+
+    const cgCheck: { [key: number]: boolean } = {};
+    category.forEach((cg) => {
+      cgCheck[cg.feature_catefory_id] = cg.has_test;
+    });
+    setTestCheckCg(cgCheck);
 
     setCategoryList(category);
     setClickCg({});
@@ -82,6 +92,29 @@ export default function ListTable() {
     setEndDates(endDateMap);
   }, [featuresByCategoryId]);
 
+  useEffect(() => {
+    const cgCheck: { [key: number]: boolean } = {};
+    categoryList.forEach((cg) => {
+      cgCheck[cg.feature_catefory_id] = cg.has_test;
+    });
+    setTestCheckCg(cgCheck);
+  }, [categoryList]);
+
+  useEffect(() => {
+    const ftCheck: { [key: number]: boolean } = {};
+    features.forEach((ft) => {
+      ftCheck[ft.feature_id] = ft.has_test;
+    });
+    setTestCheckFt(ftCheck);
+  }, [features]);
+
+  useEffect(() => {
+    const acCheck: { [key: number]: boolean } = {};
+    actions.forEach((ac) => {
+      acCheck[ac.action_id] = ac.has_test;
+    });
+    setTestCheckAc(acCheck);
+  }, [actions]);
 
   const isCategoryCompletable = (categoryId: number) => {
     const children = features.filter((ft) => ft.category_id === categoryId);
@@ -176,7 +209,19 @@ export default function ListTable() {
                     </button>
                   </td>
                   <td />
-                  <td>{cg.has_test ? "✅" : "❌"}</td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      className="list-checkbox"
+                      checked={testCheckCg[cg.feature_catefory_id] || false}
+                      onChange={(e) =>
+                        setTestCheckCg((prev) => ({
+                          ...prev,
+                          [cg.feature_catefory_id]: e.target.checked,
+                        }))
+                      }
+                    />
+                  </td>
                 </tr>
 
                 {/* 기능 리스트 */}
@@ -227,7 +272,19 @@ export default function ListTable() {
                           <td />
                           <td>{ft.state ? "✅" : "❌"}</td>
                           <td />
-                          <td>{ft.has_test ? "✅" : "❌"}</td>
+                          <td>
+                            <input
+                              type="checkbox"
+                              className="list-checkbox"
+                              checked={testCheckFt[ft.feature_id] || false}
+                              onChange={(e) =>
+                                setTestCheckFt((prev) => ({
+                                  ...prev,
+                                  [ft.feature_id]: e.target.checked,
+                                }))
+                              }
+                            />
+                          </td>
                         </tr>
 
                         {/* 액션 리스트 */}
@@ -276,9 +333,41 @@ export default function ListTable() {
                                 />
                               </td>
                               <td />
+                              <td>
+                                <ActionStatusCell
+                                  status={ac.status}
+                                  onChange={(newStatus) => {
+                                    // actionBtFeatureId가 형태가 Map형태라 Map형태를 map 못함
+                                    setActionsByFeatureId((prev) => {
+                                      const featureId = ac.feature_id;
+                                      const actions = prev.get(featureId);
+                                      if (!actions) return prev;
+
+                                      const updatedActions = actions.map((item) =>
+                                        item.action_id === ac.action_id ? { ...item, status: newStatus } : item
+                                      );
+
+                                      const newMap = new Map(prev);
+                                      newMap.set(featureId, updatedActions);
+                                      return newMap;
+                                    });
+                                  }}
+                                />
+                              </td>
                               <td />
-                              <td />
-                              <td>{ac.has_test ? "✅" : "❌"}</td>
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  className="list-checkbox"
+                                  checked={testCheckAc[ac.action_id] || false}
+                                  onChange={(e) =>
+                                    setTestCheckAc((prev) => ({
+                                      ...prev,
+                                      [ac.action_id]: e.target.checked,
+                                    }))
+                                  }
+                                />
+                              </td>
                             </tr>
                           ))}
                       </React.Fragment>

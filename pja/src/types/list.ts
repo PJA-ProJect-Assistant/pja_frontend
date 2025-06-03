@@ -14,8 +14,8 @@ export interface feature {
     order: number,
     has_test: boolean,
 }
-type Status = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
-type Importance = 0 | 1 | 2 | 3 | 4 | 5;
+export type Status = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+export type Importance = 0 | 1 | 2 | 3 | 4 | 5;
 export interface action {
     action_id: number,
     name: string,

@@ -1,30 +1,31 @@
 .feature-table {
-  width: 100%;
-  min-width: 900px;
-  border-collapse: collapse;
-  table-layout: fixed;
-  margin: 20px 0;
-  font-size: var(--font-size-sm);
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 20px 0;
+    font-size: var(--font-size-sm);
 }
 
 .feature-table th {
-  background-color: #f0f2f7;
-  font-weight: bold;
-  border: 1px solid #ccc;
-  text-align: left;
-  padding: 5px 2px;
+    background-color: #f0f2f7;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 5px 2px;
 }
+
 .feature-table td {
-  border: 1px solid #ccc;
-  text-align: center;
-  padding: 10px 0;
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 10px 0;
 }
 
 /* 열 너비 설정 (총합 100%) */
 .feature-table th:nth-child(1),
 /* 이름 */
 .feature-table td:nth-child(1) {
-  width: 30%;
+    width: 30%;
 }
 
 .feature-table th:nth-child(2),
@@ -39,109 +40,147 @@
 .feature-table th:nth-child(6),
 /* 중요도 */
 .feature-table td:nth-child(6) {
-  width: 11%;
+    width: 11%;
 }
 
 .feature-table th:nth-child(5),
 /* 상태 */
-.feature-table td:nth-child(5),
+.feature-table td:nth-child(5) {
+    width: 9%;
+}
+
 .feature-table th:nth-child(7),
 /* 테스트 여부 */
 .feature-table td:nth-child(7) {
-  width: 8%;
+    width: 7%;
 }
+
+.list-checkbox {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    vertical-align: middle;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.list-checkbox:checked {
+    background-color: #fe5000;
+    border-color: #fe5000;
+}
+
+/* 체크 표시를 CSS로 구현 */
+.list-checkbox:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
 .cglist-name {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  height: 100%;
-  width: 100%;
-  min-width: 200px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    min-width: 200px;
 }
 
 .cglist-icon {
-  background-color: #fe5000;
-  border-radius: 5px;
-  padding: 1px;
+    background-color: #fe5000;
+    border-radius: 5px;
+    padding: 1px;
 }
 
 .ftlist-name {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-  padding: 0;
-  padding-left: 20px;
-  box-sizing: border-box;
-  height: 100%;
-  width: 100%;
-  min-width: 200px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0;
+    padding-left: 20px;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    min-width: 200px;
 }
 
 .ftlist-icon {
-  background-color: #ff8c57;
-  border-radius: 5px;
-  padding: 1px;
+    background-color: #ff8c57;
+    border-radius: 5px;
+    padding: 1px;
 }
 
 .list-completebtn {
-  box-sizing: border-box;
-  background-color: #fe5000;
-  border-radius: 3px;
-  font-size: var(--font-size-xs);
-  color: white;
-  cursor: pointer;
-  border: none;
+    box-sizing: border-box;
+    background-color: #fe5000;
+    border-radius: 3px;
+    font-size: var(--font-size-xs);
+    color: white;
+    cursor: pointer;
+    border: none;
 }
 
 .list-completebtn:disabled {
-  background-color: #d9d9d6;
-  color: black;
-  cursor: not-allowed;
+    background-color: #d9d9d6;
+    color: black;
+    cursor: not-allowed;
 }
 
 .list-completebtn.completed {
-  opacity: 0.5;
+    opacity: 0.5;
 }
+
 .cg-row.completed,
 .ft-row.completed,
 .ac-row.completed {
-  opacity: 0.5;
+    opacity: 0.5;
 }
+
 .aclist-name {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-  padding: 0;
-  padding-left: 65px;
-  box-sizing: border-box;
-  height: 100%;
-  width: 100%;
-  min-width: 200px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0;
+    padding-left: 65px;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    min-width: 200px;
 }
 
 .aclist-icon {
-  background-color: #fec300;
-  border-radius: 5px;
-  padding: 1px;
-  min-width: 22px;
+    background-color: #fec300;
+    border-radius: 5px;
+    padding: 1px;
+    min-width: 22px;
 }
 
 .cglist-name span,
 .ftlist-name span,
 .aclist-name span {
-  display: inline-block;
-  max-width: calc(100% - 22px); /* 아이콘 너비 고려 */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
+    display: inline-block;
+    max-width: calc(100% - 22px);
+    /* 아이콘 너비 고려 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
 }
