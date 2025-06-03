@@ -5,6 +5,7 @@ import "./ActionStatusCell.css"; // CSS 파일 임포트
 interface StatusCellProps {
     status: Status;
     onChange: (newStatus: Status) => void;
+    disable?: boolean
 }
 
 const statusLabels: Record<Status, string> = {
@@ -19,7 +20,7 @@ const statusColors: Record<Status, string> = {
     COMPLETED: "#fe5000",
 };
 
-export const ActionStatusCell = ({ status, onChange }: StatusCellProps) => {
+export const ActionStatusCell = ({ status, onChange, disable }: StatusCellProps) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const handleSelect = (newStatus: Status) => {
@@ -30,7 +31,7 @@ export const ActionStatusCell = ({ status, onChange }: StatusCellProps) => {
 
     return (
         <div className="status-td">
-            {isEditing ? (
+            {isEditing && !disable ? (
                 <div className="status-dropdown">
                     {(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"] as Status[]).map((s) => (
                         <div key={s} className="status-option" onClick={() => handleSelect(s)}>

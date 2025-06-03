@@ -13,6 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import DateSelectCell from "../../../../components/cells/DateSelectCell";
 import { ActionStatusCell } from "../../../../components/cells/ActionStatusCell";
 import { FeatureProgressCell } from "../../../../components/cells/FeatureProgessCell";
+import { ImportanceCell } from "../../../../components/cells/ImportantCell";
 
 export default function ListTable() {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
@@ -238,6 +239,7 @@ export default function ListTable() {
                   <td>
                     <input
                       type="checkbox"
+                      disabled={isCompleted}
                       className="list-checkbox"
                       checked={testCheckCg[cg.feature_catefory_id] || false}
                       onChange={(e) =>
@@ -301,6 +303,7 @@ export default function ListTable() {
                           <td>
                             <input
                               type="checkbox"
+                              disabled={isCompleted}
                               className="list-checkbox"
                               checked={testCheckFt[ft.feature_id] || false}
                               onChange={(e) =>
@@ -339,22 +342,28 @@ export default function ListTable() {
                               <td>
                                 <DateSelectCell
                                   value={startDates[ac.action_id] ?? null}
-                                  onChange={(date) =>
+                                  disable={isCompleted}
+                                  onChange={(date) => {
+                                    if (isCompleted) return;
                                     setStartDates((prev) => ({
                                       ...prev,
                                       [ac.action_id]: date,
                                     }))
+                                  }
                                   }
                                 />
                               </td>
                               <td>
                                 <DateSelectCell
                                   value={endDates[ac.action_id] ?? null}
-                                  onChange={(date) =>
+                                  disable={isCompleted}
+                                  onChange={(date) => {
+                                    if (isCompleted) return;
                                     setEndDates((prev) => ({
                                       ...prev,
                                       [ac.action_id]: date,
                                     }))
+                                  }
                                   }
                                 />
                               </td>
@@ -362,7 +371,9 @@ export default function ListTable() {
                               <td>
                                 <ActionStatusCell
                                   status={ac.status}
+                                  disable={isCompleted}
                                   onChange={(newStatus) => {
+                                    if (isCompleted) return;
                                     // actionBtFeatureId가 형태가 Map형태라 Map형태를 map 못함
                                     setActionsByFeatureId((prev) => {
                                       const featureId = ac.feature_id;
@@ -407,10 +418,32 @@ export default function ListTable() {
                                   }}
                                 />
                               </td>
-                              <td />
+                              <td>
+                                <ImportanceCell
+                                  value={ac.importance ?? 0}
+                                  onChange={(newVal) => {
+                                    if (isCompleted) return;
+                                    // 상태 업데이트
+                                    setActionsByFeatureId((prev) => {
+                                      const featureId = ac.feature_id;
+                                      const actions = prev.get(featureId);
+                                      if (!actions) return prev;
+
+                                      const updatedActions = actions.map((item) =>
+                                        item.action_id === ac.action_id ? { ...item, importance: newVal } : item
+                                      );
+
+                                      const newMap = new Map(prev);
+                                      newMap.set(featureId, updatedActions);
+                                      return newMap;
+                                    });
+                                  }}
+                                />
+                              </td>
                               <td>
                                 <input
                                   type="checkbox"
+                                  disabled={isCompleted}
                                   className="list-checkbox"
                                   checked={testCheckAc[ac.action_id] || false}
                                   onChange={(e) =>

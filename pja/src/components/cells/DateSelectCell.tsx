@@ -6,16 +6,21 @@ import { useState } from "react";
 export default function DateSelectCell({
   value,
   onChange,
+  disable,
 }: {
   value: Date | null;
   onChange: (date: Date | null) => void;
+  disable?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div style={{ position: "relative", display: "inline-block" }}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          if (disable) return;
+          setIsOpen(!isOpen)
+        }}
         style={{
           background: "none",
           border: "none",
