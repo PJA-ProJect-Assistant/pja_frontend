@@ -7,7 +7,7 @@ import {
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../../store/store";
 import { useEffect, useState } from "react";
-import type { feature_category } from "../../../../types/list";
+import type { feature_category, feature, action } from "../../../../types/list";
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DateSelectCell from "../../../../utils/DateSelectCell";
@@ -16,12 +16,10 @@ export default function ListTable() {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
   const [clickCg, setClickCg] = useState<{ [key: number]: boolean }>({});
   const [clickFt, setClickFt] = useState<{ [key: number]: boolean }>({});
-  const [startDates, setStartDates] = useState<{
-    [id: number]: Date | undefined | null;
-  }>({});
-  const [endDates, setEndDates] = useState<{
-    [id: number]: Date | undefined | null;
-  }>({});
+  const [featuresByCategoryId, setFeaturesByCategoryId] = useState<Map<number, feature[]>>(new Map());
+  const [actionsByFeatureId, setActionsByFeatureId] = useState<Map<number, action[]>>(new Map());
+  const [startDates, setStartDates] = useState<{ [key: number]: Date | null }>({});
+  const [endDates, setEndDates] = useState<{ [key: number]: Date | null }>({});
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -36,6 +34,54 @@ export default function ListTable() {
     setClickCg({});
     setClickFt({});
   }, [selectedWS]);
+
+  useEffect(() => {
+    if (categoryList.length === 0) return;
+
+    const featureMap = new Map<number, feature[]>();
+
+    features
+      .filter((ft) =>
+        categoryList.some((cg) => cg.feature_catefory_id === ft.category_id)
+      )
+      .forEach((ft) => {
+        if (!featureMap.has(ft.category_id)) {
+          featureMap.set(ft.category_id, []);
+        }
+        featureMap.get(ft.category_id)!.push(ft);
+      });
+
+    setFeaturesByCategoryId(featureMap);
+  }, [categoryList]);
+
+  useEffect(() => {
+    const allFeatures = Array.from(featuresByCategoryId.values()).flat();
+    if (allFeatures.length === 0) return;
+
+    const actionMap = new Map<number, action[]>();
+    const startDateMap: { [key: number]: Date | null } = {};
+    const endDateMap: { [key: number]: Date | null } = {};
+
+    actions
+      .filter((ac) =>
+        allFeatures.some((ft) => ft.feature_id === ac.feature_id)
+      )
+      .forEach((ac) => {
+        if (!actionMap.has(ac.feature_id)) {
+          actionMap.set(ac.feature_id, []);
+        }
+        actionMap.get(ac.feature_id)!.push(ac);
+
+        // ✅ 액션 내 포함된 날짜값을 그대로 초기값으로 설정
+        startDateMap[ac.action_id] = ac.start_date ? new Date(ac.start_date) : null;
+        endDateMap[ac.action_id] = ac.end_date ? new Date(ac.end_date) : null;
+      });
+
+    setActionsByFeatureId(actionMap);
+    setStartDates(startDateMap);
+    setEndDates(endDateMap);
+  }, [featuresByCategoryId]);
+
 
   const isCategoryCompletable = (categoryId: number) => {
     const children = features.filter((ft) => ft.category_id === categoryId);
@@ -75,9 +121,8 @@ export default function ListTable() {
         <tbody>
           {categoryList.map((cg, index) => {
             const isCompleted = cg.state;
-            const categoryFeatures = features.filter(
-              (ft) => ft.category_id === cg.feature_catefory_id
-            );
+
+            const categoryFeatures = featuresByCategoryId.get(cg.feature_catefory_id) || [];
 
             return (
               <React.Fragment key={cg.feature_catefory_id}>
@@ -120,9 +165,8 @@ export default function ListTable() {
                   <td />
                   <td>
                     <button
-                      className={`list-completebtn ${
-                        isCompleted ? "completed" : ""
-                      }`}
+                      className={`list-completebtn ${isCompleted ? "completed" : ""
+                        }`}
                       disabled={!isCategoryCompletable(cg.feature_catefory_id)}
                       onClick={() =>
                         handleCompleteClick(cg.feature_catefory_id)
@@ -138,9 +182,8 @@ export default function ListTable() {
                 {/* 기능 리스트 */}
                 {clickCg[index] &&
                   categoryFeatures.map((ft) => {
-                    const featureActions = actions.filter(
-                      (ac) => ac.feature_id === ft.feature_id
-                    );
+
+                    const featureActions = actionsByFeatureId.get(ft.feature_id) || [];
 
                     return (
                       <React.Fragment key={ft.feature_id}>
@@ -192,9 +235,8 @@ export default function ListTable() {
                           featureActions.map((ac) => (
                             <tr
                               key={ac.action_id}
-                              className={`ac-row ${
-                                isCompleted ? "completed" : ""
-                              }`}
+                              className={`ac-row ${isCompleted ? "completed" : ""
+                                }`}
                             >
                               <td>
                                 <div className="aclist-name">

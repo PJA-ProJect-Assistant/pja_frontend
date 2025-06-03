@@ -52,6 +52,14 @@ export const features: feature[] = [
     order: 1,
     has_test: true,
   },
+  {
+    feature_id: 4,
+    name: "카드 결제",
+    category_id: 3,
+    state: true,
+    order: 1,
+    has_test: true,
+  },
 ];
 export const actions: action[] = [
   {
@@ -87,5 +95,15 @@ export const actions: action[] = [
     order: 1,
     has_test: true,
     feature_id: 3,
+  },
+  {
+    action_id: 4,
+    name: "카드 결제 테스트 코드 작성",
+    status: "COMPLETED",
+    importance: 5,
+    assignee_id: [1],
+    order: 1,
+    has_test: true,
+    feature_id: 4,
   },
 ];
