@@ -130,12 +130,33 @@ export default function ListTable() {
     const updatedList = categoryList.map((cg) =>
       cg.feature_catefory_id === categoryId ? { ...cg, state: !cg.state } : cg
     );
+    const index = categoryList.findIndex(cg => cg.feature_catefory_id === categoryId);
+    if (index !== -1) { //조건에 맞는 요소가 존재할 때때
+      cgToggleClick(index, true);
+    }
     updatedList.sort((a, b) => Number(a.state) - Number(b.state));
     setCategoryList(updatedList);
   };
 
-  const cgToggleClick = (index: number) => {
-    setClickCg((prev) => ({ ...prev, [index]: !prev[index] }));
+  const cgToggleClick = (index: number, close?: boolean) => {
+    setClickCg((prev) => {
+      // 클로즈일땐 강제로 false
+      const next = close ? false : !prev[index];
+      // 닫힐 때 하위 feature 전부 닫기
+      if (!next) {
+        const categoryId = categoryList[index].feature_catefory_id;
+        const featuresInCategory = featuresByCategoryId.get(categoryId) || [];
+        setClickFt((prevFt) => {
+          const updatedFt = { ...prevFt };
+          featuresInCategory.forEach((ft) => {
+            updatedFt[ft.feature_id] = false;
+          });
+          return updatedFt;
+        });
+      }
+      const updated = { ...prev, [index]: next };
+      return updated;
+    });
   };
 
   const ftToggleClick = (id: number) => {
