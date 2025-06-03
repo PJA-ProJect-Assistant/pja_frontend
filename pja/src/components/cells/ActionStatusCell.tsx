@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { Status } from "../../types/list";
 import "./ActionStatusCell.css"; // CSS 파일 임포트
 
@@ -19,10 +19,11 @@ const statusColors: Record<Status, string> = {
     COMPLETED: "#fe5000",
 };
 
-export const ActionStatusCell: React.FC<StatusCellProps> = ({ status, onChange }) => {
+export const ActionStatusCell = ({ status, onChange }: StatusCellProps) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const handleSelect = (newStatus: Status) => {
+        console.log("selected status:", newStatus);
         onChange(newStatus);
         setIsEditing(false);
     };
