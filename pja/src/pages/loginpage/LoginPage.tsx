@@ -26,6 +26,11 @@ const LoginPage = () => {
 
   const handleLogin = () => {};
 
+  //Google 로그인 버튼 클릭 시 백엔드 OAuth 주소로 이동
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   return (
     <div className="login-container">
       <div className="login-box">
@@ -176,7 +181,7 @@ const LoginPage = () => {
           </div>
         </div>
         <div className="google-login-wrapper">
-          <button className="google-login-button">
+          <button className="google-login-button" onClick={handleGoogleLogin}>
             <img src={GoogleImage} alt="Google logo" className="google-logo" />
             <span className="google-text">Google 계정으로 로그인</span>
           </button>

@@ -1,0 +1,74 @@
+.api-wrapper {
+  display: flex;
+}
+.api-main {
+  flex: 1;
+  padding: 54px;
+}
+.api-alert {
+  display: flex;
+  color: #909090;
+  font-size: 24px;
+}
+.api-table {
+  width: 100%;
+  margin-top: 30px;
+  border-collapse: collapse; /*셀 경계 중첩 제거*/
+}
+.api-table th,
+.api-table td {
+  border: 1px solid #00205b;
+  text-align: center;
+}
+.api-table-title {
+  font-weight: bold;
+  font-size: 15px;
+  background-color: #f0f2f7;
+}
+
+.api-add-button {
+  display: block;
+  margin: 20px auto;
+  background-color: transparent;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  border: none;
+}
+.api-add-button img {
+  /* object-fit: contain; */
+}
+
+.api-delete-row-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-border {
+  border: none !important;
+}
+
+.api-button-group {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 130px;
+}
+.api-edit-button {
+  background-color: #00205b;
+  color: white;
+  border-radius: 5px;
+  width: 100px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.api-edit-input {
+  border: none;
+  outline: none;
+  padding: 4px;
+}
