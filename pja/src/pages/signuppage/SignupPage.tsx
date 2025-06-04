@@ -9,6 +9,7 @@ import axios from "axios";
 import CustomModal from "./CustomModal";
 import { validateId } from "./idValidator";
 import { validateName } from "./nameValidator";
+import { validateEmail } from "./emailValidator";
 
 interface SignupApiResponse {
   // 실제 API 응답에 맞게 수정
@@ -44,6 +45,12 @@ const SignupPage: React.FC = () => {
   const [nameValidation, setNameValidation] = useState<{
     isValid: boolean;
     message: String;
+  }>({ isValid: false, message: "" });
+
+  //이메일 유효성 검사 상태
+  const [emailValidation, setEmailValidation] = useState<{
+    isValid: boolean;
+    message: string;
   }>({ isValid: false, message: "" });
 
   //handle 함수보다 먼저 정의되어야 함
@@ -118,8 +125,11 @@ const SignupPage: React.FC = () => {
   };
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setEmail(event.target.value);
-    //이메일이 변경되면 중복확인 상태 초기화
+    const newEmailValue = event.target.value;
+    setEmail(newEmailValue);
+    const validation = validateEmail(newEmailValue);
+    setEmailValidation(validation);
+    // 이메일 값이 변경되면 중복확인 상태도 초기화
     setIsEmailChecked(false);
     setIsEmailAvailable(false);
   };
@@ -130,10 +140,10 @@ const SignupPage: React.FC = () => {
       openModal("이메일을 입력해주세요");
       return;
     }
-    //간단한 이메일 형식 검증
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      openModal("올바른 이메일 형식을 입력해주세요");
+    if (!emailValidation.isValid) {
+      openModal(
+        emailValidation.message || EMAIL_VALIDATION_MESSAGES.INVALID_FORMAT
+      ); // emailValidation 메시지 우선 사용
       return;
     }
 
@@ -158,12 +168,15 @@ const SignupPage: React.FC = () => {
           다시 시도해주세요
         </>
       );
+      setIsEmailChecked(false);
+      setIsEmailAvailable(false);
     }
   };
 
   //삭제 아이콘 클릭 시 아이디 값을 빈 문자열로 설정
   const handleClearId = (): void => {
     setId("");
+    setIdValidation({ isValid: false, message: "" });
     setIsIdChecked(false);
     setIsIdAvailable(false);
   };
@@ -177,6 +190,7 @@ const SignupPage: React.FC = () => {
   //삭제 아이콘 클릭 시 이메일 값을 빈 문자열로 설정
   const handleClearEmail = (): void => {
     setEmail("");
+    setEmailValidation({ isValid: false, message: "" }); // 유효성 상태 초기화
     setIsEmailChecked(false);
     setIsEmailAvailable(false);
   };
@@ -207,6 +221,14 @@ const SignupPage: React.FC = () => {
     // 이름 유효성 확인
     if (!nameValidation.isValid) {
       openModal(nameValidation.message || "올바른 형식의 이름을 입력해주세요.");
+      return;
+    }
+
+    //이메일 유효성 확인
+    if (!emailValidation.isValid) {
+      openModal(
+        emailValidation.message || "올바른 형식의 이메일을 입력해주세요."
+      );
       return;
     }
 
@@ -440,11 +462,17 @@ const SignupPage: React.FC = () => {
                 type="button"
                 onClick={handleCheckEmailDuplicate}
                 className="duplicate-check-button"
-                disabled={!email.trim()}
+                disabled={!email.trim() || !emailValidation.isValid}
               >
                 중복확인
               </button>
             </div>
+            {/*이메일 유효성 검사 메세지*/}
+            {email && !emailValidation.isValid && emailValidation.message && (
+              <div className="validation-message error">
+                {emailValidation.message}
+              </div>
+            )}
             {/* 중복확인 결과 메시지 */}
             {isEmailChecked && (
               <div
