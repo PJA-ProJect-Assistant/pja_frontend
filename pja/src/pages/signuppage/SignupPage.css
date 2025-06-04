@@ -34,17 +34,17 @@
 .input-wrapper {
   position: relative;
   width: 100%;
-  /* display: flex; */
-  /* align-items: center; */
+  display: flex;
+  align-items: center;
   border-radius: 5px;
   width: 100%;
   max-width: 600px;
+  /*padding-right: 120px;*/
 }
 
 .id-input,
 .name-input,
 .email-input {
-  width: 100%;
   padding: 12px 0px 12px 50px;
   outline: none;
   box-sizing: border-box;
@@ -101,13 +101,12 @@
 /* 삭제 아이콘 버튼 */
 .clear-icon {
   position: absolute;
-  right: 0px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  color: #9ca3af;
   padding: 0;
   display: flex;
   align-items: center;
@@ -200,4 +199,28 @@
   font-weight: 500;
   cursor: pointer;
   margin-top: 20px;
+}
+
+/*중복확인 버튼 스타일*/
+.duplicate-check-button {
+  flex-shrink: 0; /*공간이 줄어들 때 버튼 줄어들지 않음*/
+  position: absolute;
+  left: 105%; /* clear 버튼 왼쪽에 위치 */
+  top: 8%;
+  background-color: #00205b;
+  color: white;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+.duplicate-check-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+.duplicate-check-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

@@ -1,56 +1,222 @@
-import { useState } from "react";
+import { useState, ChangeEvent, type ReactNode } from "react";
 import "./SignupPage.css";
 import logoImage from "../../assets/img/logo.png";
 import personIcon from "../../assets/img/person.png";
 import emailIcon from "../../assets/img/email.png";
 import lockIcon from "../../assets/img/lock.png";
 import { SignupHeader } from "../../components/header/SignupHeader";
+import axios from "axios";
+import CustomModal from "./CustomModal";
+import { validateId } from "./idValidator";
 
-const SignupPage = () => {
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+interface SignupApiResponse {
+  // 실제 API 응답에 맞게 수정
+  message?: string;
+  // 다른 필드가 있다면 추가
+}
 
-  const handleIdChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => setId(event.target.value);
-  const handlePasswordChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => setPassword(event.target.value);
+const SignupPage: React.FC = () => {
+  const [id, setId] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  //모달창
+  const [showModal, setShowModal] = useState<React.ReactNode>(false);
+  const [modalMessage, setModalMessage] = useState<React.ReactNode>("");
+
+  //중복확인 상태 관리
+  const [isIdChecked, setIsIdChecked] = useState<boolean>(false);
+  const [isEmailChecked, setIsEmailChecked] = useState<boolean>(false);
+  const [isIdAvailable, setIsIdAvailable] = useState<boolean>(false);
+  const [isEmailAvailable, setIsEmailAvailable] = useState<boolean>(false);
+
+  //아이디 유효성 검사 상태
+  const [idValidation, setIdValidation] = useState<{
+    isValid: boolean;
+    message: string;
+  }>({ isValid: false, message: "" });
+
+  //handle 함수보다 먼저 정의되어야 함
+  const openModal = (message: ReactNode): void => {
+    setModalMessage(message);
+    setShowModal(true);
+  };
+
+  const closeModal = (): void => {
+    setShowModal(false);
+    setModalMessage("");
+  };
+
+  const handleIdChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const newIdValue = event.target.value;
+    setId(newIdValue);
+
+    //실시간 유효성 검사
+    const validation = validateId(newIdValue);
+    setIdValidation(validation);
+
+    //아이디가 변경되면 중복확인 상태 초기화
+    setIsIdChecked(false);
+    setIsIdAvailable(false);
+  };
+
+  //아이디 중복확인
+  const handleCheckIdDuplicate = async (): Promise<void> => {
+    if (!id.trim()) {
+      openModal("아이디를 입력해주세요.");
+      return;
+    }
+
+    if (!idValidation.isValid) {
+      openModal(idValidation.message || "올바른 형식의 아이디를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/auth/check-username?username=${id}`
+      );
+      if (response.data.avialable || response.data.available) {
+        setIsIdAvailable(true);
+        setIsIdChecked(true);
+        openModal("사용 가능한 아이디입니다.");
+      } else {
+        setIsIdAvailable(false);
+        setIsIdChecked(true);
+        openModal("이미 사용 중인 아이디입니다.");
+      }
+    } catch (error) {
+      console.error("아이디 중복확인 실패", error);
+
+      console.log("모달 열기 시도 중... (handleCheckIdDuplicate catch)");
+      openModal("아이디 중복확인에 실패했습니다 \n 다시 시도해주세요");
+    }
+  };
+
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>): void =>
+    setPassword(event.target.value);
   // 2. 비밀번호 확인 입력 변경 핸들러
-  const handlePasswordConfirmChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => setPasswordConfirm(event.target.value);
-  const handleNameChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => setName(event.target.value);
-  const handleEmailChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => setEmail(event.target.value);
+  const handlePasswordConfirmChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => setPasswordConfirm(event.target.value);
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>): void =>
+    setName(event.target.value);
+  const handleEmailChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setEmail(event.target.value);
+    //이메일이 변경되면 중복확인 상태 초기화
+    setIsEmailChecked(false);
+    setIsEmailAvailable(false);
+  };
+
+  //이메일 중복확인
+  const handleCheckEmailDuplicate = async () => {
+    if (!email.trim()) {
+      openModal("이메일을 입력해주세요");
+      return;
+    }
+    //간단한 이메일 형식 검증
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      openModal("올바른 이메일 형식을 입력해주세요");
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/auth/check-email?email=${email}`
+      );
+      if (response.data.avialable) {
+        setIsEmailAvailable(true);
+        setIsEmailChecked(true);
+        openModal("사용 가능한 이메일입니다");
+      } else {
+        setIsEmailAvailable(false);
+        setIsEmailChecked(true);
+        openModal("이미 사용 중인 이메일입니다");
+      }
+    } catch (error) {
+      console.error("이메일 중복확인 실패", error);
+      openModal(
+        <>
+          이메일 중복확인에 실패했습니다 <br />
+          다시 시도해주세요
+        </>
+      );
+    }
+  };
 
   //삭제 아이콘 클릭 시 아이디 값을 빈 문자열로 설정
-  const handleClearId = () => setId("");
+  const handleClearId = (): void => {
+    setId("");
+    setIsIdChecked(false);
+    setIsIdAvailable(false);
+  };
+
   //삭제 아이콘 클릭 시 이름 값을 빈 문자열로 설정
-  const handleClearName = () => setName("");
+  const handleClearName = (): void => setName("");
   //삭제 아이콘 클릭 시 이메일 값을 빈 문자열로 설정
-  const handleClearEmail = () => setEmail("");
+  const handleClearEmail = (): void => {
+    setEmail("");
+    setIsEmailChecked(false);
+    setIsEmailAvailable(false);
+  };
   //삭제 아이콘 클릭 시 비밀번호 값을 빈 문자열로 설정
-  const handleClearPassword = () => {
+  const handleClearPassword = (): void => {
     setPassword("");
   };
   // 3. 비밀번호 확인 필드 클리어 핸들러
-  const handleClearPasswordConfirm = () => {
+  const handleClearPasswordConfirm = (): void => {
     setPasswordConfirm("");
   };
 
-  const togglePasswordVisibility = () => {
+  const togglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
   };
 
-  //const handleLogin = () => {};
+  const handleSignup = async (): Promise<void> => {
+    if (!id || !name || !email || !password || !passwordConfirm) {
+      openModal("모든 항목을 입력해주세요");
+      return;
+    }
+    // 중복확인 체크
+    if (!isIdChecked || !isIdAvailable) {
+      openModal("아이디 중복확인을 해주세요");
+      return;
+    }
+
+    if (!isEmailChecked || !isEmailAvailable) {
+      openModal("이메일 중복확인을 해주세요");
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      openModal("비밀번호가 일치하지 않습니다");
+      return;
+    }
+
+    try {
+      const response: AxiosResponse<SignupApiResponse> = await axios.post(
+        "http://localhost:8080/api/auth/signup",
+        {
+          username: id,
+          name: name,
+          email: email,
+          password: password,
+        }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        alert("회원가입이 완료되었습니다");
+        window.location.href = "/login";
+      }
+    } catch (error) {
+      console.error("회원가입 실패", error);
+      openModal("회원가입에 실패했습니다 \n 다시 시도해주세요");
+    }
+  };
 
   return (
     <div className="signup-maincontainer">
@@ -63,6 +229,7 @@ const SignupPage = () => {
           <h1>회원가입</h1>
           <div className="id-title">아이디</div>
           <div className="input-section">
+            {/*아이콘, 입력창, 클리어 아이콘만 포함 */}
             <div className="input-wrapper">
               <img
                 src={personIcon}
@@ -73,7 +240,16 @@ const SignupPage = () => {
               <input
                 type="text"
                 placeholder="아이디"
-                className="id-input"
+                className={`id-input ${
+                  // 클래스 적용 로직 복원
+                  id && !idValidation.isValid ? "input-error" : ""
+                } ${
+                  isIdChecked
+                    ? isIdAvailable
+                      ? "input-success"
+                      : "input-error"
+                    : ""
+                }`}
                 value={id}
                 onChange={handleIdChange}
                 onFocus={(e) => {
@@ -105,7 +281,36 @@ const SignupPage = () => {
                   </svg>
                 </button>
               )}
+              {/*아이디 중복확인 버튼*/}
+              <button
+                type="button"
+                onClick={handleCheckIdDuplicate}
+                className="duplicate-check-button"
+                disabled={!id.trim() || !idValidation.isValid}
+              >
+                중복확인
+              </button>
+
+              {/*중복확인 결과 메세지*/}
+              {isIdChecked && idValidation.isValid && (
+                <div
+                  className={`validation-message ${
+                    isIdAvailable ? "success" : "error"
+                  }`}
+                >
+                  {isIdAvailable
+                    ? "✓ 사용 가능한 아이디입니다."
+                    : "✗ 이미 사용 중인 아이디입니다"}
+                </div>
+              )}
             </div>
+
+            {/*실시간 유효성 검사 메세지*/}
+            {id && idValidation.message && (
+              <div className="validation-message error">
+                {idValidation.message}
+              </div>
+            )}
           </div>
           <div className="name-title">이름</div>
           <div className="input-section">
@@ -159,7 +364,13 @@ const SignupPage = () => {
               <input
                 type="text"
                 placeholder="이메일"
-                className="email-input"
+                className={`email-input ${
+                  isEmailChecked
+                    ? isEmailAvailable
+                      ? "input-success"
+                      : "input-error"
+                    : ""
+                }`}
                 value={email}
                 onChange={handleEmailChange}
                 onFocus={(e) => {
@@ -169,6 +380,7 @@ const SignupPage = () => {
                   e.target.classList.remove("input-focus");
                 }}
               />
+
               {email && (
                 <button
                   type="button"
@@ -191,7 +403,28 @@ const SignupPage = () => {
                   </svg>
                 </button>
               )}
+              {/*이메일 중복확인 버튼*/}
+              <button
+                type="button"
+                onClick={handleCheckEmailDuplicate}
+                className="duplicate-check-button"
+                disabled={!email.trim()}
+              >
+                중복확인
+              </button>
             </div>
+            {/* 중복확인 결과 메시지 */}
+            {isEmailChecked && (
+              <div
+                className={`validation-message ${
+                  isEmailAvailable ? "success" : "error"
+                }`}
+              >
+                {isEmailAvailable
+                  ? "✓ 사용 가능한 이메일입니다"
+                  : "✗ 이미 사용 중인 이메일입니다"}
+              </div>
+            )}
           </div>
 
           <div className="pw-title">비밀번호</div>
@@ -363,12 +596,17 @@ const SignupPage = () => {
             </div>
           </div>
           <div className="signup-button-container">
-            <button type="submit" className="signup-button">
+            <button
+              type="submit"
+              className="signup-button"
+              onClick={handleSignup}
+            >
               회원가입
             </button>
           </div>
         </div>
       </div>
+      {showModal && <CustomModal message={modalMessage} onClose={closeModal} />}
     </div>
   );
 };

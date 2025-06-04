@@ -1,0 +1,14 @@
+/* 유효성 검사 메시지 스타일 */
+.validation-message {
+  font-size: 12px;
+  margin-top: 4px;
+  padding-left: 8px;
+  line-height: 1.3;
+}
+.validation-message error {
+  color: red;
+}
+
+.validation-message.success {
+  color: #0056b3;
+}
