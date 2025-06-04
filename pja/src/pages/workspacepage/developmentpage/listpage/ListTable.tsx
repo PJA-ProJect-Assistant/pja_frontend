@@ -15,11 +15,18 @@ import { ActionStatusCell } from "../../../../components/cells/ActionStatusCell"
 import { FeatureProgressCell } from "../../../../components/cells/FeatureProgessCell";
 import { ImportanceCell } from "../../../../components/cells/ImportantCell";
 import { ParticipantsCell } from "../../../../components/cells/ParticipantsCell";
+import { useNavigate } from "react-router-dom";
 
 export default function ListTable() {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
   const [clickCg, setClickCg] = useState<{ [key: number]: boolean }>({});
   const [clickFt, setClickFt] = useState<{ [key: number]: boolean }>({});
+  const [name, setName] = useState<string>("");
+  const [editingCategoryId, setEditingCategoryId] = useState<number | null>(
+    null
+  );
+  const [editingFeatureId, setEditingFeatureId] = useState<number | null>(null);
+  const [editingActionId, setEditingActionId] = useState<number | null>(null);
   const [featuresByCategoryId, setFeaturesByCategoryId] = useState<
     Map<number, feature[]>
   >(new Map());
@@ -107,6 +114,7 @@ export default function ListTable() {
     setEndDates(endDateMap);
   }, [featuresByCategoryId]);
 
+  //has_test 초기화
   useEffect(() => {
     const cgCheck: { [key: number]: boolean } = {};
     categoryList.forEach((cg) => {
@@ -182,6 +190,139 @@ export default function ListTable() {
     setClickFt((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  // 기능 추가
+  const handleAddFeature = (categoryId: number) => {
+    setFeaturesByCategoryId((prev) => {
+      const features = prev.get(categoryId) || [];
+      const newFeature: feature = {
+        feature_id: 0, // 임시 ID
+        name: "",
+        category_id: categoryId,
+        state: false,
+        has_test: false,
+        order: 0,
+      };
+      const updated = [...features, newFeature];
+      const newMap = new Map(prev);
+      newMap.set(categoryId, updated);
+      return newMap;
+    });
+  };
+
+  // 기능 이름 업데이트
+  const updateFeatureName = (
+    categoryId: number,
+    featureId: number,
+    newName: string
+  ) => {
+    setFeaturesByCategoryId((prev) => {
+      const features = prev.get(categoryId);
+      if (!features) return prev;
+
+      let updated;
+      if (newName.trim() === "") {
+        // 이름이 비어 있으면 해당 액션 제거
+        updated = features.filter((item) => item.feature_id !== featureId);
+      } else {
+        // 아니면 이름만 수정
+        updated = features.map((item) =>
+          item.feature_id === featureId ? { ...item, name: newName } : item
+        );
+      }
+
+      const newMap = new Map(prev);
+      newMap.set(categoryId, updated);
+      setName("");
+      return newMap;
+    });
+  };
+
+  // 액션 추가
+  const handleAddAction = (featureId: number) => {
+    setActionsByFeatureId((prev) => {
+      const actions = prev.get(featureId) || [];
+      const newAction: action = {
+        action_id: 0, // 임시 ID
+        name: "",
+        status: "NOT_STARTED",
+        importance: 0,
+        has_test: false,
+        order: 0,
+        feature_id: featureId,
+      };
+      const updated = [...actions, newAction];
+      const newMap = new Map(prev);
+      newMap.set(featureId, updated);
+      return newMap;
+    });
+  };
+
+  // 액션이름 업데이트
+  const updateActionName = (
+    featureId: number,
+    actionId: number,
+    newName: string
+  ) => {
+    setActionsByFeatureId((prev) => {
+      const actions = prev.get(featureId);
+      if (!actions) return prev;
+
+      let updated;
+      if (newName.trim() === "") {
+        // 이름이 비어 있으면 해당 액션 제거
+        updated = actions.filter((item) => item.action_id !== actionId);
+      } else {
+        // 아니면 이름만 수정
+        updated = actions.map((item) =>
+          item.action_id === actionId ? { ...item, name: newName } : item
+        );
+      }
+
+      const newMap = new Map(prev);
+      newMap.set(featureId, updated);
+      setName("");
+      return newMap;
+    });
+  };
+
+  //category 삭제
+  const handleDeleteCategory = (categoryId: number) => {
+    setCategoryList(() => {
+      const updated = featureCategories.filter(
+        (item) => item.feature_catefory_id !== categoryId
+      );
+      return updated;
+    });
+  };
+
+  //feature 삭제
+  const handleDeleteFeature = (categoryId: number, featureId: number) => {
+    setFeaturesByCategoryId((prev) => {
+      const updated = new Map(prev);
+      const features = updated.get(categoryId);
+      if (!features) return prev;
+
+      const newFeatures = features.filter((f) => f.feature_id !== featureId);
+      updated.set(categoryId, newFeatures);
+      return updated;
+    });
+  };
+
+  //action 삭제
+  const handleDeleteAction = (featureId: number, actionId: number) => {
+    setActionsByFeatureId((prev) => {
+      const updated = new Map(prev);
+      const features = updated.get(featureId);
+      if (!features) return prev;
+
+      const newActions = actions.filter((a) => a.action_id !== actionId);
+      updated.set(featureId, newActions);
+      return updated;
+    });
+  };
+
+  const navigate = useNavigate();
+
   return (
     <div>
       <table className="feature-table">
@@ -237,6 +378,51 @@ export default function ListTable() {
                         <path d="M48-144v-72h864v72H48Zm120-120q-29.7 0-50.85-21.15Q96-306.3 96-336v-408q0-29.7 21.15-50.85Q138.3-816 168-816h624q29.7 0 50.85 21.15Q864-773.7 864-744v408q0 29.7-21.15 50.85Q821.7-264 792-264H168Zm0-72h624v-408H168v408Zm0 0v-408 408Z" />
                       </svg>
                       <span title={cg.name}>{cg.name}</span>
+                      <button className="list-modifybtn">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="20px"
+                          viewBox="0 -960 960 960"
+                          width="20px"
+                          fill="#FFFFFF"
+                        >
+                          <path d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z" />
+                        </svg>
+                      </button>
+                      <div>
+                        <button
+                          onClick={() =>
+                            handleAddFeature(cg.feature_catefory_id)
+                          }
+                          className="list-addbtn"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="20px"
+                            viewBox="0 -960 960 960"
+                            width="20px"
+                            fill="#FFFFFF"
+                          >
+                            <path d="M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z" />
+                          </svg>
+                        </button>
+                        <button
+                          className="list-deletebtn"
+                          onClick={() =>
+                            handleDeleteCategory(cg.feature_catefory_id)
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="20px"
+                            viewBox="0 -960 960 960"
+                            width="20px"
+                            fill="#FFFFFF"
+                          >
+                            <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </td>
                   <td />
@@ -312,7 +498,86 @@ export default function ListTable() {
                               >
                                 <path d="M168-192q-29 0-50.5-21.5T96-264v-432q0-29.7 21.5-50.85Q139-768 168-768h216l96 96h312q29.7 0 50.85 21.15Q864-629.7 864-600v336q0 29-21.15 50.5T792-192H168Zm0-72h624v-336H450l-96-96H168v432Zm0 0v-432 432Z" />
                               </svg>
-                              <span title={ft.name}>{ft.name}</span>
+                              {ft.name === "" ? (
+                                <input
+                                  type="text"
+                                  value={name}
+                                  onChange={(e) => setName(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      (e.target as HTMLInputElement).blur(); // 엔터치면 blur로 확정
+                                    }
+                                  }}
+                                  onBlur={(e) => {
+                                    const newname = e.target.value;
+                                    updateFeatureName(
+                                      ft.category_id,
+                                      ft.feature_id,
+                                      newname
+                                    );
+                                  }}
+                                  placeholder="이름을 입력하세요"
+                                  autoFocus
+                                />
+                              ) : (
+                                <>
+                                  <span title={ft.name}>{ft.name}</span>
+                                  <button
+                                    className="list-modifybtn"
+                                    onClick={() => {
+                                      setName(ft.name); // 현재 이름으로 초기화
+                                      setEditingFeatureId(ft.feature_id); // 수정 모드 진입
+                                    }}
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      height="20px"
+                                      viewBox="0 -960 960 960"
+                                      width="20px"
+                                      fill="#FFFFFF"
+                                    >
+                                      <path d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z" />
+                                    </svg>
+                                  </button>
+                                  <div>
+                                    <button
+                                      onClick={() =>
+                                        handleAddAction(ft.feature_id)
+                                      }
+                                      className="list-addbtn"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        height="20px"
+                                        viewBox="0 -960 960 960"
+                                        width="20px"
+                                        fill="#FFFFFF"
+                                      >
+                                        <path d="M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z" />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleDeleteFeature(
+                                          ft.category_id,
+                                          ft.feature_id
+                                        )
+                                      }
+                                      className="list-deletebtn"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        height="20px"
+                                        viewBox="0 -960 960 960"
+                                        width="20px"
+                                        fill="#FFFFFF"
+                                      >
+                                        <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </>
+                              )}
                             </div>
                           </td>
                           <td />
@@ -359,7 +624,73 @@ export default function ListTable() {
                                   >
                                     <path d="M336-240h288v-72H336v72Zm0-144h288v-72H336v72ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z" />
                                   </svg>
-                                  <span title={ac.name}>{ac.name}</span>
+                                  {ac.name === "" ? (
+                                    <input
+                                      type="text"
+                                      value={name}
+                                      onChange={(e) => setName(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          (e.target as HTMLInputElement).blur(); // 엔터치면 blur로 확정
+                                        }
+                                      }}
+                                      onBlur={(e) => {
+                                        const newname = e.target.value;
+                                        updateActionName(
+                                          ac.feature_id,
+                                          ac.action_id,
+                                          newname
+                                        );
+                                      }}
+                                      placeholder="이름을 입력하세요"
+                                      autoFocus
+                                    />
+                                  ) : (
+                                    <>
+                                      <span
+                                        title={ac.name}
+                                        onClick={() =>
+                                          navigate(
+                                            `/ws/${cg.workspace_id}/action/${ac.action_id}`
+                                          )
+                                        }
+                                      >
+                                        {ac.name}
+                                      </span>
+                                      <button className="list-modifybtn">
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          height="20px"
+                                          viewBox="0 -960 960 960"
+                                          width="20px"
+                                          fill="#FFFFFF"
+                                        >
+                                          <path d="M216-216h51l375-375-51-51-375 375v51Zm-72 72v-153l498-498q11-11 23.84-16 12.83-5 27-5 14.16 0 27.16 5t24 16l51 51q11 11 16 24t5 26.54q0 14.45-5.02 27.54T795-642L297-144H144Zm600-549-51-51 51 51Zm-127.95 76.95L591-642l51 51-25.95-25.05Z" />
+                                        </svg>
+                                      </button>
+                                      <div>
+                                        <button
+                                          className="list-deletebtn"
+                                          onClick={() =>
+                                            handleDeleteAction(
+                                              ac.feature_id,
+                                              ac.action_id
+                                            )
+                                          }
+                                        >
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            height="20px"
+                                            viewBox="0 -960 960 960"
+                                            width="20px"
+                                            fill="#FFFFFF"
+                                          >
+                                            <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
                                 </div>
                               </td>
                               <td>
@@ -420,12 +751,14 @@ export default function ListTable() {
                                 />
                               </td>
                               <td>
+                                {/* 지금 action상태변화에 따른 feature상태변화 안되는 중임 */}
+                                {/* 오류나서 api연결하고 해야할것같음 */}
                                 <ActionStatusCell
                                   status={ac.status}
                                   disable={isCompleted}
                                   onChange={(newStatus) => {
                                     if (isCompleted) return;
-                                    // actionBtFeatureId가 형태가 Map형태라 Map형태를 map 못함
+
                                     setActionsByFeatureId((prev) => {
                                       const featureId = ac.feature_id;
                                       const actions = prev.get(featureId);
@@ -440,55 +773,6 @@ export default function ListTable() {
 
                                       const newMap = new Map(prev);
                                       newMap.set(featureId, updatedActions);
-
-                                      // 모든 액션 완료 확인
-                                      const allCompleted = updatedActions.every(
-                                        (act) => act.status === "COMPLETED"
-                                      );
-
-                                      if (allCompleted) {
-                                        setFeaturesByCategoryId(
-                                          (prevFeatures) => {
-                                            const updatedFeaturesByCategory =
-                                              new Map(prevFeatures);
-                                            let hasChanged = false;
-
-                                            for (const [
-                                              categoryId,
-                                              ftList,
-                                            ] of updatedFeaturesByCategory.entries()) {
-                                              const newFtList = ftList.map(
-                                                (ft) => {
-                                                  if (
-                                                    ft.feature_id ===
-                                                      featureId &&
-                                                    ft.state !== true
-                                                  ) {
-                                                    hasChanged = true;
-                                                    return {
-                                                      ...ft,
-                                                      state: true,
-                                                    };
-                                                  }
-                                                  return ft;
-                                                }
-                                              );
-
-                                              if (hasChanged) {
-                                                updatedFeaturesByCategory.set(
-                                                  categoryId,
-                                                  newFtList
-                                                );
-                                              }
-                                            }
-
-                                            return hasChanged
-                                              ? updatedFeaturesByCategory
-                                              : prevFeatures;
-                                          }
-                                        );
-                                      }
-
                                       return newMap;
                                     });
                                   }}

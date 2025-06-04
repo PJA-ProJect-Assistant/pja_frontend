@@ -186,3 +186,53 @@
   white-space: nowrap;
   cursor: pointer;
 }
+.cglist-name div,
+.ftlist-name div,
+.aclist-name div {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+.list-addbtn {
+  display: flex;
+  padding: 0;
+  text-align: center;
+  border: none;
+  background-color: white;
+}
+.list-addbtn svg {
+  border-radius: 3px;
+  background-color: white;
+  cursor: pointer;
+}
+.list-addbtn svg:hover {
+  background-color: #d9d9d6;
+}
+.list-modifybtn {
+  display: flex;
+  text-align: center;
+  border: none;
+  background-color: white;
+}
+.list-modifybtn svg {
+  border-radius: 3px;
+  background-color: white;
+  cursor: pointer;
+}
+.list-modifybtn svg:hover {
+  background-color: #d9d9d6;
+}
+.list-deletebtn {
+  display: flex;
+  text-align: center;
+  border: none;
+  background-color: white;
+}
+.list-deletebtn svg {
+  border-radius: 3px;
+  background-color: white;
+  cursor: pointer;
+}
+.list-deletebtn svg:hover {
+  background-color: #d9d9d6;
+}
