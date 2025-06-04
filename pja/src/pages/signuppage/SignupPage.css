@@ -224,3 +224,9 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+.validation-message-success {
+  color: #007bff;
+  font-size: 13px;
+  margin-top: 5px;
+}

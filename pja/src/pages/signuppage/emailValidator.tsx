@@ -3,11 +3,10 @@ interface EmailValidationResult {
   message: string;
 }
 
-const EMAIL_VALIDATION_MESSAGES = {
+export const EMAIL_VALIDATION_MESSAGES = {
   EMPTY: "이메일주소는 필수 정보입니다",
   INVALID_FORMAT: "이메일주소가 정확한지 확인해 주세요",
 };
-
 export const validateEmail = (email: string): EmailValidationResult => {
   const trimmedEmail = email.trim();
 
