@@ -8,6 +8,7 @@ import { SignupHeader } from "../../components/header/SignupHeader";
 import axios from "axios";
 import CustomModal from "./CustomModal";
 import { validateId } from "./idValidator";
+import { validateName } from "./nameValidator";
 
 interface SignupApiResponse {
   // 실제 API 응답에 맞게 수정
@@ -37,6 +38,12 @@ const SignupPage: React.FC = () => {
   const [idValidation, setIdValidation] = useState<{
     isValid: boolean;
     message: string;
+  }>({ isValid: false, message: "" });
+
+  //이름 유효성 검사 상태
+  const [nameValidation, setNameValidation] = useState<{
+    isValid: boolean;
+    message: String;
   }>({ isValid: false, message: "" });
 
   //handle 함수보다 먼저 정의되어야 함
@@ -102,8 +109,14 @@ const SignupPage: React.FC = () => {
   const handlePasswordConfirmChange = (
     event: ChangeEvent<HTMLInputElement>
   ): void => setPasswordConfirm(event.target.value);
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>): void =>
-    setName(event.target.value);
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const newNameValue = event.target.value;
+    setName(newNameValue);
+
+    const validation = validateName(newNameValue); //유효성 검사
+    setNameValidation(validation); //유효성 검사 결과 업데이트
+  };
+
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setEmail(event.target.value);
     //이메일이 변경되면 중복확인 상태 초기화
@@ -156,7 +169,11 @@ const SignupPage: React.FC = () => {
   };
 
   //삭제 아이콘 클릭 시 이름 값을 빈 문자열로 설정
-  const handleClearName = (): void => setName("");
+  const handleClearName = (): void => {
+    setName("");
+    setNameValidation({ isValid: false, message: "" }); // 유효성 상태도 초기화
+  };
+
   //삭제 아이콘 클릭 시 이메일 값을 빈 문자열로 설정
   const handleClearEmail = (): void => {
     setEmail("");
@@ -184,6 +201,12 @@ const SignupPage: React.FC = () => {
     // 중복확인 체크
     if (!isIdChecked || !isIdAvailable) {
       openModal("아이디 중복확인을 해주세요");
+      return;
+    }
+
+    // 이름 유효성 확인
+    if (!nameValidation.isValid) {
+      openModal(nameValidation.message || "올바른 형식의 이름을 입력해주세요.");
       return;
     }
 
@@ -323,7 +346,9 @@ const SignupPage: React.FC = () => {
               <input
                 type="text"
                 placeholder="이름"
-                className="name-input"
+                className={`name-input ${
+                  name && !nameValidation.isValid ? "input-error" : ""
+                }`}
                 value={name}
                 onChange={handleNameChange}
                 onFocus={(e) => {
@@ -356,7 +381,14 @@ const SignupPage: React.FC = () => {
                 </button>
               )}
             </div>
+            {/*이름 유효성 검사 메세지*/}
+            {name && nameValidation.message && (
+              <div className="validation-message error">
+                {nameValidation.message}
+              </div>
+            )}
           </div>
+
           <div className="email-title">이메일</div>
           <div className="input-section">
             <div className="input-wrapper">
