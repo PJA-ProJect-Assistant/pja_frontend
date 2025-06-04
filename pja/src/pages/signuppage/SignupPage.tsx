@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, type ReactNode } from "react";
+import { useState, ChangeEvent } from "react";
 import "./SignupPage.css";
 import logoImage from "../../assets/img/logo.png";
 import personIcon from "../../assets/img/person.png";
@@ -6,9 +6,12 @@ import emailIcon from "../../assets/img/email.png";
 import lockIcon from "../../assets/img/lock.png";
 import { SignupHeader } from "../../components/header/SignupHeader";
 import axios from "axios";
+import type { AxiosResponse } from "axios";
 import CustomModal from "./CustomModal";
 import { validateId } from "./idValidator";
 import { validateName } from "./nameValidator";
+import { validateEmail, EMAIL_VALIDATION_MESSAGES } from "./emailValidator";
+import { validatePassword } from "./passwordValidator";
 
 interface SignupApiResponse {
   // 실제 API 응답에 맞게 수정
@@ -43,11 +46,23 @@ const SignupPage: React.FC = () => {
   //이름 유효성 검사 상태
   const [nameValidation, setNameValidation] = useState<{
     isValid: boolean;
-    message: String;
+    message: string;
+  }>({ isValid: false, message: "" });
+
+  //이메일 유효성 검사 상태
+  const [emailValidation, setEmailValidation] = useState<{
+    isValid: boolean;
+    message: string;
+  }>({ isValid: false, message: "" });
+
+  //비밀번호 유효성 검사 상태
+  const [passwordValidation, setPasswordValidation] = useState<{
+    isValid: boolean;
+    message: string;
   }>({ isValid: false, message: "" });
 
   //handle 함수보다 먼저 정의되어야 함
-  const openModal = (message: ReactNode): void => {
+  const openModal = (message: string): void => {
     setModalMessage(message);
     setShowModal(true);
   };
@@ -103,8 +118,14 @@ const SignupPage: React.FC = () => {
     }
   };
 
-  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>): void =>
-    setPassword(event.target.value);
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const newPasswordValue = event.target.value;
+    setPassword(newPasswordValue);
+
+    const validation = validatePassword(newPasswordValue);
+    setPasswordValidation(validation);
+  };
+
   // 2. 비밀번호 확인 입력 변경 핸들러
   const handlePasswordConfirmChange = (
     event: ChangeEvent<HTMLInputElement>
@@ -118,8 +139,11 @@ const SignupPage: React.FC = () => {
   };
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setEmail(event.target.value);
-    //이메일이 변경되면 중복확인 상태 초기화
+    const newEmailValue = event.target.value;
+    setEmail(newEmailValue);
+    const validation = validateEmail(newEmailValue);
+    setEmailValidation(validation);
+    // 이메일 값이 변경되면 중복확인 상태도 초기화
     setIsEmailChecked(false);
     setIsEmailAvailable(false);
   };
@@ -127,13 +151,13 @@ const SignupPage: React.FC = () => {
   //이메일 중복확인
   const handleCheckEmailDuplicate = async () => {
     if (!email.trim()) {
-      openModal("이메일을 입력해주세요");
+      openModal(EMAIL_VALIDATION_MESSAGES.EMPTY);
       return;
     }
-    //간단한 이메일 형식 검증
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      openModal("올바른 이메일 형식을 입력해주세요");
+    if (!emailValidation.isValid) {
+      openModal(
+        emailValidation.message || EMAIL_VALIDATION_MESSAGES.INVALID_FORMAT
+      ); // emailValidation 메시지 우선 사용
       return;
     }
 
@@ -152,18 +176,16 @@ const SignupPage: React.FC = () => {
       }
     } catch (error) {
       console.error("이메일 중복확인 실패", error);
-      openModal(
-        <>
-          이메일 중복확인에 실패했습니다 <br />
-          다시 시도해주세요
-        </>
-      );
+      openModal("이메일 중복확인에 실패했습니다 \n 다시 시도해주세요");
+      setIsEmailChecked(false);
+      setIsEmailAvailable(false);
     }
   };
 
   //삭제 아이콘 클릭 시 아이디 값을 빈 문자열로 설정
   const handleClearId = (): void => {
     setId("");
+    setIdValidation({ isValid: false, message: "" });
     setIsIdChecked(false);
     setIsIdAvailable(false);
   };
@@ -177,12 +199,14 @@ const SignupPage: React.FC = () => {
   //삭제 아이콘 클릭 시 이메일 값을 빈 문자열로 설정
   const handleClearEmail = (): void => {
     setEmail("");
+    setEmailValidation({ isValid: false, message: "" }); // 유효성 상태 초기화
     setIsEmailChecked(false);
     setIsEmailAvailable(false);
   };
   //삭제 아이콘 클릭 시 비밀번호 값을 빈 문자열로 설정
   const handleClearPassword = (): void => {
     setPassword("");
+    setPasswordValidation({ isValid: false, message: "" });
   };
   // 3. 비밀번호 확인 필드 클리어 핸들러
   const handleClearPasswordConfirm = (): void => {
@@ -210,8 +234,24 @@ const SignupPage: React.FC = () => {
       return;
     }
 
+    //이메일 유효성 확인
+    if (!emailValidation.isValid) {
+      openModal(
+        emailValidation.message || "올바른 형식의 이메일을 입력해주세요."
+      );
+      return;
+    }
+
     if (!isEmailChecked || !isEmailAvailable) {
       openModal("이메일 중복확인을 해주세요");
+      return;
+    }
+
+    //이메일 유효성 확인
+    if (!passwordValidation.isValid) {
+      openModal(
+        passwordValidation.message || "비밀번호 형식이 올바르지 않습니다."
+      );
       return;
     }
 
@@ -440,11 +480,17 @@ const SignupPage: React.FC = () => {
                 type="button"
                 onClick={handleCheckEmailDuplicate}
                 className="duplicate-check-button"
-                disabled={!email.trim()}
+                disabled={!email.trim() || !emailValidation.isValid}
               >
                 중복확인
               </button>
             </div>
+            {/*이메일 유효성 검사 메세지*/}
+            {email && !emailValidation.isValid && emailValidation.message && (
+              <div className="validation-message error">
+                {emailValidation.message}
+              </div>
+            )}
             {/* 중복확인 결과 메시지 */}
             {isEmailChecked && (
               <div
@@ -466,7 +512,9 @@ const SignupPage: React.FC = () => {
               <input
                 type={showPassword ? "text" : "password"} /*type 동적 변경*/
                 placeholder="비밀번호"
-                className="pw-input"
+                className={`pw-input ${
+                  password && !passwordValidation.isValid ? "input-error" : ""
+                }`}
                 value={password}
                 onChange={handlePasswordChange}
                 onFocus={(e) => {
@@ -548,7 +596,12 @@ const SignupPage: React.FC = () => {
               <input
                 type={showPassword ? "text" : "password"} /*type 동적 변경*/
                 placeholder="비밀번호"
-                className="pw-input"
+                className={`pw-input ${
+                  // 불일치 시 에러 클래스
+                  passwordConfirm && password !== passwordConfirm
+                    ? "input-error"
+                    : ""
+                }`}
                 value={passwordConfirm}
                 onChange={handlePasswordConfirmChange}
                 onFocus={(e) => {
@@ -620,6 +673,18 @@ const SignupPage: React.FC = () => {
                 </button>
               )}
             </div>
+            {/* 비밀번호 일치 여부 메시지 */}
+            {passwordConfirm && password !== passwordConfirm && (
+              <div className="validation-message error">
+                비밀번호가 일치하지 않습니다.
+              </div>
+            )}
+            {/* (선택적) 비밀번호가 일치할 때 성공 메시지 */}
+            {passwordConfirm && password && password === passwordConfirm && (
+              <div className="validation-message-success">
+                비밀번호가 일치합니다
+              </div>
+            )}
           </div>
           <div className="agree-select-container">
             <div className="agree-wrapper">
