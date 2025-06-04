@@ -3,55 +3,65 @@ import type { Status } from "../../types/list";
 import "./ActionStatusCell.css"; // CSS 파일 임포트
 
 interface StatusCellProps {
-    status: Status;
-    onChange: (newStatus: Status) => void;
-    disable?: boolean
+  status: Status;
+  onChange: (newStatus: Status) => void;
+  disable: boolean;
 }
 
 const statusLabels: Record<Status, string> = {
-    NOT_STARTED: "진행 전",
-    IN_PROGRESS: "진행 중",
-    COMPLETED: "완료",
+  NOT_STARTED: "진행 전",
+  IN_PROGRESS: "진행 중",
+  COMPLETED: "완료",
 };
 
 const statusColors: Record<Status, string> = {
-    NOT_STARTED: "#d9d9d6",
-    IN_PROGRESS: "#fec300",
-    COMPLETED: "#fe5000",
+  NOT_STARTED: "#d9d9d6",
+  IN_PROGRESS: "#fec300",
+  COMPLETED: "#fe5000",
 };
 
-export const ActionStatusCell = ({ status, onChange, disable }: StatusCellProps) => {
-    const [isEditing, setIsEditing] = useState(false);
+export const ActionStatusCell = ({
+  status,
+  onChange,
+  disable,
+}: StatusCellProps) => {
+  const [isEditing, setIsEditing] = useState(false);
 
-    const handleSelect = (newStatus: Status) => {
-        console.log("selected status:", newStatus);
-        onChange(newStatus);
-        setIsEditing(false);
-    };
+  const handleSelect = (newStatus: Status) => {
+    console.log("selected status:", newStatus);
+    onChange(newStatus);
+    setIsEditing(false);
+  };
 
-    return (
-        <div className="status-td">
-            {isEditing && !disable ? (
-                <div className="status-dropdown">
-                    {(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"] as Status[]).map((s) => (
-                        <div key={s} className="status-option" onClick={() => handleSelect(s)}>
-                            <span
-                                className="status-dot"
-                                style={{ backgroundColor: statusColors[s] }}
-                            />
-                            <span>{statusLabels[s]}</span>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="status-display" onClick={() => setIsEditing(true)}>
-                    <span
-                        className="status-dot"
-                        style={{ backgroundColor: statusColors[status] }}
-                    />
-                    <span>{statusLabels[status]}</span>
-                </div>
-            )}
+  return (
+    <div className="status-td">
+      {isEditing && !disable ? (
+        <div className="status-dropdown">
+          {(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"] as Status[]).map(
+            (s) => (
+              <div
+                key={s}
+                className="status-option"
+                onClick={() => handleSelect(s)}
+              >
+                <span
+                  className="status-dot"
+                  style={{ backgroundColor: statusColors[s] }}
+                />
+                <span>{statusLabels[s]}</span>
+              </div>
+            )
+          )}
         </div>
-    );
+      ) : (
+        <div className="status-display" onClick={() => setIsEditing(true)}>
+          <span
+            className="status-dot"
+            style={{ backgroundColor: statusColors[status] }}
+          />
+          <span>{statusLabels[status]}</span>
+        </div>
+      )}
+    </div>
+  );
 };

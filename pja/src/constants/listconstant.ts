@@ -81,7 +81,7 @@ export const actions: action[] = [
     end_date: new Date("2025-06-06"),
     status: "IN_PROGRESS",
     importance: 4,
-    assignee_id: [3],
+    assignee_id: [],
     order: 2,
     has_test: false,
     feature_id: 2,

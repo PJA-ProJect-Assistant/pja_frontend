@@ -14,18 +14,31 @@ import DateSelectCell from "../../../../components/cells/DateSelectCell";
 import { ActionStatusCell } from "../../../../components/cells/ActionStatusCell";
 import { FeatureProgressCell } from "../../../../components/cells/FeatureProgessCell";
 import { ImportanceCell } from "../../../../components/cells/ImportantCell";
+import { ParticipantsCell } from "../../../../components/cells/ParticipantsCell";
 
 export default function ListTable() {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
   const [clickCg, setClickCg] = useState<{ [key: number]: boolean }>({});
   const [clickFt, setClickFt] = useState<{ [key: number]: boolean }>({});
-  const [featuresByCategoryId, setFeaturesByCategoryId] = useState<Map<number, feature[]>>(new Map());
-  const [actionsByFeatureId, setActionsByFeatureId] = useState<Map<number, action[]>>(new Map());
-  const [startDates, setStartDates] = useState<{ [key: number]: Date | null }>({});
+  const [featuresByCategoryId, setFeaturesByCategoryId] = useState<
+    Map<number, feature[]>
+  >(new Map());
+  const [actionsByFeatureId, setActionsByFeatureId] = useState<
+    Map<number, action[]>
+  >(new Map());
+  const [startDates, setStartDates] = useState<{ [key: number]: Date | null }>(
+    {}
+  );
   const [endDates, setEndDates] = useState<{ [key: number]: Date | null }>({});
-  const [testCheckCg, setTestCheckCg] = useState<{ [key: number]: boolean }>({});
-  const [testCheckFt, setTestCheckFt] = useState<{ [key: number]: boolean }>({});
-  const [testCheckAc, setTestCheckAc] = useState<{ [key: number]: boolean }>({});
+  const [testCheckCg, setTestCheckCg] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+  const [testCheckFt, setTestCheckFt] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+  const [testCheckAc, setTestCheckAc] = useState<{ [key: number]: boolean }>(
+    {}
+  );
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -75,9 +88,7 @@ export default function ListTable() {
     const endDateMap: { [key: number]: Date | null } = {};
 
     actions
-      .filter((ac) =>
-        allFeatures.some((ft) => ft.feature_id === ac.feature_id)
-      )
+      .filter((ac) => allFeatures.some((ft) => ft.feature_id === ac.feature_id))
       .forEach((ac) => {
         if (!actionMap.has(ac.feature_id)) {
           actionMap.set(ac.feature_id, []);
@@ -85,7 +96,9 @@ export default function ListTable() {
         actionMap.get(ac.feature_id)!.push(ac);
 
         // ✅ 액션 내 포함된 날짜값을 그대로 초기값으로 설정
-        startDateMap[ac.action_id] = ac.start_date ? new Date(ac.start_date) : null;
+        startDateMap[ac.action_id] = ac.start_date
+          ? new Date(ac.start_date)
+          : null;
         endDateMap[ac.action_id] = ac.end_date ? new Date(ac.end_date) : null;
       });
 
@@ -122,7 +135,9 @@ export default function ListTable() {
     const result: { [key: number]: boolean } = {};
     for (const cg of categoryList) {
       const children = featuresByCategoryId.get(cg.feature_catefory_id) || [];
-      result[cg.feature_catefory_id] = children.every((ft) => ft.state === true);
+      result[cg.feature_catefory_id] = children.every(
+        (ft) => ft.state === true
+      );
     }
     return result;
   }, [featuresByCategoryId, categoryList]);
@@ -131,8 +146,11 @@ export default function ListTable() {
     const updatedList = categoryList.map((cg) =>
       cg.feature_catefory_id === categoryId ? { ...cg, state: !cg.state } : cg
     );
-    const index = categoryList.findIndex(cg => cg.feature_catefory_id === categoryId);
-    if (index !== -1) { //조건에 맞는 요소가 존재할 때때
+    const index = categoryList.findIndex(
+      (cg) => cg.feature_catefory_id === categoryId
+    );
+    if (index !== -1) {
+      //조건에 맞는 요소가 존재할 때
       cgToggleClick(index, true);
     }
     updatedList.sort((a, b) => Number(a.state) - Number(b.state));
@@ -182,7 +200,8 @@ export default function ListTable() {
           {categoryList.map((cg, index) => {
             const isCompleted = cg.state;
 
-            const categoryFeatures = featuresByCategoryId.get(cg.feature_catefory_id) || [];
+            const categoryFeatures =
+              featuresByCategoryId.get(cg.feature_catefory_id) || [];
 
             return (
               <React.Fragment key={cg.feature_catefory_id}>
@@ -225,8 +244,9 @@ export default function ListTable() {
                   <td />
                   <td>
                     <button
-                      className={`list-completebtn ${isCompleted ? "completed" : ""
-                        }`}
+                      className={`list-completebtn ${
+                        isCompleted ? "completed" : ""
+                      }`}
                       disabled={!categoryCompletableMap[cg.feature_catefory_id]}
                       onClick={() =>
                         handleCompleteClick(cg.feature_catefory_id)
@@ -255,8 +275,8 @@ export default function ListTable() {
                 {/* 기능 리스트 */}
                 {clickCg[index] &&
                   categoryFeatures.map((ft) => {
-
-                    const featureActions = actionsByFeatureId.get(ft.feature_id) || [];
+                    const featureActions =
+                      actionsByFeatureId.get(ft.feature_id) || [];
 
                     return (
                       <React.Fragment key={ft.feature_id}>
@@ -298,7 +318,9 @@ export default function ListTable() {
                           <td />
                           <td />
                           <td />
-                          <td><FeatureProgressCell actions={featureActions} /></td>
+                          <td>
+                            <FeatureProgressCell actions={featureActions} />
+                          </td>
                           <td />
                           <td>
                             <input
@@ -321,8 +343,9 @@ export default function ListTable() {
                           featureActions.map((ac) => (
                             <tr
                               key={ac.action_id}
-                              className={`ac-row ${isCompleted ? "completed" : ""
-                                }`}
+                              className={`ac-row ${
+                                isCompleted ? "completed" : ""
+                              }`}
                             >
                               <td>
                                 <div className="aclist-name">
@@ -348,9 +371,8 @@ export default function ListTable() {
                                     setStartDates((prev) => ({
                                       ...prev,
                                       [ac.action_id]: date,
-                                    }))
-                                  }
-                                  }
+                                    }));
+                                  }}
                                 />
                               </td>
                               <td>
@@ -362,12 +384,41 @@ export default function ListTable() {
                                     setEndDates((prev) => ({
                                       ...prev,
                                       [ac.action_id]: date,
-                                    }))
-                                  }
-                                  }
+                                    }));
+                                  }}
                                 />
                               </td>
-                              <td />
+                              <td>
+                                {/* 참여자 */}
+                                <ParticipantsCell
+                                  value={ac.assignee_id}
+                                  wsid={cg.workspace_id}
+                                  disable={isCompleted}
+                                  onChange={(newParti) => {
+                                    if (isCompleted) return;
+                                    // 상태 업데이트
+                                    setActionsByFeatureId((prev) => {
+                                      const featureId = ac.feature_id;
+                                      const actions = prev.get(featureId);
+                                      if (!actions) return prev;
+
+                                      const updatedActions = actions.map(
+                                        (item) =>
+                                          item.action_id === ac.action_id
+                                            ? {
+                                                ...item,
+                                                assignee_id: [...newParti],
+                                              }
+                                            : item
+                                      );
+
+                                      const newMap = new Map(prev);
+                                      newMap.set(featureId, updatedActions);
+                                      return newMap;
+                                    });
+                                  }}
+                                />
+                              </td>
                               <td>
                                 <ActionStatusCell
                                   status={ac.status}
@@ -380,37 +431,62 @@ export default function ListTable() {
                                       const actions = prev.get(featureId);
                                       if (!actions) return prev;
 
-                                      const updatedActions = actions.map((item) =>
-                                        item.action_id === ac.action_id ? { ...item, status: newStatus } : item
+                                      const updatedActions = actions.map(
+                                        (item) =>
+                                          item.action_id === ac.action_id
+                                            ? { ...item, status: newStatus }
+                                            : item
                                       );
 
                                       const newMap = new Map(prev);
                                       newMap.set(featureId, updatedActions);
 
                                       // 모든 액션 완료 확인
-                                      const allCompleted = updatedActions.every(act => act.status === "COMPLETED");
+                                      const allCompleted = updatedActions.every(
+                                        (act) => act.status === "COMPLETED"
+                                      );
 
                                       if (allCompleted) {
-                                        setFeaturesByCategoryId((prevFeatures) => {
-                                          const updatedFeaturesByCategory = new Map(prevFeatures);
-                                          let hasChanged = false;
+                                        setFeaturesByCategoryId(
+                                          (prevFeatures) => {
+                                            const updatedFeaturesByCategory =
+                                              new Map(prevFeatures);
+                                            let hasChanged = false;
 
-                                          for (const [categoryId, ftList] of updatedFeaturesByCategory.entries()) {
-                                            const newFtList = ftList.map((ft) => {
-                                              if (ft.feature_id === featureId && ft.state !== true) {
-                                                hasChanged = true;
-                                                return { ...ft, state: true };
+                                            for (const [
+                                              categoryId,
+                                              ftList,
+                                            ] of updatedFeaturesByCategory.entries()) {
+                                              const newFtList = ftList.map(
+                                                (ft) => {
+                                                  if (
+                                                    ft.feature_id ===
+                                                      featureId &&
+                                                    ft.state !== true
+                                                  ) {
+                                                    hasChanged = true;
+                                                    return {
+                                                      ...ft,
+                                                      state: true,
+                                                    };
+                                                  }
+                                                  return ft;
+                                                }
+                                              );
+
+                                              if (hasChanged) {
+                                                updatedFeaturesByCategory.set(
+                                                  categoryId,
+                                                  newFtList
+                                                );
                                               }
-                                              return ft;
-                                            });
-
-                                            if (hasChanged) {
-                                              updatedFeaturesByCategory.set(categoryId, newFtList);
                                             }
-                                          }
 
-                                          return hasChanged ? updatedFeaturesByCategory : prevFeatures;
-                                        });
+                                            return hasChanged
+                                              ? updatedFeaturesByCategory
+                                              : prevFeatures;
+                                          }
+                                        );
                                       }
 
                                       return newMap;
@@ -429,8 +505,11 @@ export default function ListTable() {
                                       const actions = prev.get(featureId);
                                       if (!actions) return prev;
 
-                                      const updatedActions = actions.map((item) =>
-                                        item.action_id === ac.action_id ? { ...item, importance: newVal } : item
+                                      const updatedActions = actions.map(
+                                        (item) =>
+                                          item.action_id === ac.action_id
+                                            ? { ...item, importance: newVal }
+                                            : item
                                       );
 
                                       const newMap = new Map(prev);
