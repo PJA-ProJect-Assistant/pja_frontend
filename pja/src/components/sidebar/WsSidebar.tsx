@@ -9,9 +9,9 @@ export default function WsSidebar({ onClose }: IsClose) {
   return (
     <motion.div
       className="wssidebar-container"
-      initial={{ x: "-100%", opacity: 0 }}
+      initial={{ x: "-80%", opacity: 0 }}
       animate={{ x: "0%", opacity: 1 }}
-      exit={{ x: "-100%", opacity: 0 }}
+      exit={{ x: "-80%", opacity: 0 }}
       transition={{ type: "tween", duration: 0.3 }}
     >
       <WSSidebarHeader onClose={onClose} />

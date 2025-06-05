@@ -35,16 +35,18 @@ export default function ActionPostPage() {
         )}
       </AnimatePresence>
       {!sidebarOpen && showIcon && (
-        <div className="post-sidebar-icon" onClick={() => setSidebarOpen(true)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="#000000"
-          >
-            <path d="M360-120v-720h80v720h-80Zm160-160v-400l200 200-200 200Z" />
-          </svg>
+        <div className="post-sidebar-closed">
+          <div className="post-sidebar-icon" onClick={() => setSidebarOpen(true)}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M360-120v-720h80v720h-80Zm160-160v-400l200 200-200 200Z" />
+            </svg>
+          </div>
         </div>
       )}
       <div className="actionpost-container">
