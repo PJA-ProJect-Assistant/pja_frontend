@@ -2,7 +2,7 @@ import type { action, feature, feature_category } from "../types/list";
 
 export const featureCategories: feature_category[] = [
   {
-    feature_catefory_id: 1,
+    feature_category_id: 1,
     name: "회원 관리",
     state: false,
     order: 1,
@@ -10,7 +10,7 @@ export const featureCategories: feature_category[] = [
     has_test: true,
   },
   {
-    feature_catefory_id: 2,
+    feature_category_id: 2,
     name: "결제 시스템",
     state: false,
     order: 2,
@@ -18,7 +18,7 @@ export const featureCategories: feature_category[] = [
     has_test: false,
   },
   {
-    feature_catefory_id: 3,
+    feature_category_id: 3,
     name: "결제 시스템",
     state: true,
     order: 2,
