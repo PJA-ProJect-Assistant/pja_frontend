@@ -56,6 +56,10 @@
   width: 7.5%;
 }
 
+.list-name:hover {
+  background-color: #f2f2f2;
+}
+
 .list-checkbox {
   width: 20px;
   height: 20px;
@@ -186,6 +190,7 @@
   white-space: nowrap;
   cursor: pointer;
 }
+
 .cglist-name div,
 .ftlist-name div,
 .aclist-name div {
@@ -193,46 +198,52 @@
   flex: 1;
   justify-content: flex-end;
 }
+
 .list-addbtn {
   display: flex;
+  display: none;
   padding: 0;
   text-align: center;
   border: none;
-  background-color: white;
+  background-color: transparent;
 }
+
 .list-addbtn svg {
   border-radius: 3px;
-  background-color: white;
+  background-color: #d9d9d6;
   cursor: pointer;
 }
-.list-addbtn svg:hover {
-  background-color: #d9d9d6;
-}
+
 .list-modifybtn {
   display: flex;
+  display: none;
   text-align: center;
   border: none;
-  background-color: white;
+  background-color: transparent;
 }
+
 .list-modifybtn svg {
   border-radius: 3px;
-  background-color: white;
+  background-color: #d9d9d6;
   cursor: pointer;
 }
-.list-modifybtn svg:hover {
-  background-color: #d9d9d6;
-}
+
 .list-deletebtn {
   display: flex;
+  display: none;
   text-align: center;
   border: none;
-  background-color: white;
+  background-color: transparent;
 }
+
 .list-deletebtn svg {
   border-radius: 3px;
-  background-color: white;
+  background-color: #d9d9d6;
   cursor: pointer;
 }
-.list-deletebtn svg:hover {
-  background-color: #d9d9d6;
+
+.list-name:hover .list-deletebtn,
+.list-name:hover .list-modifybtn,
+.list-name:hover .list-addbtn {
+  display: flex;
 }

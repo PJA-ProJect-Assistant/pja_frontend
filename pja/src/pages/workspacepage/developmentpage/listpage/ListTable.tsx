@@ -381,7 +381,7 @@ export default function ListTable() {
               <React.Fragment key={cg.feature_category_id}>
                 {/* 카테고리 행 */}
                 <tr className={`cg-row ${isCompleted ? "completed" : ""}`}>
-                  <td>
+                  <td className="list-name">
                     <div className="cglist-name">
                       {editingCategoryId === cg.feature_category_id ? (
                         <input
@@ -523,7 +523,7 @@ export default function ListTable() {
                         <tr
                           className={`ft-row ${isCompleted ? "completed" : ""}`}
                         >
-                          <td>
+                          <td className="list-name">
                             <div className="ftlist-name">
                               {editingFeatureId === ft.feature_id ? (
                                 <input
@@ -685,7 +685,7 @@ export default function ListTable() {
                               className={`ac-row ${isCompleted ? "completed" : ""
                                 }`}
                             >
-                              <td>
+                              <td className="list-name">
                                 <div className="aclist-name">
                                   {editingActionId === ac.action_id ? (<input
                                     type="text"
