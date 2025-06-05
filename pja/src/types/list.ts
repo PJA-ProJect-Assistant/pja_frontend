@@ -1,5 +1,5 @@
 export interface feature_category {
-    feature_catefory_id: number,
+    feature_category_id: number,
     name: string,
     state: boolean,
     order: number,
