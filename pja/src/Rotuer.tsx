@@ -8,6 +8,7 @@ import FindPwPage from "./pages/loginpage/findpw/FindPwPage";
 import SignupPage from "./pages/signuppage/SignupPage";
 import AddWSPage from "./pages/workspacepage/addworkspacepage/AddWSPage";
 import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
+import AccountSettingPage from "./pages/accountsettingpage/AccountSettingPage";
 
 const Router = () => {
   return (
@@ -33,6 +34,9 @@ const Router = () => {
 
       {/*로그인 성공 후 리디렉션 처리용 페이지 */}
       <Route path="/oauth2/success" element={<OAuth2Success />} />
+
+      {/*계정설정 페이지*/}
+      <Route path="/account-settings" element={<AccountSettingPage />} />
     </Routes>
   );
 };
