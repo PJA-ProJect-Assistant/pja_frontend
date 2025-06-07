@@ -1,4 +1,6 @@
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
+import type { ChangeEvent } from "react";
+
 import "./SignupPage.css";
 import logoImage from "../../assets/img/logo.png";
 import personIcon from "../../assets/img/person.png";
@@ -17,6 +19,22 @@ interface SignupApiResponse {
   // 실제 API 응답에 맞게 수정
   message?: string;
   // 다른 필드가 있다면 추가
+}
+
+interface IdCheckApiResponse {
+  status: string;
+  message: string;
+  data: {
+    isDuplicated: boolean; //true면 사용 불가 , false면 사용 가능
+  };
+}
+
+interface EmailCheckApiResponse {
+  status: string;
+  message: string;
+  data: {
+    isDuplicated: boolean;
+  };
 }
 
 const SignupPage: React.FC = () => {
@@ -98,25 +116,69 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/auth/check-username?username=${id}`
+      // 새로운 API 엔드포인트로 요청
+      const response = await axios.get<IdCheckApiResponse>(
+        `http://localhost:8080/api/auth/check-uid?uid=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      if (response.data.avialable || response.data.available) {
-        setIsIdAvailable(true);
-        setIsIdChecked(true);
-        openModal("사용 가능한 아이디입니다.");
+
+      // 응답 성공 시 (status code 200)
+      if (response.status === 200 && response.data.status === "success") {
+        const { isDuplicated } = response.data.data;
+
+        if (!isDuplicated) {
+          // false면 중복X → 사용 가능
+          setIsIdAvailable(true);
+          setIsIdChecked(true);
+          openModal("사용 가능한 아이디입니다.");
+        } else {
+          // true면 중복O → 사용 불가
+          setIsIdAvailable(false);
+          setIsIdChecked(true);
+          openModal("이미 사용 중인 아이디입니다.");
+        }
       } else {
-        setIsIdAvailable(false);
-        setIsIdChecked(true);
-        openModal("이미 사용 중인 아이디입니다.");
+        console.error("예상치 못한 응답:", response.data);
+        openModal("아이디 중복확인에 실패했습니다.\n다시 시도해주세요.");
       }
     } catch (error) {
       console.error("아이디 중복확인 실패", error);
 
-      console.log("모달 열기 시도 중... (handleCheckIdDuplicate catch)");
-      openModal("아이디 중복확인에 실패했습니다 \n 다시 시도해주세요");
+      // axios 에러 처리
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 500) {
+          openModal("서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
+        } else {
+          openModal("아이디 중복확인에 실패했습니다.\n다시 시도해주세요.");
+        }
+      } else {
+        openModal("네트워크 오류가 발생했습니다.\n인터넷 연결을 확인해주세요.");
+      }
+
+      // 에러 발생 시 상태 초기화
+      setIsIdChecked(false);
+      setIsIdAvailable(false);
     }
   };
+
+  {
+    /*중복확인 결과 메세지*/
+  }
+  {
+    isIdChecked && idValidation.isValid && (
+      <div
+        className={`validation-message ${isIdAvailable ? "success" : "error"}`}
+      >
+        {isIdAvailable
+          ? "✓ 사용 가능한 아이디입니다."
+          : "✗ 이미 사용 중인 아이디입니다"}
+      </div>
+    );
+  }
 
   const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const newPasswordValue = event.target.value;
@@ -149,7 +211,7 @@ const SignupPage: React.FC = () => {
   };
 
   //이메일 중복확인
-  const handleCheckEmailDuplicate = async () => {
+  const handleCheckEmailDuplicate = async (): Promise<void> => {
     if (!email.trim()) {
       openModal(EMAIL_VALIDATION_MESSAGES.EMPTY);
       return;
@@ -162,21 +224,49 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/auth/check-email?email=${email}`
+      const response = await axios.get<EmailCheckApiResponse>(
+        `http://localhost:8080/api/auth/check-email?email=${email}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      if (response.data.avialable) {
-        setIsEmailAvailable(true);
-        setIsEmailChecked(true);
-        openModal("사용 가능한 이메일입니다");
+
+      // 응답 성공 시 (status code 200)
+      if (response.status === 200 && response.data.status === "success") {
+        const { isDuplicated } = response.data.data;
+
+        if (!isDuplicated) {
+          // false면 중복X → 사용 가능
+          setIsEmailAvailable(true);
+          setIsEmailChecked(true);
+          openModal("사용 가능한 이메일입니다.");
+        } else {
+          // true면 중복O → 사용 불가
+          setIsEmailAvailable(false);
+          setIsEmailChecked(true);
+          openModal("이미 사용 중인 이메일입니다.");
+        }
       } else {
-        setIsEmailAvailable(false);
-        setIsEmailChecked(true);
-        openModal("이미 사용 중인 이메일입니다");
+        console.error("예상치 못한 응답:", response.data);
+        openModal("이메일 중복확인에 실패했습니다.\n다시 시도해주세요.");
       }
     } catch (error) {
       console.error("이메일 중복확인 실패", error);
-      openModal("이메일 중복확인에 실패했습니다 \n 다시 시도해주세요");
+
+      // axios 에러 처리
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 500) {
+          openModal("서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
+        } else {
+          openModal("이메일 중복확인에 실패했습니다.\n다시 시도해주세요.");
+        }
+      } else {
+        openModal("네트워크 오류가 발생했습니다.\n인터넷 연결을 확인해주세요.");
+      }
+
+      // 에러 발생 시 상태 초기화
       setIsEmailChecked(false);
       setIsEmailAvailable(false);
     }
@@ -264,20 +354,78 @@ const SignupPage: React.FC = () => {
       const response: AxiosResponse<SignupApiResponse> = await axios.post(
         "http://localhost:8080/api/auth/signup",
         {
-          username: id,
+          uid: id,
           name: name,
           email: email,
           password: password,
         }
       );
 
-      if (response.status === 201 || response.status === 200) {
-        alert("회원가입이 완료되었습니다");
+      //  성공 응답 처리 (201 Created)
+      if (response.status === 201 && response.data.status === "success") {
+        alert(response.data.message || "회원가입이 완료되었습니다");
         window.location.href = "/login";
+        return;
       }
+
+      // 예상치 못한 성공 응답
+      console.warn("예상치 못한 응답:", response);
+      openModal("회원가입 처리 중 문제가 발생했습니다.");
     } catch (error) {
       console.error("회원가입 실패", error);
-      openModal("회원가입에 실패했습니다 \n 다시 시도해주세요");
+
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+
+        switch (status) {
+          case 400:
+            openModal(
+              data.message || "입력값이 올바르지 않습니다.\n다시 확인해주세요."
+            );
+            break;
+
+          case 409:
+            if (data.message?.includes("아이디")) {
+              openModal(
+                "이미 사용 중인 아이디입니다.\n다른 아이디를 입력해주세요."
+              );
+              // 아이디 중복확인 상태 초기화
+              setIsIdChecked(false);
+              setIsIdAvailable(false);
+            } else if (data.message?.includes("이메일")) {
+              openModal(
+                "이미 사용 중인 이메일입니다.\n다른 이메일을 입력해주세요."
+              );
+              // 이메일 중복확인 상태 초기화
+              setIsEmailChecked(false);
+              setIsEmailAvailable(false);
+            } else {
+              openModal(
+                data.message ||
+                  "중복된 정보가 있습니다.\n입력 정보를 확인해주세요."
+              );
+            }
+            break;
+
+          case 500:
+            openModal(
+              data.message ||
+                "서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요."
+            );
+            break;
+
+          default:
+            openModal(
+              data.message ||
+                `오류가 발생했습니다 (${status}).\n다시 시도해주세요.`
+            );
+            break;
+        }
+      } else {
+        openModal(
+          "네트워크 오류가 발생했습니다.\n인터넷 연결을 확인하고 다시 시도해주세요."
+        );
+      }
     }
   };
 
@@ -353,6 +501,14 @@ const SignupPage: React.FC = () => {
               >
                 중복확인
               </button>
+            </div>
+            <div className="validation-message-container">
+              {/*실시간 유효성 검사 메세지*/}
+              {id && idValidation.message && (
+                <div className="validation-message error">
+                  {idValidation.message}
+                </div>
+              )}
 
               {/*중복확인 결과 메세지*/}
               {isIdChecked && idValidation.isValid && (
@@ -367,13 +523,6 @@ const SignupPage: React.FC = () => {
                 </div>
               )}
             </div>
-
-            {/*실시간 유효성 검사 메세지*/}
-            {id && idValidation.message && (
-              <div className="validation-message error">
-                {idValidation.message}
-              </div>
-            )}
           </div>
           <div className="name-title">이름</div>
           <div className="input-section">
@@ -703,6 +852,7 @@ const SignupPage: React.FC = () => {
           </div>
         </div>
       </div>
+
       {showModal && <CustomModal message={modalMessage} onClose={closeModal} />}
     </div>
   );
