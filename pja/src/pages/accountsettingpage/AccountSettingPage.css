@@ -1,0 +1,266 @@
+.accountsetting-wrapper {
+  padding: 0 60px;
+}
+
+.accountsetting-title {
+  font-weight: bold;
+  font-size: 25px;
+  padding-left: 20px;
+  margin-top: 50px;
+}
+.underline {
+  border-bottom: 1px solid #000;
+  width: 90%;
+  padding-left: 20px;
+  margin-bottom: 24px;
+}
+.profile-title {
+  padding-left: 20px;
+  font-weight: bold;
+}
+
+.profile-image-container {
+  position: relative;
+  display: inline-block;
+  width: 125px;
+  height: 125px;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #ddd;
+  display: block; /*이미지가 텍스트처럼 보이는 것을 방지*/
+  background-size: cover;
+}
+.image-upload-button {
+  position: absolute;
+  top: 90px;
+  left: 90px;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 50%;
+  padding: 4px;
+  cursor: pointer;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.image-upload-button img {
+  display: block;
+}
+
+.profile-input-section {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.profile-input-wrapper {
+  position: relative; /*기준점 설정*/
+  width: 100%;
+  max-width: 600px;
+  /* padding-left: 30px; */
+}
+
+.profile-id-input {
+  flex-grow: 1;
+  height: 40px;
+  border: 1px solid #aaaaaa;
+  border-radius: 6px;
+  font-size: 15px;
+  padding-left: 40px;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+.profile-id-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profile-clear-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0;
+  outline: none;
+  transition: color 0.2s;
+}
+
+.profile-id-title {
+  display: block;
+}
+.profile-icon-inside {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  z-index: 1;
+}
+
+.profile-button-item {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  top: 0;
+  right: -60px;
+  transform: translateX(50%);
+}
+
+.profile.btn.confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 60px;
+  width: auto;
+  height: 40px;
+  padding: 0 15px;
+
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.profile-name-title {
+  font-weight: bold;
+}
+
+/*비밀번호 변경*/
+.profile-pw-change-wrapper {
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.pw-change-title {
+  font-size: 20px;
+}
+
+.profile-pw-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+  /* padding-left: 30px; */
+}
+
+.profile-pw-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.profile-pw-icon-inside {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  z-index: 1;
+}
+.profile-pw-input {
+  flex-grow: 1;
+  height: 40px;
+  border: 1px solid #aaaaaa;
+  border-radius: 6px;
+  font-size: 15px;
+  padding-left: 40px;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+.profile-new-pw-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+.profile-new-pw-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profile-new-pw-input {
+  flex-grow: 1;
+  height: 40px;
+  border: 1px solid #aaaaaa;
+  border-radius: 6px;
+  font-size: 15px;
+  padding-left: 40px;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+.password-error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.profile-new-pwcf-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+.profile-new-pwcf-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profile-new-pwcf-input {
+  flex-grow: 1;
+  height: 40px;
+  border: 1px solid #aaaaaa;
+  border-radius: 6px;
+  font-size: 15px;
+  padding-left: 40px;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+.profile-new-button-item {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  top: 0;
+  right: -60px;
+  transform: translateX(50%);
+}
+
+.profile.new.btn.confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 60px;
+  width: auto;
+  height: 40px;
+  padding: 0 15px;
+
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}

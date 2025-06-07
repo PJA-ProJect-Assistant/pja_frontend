@@ -2,10 +2,16 @@ import type { IsClose } from "../../types/common";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Users } from "../../constants/userconstants";
+import { useNavigate } from "react-router-dom";
 import "./MainMenuSidebar.css";
 
 export default function MainMenuSidebar({ onClose }: IsClose) {
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const goToAccountSettings = () => {
+    navigate("/account-settings");
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -32,7 +38,9 @@ export default function MainMenuSidebar({ onClose }: IsClose) {
           <div className="mainmenu-profile">{Users.name.charAt(0)}</div>
           <p className="mainmenu-username">{Users.name}</p>
           <div className="mainmenu-list">
-            <p>계정설정</p>
+            <p onClick={goToAccountSettings} style={{ cursor: "pointer" }}>
+              계정설정
+            </p>
             <p>공지</p>
             <p>로그아웃</p>
             <p>탈퇴</p>
