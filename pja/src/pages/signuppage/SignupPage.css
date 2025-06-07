@@ -230,3 +230,7 @@
   font-size: 13px;
   margin-top: 5px;
 }
+
+.validation-message-container {
+  margin-top: 4px;
+}
