@@ -1,9 +1,41 @@
+.listtable-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.listtable-btn-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.listtable-btn-container button {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+  background-color: #00205B;
+  border: none;
+  color: white;
+  padding: 5px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.listtable-btn-container p {
+  margin: 0;
+}
+
 .feature-table {
   width: 100%;
   min-width: 900px;
   border-collapse: collapse;
   table-layout: fixed;
-  margin: 20px 0;
+  margin: 10px 0;
   font-size: var(--font-size-sm);
 }
 
@@ -246,4 +278,82 @@
 .list-name:hover .list-modifybtn,
 .list-name:hover .list-addbtn {
   display: flex;
+}
+
+.filter-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 300px;
+  box-sizing: border-box;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  gap: 10px;
+  margin-left: 30px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.filter-dropdown label {
+  display: block;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.filter-group {
+  position: relative;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  padding: 1px 10px;
+  border: 1px solid #d9d9d6;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdown-wrapper {
+  position: relative;
+}
+
+.dropdown-absolute {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+}
+
+.dropdown {
+  margin-bottom: 12px;
+  max-height: 100px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  padding: 6px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.dropdown div {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dropdown input[type="checkbox"] {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.filter-apply-btn {
+  height: 30px;
 }

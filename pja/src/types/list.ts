@@ -28,3 +28,9 @@ export interface action {
     order: number,
     feature_id: number,
 }
+
+export interface filtered {
+    selectedCategories: number[];
+    selectedAssignees: number[];
+    selectedStatuses: Status[];
+}
