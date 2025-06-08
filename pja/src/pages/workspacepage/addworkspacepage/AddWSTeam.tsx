@@ -77,14 +77,15 @@ export default function AddWSTeam() {
           </div>
         </div>
         <div className="addws-btn-container">
+          {/* navigate는 api 연결 후 해야함 */}
           <button
-            onClick={() => navi("/ws")}
+            onClick={() => navi("/ws/{wsid}/step/0")}
             disabled={emails.length === 0}
             className={emails.length > 0 ? "addws-btn1" : "addws-btn2"}
           >
             초대하기
           </button>
-          <button onClick={() => navi("/ws")} className="addws-btn2">
+          <button onClick={() => navi("/ws/{wsid}/step/0")} className="addws-btn2">
             넘어가기
           </button>
         </div>

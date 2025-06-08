@@ -1,16 +1,20 @@
 .sidebarheader-container {
   display: flex;
   width: 100%;
+  box-sizing: border-box;
   justify-content: center;
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
+  height: 8%;
 }
+
 .sidebarheader-left {
   display: flex;
   flex-direction: column;
   max-width: 175px;
 }
+
 .sidebarheader-left h3 {
   white-space: nowrap;
   overflow: hidden;
@@ -19,6 +23,7 @@
   margin: 0;
   gap: 5px;
 }
+
 .sidebarheader-left p {
   white-space: nowrap;
   overflow: hidden;
@@ -26,6 +31,8 @@
   width: 80%;
   margin: 2px 0;
 }
+
 .sidebarheader-right {
   max-width: 25px;
+  cursor: pointer;
 }

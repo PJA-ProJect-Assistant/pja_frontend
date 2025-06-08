@@ -283,16 +283,17 @@ export function Myworkspace() {
             )}
           </div>
         </div>
-        <div ref={editId === ws.workspace_id ? editTeamRef : null}>
+        <div ref={editId === ws.workspace_id ? editTeamRef : null}
+          className="workspace-team">
           {editId === ws.workspace_id ? (
             <input
               type="text"
               value={editTeam}
               onChange={(e) => setEditTeam(e.target.value)}
-              className="workspace-team-input"
+
             />
           ) : (
-            <p className="workspace-team">{ws.team_name}</p>
+            <p>{ws.team_name}</p>
           )}
         </div>
       </div>

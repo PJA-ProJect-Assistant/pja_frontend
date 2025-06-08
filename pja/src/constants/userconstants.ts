@@ -8,19 +8,22 @@ export const Users: users = {
   name: "Alice Kim",
   // profile_image: "https://example.com/profiles/alice.png",
 };
-// {
-//     user_id: 2,
-//     email: "bob@example.com",
-//     password: "hashed_password_2",
-//     uid: "uid_def456",
-//     name: "Bob Lee",
-//     profile_image: "https://example.com/profiles/bob.jpg",
-//   },
-//   {
-//     user_id: 3,
-//     email: "charlie@example.com",
-//     password: "hashed_password_3",
-//     uid: "uid_ghi789",
-//     name: "Charlie Park",
-//     // profile_image 생략됨 (옵셔널)
-//   },
+
+export const Members: users[] = [
+  {
+    user_id: 2,
+    email: "bob@example.com",
+    password: "hashed_password_2",
+    uid: "uid_def456",
+    name: "Bob Lee",
+    profile_image: "https://example.com/profiles/bob.jpg",
+  },
+  {
+    user_id: 3,
+    email: "charlie@example.com",
+    password: "hashed_password_3",
+    uid: "uid_ghi789",
+    name: "Charlie Park",
+    // profile_image 생략됨 (옵셔널)
+  },
+]

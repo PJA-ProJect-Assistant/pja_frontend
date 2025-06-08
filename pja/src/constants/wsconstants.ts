@@ -1,4 +1,5 @@
 import type { workspace } from "../types/workspace";
+import type { workspace_member } from "../types/workspace";
 
 export const dummyWorkspaces: workspace[] = [
   {
@@ -101,3 +102,48 @@ export const dummyWorkspaces: workspace[] = [
     progress_step: 3,
   },
 ];
+
+export const dummyWSMember: workspace_member[] = [
+  {
+    workspace_member_id: 1,
+    user_id: 1,
+    workspace_id: 1,
+    role: "OWNER",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+  {
+    workspace_member_id: 2,
+    user_id: 2,
+    workspace_id: 1,
+    role: "MEMBER",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+  {
+    workspace_member_id: 3,
+    user_id: 3,
+    workspace_id: 1,
+    role: "GUEST",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+  {
+    workspace_member_id: 4,
+    user_id: 1,
+    workspace_id: 3,
+    role: "OWNER",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+  {
+    workspace_member_id: 5,
+    user_id: 2,
+    workspace_id: 3,
+    role: "MEMBER",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+  {
+    workspace_member_id: 6,
+    user_id: 3,
+    workspace_id: 3,
+    role: "GUEST",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+]
