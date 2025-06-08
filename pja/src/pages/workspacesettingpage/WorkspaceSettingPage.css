@@ -21,12 +21,13 @@
 }
 .workspacesetting-input-wrapper {
   position: relative; /*기준점 설정*/
-  width: 500px;
+  width: 600px;
 
   padding-left: 30px;
   margin-top: 50px;
 }
 .workspace-name-title {
+  font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
 }
@@ -55,12 +56,13 @@
 
 .workpspacesetting-teamname-input-wrapper {
   position: relative;
-  width: 500px;
+  width: 600px;
 
   padding-left: 30px;
   margin-top: 30px;
 }
 .workspace-teamname-title {
+  font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
 }
@@ -89,12 +91,13 @@
 
 .workspacesetting-public-wrapper {
   position: relative;
-  width: 500px;
+  width: 600px;
   max-width: 600px;
   padding-left: 30px;
   margin-top: 30px;
 }
 .workspacesetting-pulic-title {
+  font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
 }
@@ -117,9 +120,11 @@
 }
 
 .workspace-save-button {
+  font-size: 18px;
+  font-weight: 500;
   background-color: #00205b;
   border-radius: 5px;
   color: white;
-  width: 80px;
-  height: 40px;
+  width: 100px;
+  height: 50px;
 }
