@@ -9,6 +9,7 @@ import SignupPage from "./pages/signuppage/SignupPage";
 import AddWSPage from "./pages/workspacepage/addworkspacepage/AddWSPage";
 import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
 import AccountSettingPage from "./pages/accountsettingpage/AccountSettingPage";
+import WorkspaceSettingPage from "./pages/workspacesettingpage/WorkspaceSettingPage";
 
 const Router = () => {
   return (
@@ -37,6 +38,8 @@ const Router = () => {
 
       {/*계정설정 페이지*/}
       <Route path="/account-settings" element={<AccountSettingPage />} />
+
+      <Route path="/workspace-setting" element={<WorkspaceSettingPage />} />
     </Routes>
   );
 };
