@@ -21,7 +21,7 @@
 }
 .workspacesetting-input-wrapper {
   position: relative; /*기준점 설정*/
-  width: 600px;
+  width: 550px;
 
   padding-left: 30px;
   margin-top: 50px;
@@ -56,7 +56,7 @@
 
 .workpspacesetting-teamname-input-wrapper {
   position: relative;
-  width: 600px;
+  width: 550px;
 
   padding-left: 30px;
   margin-top: 30px;
@@ -91,7 +91,7 @@
 
 .workspacesetting-public-wrapper {
   position: relative;
-  width: 600px;
+  width: 550px;
   max-width: 600px;
   padding-left: 30px;
   margin-top: 30px;
