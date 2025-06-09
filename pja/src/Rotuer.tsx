@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import MainPage from "./pages/mainpage/MainPage";
 import ApiPage from "./pages/mainpage/ApiPage";
 import LoginPage from "./pages/loginpage/LoginPage";
+import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
 import FindIdPage from "./pages/loginpage/findid/FindIdPage";
 import FindPwPage from "./pages/loginpage/findpw/FindPwPage";
 import SignupPage from "./pages/signuppage/SignupPage";
@@ -10,7 +11,6 @@ import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
 import AccountSettingPage from "./pages/accountsettingpage/AccountSettingPage";
 import WorkspaceSettingPage from "./pages/workspacesettingpage/WorkspaceSettingPage";
 import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/ActionPostPage";
-import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
 
 const Router = () => {
       return (
@@ -21,6 +21,7 @@ const Router = () => {
 
                   {/* 공개 라우트 */}
                   <Route path="/login" element={<LoginPage />} />
+                  <Route path="/main" element={<MainPage />} />
                   <Route path="/signup" element={<SignupPage />} />
                   <Route path="/find-id" element={<FindIdPage />} />
                   <Route path="/find-pw" element={<FindPwPage />} />
@@ -32,7 +33,9 @@ const Router = () => {
                   <Route path="/addws" element={<AddWSPage />} />
                   <Route path="/ws/:wsid/step/:stepNumber" element={<MainWSPage />} />
                   <Route path="/ws/:wsid/action/:acId" element={<ActionPostPage />} />
+                  {/*로그인 성공 후 리디렉션 처리용 페이지 */}
                   <Route path="/oauth2/success" element={<OAuth2Success />} />
+
                   {/*계정설정 페이지*/}
                   <Route path="/account-settings" element={<AccountSettingPage />} />
 
