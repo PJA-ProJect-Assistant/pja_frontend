@@ -16,9 +16,8 @@ import { validateEmail, EMAIL_VALIDATION_MESSAGES } from "./emailValidator";
 import { validatePassword } from "./passwordValidator";
 
 interface SignupApiResponse {
-  // 실제 API 응답에 맞게 수정
+  status: string;
   message?: string;
-  // 다른 필드가 있다면 추가
 }
 
 interface IdCheckApiResponse {
@@ -363,7 +362,7 @@ const SignupPage: React.FC = () => {
 
       //  성공 응답 처리 (201 Created)
       if (response.status === 201 && response.data.status === "success") {
-        alert(response.data.message || "회원가입이 완료되었습니다");
+        openModal(response.data.message || "회원가입이 완료되었습니다");
         window.location.href = "/login";
         return;
       }
