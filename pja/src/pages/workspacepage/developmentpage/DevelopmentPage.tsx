@@ -2,6 +2,7 @@ import { useState } from "react";
 import { WSHeader } from "../../../components/header/WSHeader";
 import "./DevelopmentPage.css";
 import ListPage from "./listpage/ListPage";
+import KanbanPage from "./kanbanpage/KanbanPage";
 
 export default function DevelopmentPage() {
   const [page, setPage] = useState<number>(0);
@@ -23,6 +24,7 @@ export default function DevelopmentPage() {
           ))}
         </div>
         {page === 0 && <ListPage />}
+        {page === 1 && <KanbanPage />}
       </div>
     </div>
   );
