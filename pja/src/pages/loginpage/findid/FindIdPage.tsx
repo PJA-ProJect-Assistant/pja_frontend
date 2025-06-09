@@ -1,24 +1,97 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import logoImage from "../../../assets/img/logo.png";
 import "./FindIdPage.css";
 import findEmailIcon from "../../../assets/img/findEmail.png";
-const FindIdPage = () => {
-  const [email, setEmail] = useState("");
-  /*아이디 찾기 버튼 클릭 시 모달창*/
-  const [showModal, setShowModal] = useState(false);
 
-  const handleEmailChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => setEmail(event.target.value);
-  //삭제 아이콘 클릭 시 이메일 값을 빈 문자열로 설정
-  const handleClearEmail = () => setEmail("");
+interface FindIdSuccessResponse {
+  status: "success";
+  message: string;
+  data: {
+    uid: string;
+  };
+}
 
-  const handleFindId = () => {
-    setShowModal(true);
+interface FindIdErrorResponse {
+  status: "fail" | "error";
+  message: string;
+}
+
+type FindIdResponse = FindIdSuccessResponse | FindIdErrorResponse;
+
+const FindIdPage: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [foundUserId, setFoundUserId] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
   };
 
-  const handleCloseModal = () => {
+  // 이메일 유효성 검사
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleFindId = async (): Promise<void> => {
+    if (!email.trim()) {
+      setErrorMessage("이메일을 입력해주세요.");
+      setFoundUserId("");
+      setShowModal(true);
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setErrorMessage("올바른 이메일 형식을 입력해주세요.");
+      setFoundUserId("");
+      setShowModal(true);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/find-id", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+        }),
+      });
+
+      const data: FindIdResponse = await response.json();
+
+      if (response.ok && data.status === "success") {
+        const successData = data as FindIdSuccessResponse;
+        setFoundUserId(successData.data.uid);
+        setErrorMessage("");
+      } else {
+        const errorData = data as FindIdErrorResponse;
+        setFoundUserId("");
+        setErrorMessage(errorData.message || "아이디 찾기에 실패했습니다.");
+      }
+    } catch (error) {
+      setFoundUserId("");
+      setErrorMessage("서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
+      setShowModal(true);
+    }
+  };
+
+  const handleCloseModal = (): void => {
     setShowModal(false);
+    setFoundUserId("");
+    setErrorMessage("");
+  };
+
+  // 삭제 아이콘 클릭 시 이메일 값을 빈 문자열로 설정
+  const handleClearEmail = (): void => {
+    setEmail("");
   };
 
   return (
@@ -37,9 +110,8 @@ const FindIdPage = () => {
                 alt="이메일"
                 className="findemail-icon-inside"
               />
-
               <input
-                type="text"
+                type="email"
                 placeholder="이메일"
                 className="findid-email-input"
                 value={email}
@@ -49,7 +121,7 @@ const FindIdPage = () => {
                 <button
                   type="button"
                   onClick={handleClearEmail}
-                  className="findid-clear-icon "
+                  className="findid-clear-icon"
                 >
                   <svg
                     width="20"
@@ -74,21 +146,26 @@ const FindIdPage = () => {
               type="button"
               onClick={handleFindId}
               className="findid-button"
+              disabled={loading}
             >
-              아이디 찾기
+              {loading ? "찾는 중..." : "아이디 찾기"}
             </button>
           </div>
         </div>
       </div>
-      /*모달창 */
+
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header" />
-            <p>
-              아이디는 <strong>OOO</strong>입니다
-            </p>
-            {/*확인 버튼이 있는 모달 푸터*/}
+            {foundUserId ? (
+              <p>
+                아이디는 <strong>{foundUserId}</strong>입니다
+              </p>
+            ) : (
+              <p style={{ color: "#ff4444" }}>{errorMessage}</p>
+            )}
+
             <div className="modal-footer">
               <button
                 type="button"
@@ -104,4 +181,5 @@ const FindIdPage = () => {
     </>
   );
 };
+
 export default FindIdPage;
