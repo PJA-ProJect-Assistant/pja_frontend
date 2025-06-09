@@ -16,8 +16,7 @@ interface UseCategoryFeatureCategoryReturn {
     editingActionId: number | null;
     featuresByCategoryId: Map<number, feature[]>;
     actionsByFeatureId: Map<number, action[]>;
-    startDates: { [key: number]: Date | null };
-    endDates: { [key: number]: Date | null };
+
     testCheckCg: { [key: number]: boolean };
     testCheckFt: { [key: number]: boolean };
     testCheckAc: { [key: number]: boolean };
@@ -495,6 +494,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     };
     // 시작,종료 날짜 업데이트
     const updateStartDate = (featureId: number, actionId: number, date: Date | null) => {
+        console.log("updateEndDate called", featureId, actionId, date);
         if (!date) return;
         setActionsByFeatureId((prev) => {
             const actions = prev.get(featureId);
@@ -503,7 +503,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
             const updated = actions.map((a) =>
                 a.action_id === actionId ? { ...a, start_date: date } : a
             );
-
             const newMap = new Map(prev);
             newMap.set(featureId, updated);
             return newMap;
@@ -516,7 +515,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
             if (!actions) return prev;
 
             const updated = actions.map((a) =>
-                a.action_id === actionId ? { ...a, start_date: date } : a
+                a.action_id === actionId ? { ...a, end_date: date } : a
             );
 
             const newMap = new Map(prev);
@@ -538,8 +537,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         editingActionId,
         featuresByCategoryId,
         actionsByFeatureId,
-        startDates,
-        endDates,
         testCheckCg,
         testCheckFt,
         testCheckAc,
