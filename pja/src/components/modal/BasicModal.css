@@ -9,6 +9,9 @@
 
 .modal-content {
   position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -16,13 +19,14 @@
   border-radius: 12px;
   padding: 24px;
   width: 300px;
+  min-height: 180px;
   z-index: 1000;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.3s ease;
 }
 
 .modal-title {
-  font-size: 18px;
+  font-size: var(--font-size-xl);
   font-weight: bold;
   margin-bottom: 12px;
   text-align: center;
@@ -30,14 +34,16 @@
 }
 
 .modal-description {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   text-align: center;
   margin-bottom: 20px;
 }
 
 .modal-close {
   display: block;
-  width: 100%;
+  width: 90%;
+  margin: 10px;
+  box-sizing: border-box;
   padding: 10px 0;
   background-color: #00205b;
   color: white;
@@ -52,6 +58,7 @@
     opacity: 0;
     transform: translate(-50%, -45%);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%);
