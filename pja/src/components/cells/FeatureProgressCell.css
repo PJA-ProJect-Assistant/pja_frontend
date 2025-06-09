@@ -1,0 +1,26 @@
+.ftprogress-bar-container {
+    flex: 1;
+    box-sizing: border-box;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    margin: 0 4px;
+    background-color: #e0e0e0;
+}
+
+.ftbar-section {
+    height: 100%;
+}
+
+.ftbar-section.completed {
+    background-color: #fe5000;
+}
+
+.ftbar-section.in-progress {
+    background-color: #fec300;
+}
+
+.ftbar-section.not-started {
+    background-color: #d9d9d6;
+}

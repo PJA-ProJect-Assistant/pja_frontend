@@ -146,4 +146,25 @@ export const dummyWSMember: workspace_member[] = [
     role: "GUEST",
     joined_at: new Date("2024-11-01T10:00:00Z"),
   },
-]
+  {
+    workspace_member_id: 7,
+    user_id: 4,
+    workspace_id: 3,
+    role: "MEMBER",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+  {
+    workspace_member_id: 8,
+    user_id: 5,
+    workspace_id: 3,
+    role: "MEMBER",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+  {
+    workspace_member_id: 9,
+    user_id: 6,
+    workspace_id: 3,
+    role: "MEMBER",
+    joined_at: new Date("2024-11-01T10:00:00Z"),
+  },
+];
