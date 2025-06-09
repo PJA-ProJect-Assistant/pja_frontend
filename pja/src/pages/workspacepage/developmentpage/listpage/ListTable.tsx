@@ -11,9 +11,11 @@ import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeature
 import type { Status } from "../../../../types/list";
 import { Members } from "../../../../constants/userconstants";
 import FilterTable from "./FilterTable";
+import { NoCgAddModal } from "../../../../components/modal/WsmenuModal";
 
 
 export default function ListTable() {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isFilter, setIsFilter] = useState<boolean>(false);
   const [showFilter, setShowFilter] = useState<Boolean>(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -29,8 +31,6 @@ export default function ListTable() {
     name,
     workspaceId,
     participantList,
-    startDates,
-    endDates,
     editingCategoryId,
     editingFeatureId,
     editingActionId,
@@ -80,8 +80,13 @@ export default function ListTable() {
 
   return (
     <div className="listtable-container">
+      {isModalOpen && <NoCgAddModal onClose={() => setIsModalOpen(false)} />}
       <div className="listtable-btn-container">
-        <button onClick={() => handleAddCategory()}>
+        <button onClick={() => {
+          if (showFilter) { setIsModalOpen(true) }
+          else handleAddCategory()
+        }
+        }>
           <p>카테고리 추가</p>
           <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z" /></svg>
         </button>
@@ -135,17 +140,18 @@ export default function ListTable() {
             <div className="filter-group">
               <div className="filter-header" onClick={() => setShowParticipant((prev) => !prev)}>
                 <label>참여자</label>
-                {showParticipant ? <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M480-525 291-336l-51-51 240-240 240 240-51 51-189-189Z" /></svg> : <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="20px"
-                  viewBox="0 -960 960 960"
-                  width="20px"
-                  fill="#000"
-                >
-                  <path
-                    d="M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z"
-                  />
-                </svg>}
+                {showParticipant ? <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000"><path d="M480-525 291-336l-51-51 240-240 240 240-51 51-189-189Z" /></svg>
+                  : <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20px"
+                    viewBox="0 -960 960 960"
+                    width="20px"
+                    fill="#000"
+                  >
+                    <path
+                      d="M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z"
+                    />
+                  </svg>}
               </div>
               <div className="dropdown-wrapper">
                 {showParticipant && (
@@ -163,7 +169,18 @@ export default function ListTable() {
                             )
                           }
                         />
-                        <span>{Members.find((m) => m.user_id === user)?.name}</span>
+                        {Members.find((m) => m.user_id === user)?.profile_image ? (
+                          <img
+                            src={Members.find((m) => m.user_id === user)?.profile_image}
+                            alt={Members.find((m) => m.user_id === user)?.name}
+                            className="listprofile-img"
+                          />
+                        ) : (
+                          <div className="listprofile-none">
+                            {Members.find((m) => m.user_id === user)?.name.charAt(0)}
+                          </div>
+                        )}
+                        <span title={Members.find((m) => m.user_id === user)?.name}>{Members.find((m) => m.user_id === user)?.name}</span>
                       </div>
                     ))}
                   </div>
@@ -211,8 +228,22 @@ export default function ListTable() {
               </div>
             </div>
 
-            <button onClick={() => setShowFilter(true)} className="filter-apply-btn">
+            <button onClick={() => {
+              setShowFilter(true)
+              setShowCategory(false)
+              setShowParticipant(false)
+              setShowStatus(false)
+            }} className="filter-apply-btn">
               확인
+            </button>
+            <button onClick={() => {
+              setShowFilter(false)
+              setSelectedCategories([])
+              setSelectedAssignees([])
+              setSelectedStatuses([])
+            }
+            } className="filter-apply-btn">
+              취소
             </button>
           </div>
         )}
@@ -668,7 +699,7 @@ export default function ListTable() {
                                 </td>
                                 <td>
                                   <DateSelectCell
-                                    value={startDates[ac.action_id] ?? null}
+                                    value={ac.start_date ?? null}
                                     disable={isCompleted}
                                     onChange={(date) => {
                                       if (isCompleted) return;
@@ -678,7 +709,7 @@ export default function ListTable() {
                                 </td>
                                 <td>
                                   <DateSelectCell
-                                    value={endDates[ac.action_id] ?? null}
+                                    value={ac.end_date ?? null}
                                     disable={isCompleted}
                                     onChange={(date) => {
                                       if (isCompleted) return;
