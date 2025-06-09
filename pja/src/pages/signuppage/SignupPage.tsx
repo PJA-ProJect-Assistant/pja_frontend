@@ -16,9 +16,8 @@ import { validateEmail, EMAIL_VALIDATION_MESSAGES } from "./emailValidator";
 import { validatePassword } from "./passwordValidator";
 
 interface SignupApiResponse {
-  // 실제 API 응답에 맞게 수정
+  status: string;
   message?: string;
-  // 다른 필드가 있다면 추가
 }
 
 interface IdCheckApiResponse {
@@ -363,8 +362,47 @@ const SignupPage: React.FC = () => {
 
       //  성공 응답 처리 (201 Created)
       if (response.status === 201 && response.data.status === "success") {
-        alert(response.data.message || "회원가입이 완료되었습니다");
-        window.location.href = "/login";
+        openModal(
+          response.data.message ||
+            "회원가입이 완료되었습니다 \n이메일 인증을 진행해주세요"
+        );
+
+        // 회원가입 성공 후 이메일 인증 요청
+        try {
+          const emailResponse = await axios.get(
+            `http://localhost:8080/api/auth/user/send-email?email=${encodeURIComponent(
+              email
+            )}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (
+            emailResponse.status === 200 &&
+            emailResponse.data.status === "success"
+          ) {
+            openModal(
+              "이메일 인증 메일이 발송되었습니다. 이메일을 확인해주세요."
+            );
+          } else {
+            console.warn("이메일 발송 응답 이상:", emailResponse.data);
+            openModal(
+              "이메일 인증 메일 발송에 실패했지만 회원가입은 완료되었습니다."
+            );
+          }
+        } catch (emailError) {
+          console.error("이메일 발송 실패:", emailError);
+          openModal(
+            "이메일 인증 메일 발송에 실패했지만 회원가입은 완료되었습니다."
+          );
+        }
+
+        window.location.href = `/email-verification?email=${encodeURIComponent(
+          email
+        )}`;
         return;
       }
 
