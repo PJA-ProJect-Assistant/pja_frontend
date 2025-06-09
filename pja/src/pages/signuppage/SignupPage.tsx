@@ -369,16 +369,15 @@ const SignupPage: React.FC = () => {
 
         // 회원가입 성공 후 이메일 인증 요청
         try {
-          const emailResponse = await axios.get(
-            `http://localhost:8080/api/auth/user/send-email?email=${encodeURIComponent(
-              email
-            )}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+        const emailResponse = await axios.post(
+          `http://localhost:8080/api/auth/send-email`,
+          { email },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
           if (
             emailResponse.status === 200 &&

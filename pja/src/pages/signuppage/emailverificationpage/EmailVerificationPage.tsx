@@ -36,17 +36,31 @@ const EmailVerificationPage: React.FC = () => {
     }
 
     try {
-      // GET 요청으로 변경하고 query parameter 사용
-      const response = await axios.get<VerificationCheckApiResponse>(
-        `/api/auth/user/verify-email?email=${encodeURIComponent(
-          userEmail
-        )}&token=${encodeURIComponent(verificationToken)}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // const response = await axios.post<VerificationCheckApiResponse>(
+      //   `/api/auth/verify-email`,
+      //   {
+      //     email: userEmail,
+      //     token: verificationToken,
+      //   },
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
+
+            const response = await axios.post(
+          `http://localhost:8080/api/auth/verify-email`,
+          { 
+            email: userEmail,
+            token: verificationToken },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
 
       if (response.status === 200 && response.data.status === "success") {
         alert("이메일 인증이 완료되었습니다!");
@@ -87,12 +101,16 @@ const EmailVerificationPage: React.FC = () => {
 
     setIsResending(true);
     try {
-      const response = await axios.post<EmailVerificationApiResponse>(
-        "/api/auth/send-verification-email",
-        {
-          email: userEmail,
-        }
-      );
+      const response = await axios.post(
+          `http://localhost:8080/api/auth/send-email`,
+          { email: userEmail },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("userEmail:",userEmail);
 
       if (response.status === 200 && response.data.status === "success") {
         alert("인증 이메일이 재전송되었습니다");
