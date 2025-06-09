@@ -1,0 +1,88 @@
+.emailverification-logo-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.emaillogo-image {
+  padding: 30px 50px 0 40px;
+  width: 233px;
+  height: 132px;
+}
+.emailverification-box-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.emailverification-box {
+  margin-top: 40px;
+  border: 1px solid #aaaaaa;
+  width: 700px;
+  height: 450px;
+}
+.emailverification-title {
+  margin-top: 35px;
+  font-size: 32px;
+  font-weight: 500;
+  padding-left: 260px;
+}
+.verficatedemail-icon {
+  margin-top: 35px;
+  padding-left: 300px;
+}
+
+.verification-email-box {
+  padding-left: 240px;
+  margin-top: 20px;
+  font-size: 24px;
+}
+
+.verification-message {
+  margin-top: 25px;
+  padding-left: 170px;
+}
+.verification-message .first-line {
+  font-size: 18px;
+  margin-left: 10px;
+}
+.verification-message .second-line {
+}
+
+.verificationcode-input {
+  width: 230px;
+  /*margin-top: 20px;*/
+  /*margin-left: 250px;*/
+  padding-left: 20px;
+  height: 40px;
+  border-radius: 5px;
+  font-size: 20px;
+  border: 1px solid #00205b;
+}
+.verification-button-wrapper {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 30px;
+  box-sizing: border-box;
+}
+.verification-button {
+  display: flex;
+  padding: 10px 8px;
+  border-radius: 5px;
+  background-color: #00205b;
+  color: white;
+  border: none;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+}
+.email-resend-message {
+  margin-top: 10px;
+  margin-left: 180px;
+  font-size: 12px;
+}
+.hint-icon {
+  width: 15px;
+  width: 15px;
+}
