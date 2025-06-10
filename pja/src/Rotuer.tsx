@@ -16,7 +16,7 @@ const Router = () => {
     <Routes>
       {/* 기본 경로에서 로그인으로 리다이렉트 */}
       {/* 로그인해서 들어가게 하는거는 백이랑 연결하고 일단 들어가면 바로 홈 나오게 할게여 */}
-      <Route path="/" element={<Navigate to="/main" replace />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
 
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />

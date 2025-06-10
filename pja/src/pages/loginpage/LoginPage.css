@@ -4,6 +4,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  box-sizing: border-box;
   padding: 20px;
 }
 
@@ -127,6 +128,7 @@
   border-radius: 5px;
   border: 1px solid #d9d9d6;
   background-color: white;
+  cursor: pointer;
 }
 
 .google-logo {
