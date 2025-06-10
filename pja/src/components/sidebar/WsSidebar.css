@@ -27,6 +27,7 @@
   box-sizing: border-box;
   padding: 4% 15%;
   gap: 10px;
+  cursor: pointer;
 }
 
 .wssidebar-list:hover {
