@@ -2,11 +2,24 @@ import React, { useState } from "react";
 import "./LoginPage.css"; // CSS 파일 연결
 import logoImage from "../../assets/img/logo.png";
 import GoogleImage from "../../assets/img/Google.png";
+import CustomModal from "../signuppage/CustomModal";
 
 const LoginPage = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showModal, setShowModal] = useState<React.ReactNode>(false);
+  const [modalMessage, setModalMessage] = useState<React.ReactNode>("");
+
+  const openModal = (message: string): void => {
+    setModalMessage(message);
+    setShowModal(true);
+  };
+
+  const closeModal = (): void => {
+    setShowModal(false);
+    setModalMessage("");
+  };
 
   const handleIdChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -24,12 +37,40 @@ const LoginPage = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = () => {};
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid: id,
+          password: password,
+        }),
+      });
 
-  //Google 로그인 버튼 클릭 시 백엔드 OAuth 주소로 이동
-  const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+      const result = await response.json();
+
+      if (response.ok && result.status === "success") {
+        // 로그인 성공
+        openModal(result.message);
+
+        localStorage.setItem("accessToken", result.data.accessToken);
+        localStorage.setItem("refreshToken", result.data.refreshToken);
+
+        // 메인 페이지로 이동
+        window.location.href = "/main";
+      } else {
+        openModal(result.message);
+      }
+    } catch (error) {
+      console.error("로그인 오류:", error);
+      openModal("네트워크 오류로 로그인에 실패했습니다.");
+    }
   };
+  //Google 로그인 버튼 클릭 시 백엔드 OAuth 주소로 이동
+  const handleGoogleLogin = () => {};
 
   return (
     <div className="login-container">
@@ -187,6 +228,7 @@ const LoginPage = () => {
           </button>
         </div>
       </div>
+      {showModal && <CustomModal message={modalMessage} onClose={closeModal} />}
     </div>
   );
 };
