@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
 import "./GanttChartPage.css";
 import { getSequentialColor } from "../../../../utils/colorUtils";
 import { Gantt_COLORS } from "../../../../constants/colors";
@@ -66,6 +65,18 @@ const tasks: Task[] = [
     start_date: new Date("2025-06-10"),
     end_date: new Date("2025-06-19"),
   },
+  {
+    action_id: 10,
+    name: "엄청 길어졌을때를 확인을 해볼거에여ㅕㅕㅕㅕㅕㅕㅕㅕㅕㅕㅕㅕ",
+    start_date: new Date("2025-06-15"),
+    end_date: new Date("2025-06-20"),
+  },
+  {
+    action_id: 11,
+    name: "베포하기",
+    start_date: new Date("2025-06-25"),
+    end_date: new Date("2025-06-29"),
+  },
 ];
 
 function dateDiffInDays(a: Date, b: Date) {
@@ -82,8 +93,6 @@ function formatDate(date: Date) {
 }
 
 export default function GanttChartPage() {
-  const { actionsByFeatureId } = useCategoryFeatureCategory();
-
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -106,8 +115,8 @@ export default function GanttChartPage() {
 
   const CELL_WIDTH = 80;
 
-  useEffect(() => {
-    // 오늘 날짜를 가운데로 스크롤
+  // 오늘 날짜를 가운데로 스크롤
+  const scrollToToday = () => {
     if (!containerRef.current || !contentRef.current) return;
     const todayIndex = dates.indexOf(today);
     if (todayIndex === -1) return;
@@ -117,6 +126,10 @@ export default function GanttChartPage() {
       containerRef.current.clientWidth / 2 +
       CELL_WIDTH / 2;
     containerRef.current.scrollLeft = scrollTo > 0 ? scrollTo : 0;
+  };
+
+  useEffect(() => {
+    scrollToToday();
   }, []);
 
   // 드래그 핸들링
@@ -146,69 +159,100 @@ export default function GanttChartPage() {
   }, [isDragging]);
 
   return (
-    <div
-      className="gantt-container"
-      ref={containerRef}
-      onMouseDown={onMouseDown}
-    >
+    <>
+      <div className="gantt-header">
+        <p>
+          {formatDate(chartStart)} ~ {formatDate(chartEnd)}
+        </p>
+        <button onClick={() => scrollToToday()}>오늘</button>
+      </div>
+
       <div
-        className="gantt-drag-area"
-        ref={contentRef}
-        style={{ width: dates.length * CELL_WIDTH }}
+        className="gantt-container"
+        ref={containerRef}
+        onMouseDown={onMouseDown}
       >
-        <div className="gantt-content">
-          <div
-            className="gantt-chart"
-            style={{ width: dates.length * CELL_WIDTH }}
-          >
-            {/* 날짜 칼럼 (absolute, 맨 아래 깔림) */}
-            <div className="gantt-date-columns">
-              {dates.map((date) => {
-                const isToday = date === today;
-                return (
+        <div
+          className="gantt-drag-area"
+          ref={contentRef}
+          style={{ width: dates.length * CELL_WIDTH }}
+        >
+          <div className="gantt-content">
+            <div
+              className="gantt-chart"
+              style={{ width: dates.length * CELL_WIDTH }}
+            >
+              {/* 배경 그리드 - 날짜 컬럼들을 반복해서 생성 */}
+              <div className="gantt-background">
+                {Array.from({
+                  length: Math.ceil((tasks.length * 40 + 60) / 40),
+                }).map((_, rowIndex) => (
+                  <div
+                    key={rowIndex}
+                    className="gantt-row"
+                    style={{ top: rowIndex * 40 }}
+                  >
+                    {dates.map((date) => {
+                      const isToday = date === today;
+                      return (
+                        <div
+                          key={`${rowIndex}-${date}`}
+                          className={`gantt-cell ${isToday ? "today" : ""}`}
+                          style={{ width: CELL_WIDTH }}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+
+              {/* 날짜 라벨 (맨 위 고정) */}
+              <div className="gantt-date-labels">
+                {dates.map((date) => (
                   <div
                     key={date}
-                    className={`gantt-date-column ${isToday ? "today" : ""}`}
+                    className="gantt-date-label"
+                    style={{ width: CELL_WIDTH }}
                   >
-                    <div className="gantt-date-label">{date.slice(5)}</div>
+                    {date.slice(5)}
+                  </div>
+                ))}
+              </div>
+
+              {/* 태스크 바들 */}
+              {tasks.map((task, i) => {
+                const left =
+                  dateDiffInDays(chartStart, new Date(task.start_date)) *
+                  CELL_WIDTH;
+                const width =
+                  (dateDiffInDays(
+                    new Date(task.start_date),
+                    new Date(task.end_date)
+                  ) +
+                    1) *
+                  CELL_WIDTH;
+
+                return (
+                  <div
+                    key={task.action_id}
+                    className="gantt-task-bar"
+                    style={{
+                      top: i * 40 + 40, // 날짜 라벨 아래부터 시작
+                      left,
+                      width,
+                      backgroundColor: getSequentialColor(Gantt_COLORS, i),
+                    }}
+                  >
+                    <span className="gantt-task-name" title={`${task.name}`}>
+                      {task.name}
+                    </span>
                   </div>
                 );
               })}
             </div>
-
-            {/* 태스크 바 (absolute, 위에 올라옴) */}
-            {tasks.map((task, i) => {
-              const left =
-                dateDiffInDays(chartStart, new Date(task.start_date)) *
-                CELL_WIDTH;
-              const width =
-                (dateDiffInDays(
-                  new Date(task.start_date),
-                  new Date(task.end_date)
-                ) +
-                  1) *
-                CELL_WIDTH;
-
-              return (
-                <div
-                  key={task.action_id}
-                  className="gantt-task-bar"
-                  style={{
-                    top: i * 30 + 30, // 💡 날짜 라벨 높이 + 여백
-                    left,
-                    width,
-                    backgroundColor: getSequentialColor(Gantt_COLORS, i),
-                  }}
-                >
-                  <span className="gantt-task-name" title={`${task.name}`}>
-                    {task.name}
-                  </span>
-                </div>
-              );
-            })}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,21 +1,39 @@
+.gantt-header {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.gantt-header p {
+  margin: 0;
+}
+
+.gantt-header button {
+  padding: 1px 3px;
+  border: 1px solid #d9d9d6;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .gantt-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   margin-top: 10px;
-  height: 600px;
+  height: 550px;
   flex-grow: 1;
   box-sizing: border-box;
   overflow: hidden;
-  background-color: #fff5f0;
   position: relative;
   cursor: grab;
 }
 
 .gantt-drag-area {
   flex-grow: 1;
-  overflow: hidden;
+  overflow: auto;
   position: relative;
+  padding-right: 16px;
 }
 
 .gantt-content {
@@ -26,53 +44,72 @@
   position: relative;
 }
 
-.gantt-date-columns {
-  display: flex;
+.gantt-chart {
+  box-sizing: border-box;
+  position: relative;
+  min-height: 100%;
+}
+
+/* 배경 그리드 */
+.gantt-background {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
   width: 100%;
+  height: 100%;
   z-index: 0;
 }
 
-.gantt-date-column {
-  width: 80px;
+.gantt-row {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 40px;
+}
+
+.gantt-cell {
+  height: 100%;
+  background-color: #fff5f0;
   border-right: 1px solid #ffe3d7;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-.gantt-date-label {
-  font-size: 12px;
-  font-weight: bold;
-  padding-top: 4px;
-}
-
-.gantt-date-column.today {
+.gantt-cell.today {
   background-color: #ffe3d7;
 }
 
-.gantt-chart {
-  flex-grow: 1;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: 580px;
-  position: relative;
+/* 날짜 라벨 */
+.gantt-date-labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  height: 30px;
+  z-index: 5;
+  background-color: transparent;
 }
 
+.gantt-date-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 12px;
+  font-weight: bold;
+  border-right: 1px solid #ffe3d7;
+  box-sizing: border-box;
+}
+
+/* 태스크 바 */
 .gantt-task-bar {
-  position: relative;
+  position: absolute;
   box-sizing: border-box;
   height: 30px;
   border-radius: 5px;
   padding: 0 5px;
   display: flex;
   align-items: center;
-  /* 기타 스타일 */
+  z-index: 3;
 }
 
 .gantt-task-name {
