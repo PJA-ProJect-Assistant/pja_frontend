@@ -5,6 +5,7 @@ import "./EmailVerificationPage.css";
 import emailLogoImage from "../../../assets/img/emailLogo.png";
 import verficatedemailIcon from "../../../assets/img/verficatedemail.png";
 import hintIcon from "../../../assets/img/hint.png";
+import CustomModal from "../CustomModal";
 
 interface EmailVerificationApiResponse {
   status: string;
@@ -23,6 +24,19 @@ const EmailVerificationPage: React.FC = () => {
   const [verificationToken, setVerificationToken] = useState<string>("");
   const [isResending, setIsResending] = useState<boolean>(false);
   const [resendCooldown, setResendCooldown] = useState<number>(0);
+
+  const [showModal, setShowModal] = useState<React.ReactNode>(false);
+  const [modalMessage, setModalMessage] = useState<React.ReactNode>("");
+
+  const openModal = (message: string): void => {
+    setModalMessage(message);
+    setShowModal(true);
+  };
+
+  const closeModal = (): void => {
+    setShowModal(false);
+    setModalMessage("");
+  };
 
   const handleVerification = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVerificationToken(e.target.value);
@@ -49,25 +63,25 @@ const EmailVerificationPage: React.FC = () => {
       //   }
       // );
 
-            const response = await axios.post(
-          `http://localhost:8080/api/auth/verify-email`,
-          { 
-            email: userEmail,
-            token: verificationToken },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
+      const response = await axios.post(
+        `http://localhost:8080/api/auth/verify-email`,
+        {
+          email: userEmail,
+          token: verificationToken,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status === 200 && response.data.status === "success") {
-        alert("이메일 인증이 완료되었습니다!");
+        openModal("이메일 인증이 완료되었습니다!");
         // 로그인 페이지로 이동
         window.location.href = "/login";
       } else {
-        alert(response.data.message || "인증 토큰이 올바르지 않습니다.");
+        openModal(response.data.message || "인증 번호가 올바르지 않습니다.");
       }
     } catch (error) {
       console.error("이메일 인증 실패", error);
@@ -102,15 +116,15 @@ const EmailVerificationPage: React.FC = () => {
     setIsResending(true);
     try {
       const response = await axios.post(
-          `http://localhost:8080/api/auth/send-email`,
-          { email: userEmail },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("userEmail:",userEmail);
+        `http://localhost:8080/api/auth/send-email`,
+        { email: userEmail },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("userEmail:", userEmail);
 
       if (response.status === 200 && response.data.status === "success") {
         alert("인증 이메일이 재전송되었습니다");
@@ -232,6 +246,7 @@ const EmailVerificationPage: React.FC = () => {
           </div>
         </div>
       </div>
+      {showModal && <CustomModal message={modalMessage} onClose={closeModal} />}
     </div>
   );
 };
