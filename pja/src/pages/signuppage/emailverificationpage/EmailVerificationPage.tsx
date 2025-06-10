@@ -25,8 +25,8 @@ const EmailVerificationPage: React.FC = () => {
   const [isResending, setIsResending] = useState<boolean>(false);
   const [resendCooldown, setResendCooldown] = useState<number>(0);
 
-  const [showModal, setShowModal] = useState<React.ReactNode>(false);
-  const [modalMessage, setModalMessage] = useState<React.ReactNode>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>("");
 
   const openModal = (message: string): void => {
     setModalMessage(message);
