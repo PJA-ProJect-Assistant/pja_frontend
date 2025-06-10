@@ -20,7 +20,6 @@ const Router = () => {
       {/* 로그인해서 들어가게 하는거는 백이랑 연결하고 일단 들어가면 바로 홈 나오게 할게여 */}
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
@@ -39,14 +38,7 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-      <Route
-        path="/apipage"
-        element={
-          <PrivateRoute>
-            <ApiPage />
-          </PrivateRoute>
-        }
-      />
+
       <Route
         path="/addws"
         element={
@@ -90,9 +82,6 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-
-
-     
     </Routes>
   );
 };
