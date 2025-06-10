@@ -7,10 +7,6 @@ import { WSSidebarHeader } from "../header/WSSidebarHeader";
 import ProgressStep from "./ProgressStep";
 import LeaveTeamModal from "../modal/LeaveTeamModal";
 
-interface IsClose {
-  onClose: () => void;
-}
-
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -79,6 +75,7 @@ export default function WsSidebar({ onClose }: IsClose) {
           <div className="wssidebar-img">
             <img src={git_icon} alt="git아이콘" />
           </div>
+          <p>Git 연동</p>
         </div>
         <div className="wssidebar-list">
           <svg

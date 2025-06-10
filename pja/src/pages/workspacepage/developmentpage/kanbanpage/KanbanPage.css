@@ -1,6 +1,7 @@
 .kanban-board {
     display: flex;
-    gap: 16px;
+    justify-content: space-around;
+    gap: 20px;
     padding: 20px;
 }
 
@@ -9,25 +10,24 @@
     border-radius: 8px;
     padding: 12px;
     flex: 1;
-    min-width: 300px;
+    min-width: 250px;
+    max-width: 350px;
     min-height: 500px;
     display: flex;
     flex-direction: column;
+    gap: 20px;
 }
 
 .kanban-column-title {
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 16px;
 }
 
 .kanban-category {
     background: #fff;
-    margin-bottom: 20px;
     width: 100%;
     box-sizing: border-box;
     border-radius: 10px;
-    margin-bottom: 10px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -54,7 +54,7 @@
 }
 
 .kanban-action-card {
-    background: #e5e7eb;
+    background: #F0F2F7;
     padding: 8px 10px;
     margin-bottom: 6px;
     border-radius: 4px;
