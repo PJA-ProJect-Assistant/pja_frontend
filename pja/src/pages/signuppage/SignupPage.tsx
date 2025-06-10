@@ -336,7 +336,7 @@ const SignupPage: React.FC = () => {
       return;
     }
 
-    //이메일 유효성 확인
+    //비밀번호 유효성 확인
     if (!passwordValidation.isValid) {
       openModal(
         passwordValidation.message || "비밀번호 형식이 올바르지 않습니다."
@@ -362,11 +362,6 @@ const SignupPage: React.FC = () => {
 
       //  성공 응답 처리 (201 Created)
       if (response.status === 201 && response.data.status === "success") {
-        openModal(
-          response.data.message ||
-            "회원가입이 완료되었습니다 \n이메일 인증을 진행해주세요"
-        );
-
         // 회원가입 성공 후 이메일 인증 요청
         try {
           const emailResponse = await axios.post(
@@ -378,25 +373,8 @@ const SignupPage: React.FC = () => {
               },
             }
           );
-
-          if (
-            emailResponse.status === 200 &&
-            emailResponse.data.status === "success"
-          ) {
-            openModal(
-              "이메일 인증 메일이 발송되었습니다. 이메일을 확인해주세요."
-            );
-          } else {
-            console.warn("이메일 발송 응답 이상:", emailResponse.data);
-            openModal(
-              "이메일 인증 메일 발송에 실패했지만 회원가입은 완료되었습니다."
-            );
-          }
         } catch (emailError) {
           console.error("이메일 발송 실패:", emailError);
-          openModal(
-            "이메일 인증 메일 발송에 실패했지만 회원가입은 완료되었습니다."
-          );
         }
 
         window.location.href = `/email-verification?email=${encodeURIComponent(
@@ -772,6 +750,19 @@ const SignupPage: React.FC = () => {
                 </button>
               )}
             </div>
+            {/*비밀번호 유효성 검사 */}
+            {password && !passwordValidation.isValid && (
+              <div className="validation-message error">
+                {passwordValidation.message}
+              </div>
+            )}
+
+            {/* 비밀번호가 유효할 때 성공 메시지 (선택사항) */}
+            {password && passwordValidation.isValid && (
+              <div className="validation-message success">
+                ✓ 사용 가능한 비밀번호입니다
+              </div>
+            )}
           </div>
 
           {/*비밀번호 확인*/}
