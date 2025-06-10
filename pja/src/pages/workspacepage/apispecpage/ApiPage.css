@@ -1,9 +1,13 @@
-.api-wrapper {
-  display: flex;
-}
 .api-main {
   flex: 1;
-  padding: 54px;
+  padding: 0 54px 54px 54px;
+}
+.api-header {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 5px;
 }
 .api-alert {
   display: flex;
@@ -12,7 +16,7 @@
 }
 .api-table {
   width: 100%;
-  margin-top: 30px;
+  margin-top: 10px;
   border-collapse: collapse; /*셀 경계 중첩 제거*/
 }
 .api-table th,
@@ -22,7 +26,7 @@
 }
 .api-table-title {
   font-weight: bold;
-  font-size: 15px;
+  font-size: var(--font-size-base);
   background-color: #f0f2f7;
 }
 
@@ -49,12 +53,13 @@
 
 .no-border {
   border: none !important;
+  width: 0;
 }
 
 .api-button-group {
   display: flex;
   justify-content: flex-end;
-  padding-right: 130px;
+  margin-right: 55px;
 }
 .api-edit-button {
   background-color: #00205b;
@@ -64,7 +69,6 @@
   height: 40px;
   border: none;
   cursor: pointer;
-  font-size: 15px;
 }
 
 .api-edit-input {

@@ -63,8 +63,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     const [editingActionId, setEditingActionId] = useState<number | null>(null);
     const [featuresByCategoryId, setFeaturesByCategoryId] = useState<Map<number, feature[]>>(new Map());
     const [actionsByFeatureId, setActionsByFeatureId] = useState<Map<number, action[]>>(new Map());
-    const [startDates, setStartDates] = useState<{ [key: number]: Date | null }>({});
-    const [endDates, setEndDates] = useState<{ [key: number]: Date | null }>({});
     const [testCheckCg, setTestCheckCg] = useState<{ [key: number]: boolean }>({});
     const [testCheckFt, setTestCheckFt] = useState<{ [key: number]: boolean }>({});
     const [testCheckAc, setTestCheckAc] = useState<{ [key: number]: boolean }>({});
@@ -135,8 +133,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
             });
 
         setActionsByFeatureId(actionMap);
-        setStartDates(startDateMap);
-        setEndDates(endDateMap);
     }, [featuresByCategoryId, actions]);
 
     // has_test 초기화 (category, feature, action 각각)

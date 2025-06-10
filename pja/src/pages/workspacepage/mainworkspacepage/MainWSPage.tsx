@@ -10,11 +10,15 @@ import { AnimatePresence } from "framer-motion";
 import IdeaPage from "../ideapage/IdeaPage";
 import RequirementsPage from "../requirementpage/RequirementsPage";
 import ERDPage from "../erdpage/ERDPage";
-import ApiSpecPage from "../apispecpage/ApiSpecPage";
+import ApiPage from "../apispecpage/ApiPage";
 import DevelopmentPage from "../developmentpage/DevelopmentPage";
+import { ReactFlowProvider } from "reactflow";
 
 export default function MainWSPage() {
-  const { wsid, stepNumber } = useParams<{ wsid: string; stepNumber: string }>();
+  const { wsid, stepNumber } = useParams<{
+    wsid: string;
+    stepNumber: string;
+  }>();
   const dispatch = useDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
@@ -61,21 +65,15 @@ export default function MainWSPage() {
         </div>
       )}
       <div className="wscontent-container">
-        {step === 0 && (
-          <IdeaPage />
-        )}
-        {step === 1 && (
-          <RequirementsPage />
-        )}
+        {step === 0 && <IdeaPage />}
+        {step === 1 && <RequirementsPage />}
         {step === 2 && (
-          <ERDPage />
+          <ReactFlowProvider>
+            <ERDPage />
+          </ReactFlowProvider>
         )}
-        {step === 3 && (
-          <ApiSpecPage />
-        )}
-        {(step === 4 || step === 5 || step == 6) && (
-          <DevelopmentPage />
-        )}
+        {step === 3 && <ApiPage />}
+        {(step === 4 || step === 5 || step == 6) && <DevelopmentPage />}
       </div>
     </div>
   );
