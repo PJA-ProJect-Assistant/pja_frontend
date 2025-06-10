@@ -20,13 +20,10 @@ const Router = () => {
 
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/main" element={<MainPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/find-id" element={<FindIdPage />} />
       <Route path="/find-pw" element={<FindPwPage />} />
       {/* 인증 필요 라우트 */}
-      {/* <Route element={<PrivateRoute />}*/}
-      {/*</Route> */}
       <Route path="/main" element={<MainPage />} />
       <Route path="/addws" element={<AddWSPage />} />
       <Route path="/ws/:wsid/step/:stepNumber" element={<MainWSPage />} />
