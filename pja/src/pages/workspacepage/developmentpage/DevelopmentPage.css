@@ -1,32 +1,38 @@
 .develop-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    box-sizing: border-box;
-    flex: 1;
-    margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  flex: 1;
+  margin-top: 5px;
+}
+
+.develop-content-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .develop-navigate-container {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .develop-navigate {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px 10px 0 0;
-    width: 100px;
-    height: 50px;
-    background-color: #d9d9d6;
-    cursor: pointer;
-    transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px 10px 0 0;
+  min-width: 100px;
+  height: 50px;
+  background-color: #d9d9d6;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .develop-navigate.selected {
-    background-color: white;
-    box-shadow: 0 -4px 8px -4px rgba(0, 0, 0, 0.4);
-    z-index: 1;
-
+  background-color: white;
+  box-shadow: 0 -4px 8px -4px rgba(0, 0, 0, 0.4);
+  z-index: 1;
 }

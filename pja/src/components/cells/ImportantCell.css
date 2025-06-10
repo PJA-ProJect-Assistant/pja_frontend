@@ -1,0 +1,19 @@
+.importance-cell-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.importance-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: #d9d9d6;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.importance-dot.filled {
+    background-color: #FE5000;
+}

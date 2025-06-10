@@ -1,4 +1,4 @@
-.mainws-container {
+.post-container {
   display: flex;
   position: fixed;
   flex-direction: row;
@@ -8,7 +8,7 @@
   overflow: hidden;
 }
 
-.sidebar-closed {
+.post-sidebar-closed {
   display: flex;
   justify-content: center;
   width: 40px;
@@ -16,17 +16,23 @@
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-icon {
+.post-sidebar-icon {
   background-color: transparent;
   margin-top: 30px;
   cursor: pointer;
 }
 
-.wscontent-container {
+.actionpost-container {
   width: 100%;
   height: 100%;
   max-width: 100%;
+  min-height: 60%;
   box-sizing: border-box;
   padding: 0 20px;
   overflow: auto;
+}
+
+.actionpost-container h2 {
+  text-align: center;
+  margin: 0;
 }

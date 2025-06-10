@@ -4,6 +4,7 @@
   display: flex;
   min-width: 100%;
   height: 100%;
+  box-sizing: border-box;
   flex-direction: column;
   align-items: center;
 }
@@ -11,6 +12,7 @@
 .ws-container-2 {
   min-width: 70%;
   max-width: 70%;
+  box-sizing: border-box;
 }
 
 .wstitle {
@@ -20,7 +22,7 @@
   font-size: var(--font-size-3xl);
   font-weight: 600;
   margin-left: 20px;
-  margin-top: 50px;
+  margin-top: 40px;
   margin-bottom: 20px;
   justify-content: flex-start;
 }
@@ -31,7 +33,8 @@
   flex-direction: column;
   justify-content: space-between;
   width: 300px;
-  height: 200px;
+  height: 180px;
+  box-sizing: border-box;
   flex: 0 0 auto;
   border: 1px solid #d9d9d6;
   background-color: white;
@@ -39,7 +42,6 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 12px;
   z-index: 2;
-  /* 추가: 카드에 z-index 설정 */
 }
 
 .workspace-title {
@@ -64,7 +66,7 @@
 .workspace-title-input:focus {
   outline: none;
   border-radius: 3px;
-  border: 2px solid #00205B;
+  border: 2px solid #00205b;
 }
 
 .ws-title-container {
@@ -88,7 +90,7 @@
 .workspace-team input:focus {
   outline: none;
   border-radius: 3px;
-  border: 2px solid #00205B;
+  border: 2px solid #00205b;
 }
 
 .workspace-more {

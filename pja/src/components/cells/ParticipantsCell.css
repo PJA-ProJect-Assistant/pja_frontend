@@ -1,0 +1,93 @@
+.participants-container {
+  position: relative;
+}
+.participants-display {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 85px;
+  min-height: 20px;
+  gap: 3px;
+  cursor: pointer;
+  flex-wrap: nowrap;
+}
+
+.selected-partinames {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 5px;
+}
+
+.partiprofile-img {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.partiprofile-none {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: var(--font-size-xs);
+  background-color: #bbc9ec;
+}
+
+.participants-dropdown {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  top: 50%;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  padding: 10px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.participant-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.participant-option div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.participant-option span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  display: inline-block;
+}
+.participant-option:hover {
+  background-color: #f0f0f0;
+}
+
+.remove-button {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0;
+  margin-left: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.remove-button:hover {
+  background-color: #bbc9ec;
+}

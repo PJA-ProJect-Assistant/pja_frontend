@@ -59,9 +59,9 @@ export default function ProgressStep() {
                             return <div key={index} className={barClass}></div>;
                         })}
                     </div>
-                    <div className="labels">
+                    <div className="bar-labels">
                         {steps.map((label, index) => (
-                            <div key={index} className="label" onClick={() => {
+                            <div key={index} className="bar-label" onClick={() => {
                                 handleStepClick(index);
                             }}>
                                 {label}

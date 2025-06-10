@@ -1,69 +1,69 @@
 .progress-container {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    box-sizing: border-box;
-    height: 60%;
-    margin-top: 5px;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  height: 62%;
+  min-height: 300px;
 }
 
 .progress-container h3 {
-    font-weight: 500;
+  font-weight: 500;
+  font-size: var(--font-size-base);
 }
 
 .progressbar-container {
-    display: flex;
-    flex-direction: row;
-    height: 100%;
-    width: 100%;
-    justify-content: center;
-    gap: 5px;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  gap: 5px;
 }
 
 .bar-container {
-    display: flex;
-    flex-direction: column;
-    margin-right: 10px;
-    justify-content: space-between;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .bar {
-    width: 10px;
-    flex: 1;
-    margin: 0;
-    background-color: #d9d9d6;
+  width: 10px;
+  flex: 1;
+  margin: 0;
+  background-color: #d9d9d6;
 }
 
 .bar.top {
-    border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
 }
 
 .bar.bottom {
-    border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
 }
 
 .bar.filled {
-    background-color: #ff4500;
+  background-color: #ff4500;
 }
 
 .bar.gradient {
-    background: linear-gradient(to bottom,
-            #ff4500,
-            #d9d9d6);
+  background: linear-gradient(to bottom, #ff4500, #d9d9d6);
 }
 
-.labels {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+.bar-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
-.label {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+.bar-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
 }

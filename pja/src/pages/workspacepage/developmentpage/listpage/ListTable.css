@@ -1,26 +1,65 @@
-.feature-table {
-    width: 100%;
-    min-width: 900px;
-    border-collapse: collapse;
-    table-layout: fixed;
-    margin: 20px 0;
-    font-size: var(--font-size-sm);
+.listtable-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.feature-table th,
+.listtable-btn-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  min-width: 600px;
+  gap: 10px;
+}
+
+.listtable-btn-container button {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+  background-color: #00205B;
+  border: none;
+  color: white;
+  padding: 5px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.listtable-btn-container p {
+  margin: 0;
+}
+
+.feature-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 10px 0;
+  font-size: var(--font-size-sm);
+}
+
+.feature-table th {
+  background-color: #f0f2f7;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  text-align: left;
+  padding: 5px 2px;
+}
+
 .feature-table td {
-    border: 1px solid #ccc;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  position: relative;
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 10px 0;
 }
 
 /* 열 너비 설정 (총합 100%) */
 .feature-table th:nth-child(1),
 /* 이름 */
 .feature-table td:nth-child(1) {
-    width: 30%;
+  width: 30%;
 }
 
 .feature-table th:nth-child(2),
@@ -35,75 +74,324 @@
 .feature-table th:nth-child(6),
 /* 중요도 */
 .feature-table td:nth-child(6) {
-    width: 11%;
+  width: 11%;
 }
 
 .feature-table th:nth-child(5),
 /* 상태 */
-.feature-table td:nth-child(5),
+.feature-table td:nth-child(5) {
+  width: 8.5%;
+}
+
 .feature-table th:nth-child(7),
 /* 테스트 여부 */
 .feature-table td:nth-child(7) {
-    width: 8%;
+  width: 7.5%;
 }
 
-.feature-table thead {
-    background-color: #F0F2F7;
-    font-weight: bold;
+.list-name:hover {
+  background-color: #f2f2f2;
+}
+
+.list-checkbox {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  vertical-align: middle;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+}
+
+.list-checkbox:checked {
+  background-color: #fe5000;
+  border-color: #fe5000;
+}
+
+/* 체크 표시를 CSS로 구현 */
+.list-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .cglist-name {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 6px;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    height: 100%;
-    width: 100%;
-    min-width: 200px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  min-width: 200px;
 }
 
 .cglist-icon {
-    background-color: #FE5000;
-    border-radius: 5px;
-    padding: 1px;
+  background-color: #fe5000;
+  border-radius: 5px;
+  padding: 1px;
 }
 
 .ftlist-name {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 6px;
-    padding: 0;
-    margin-left: 20px;
-    box-sizing: border-box;
-    height: 100%;
-    width: 100%;
-    min-width: 200px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 0;
+  padding-left: 20px;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  min-width: 200px;
 }
 
 .ftlist-icon {
-    background-color: #FF8C57;
-    border-radius: 5px;
-    padding: 1px;
+  background-color: #ff8c57;
+  border-radius: 5px;
+  padding: 1px;
 }
 
 .list-completebtn {
-    width: 50%;
-    margin: 10px;
-    background-color: #FE5000;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
+  padding: 3px 10px;
+  box-sizing: border-box;
+  background-color: #fe5000;
+  border-radius: 3px;
+  font-size: var(--font-size-xs);
+  color: white;
+  cursor: pointer;
+  border: none;
 }
 
-.list-completebtn:enabled {
-    background-color: #d9d9d6;
-    border-radius: 5px;
-    color: black;
-    cursor: not-allowed;
+.list-completebtn:disabled {
+  background-color: #d9d9d6;
+  color: black;
+  cursor: not-allowed;
+}
+
+.list-completebtn.completed {
+  opacity: 0.5;
+}
+
+.cg-row.completed,
+.ft-row.completed,
+.ac-row.completed {
+  opacity: 0.5;
+}
+
+.aclist-name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 0;
+  padding-left: 65px;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  min-width: 200px;
+}
+
+.aclist-icon {
+  background-color: #fec300;
+  border-radius: 5px;
+  padding: 1px;
+  min-width: 22px;
+}
+
+.cglist-name span,
+.ftlist-name span,
+.aclist-name span {
+  display: inline-block;
+  max-width: calc(100% - 22px);
+  /* 아이콘 너비 고려 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cglist-name div,
+.ftlist-name div,
+.aclist-name div {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.list-addbtn {
+  display: flex;
+  display: none;
+  padding: 0;
+  text-align: center;
+  border: none;
+  background-color: transparent;
+}
+
+.list-addbtn svg {
+  border-radius: 3px;
+  background-color: #d9d9d6;
+  cursor: pointer;
+}
+
+.list-modifybtn {
+  display: flex;
+  display: none;
+  text-align: center;
+  border: none;
+  background-color: transparent;
+}
+
+.list-modifybtn svg {
+  border-radius: 3px;
+  background-color: #d9d9d6;
+  cursor: pointer;
+}
+
+.list-deletebtn {
+  display: flex;
+  display: none;
+  text-align: center;
+  border: none;
+  background-color: transparent;
+}
+
+.list-deletebtn svg {
+  border-radius: 3px;
+  background-color: #d9d9d6;
+  cursor: pointer;
+}
+
+.list-name:hover .list-deletebtn,
+.list-name:hover .list-modifybtn,
+.list-name:hover .list-addbtn {
+  display: flex;
+}
+
+.filter-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 370px;
+  box-sizing: border-box;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  gap: 10px;
+  margin-left: 10px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.filter-dropdown label {
+  display: block;
+  font-weight: bold;
+  font-size: var(--font-size-sm);
+  color: #333;
+}
+
+.filter-group {
+  position: relative;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  padding: 1px 10px;
+  border: 1px solid #d9d9d6;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdown-wrapper {
+  position: relative;
+}
+
+.dropdown-absolute {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  min-width: 80px;
+}
+
+.dropdown-absolute div {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.dropdown-absolute span {
+  max-width: 100px;
+  /* 너비 제한 */
+  white-space: nowrap;
+  /* 줄바꿈 금지 */
+  overflow: hidden;
+  /* 넘친 내용 숨김 */
+  text-overflow: ellipsis;
+  /* 말줄임 표시 (...) */
+}
+
+.dropdown {
+  margin-bottom: 12px;
+  max-height: 100px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  padding: 6px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.dropdown div {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dropdown input[type="checkbox"] {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+
+.filter-apply-btn {
+  height: 30px;
+}
+
+.listprofile-img {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.listprofile-none {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: var(--font-size-xs);
+  background-color: #bbc9ec;
 }

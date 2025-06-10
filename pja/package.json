@@ -13,11 +13,14 @@
     "@radix-ui/react-dialog": "^1.1.14",
     "axios": "^1.9.0",
     "framer-motion": "^12.16.0",
+    "date-fns": "^4.1.0",
     "mermaid": "^11.6.0",
     "react": "^19.1.0",
+    "react-datepicker": "^8.4.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.1",
-    "recharts": "^2.15.3"
+    "recharts": "^2.15.3",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
