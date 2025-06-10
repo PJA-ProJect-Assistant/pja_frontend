@@ -225,9 +225,26 @@
   cursor: not-allowed;
 }
 
+/*중복확인 버튼 시 메세지*/
+.validation-message {
+  font-size: 13px;
+}
+
+.validation-message.success {
+  color: #007bff;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.validation-message.error {
+  font-size: 14px;
+  color: #dc2626;
+}
+
+/*비밀번호 일치 확인*/
 .validation-message-success {
   color: #007bff;
-  font-size: 13px;
+  font-size: 14px;
   margin-top: 5px;
 }
 

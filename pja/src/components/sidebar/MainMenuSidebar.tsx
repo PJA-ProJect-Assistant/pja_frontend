@@ -1,16 +1,27 @@
 import type { IsClose } from "../../types/common";
+import { useState } from "react";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Users } from "../../constants/userconstants";
 import { useNavigate } from "react-router-dom";
 import "./MainMenuSidebar.css";
+import LogoutModal from "../modal/LogoutModal";
 
 export default function MainMenuSidebar({ onClose }: IsClose) {
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  //계정설정
   const goToAccountSettings = () => {
     navigate("/account-settings");
+  };
+
+  //로그아웃 모달
+  const handleLogout = () => {
+    setShowLogoutModal(false);
+    onClose(); //메뉴 닫기
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -24,6 +35,7 @@ export default function MainMenuSidebar({ onClose }: IsClose) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onClose]);
+
   return (
     <div className="mainmenu-overlay">
       <motion.div
@@ -42,11 +54,24 @@ export default function MainMenuSidebar({ onClose }: IsClose) {
               계정설정
             </p>
             <p>공지</p>
-            <p>로그아웃</p>
+            <p
+              onClick={() => setShowLogoutModal(true)}
+              style={{ cursor: "pointer" }}
+            >
+              로그아웃
+            </p>
             <p>탈퇴</p>
           </div>
         </div>
       </motion.div>
+      {/* LogoutModal이 렌더링된 후 localStorage에서 토근 가져와 서버에 로그아웃 요청*/}
+      {showLogoutModal && (
+        <LogoutModal
+          onConfirm={handleLogout}
+          onClose={() => setShowLogoutModal(false)}
+          accessToken={localStorage.getItem("accessToken") || undefined}
+        />
+      )}
     </div>
   );
 }

@@ -60,6 +60,36 @@ const LoginPage: React.FC = () => {
   };
 
   const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid: id,
+          password: password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.status === "success") {
+        // 로그인 성공
+        openModal(result.message);
+
+        localStorage.setItem("accessToken", result.data.accessToken);
+        localStorage.setItem("refreshToken", result.data.refreshToken);
+
+        // 메인 페이지로 이동
+        window.location.href = "/main";
+      } else {
+        openModal(result.message);
+      }
+    } catch (error) {
+      console.error("로그인 오류:", error);
+      openModal("네트워크 오류로 로그인에 실패했습니다.");
+    }
     if (!id.trim()) {
       openModal("아이디를 입력해주세요");
       return;
