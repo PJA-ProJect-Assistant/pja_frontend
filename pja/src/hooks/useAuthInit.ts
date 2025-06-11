@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAccessToken, clearAccessToken } from "../store/authSlice";
 import { refreshAccessToken } from "../services/authApi";
+import { useNavigate } from "react-router-dom";
 
 //Base64URL을 일반 Base64로 변환해서 atob()를 사용
 function base64UrlDecode(str: string) {
@@ -32,29 +33,39 @@ function isTokenExpired(token: string): boolean {
 }
 
 export function useAuthInit() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  //토큰이 저장되는 동안 privateroute에서 토큰이 없다고 판단해서 리다이렉트된 것 같음
+  const [authInitialized, setAuthInitialized] = useState(false);
+
   useEffect(() => {
-    const tryRefreshToken = async () => {
-      try {
-        const data = await refreshAccessToken(); // 새 accessToken 요청
-        console.log("액세스토큰 저장 디스패치 직전", token);
-        dispatch(setAccessToken(data.accessToken));
-      } catch {
-        dispatch(clearAccessToken());
-        window.location.href = "/login"; // 로그인 페이지로 리다이렉트
+    console.log("useEffect 호출됨");
+    const initializeAuth = async () => {
+      const token = localStorage.getItem("accessToken");
+
+      if (!token || isTokenExpired(token)) {
+        try {
+          console.log("토큰 갱신 시작");
+          const data = await refreshAccessToken(); // 새 accessToken 받아오기
+          console.log("새 accessToken:", data.accessToken);
+          dispatch(setAccessToken(data.accessToken));
+        } catch (err) {
+          console.warn("토큰 갱신 실패", err);
+          console.error(err);
+          dispatch(clearAccessToken());
+          navigate("/login");
+        }
+      } else {
+        // 유효한 토큰이면 그냥 사용
+        console.log("유효한 토큰");
+
+        dispatch(setAccessToken(token));
       }
+      setAuthInitialized(true);
     };
 
-    const token = localStorage.getItem("accessToken");
-
-    if (token) {
-      // if (isTokenExpired(token)) {
-      //   tryRefreshToken(); // 만료 시 새 토큰 받기 시도
-      // } else {
-      //   dispatch(setAccessToken(token)); // 유효하면 세팅
-      // }
-      tryRefreshToken();
-    }
-  }, [dispatch]);
+    initializeAuth();
+  }, [dispatch, navigate]);
+  return authInitialized;
 }

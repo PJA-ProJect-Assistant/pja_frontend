@@ -11,7 +11,6 @@ import type {
 import logoImage from "../../assets/img/logo.png";
 import GoogleImage from "../../assets/img/Google.png";
 import CustomModal from "../signuppage/CustomModal";
-import { store } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
