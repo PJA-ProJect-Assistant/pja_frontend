@@ -12,13 +12,14 @@ import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
 import AccountSettingPage from "./pages/accountsettingpage/AccountSettingPage";
 import WorkspaceSettingPage from "./pages/workspacesettingpage/WorkspaceSettingPage";
 import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/ActionPostPage";
+import RootRedirect from "./components/common/RootRedirect";
 
 const Router = () => {
   return (
     <Routes>
-      {/* 기본 경로에서 로그인으로 리다이렉트 */}
-      {/* 로그인해서 들어가게 하는거는 백이랑 연결하고 일단 들어가면 바로 홈 나오게 할게여 */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      {/* 기본 경로에서 토큰이 있으면 메인, 없으면 로그인으로 리다이렉트 */}
+      <Route path="/" element={<RootRedirect />} />
+
 
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
@@ -61,7 +62,12 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-      <Route path="/oauth2/success" element={<OAuth2Success />} />
+      <Route path="/oauth2/success"
+        element={
+          <PrivateRoute>
+            <OAuth2Success /></PrivateRoute>
+        }
+      />
       {/*계정설정 페이지*/}
       <Route
         path="/account-settings"
