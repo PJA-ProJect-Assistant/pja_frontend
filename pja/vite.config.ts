@@ -10,5 +10,8 @@ export default defineConfig({
   plugins: [react(), basicSsl()],
   server: {
     https: {},
+    proxy: {
+      "/api": "http://localhost:8080",
+    },
   },
 });

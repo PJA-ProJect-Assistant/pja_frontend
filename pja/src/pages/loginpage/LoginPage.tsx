@@ -72,8 +72,8 @@ const LoginPage: React.FC = () => {
 
       if (result.status === "success") {
         const { accessToken } = result.data;
-        dispatch(setAccessToken(accessToken)); // Redux에 저장
-        console.log("로그인 후 Redux 상태:", store.getState().auth.accessToken);
+        localStorage.setItem("accessToken", accessToken); // 로컬스토리지 저장
+        dispatch(setAccessToken(accessToken)); // redux 저장
         openModal(result.message);
 
         setTimeout(() => {

@@ -28,8 +28,6 @@ const Router = () => {
       <Route path="/find-id" element={<FindIdPage />} />
       <Route path="/find-pw" element={<FindPwPage />} />
       {/* 인증 필요 라우트 */}
-      {/* <Route element={<PrivateRoute />}*/}
-      {/*</Route> */}
       <Route
         path="/main"
         element={

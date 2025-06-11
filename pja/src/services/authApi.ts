@@ -60,3 +60,27 @@ export const logoutUser = async (): Promise<LogoutResponse> => {
     throw error;
   }
 };
+
+//토큰 재요청
+export const refreshAccessToken = async () => {
+  try {
+    const response = await api.post("/auth/reissue", {
+      refreshToken: "",
+    });
+    return response.data; // { accessToken: "..." }
+  } catch (error: any) {
+    console.error("🔴 [refreshAccessToken] 토큰 재발급 실패:", error);
+
+    // AxiosError라면 응답 메시지 출력
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("응답 데이터:", error.response.data);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+
+    throw error; // 호출한 곳에서 다시 처리할 수 있도록 재던짐
+  }
+};
