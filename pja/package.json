@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start": "set HTTPS=true&&react-scripts start",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -12,8 +13,8 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
     "axios": "^1.9.0",
-    "framer-motion": "^12.16.0",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.16.0",
     "mermaid": "^11.6.0",
     "react": "^19.1.0",
     "react-datepicker": "^8.4.0",
@@ -25,9 +26,11 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@types/node": "^24.0.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-basic-ssl": "^2.0.0",
     "@vitejs/plugin-react": "^4.4.1",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
