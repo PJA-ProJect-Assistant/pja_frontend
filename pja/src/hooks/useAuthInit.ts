@@ -42,30 +42,36 @@ export function useAuthInit() {
   useEffect(() => {
     console.log("useEffect 호출됨");
     const initializeAuth = async () => {
-      const token = localStorage.getItem("accessToken");
+      try {
+        const token = localStorage.getItem("accessToken");
 
-      if (!token || isTokenExpired(token)) {
-        try {
+        if (!token || isTokenExpired(token)) {
           console.log("토큰 갱신 시작");
-          const data = await refreshAccessToken(); // 새 accessToken 받아오기
-          console.log("새 accessToken:", data.accessToken);
-          dispatch(setAccessToken(data.accessToken));
-        } catch (err) {
-          console.warn("토큰 갱신 실패", err);
-          console.error(err);
-          dispatch(clearAccessToken());
-          navigate("/login");
+          const data = await refreshAccessToken(); // 새 토큰 요청
+          console.log("date :", data);
+          if (!data.accessToken) {
+            console.warn("accessToken이 없음 - 토큰 갱신 실패 처리");
+            throw new Error("토큰 갱신 실패 - accessToken 없음");
+          }
+          else {
+            console.log("새 accessToken:", data.accessToken);
+            dispatch(setAccessToken(data.accessToken));
+          }
+        } else {
+          console.log("유효한 토큰");
+          dispatch(setAccessToken(token));
         }
-      } else {
-        // 유효한 토큰이면 그냥 사용
-        console.log("유효한 토큰");
-
-        dispatch(setAccessToken(token));
+      } catch (err) {
+        console.warn("토큰 갱신 실패", err);
+        dispatch(clearAccessToken());
+        window.location.href = "/login"
+        return;
       }
       setAuthInitialized(true);
-    };
 
+    };
     initializeAuth();
+
   }, [dispatch, navigate]);
   return authInitialized;
 }

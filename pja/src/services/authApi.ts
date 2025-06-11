@@ -64,9 +64,7 @@ export const logoutUser = async (): Promise<LogoutResponse> => {
 //토큰 재요청
 export const refreshAccessToken = async () => {
   try {
-    const response = await api.post("/auth/reissue", {
-      refreshToken: "",
-    });
+    const response = await api.post("/auth/reissue");
     return response.data; // { accessToken: "..." }
   } catch (error: any) {
     console.error("🔴 [refreshAccessToken] 토큰 재발급 실패:", error);
