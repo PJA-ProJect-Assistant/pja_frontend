@@ -38,14 +38,15 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const data = await refreshAccessToken(); // 🔄 accessToken 재발급
-        store.dispatch(setAccessToken(data.accessToken));
+        const response = await refreshAccessToken(); // 🔄 accessToken 재발급
+        const accessToken = response.data?.accessToken ?? null;
+        store.dispatch(setAccessToken(accessToken));
         pendingRequests.forEach((cb) => cb()); // 대기 중인 요청 재실행
         pendingRequests = [];
         isRefreshing = false;
 
         // 원래 요청에 새 토큰 설정하고 재시도
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
         return api(originalRequest);
       } catch (refreshError) {
