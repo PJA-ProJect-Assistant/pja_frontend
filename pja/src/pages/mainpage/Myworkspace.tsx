@@ -5,6 +5,7 @@ import { WsmenuModal } from "../../components/modal/WsmenuModal";
 import { WscompleteModal } from "../../components/modal/WsmenuModal";
 import { useUserData } from "../../hooks/useUserData";
 import type { workspace } from "../../types/workspace";
+import { getStepIdFromNumber } from "../../utils/projectSteps";
 
 export function Myworkspace() {
   const { myWSData } = useUserData();
@@ -29,6 +30,11 @@ export function Myworkspace() {
   // 각각의 스크롤 영역에 대해 따로 참조 만들기
   const activeRef = useRef<HTMLDivElement>(null);
   const completeRef = useRef<HTMLDivElement>(null);
+
+  const handleClickWS = (ws: workspace) => {
+    const stepId = getStepIdFromNumber(ws.progressStep);
+    navigate(`/ws/${ws.workspaceId}/step/${stepId}`);
+  }
 
   const toggleMenu = (workspaceId: number) => {
     setWsMenuOpenId((prevId) => (prevId === workspaceId ? null : workspaceId));
@@ -97,36 +103,14 @@ export function Myworkspace() {
   const activeHandlers = useDragScroll(activeRef);
   const completeHandlers = useDragScroll(completeRef);
 
-  const getStepIdFromNumber = (stepNum: string): string => {
-    switch (stepNum) {
-      case "0":
-        return "idea";
-      case "1":
-        return "requirements";
-      case "2":
-        return "project";
-      case "3":
-        return "erd";
-      case "4":
-        return "api";
-      case "5":
-        return "develop";
-      case "6":
-        return "complete";
-      default:
-        return "idea"; // fallback
-    }
-  };
-
   const renderCards = (data: workspace[]) =>
     data.map((ws) => (
       <div
         key={ws.workspaceId}
         className="workspace-card"
-        onDoubleClick={() => {
-          const stepId = getStepIdFromNumber(ws.progressStep);
-          navigate(`/ws/${ws.workspaceId}/step/${stepId}`);
-        }}
+        onDoubleClick={() =>
+          handleClickWS(ws)
+        }
       >
         <div>
           <div

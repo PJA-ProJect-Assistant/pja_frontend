@@ -4,8 +4,11 @@ import { useState } from "react";
 import { addworkspace } from "../../../services/workspaceApi";
 import { useNavigate } from "react-router-dom";
 import { useUserData } from "../../../hooks/useUserData";
+import { setSelectedWS } from "../../../store/workspaceSlice";
+import { useDispatch } from "react-redux";
 
 export default function AddWSName({ onClose }: IsClose) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { refetchWorkspaces } = useUserData();
   const [projectName, setProjectName] = useState<string>("");
@@ -19,8 +22,11 @@ export default function AddWSName({ onClose }: IsClose) {
     console.log("teamName", teamName);
     console.log("isPublic", isPublic);
     try {
-      const responese = await addworkspace({ projectName, teamName, isPublic });
-      console.log("워크스페이스 생성:", responese.data);
+      const response = await addworkspace({ projectName, teamName, isPublic });
+      console.log("워크스페이스 생성:", response.data);
+      if (response.data) {
+        dispatch(setSelectedWS(response.data));
+      }
       refetchWorkspaces(); // 워크스페이스 새로고침
       onClose();
     } catch (error) {

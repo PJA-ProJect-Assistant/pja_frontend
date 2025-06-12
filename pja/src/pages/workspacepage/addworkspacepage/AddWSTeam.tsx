@@ -1,9 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import "./AddWSPage.css";
 import { useState } from "react";
+import { getStepIdFromNumber } from "../../../utils/projectSteps";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../store/store";
 
 export default function AddWSTeam() {
-  const navi = useNavigate();
+  const navigate = useNavigate();
+
+  const currentWS = useSelector((state: RootState) => state.workspace.selectedWS);
+  const stepId = getStepIdFromNumber(currentWS?.progressStep ?? "0");
 
   const [emailInput, setEmailInput] = useState("");
   const [emails, setEmails] = useState<string[]>([]);
@@ -79,13 +85,13 @@ export default function AddWSTeam() {
         <div className="addws-btn-container">
           {/* navigate는 api 연결 후 해야함 */}
           <button
-            onClick={() => navi("/ws/{wsid}/step/0")}
+            onClick={() => navigate(`/ws/${currentWS?.workspaceId}/step/${stepId}`)}
             disabled={emails.length === 0}
             className={emails.length > 0 ? "addws-btn1" : "addws-btn2"}
           >
             초대하기
           </button>
-          <button onClick={() => navi("/ws/{wsid}/step/0")} className="addws-btn2">
+          <button onClick={() => navigate(`/ws/${currentWS?.workspaceId}/step/${stepId}`)} className="addws-btn2">
             넘어가기
           </button>
         </div>
