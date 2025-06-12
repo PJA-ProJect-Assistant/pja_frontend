@@ -22,19 +22,14 @@ const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
   };
 
   const handleLogout = async () => {
-    console.log("🔄 로그아웃 처리 시작");
-
     setIsLoading(true);
     setError(null);
 
     try {
       await logoutUser();
-      console.log("✅ 로그아웃 성공");
 
       // 로그아웃 성공 시 모든 인증 관련 데이터 제거
       store.dispatch(clearAccessToken());
-
-      console.log("🗑️ 토큰 제거 완료");
 
       onConfirm(); // 성공 콜백 호출
     } catch (error) {

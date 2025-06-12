@@ -1,13 +1,32 @@
 import "./AddWSPage.css";
 import type { IsClose } from "../../../types/common";
 import { useState } from "react";
+import { addworkspace } from "../../../services/workspaceApi";
+import { useNavigate } from "react-router-dom";
+import { useUserData } from "../../../hooks/useUserData";
 
 export default function AddWSName({ onClose }: IsClose) {
+  const navigate = useNavigate();
+  const { refetchWorkspaces } = useUserData();
   const [projectName, setProjectName] = useState<string>("");
   const [teamName, setTeamName] = useState<string>("");
   const [isPublic, setIsPublic] = useState<boolean>(true);
 
   const isValid = projectName.trim() !== "" && teamName.trim() !== "";
+
+  const handleAddWS = async () => {
+    console.log("projectName", projectName);
+    console.log("teamName", teamName);
+    console.log("isPublic", isPublic);
+    try {
+      const responese = await addworkspace({ projectName, teamName, isPublic });
+      console.log("워크스페이스 생성:", responese.data);
+      refetchWorkspaces(); // 워크스페이스 새로고침
+      onClose();
+    } catch (error) {
+      console.error("워크스페이스 생성 실패:", error);
+    }
+  };
 
   return (
     <div className="addws-container">
@@ -15,7 +34,7 @@ export default function AddWSName({ onClose }: IsClose) {
         <div className="addws-title">
           <p>워크스페이스 생성</p>
           <svg
-            onClick={() => window.history.back()}
+            onClick={() => navigate("/main")}
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
             viewBox="0 -960 960 960"
@@ -61,7 +80,7 @@ export default function AddWSName({ onClose }: IsClose) {
         <div className="addws-btn-container">
           {/* 생성하기 누르면 db에 저장 시키기! */}
           <button
-            onClick={onClose}
+            onClick={() => handleAddWS()}
             disabled={!isValid}
             className="addws-btn1"
           >

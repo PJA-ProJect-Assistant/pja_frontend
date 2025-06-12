@@ -2,7 +2,6 @@ import type { IsClose } from "../../types/common";
 import { useState } from "react";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Users } from "../../constants/userconstants";
 import { useNavigate } from "react-router-dom";
 import "./MainMenuSidebar.css";
 import LogoutModal from "../modal/LogoutModal";
