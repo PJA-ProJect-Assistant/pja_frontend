@@ -142,9 +142,9 @@ const FindIdPage: React.FC = () => {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header" />
+        <div className="findid-modal-overlay">
+          <div className="findid-modal-content">
+            <div className="findid-modal-header" />
             {foundUserId ? (
               <p>
                 아이디는 <strong>{foundUserId}</strong>입니다
@@ -153,10 +153,10 @@ const FindIdPage: React.FC = () => {
               <p style={{ color: "#ff4444" }}>{errorMessage}</p>
             )}
 
-            <div className="modal-footer">
+            <div className="findid-modal-footer">
               <button
                 type="button"
-                className="modal-close-button"
+                className="findid-modal-close-button"
                 onClick={handleCloseModal}
               >
                 확인
