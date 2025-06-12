@@ -60,3 +60,96 @@ export const refreshAccessToken = async (): Promise<
     throw error; // 호출한 곳에서 다시 처리할 수 있도록 재던짐
   }
 };
+
+//아이디 찾기
+export interface FindIdSuccessResponse {
+  status: "success";
+  message: string;
+  data: {
+    uid: string;
+  };
+}
+
+//*
+// @param
+// @returns
+//@throws */
+
+export const findIdByEmail = async (
+  email: string
+): Promise<FindIdSuccessResponse> => {
+  try {
+    const response = await api.post<FindIdSuccessResponse>("/auth/find-id", {
+      email,
+    });
+    //성공 시 response.data를 그대로 반환
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    }
+    //네트워크 오류 등 예외 상황 처리
+    throw new Error("서버와 통신하는 데 실패했습니다. 네트워크를 확인해주세요");
+  }
+};
+
+//비밀번호 찾기 인증번호 발송
+export interface RequestPwCodeSuccessResponse {
+  status: "success";
+  message: string;
+  data: null;
+}
+
+export const requestPasswordCode = async (
+  uid: string,
+  email: string
+): Promise<RequestPwCodeSuccessResponse> => {
+  try {
+    const response = await api.post<RequestPwCodeSuccessResponse>(
+      "/auth/find-pw",
+      {
+        uid,
+        email,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.message) {
+      //백엔드가 보내주는 구체적인 실패 메세지를 에러로 전달
+      throw new Error(error.response.data.message);
+    }
+    //네트워크 오류 등 예외 상황 처리
+    throw new Error("서버와 통신하는 데 실패했습니다. 네트워크를 확인해주세요");
+  }
+};
+
+//인증 번호 확인
+export interface VerifyCodeSuccessReponse {
+  status: "success";
+  message: string;
+  data: null;
+}
+
+export const verifyPasswordCode = async (
+  email: string,
+  token: string //API명세서에 맞춰서 'token'으로 명시
+): Promise<VerifyCodeSuccessReponse> => {
+  try {
+    const response = await api.post<VerifyCodeSuccessReponse>(
+      "/auth/verify-pw-code",
+
+      {
+        email,
+        token,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.message) {
+      //백엔드가 보내주는 에러 메시지
+      throw new Error(error.response.data.message);
+    }
+    //네트워크 오류 등 예외 상황 처리
+    throw new Error("서버와 통신하는 데 실패했습니다. 네트워크를 확인해주세요");
+  }
+};
