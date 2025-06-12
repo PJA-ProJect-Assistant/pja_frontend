@@ -36,3 +36,68 @@
   text-align: center;
   margin: 0;
 }
+
+/*내용 입력 */
+.actionpost-wrapper {
+  display: flex;
+  justify-content: center;
+}
+/*내용 입력 폼*/
+.actionpost-input,
+.actionpost-display {
+  margin-top: 50px;
+  width: 700px;
+  height: 400px;
+  font-size: 16px;
+  color: #aaaaaa;
+}
+
+.image-upload-container {
+  display: flex;
+  width: 690px;
+  height: auto;
+  min-height: 40px;
+  border: 2px solid #aaaaaa;
+  margin-top: 20px;
+  margin-left: 330px;
+  gap: 8px;
+}
+.image-upload-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.remove-btn {
+  margin-left: 10px;
+  background-color: #00205b;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.actionpost-display {
+  margin-top: 30px;
+  height: auto;
+  padding: 12px;
+  border: 1px solid #ddd;
+  font-size: 24px;
+}
+
+/*수정하기 버튼*/
+.actionpost-button-container {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.save-button,
+.modify-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: #001e60;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
