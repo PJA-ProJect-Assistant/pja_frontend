@@ -1,33 +1,27 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setAccessToken } from "../../store/authSlice";
 import axios from "axios";
 import "./LoginPage.css";
+import { login } from "../../services/authApi";
+import type {
+  LoginSuccessResponse,
+  LoginErrorResponse,
+} from "../../services/authApi";
 import logoImage from "../../assets/img/logo.png";
 import GoogleImage from "../../assets/img/Google.png";
 import CustomModal from "../signuppage/CustomModal";
-
-// 로그인 성공 응답 타입
-interface LoginSuccessResponse {
-  status: "success";
-  message: string;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-  };
-}
-
-// 로그인 실패 응답 타입
-interface LoginErrorResponse {
-  status: "fail" | "error";
-  message: string;
-}
+import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
+  const dispatch = useDispatch();
   const [id, setId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState<React.ReactNode>(false);
   const [modalMessage, setModalMessage] = useState<React.ReactNode>("");
+  const navigate = useNavigate();
 
   const openModal = (message: string): void => {
     setModalMessage(message);
@@ -60,36 +54,6 @@ const LoginPage: React.FC = () => {
   };
 
   const handleLogin = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uid: id,
-          password: password,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.status === "success") {
-        // 로그인 성공
-        openModal(result.message);
-
-        localStorage.setItem("accessToken", result.data.accessToken);
-        localStorage.setItem("refreshToken", result.data.refreshToken);
-
-        // 메인 페이지로 이동
-        window.location.href = "/main";
-      } else {
-        openModal(result.message);
-      }
-    } catch (error) {
-      console.error("로그인 오류:", error);
-      openModal("네트워크 오류로 로그인에 실패했습니다.");
-    }
     if (!id.trim()) {
       openModal("아이디를 입력해주세요");
       return;
@@ -98,38 +62,29 @@ const LoginPage: React.FC = () => {
       openModal("비밀번호를 입력해주세요");
       return;
     }
+
     setIsLoading(true);
     closeModal();
 
     try {
-      const response = await axios.post<LoginSuccessResponse>(
-        "http://localhost:8080/api/auth/login",
-        {
-          uid: id,
-          password: password,
-        }
-      );
+      const result: LoginSuccessResponse = await login(id, password);
 
-      // 성공 시 (status 200)
-      if (response.data.status === "success") {
-        const { accessToken, refreshToken } = response.data.data;
-        sessionStorage.setItem("accessToken", accessToken);
-        sessionStorage.setItem("refreshToken", refreshToken);
-
-        openModal(response.data.message);
+      if (result.status === "success") {
+        const { accessToken } = result.data;
+        localStorage.setItem("accessToken", accessToken); // 로컬스토리지 저장
+        dispatch(setAccessToken(accessToken)); // redux 저장
+        openModal(result.message);
 
         setTimeout(() => {
-          window.location.href = "/dashboard";
+          navigate("/main");
         }, 1500);
       }
     } catch (error) {
       console.error("로그인 요청 중 오류 발생:", error);
       if (axios.isAxiosError(error) && error.response) {
-        // 백엔드에서 보낸 에러 메시지를 바로 사용
         const errorData = error.response.data as LoginErrorResponse;
         openModal(errorData.message || "로그인에 실패했습니다.");
       } else {
-        // 네트워크 오류 또는 axios 외의 다른 에러 처리
         openModal("네트워크 오류 또는 알 수 없는 문제가 발생했습니다.");
       }
     } finally {

@@ -12,10 +12,10 @@ function OAuth2Success() {
 
     if (token) {
       //localstorage 또는 sessionStorage에 저장(세션을 넘겨 유지됨)
-      localStorage.setItem("token", token);
+      localStorage.setItem("accessToken", token);
 
       //이후 사용할 사용자 정보 요청 또는 메인 페이지 이동
-      navigate("/");
+      navigate("/main");
     } else {
       //token이 없을 시 로그인 페이지로
       navigate("/login");

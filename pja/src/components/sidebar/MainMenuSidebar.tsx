@@ -20,7 +20,6 @@ export default function MainMenuSidebar({ onClose }: IsClose) {
   //로그아웃 모달
   const handleLogout = () => {
     setShowLogoutModal(false);
-    onClose(); //메뉴 닫기
     navigate("/login");
   };
 
@@ -69,7 +68,6 @@ export default function MainMenuSidebar({ onClose }: IsClose) {
         <LogoutModal
           onConfirm={handleLogout}
           onClose={() => setShowLogoutModal(false)}
-          accessToken={localStorage.getItem("accessToken") || undefined}
         />
       )}
     </div>

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import PrivateRoute from "./components/common/PrivateRoute";
 import MainPage from "./pages/mainpage/MainPage";
 import LoginPage from "./pages/loginpage/LoginPage";
@@ -12,25 +12,25 @@ import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
 import AccountSettingPage from "./pages/accountsettingpage/AccountSettingPage";
 import WorkspaceSettingPage from "./pages/workspacesettingpage/WorkspaceSettingPage";
 import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/ActionPostPage";
+import RootRedirect from "./components/common/RootRedirect";
 
 const Router = () => {
   return (
     <Routes>
-      {/* 기본 경로에서 로그인으로 리다이렉트 */}
-      {/* 로그인해서 들어가게 하는거는 백이랑 연결하고 일단 들어가면 바로 홈 나오게 할게여 */}
-      <Route path="/" element={<Navigate to="/main" replace />} />
+      {/* 기본 경로에서 토큰이 있으면 메인, 없으면 로그인으로 리다이렉트 */}
+      <Route path="/" element={<RootRedirect />} />
 
 
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/oauth2/success" element={<OAuth2Success />}
+      />
       {/* 이메일 인증 페이지 */}
       <Route path="/email-verification" element={<EmailVerificationPage />} />
       <Route path="/find-id" element={<FindIdPage />} />
       <Route path="/find-pw" element={<FindPwPage />} />
       {/* 인증 필요 라우트 */}
-      {/* <Route element={<PrivateRoute />}*/}
-      {/*</Route> */}
       <Route
         path="/main"
         element={
@@ -39,14 +39,7 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-      <Route
-        path="/apipage"
-        element={
-          <PrivateRoute>
-            <ApiPage />
-          </PrivateRoute>
-        }
-      />
+
       <Route
         path="/addws"
         element={
@@ -71,7 +64,6 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-      <Route path="/oauth2/success" element={<OAuth2Success />} />
       {/*계정설정 페이지*/}
       <Route
         path="/account-settings"
@@ -90,9 +82,6 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-
-
-     
     </Routes>
   );
 };
