@@ -1,6 +1,6 @@
 // 사용자 데이터 타입
 export interface user {
-  name: string;
+  username: string;
   profileImage: string;
 }
 export interface users {
