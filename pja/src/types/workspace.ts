@@ -6,6 +6,7 @@ export interface workspace {
   teamName: string;
   ownerId: number;
   progressStep: Step;
+  isPublic: boolean;
 }
 
 export interface setworkspace {

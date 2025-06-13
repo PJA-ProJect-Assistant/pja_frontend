@@ -2,10 +2,16 @@ import "./Myworkspace.css";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { WsmenuModal } from "../../components/modal/WsmenuModal";
-import { WscompleteModal } from "../../components/modal/WsmenuModal";
+import { WsCompleteModal } from "../../components/modal/WsmenuModal";
 import { useUserData } from "../../hooks/useUserData";
 import type { workspace } from "../../types/workspace";
 import { getStepIdFromNumber } from "../../utils/projectSteps";
+import { WsDeleteModal } from "../../components/modal/DeleteModal";
+import {
+  completeworkspace,
+  progressworkspace,
+  deleteworkspace,
+} from "../../services/workspaceApi";
 
 export function Myworkspace() {
   const { myWSData } = useUserData();
@@ -15,6 +21,8 @@ export function Myworkspace() {
   const [completeWorkspaces, setCompleteWorkspaces] = useState<workspace[]>([]);
   const [menuModalOpen, setMenuModalOpen] = useState<boolean>(false);
   const [completeModalOpen, setCompleteModalOpen] = useState<boolean>(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   const [wsMenuOpenId, setWsMenuOpenId] = useState<number | null>(null);
 
@@ -34,24 +42,28 @@ export function Myworkspace() {
   const handleClickWS = (ws: workspace) => {
     const stepId = getStepIdFromNumber(ws.progressStep);
     navigate(`/ws/${ws.workspaceId}/step/${stepId}`);
-  }
+  };
 
   const toggleMenu = (workspaceId: number) => {
     setWsMenuOpenId((prevId) => (prevId === workspaceId ? null : workspaceId));
   };
 
   //완료 삭제 만드는거 일단 생성 다 끝내고 하기
-  const handleComplete = (id: number, step: string) => {
+  const handleComplete = async (id: number, step: string) => {
     if (step === "5") {
+      const response = await completeworkspace(id);
+      console.log("완료 결과 : ", response.data);
       setProcessWorkspaces((prev) =>
         prev.map((ws) =>
-          ws.workspaceId === id ? { ...ws, progress_step: "6" } : ws
+          ws.workspaceId === id ? { ...ws, progressStep: "6" } : ws
         )
       );
     } else if (step === "6") {
+      const response = await progressworkspace(id, "5");
+      console.log("완료 취소 : ", response.data);
       setProcessWorkspaces((prev) =>
         prev.map((ws) =>
-          ws.workspaceId === id ? { ...ws, progress_step: "5" } : ws
+          ws.workspaceId === id ? { ...ws, progressStep: "5" } : ws
         )
       );
     } else {
@@ -59,9 +71,26 @@ export function Myworkspace() {
     }
     setWsMenuOpenId(null);
   };
-  const handleDelete = (id: number) => {
-    setProcessWorkspaces((prev) => prev.filter((ws) => ws.workspaceId !== id));
+  const handleClickDelete = (id: number) => {
+    setDeleteTargetId(id);
+    setDeleteModalOpen(true);
     setWsMenuOpenId(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleteTargetId === null) return;
+
+    try {
+      await deleteworkspace(deleteTargetId);
+      setProcessWorkspaces((prev) =>
+        prev.filter((ws) => ws.workspaceId !== deleteTargetId)
+      );
+    } catch (error) {
+      console.error("삭제 실패:", error);
+    } finally {
+      setDeleteModalOpen(false);
+      setDeleteTargetId(null);
+    }
   };
 
   // 드래그 로직 재사용 함수
@@ -108,9 +137,7 @@ export function Myworkspace() {
       <div
         key={ws.workspaceId}
         className="workspace-card"
-        onDoubleClick={() =>
-          handleClickWS(ws)
-        }
+        onDoubleClick={() => handleClickWS(ws)}
       >
         <div>
           <div
@@ -146,11 +173,9 @@ export function Myworkspace() {
                 </svg>
                 <p>워크스페이스 완료</p>
               </div>
-              {/* 사용자권한 모달 확인을 위해 != 로 코드 변경 */}
               <div
                 onClick={() => {
-                  handleDelete(ws.workspaceId);
-                  // : (setMenuModalOpen(true), setWsMenuOpenId(null));
+                  handleClickDelete(ws.workspaceId);
                 }}
               >
                 <svg
@@ -186,7 +211,7 @@ export function Myworkspace() {
               </div>
               <div
                 onClick={() => {
-                  handleDelete(ws.workspaceId);
+                  handleClickDelete(ws.workspaceId);
                 }}
               >
                 <svg
@@ -205,6 +230,7 @@ export function Myworkspace() {
           <div className="ws-title-container">
             <p className="workspace-title" title={ws.projectName}>
               {/* 마우스 가져다대면 title뜨는거 기본인데 나중에 시간 남으면 커스텀 해보기로! */}
+              {ws.isPublic ? "" : "🔒"}
               {ws.projectName}
             </p>
           </div>
@@ -244,7 +270,15 @@ export function Myworkspace() {
       </div>
       {menuModalOpen && <WsmenuModal onClose={() => setMenuModalOpen(false)} />}
       {completeModalOpen && (
-        <WscompleteModal onClose={() => setCompleteModalOpen(false)} />
+        <WsCompleteModal onClose={() => setCompleteModalOpen(false)} />
+      )}
+      {deleteModalOpen && (
+        <WsDeleteModal
+          onClose={() => {
+            setDeleteTargetId(null), setDeleteModalOpen(false);
+          }}
+          onConfirm={() => handleConfirmDelete()}
+        />
       )}
     </div>
   );

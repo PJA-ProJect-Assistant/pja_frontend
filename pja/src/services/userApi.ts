@@ -7,6 +7,7 @@ import type { user } from "../types/user";
 export const getuser = async (): Promise<ApiResponse<user>> => {
   try {
     const response = await api.get("/user/read-info");
+    console.log("사용자 정보 조회 응답 : ", response.data);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getuser] 유저 정보 요청 실패:", error);

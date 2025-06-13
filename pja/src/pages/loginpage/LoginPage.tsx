@@ -13,7 +13,6 @@ import { useAuthInit } from "../../hooks/useAuthInit";
 import type { RootState } from "../../store/store";
 
 const LoginPage: React.FC = () => {
-  const { refetchUser, refetchWorkspaces } = useUserData();
   const dispatch = useDispatch();
   const [id, setId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -22,10 +21,10 @@ const LoginPage: React.FC = () => {
   const [showModal, setShowModal] = useState<React.ReactNode>(false);
   const [modalMessage, setModalMessage] = useState<React.ReactNode>("");
   const navigate = useNavigate();
-  // const token = useSelector((state: RootState) => state.auth.accessToken);
-  // const authInitialized = useAuthInit();
+  const token = useSelector((state: RootState) => state.auth.accessToken);
+  const authInitialized = useAuthInit();
 
-  // // 토큰이 있으면 리다이렉트
+  // 토큰이 있으면 리다이렉트
   // useEffect(() => {
   //   if (authInitialized && token) {
   //     navigate("/main");
@@ -93,8 +92,6 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("accessToken", accessToken); // 로컬스토리지 저장
         dispatch(setAccessToken(accessToken)); // redux 저장
         openModal(result.message);
-        refetchUser();
-        refetchWorkspaces();
 
         setTimeout(() => {
           navigate("/main");
