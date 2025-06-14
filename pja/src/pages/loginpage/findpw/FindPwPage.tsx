@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import React from "react";
 import "./FindPwPage.css";
 import logoImage from "../../../assets/img/logo.png";
@@ -25,6 +26,8 @@ const FindPwPage: React.FC = () => {
   //인증번호 코드
   const [authcode, setAuthcode] = useState<string>("");
   const [isVerified, setIsVerified] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleIdChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -103,6 +106,19 @@ const FindPwPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  //비밀번호 재설정 버튼 클릭
+  const handleResetPassword = () => {
+    //비밀번호 변경 페이지로 이동
+    navigate("/reset-password", {
+      state: {
+        uid: id,
+        email: email,
+        authcode: authcode,
+      },
+      replace: true,
+    });
   };
 
   return (
@@ -275,7 +291,11 @@ const FindPwPage: React.FC = () => {
       </div>
 
       <div className="btn-container">
-        <button className="btn reset" disabled={!isVerified}>
+        <button
+          className="btn reset"
+          disabled={!isVerified}
+          onClick={handleResetPassword}
+        >
           비밀번호 재설정
         </button>
       </div>
