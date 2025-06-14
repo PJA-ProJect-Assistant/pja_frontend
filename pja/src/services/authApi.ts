@@ -1,6 +1,7 @@
 import api from "../lib/axios";
 import type { ApiResponse } from "../types/common";
 import type { userToken } from "../types/auth";
+import axios from "axios";
 
 export const login = async (
   uid: string,
@@ -150,6 +151,37 @@ export const verifyPasswordCode = async (
       throw new Error(error.response.data.message);
     }
     //네트워크 오류 등 예외 상황 처리
+    throw new Error("서버와 통신하는 데 실패했습니다. 네트워크를 확인해주세요");
+  }
+};
+
+//비밀번호 변경
+
+export const changePassword = async (
+  uid: string,
+  newPw: string,
+  confirmPw: string
+): Promise<ApiResponse<void>> => {
+  try {
+    const response = await axios.patch<ApiResponse<void>>(
+      "http://localhost:8080/api/auth/change-pw",
+      {
+        uid,
+        newPw,
+        confirmPw,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    }
     throw new Error("서버와 통신하는 데 실패했습니다. 네트워크를 확인해주세요");
   }
 };

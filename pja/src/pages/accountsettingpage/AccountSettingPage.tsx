@@ -44,38 +44,40 @@ const AccountSettingPage: React.FC = () => {
   }, []);
 
   //사용자 정보 조회
-  //const fetchUserInfo=async()=>{
-  //  try{
-  //    setIsLoading(true);
-  //    setError("");
+  const fetchUserInfo = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
 
-  //LocalStorage에서 accessToken 가져오기
-  //    const accessToken=localStorage.getItem('accessToken');
+      //LocalStorage에서 accessToken 가져오기
+      const accessToken = localStorage.getItem("accessToken");
 
-  //    if(!accessToken) {
-  //      throw new Error('인증 토큰이 없습니다.');
-  //    }
+      if (!accessToken) {
+        throw new Error("인증 토큰이 없습니다.");
+      }
 
-  //    const response=await fetch('http://localhost:8080/api/user/read-info',{
-  //      method:'GET',
-  //      headers: {
-  //        'Authorization': `Bearer ${accessToken}`,
-  //        'Content-Type': 'application/json',
-  //      },
-  //    });
+      const response = await fetch("http://localhost:8080/api/user/read-info", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-  //    if (!response.ok){
-  //      const errorData:ErrorResponse=await response.json();
-  //      throw new Error(errorData.message || '사용자 정보 조회에 실패했습니다.');
-  //    }
+      if (!response.ok) {
+        const errorData: ErrorResponse = await response.json();
+        throw new Error(
+          errorData.message || "사용자 정보 조회에 실패했습니다."
+        );
+      }
 
-  //    const data:UserInfoResponse=await response.json();
-  //
-  //    setName(data.data.name || "");
+      const data: UserInfoResponse = await response.json();
 
-  //  }
-
-  //};
+      setName(data.data.name || "");
+    } catch (err: any) {
+      setError(err.message || "사용자 정보 조회에 실패했습니다.");
+    }
+  };
 
   const handleNameChange = (event: {
     target: { value: React.SetStateAction<string> };
