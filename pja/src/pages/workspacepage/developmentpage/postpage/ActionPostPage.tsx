@@ -7,6 +7,17 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PostHeader } from "../../../../components/header/PostHeader";
 import imageUpIcon from "../../../../assets/img/imageUp.png";
+import sendIcon from "../../../../assets/img/send.png";
+import codelIcon from "../../../../assets/img/codel.png";
+import { formatDistanceToNow, parseISO } from "date-fns";
+import { ko } from "date-fns/locale";
+
+interface Comment {
+  id: number;
+  content: string;
+  username: string;
+  createdAt: string;
+}
 
 export default function ActionPostPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -20,6 +31,11 @@ export default function ActionPostPage() {
   const [textContent, setTextContent] = useState<string>("");
   const [originalTextContent, setOriginalTextContent] = useState<string>("");
   const [originalImages, setOriginalImages] = useState<File[]>([]);
+
+  const [currentComment, setCurrentComment] = useState("");
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editingCommentText, setEditingCommentText] = useState<string>("");
 
   const { acId } = useParams<{
     acId: string;
@@ -86,6 +102,74 @@ export default function ActionPostPage() {
     }
   };
 
+  //댓글 기능 함수
+  const handleAddComment = () => {
+    if (currentComment.trim() === "") {
+      return;
+    }
+    //새 댓글
+    const newComment: Comment = {
+      id: Date.now(),
+      content: currentComment,
+      username: "testuser1",
+      createdAt: new Date().toISOString(),
+    };
+    //댓글 상태 업데이트
+    setComments((prevComments) => [...prevComments, newComment]);
+    setCurrentComment("");
+  };
+
+  //Enter 키를 누를 때 댓글을 추가하는 함수
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddComment();
+    }
+  };
+
+  const handleStartEditing = (comment: Comment) => {
+    setEditingCommentId(comment.id);
+    setEditingCommentText(comment.content);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditingCommentText("");
+  };
+
+  const handleSaveComment = (commentId: number) => {
+    const updateComments = comments.map((comment) => {
+      if (comment.id === commentId) {
+        return {
+          ...comment,
+          content: editingCommentText,
+        };
+      }
+      return comment;
+    });
+    setComments(updateComments);
+    setEditingCommentId(null);
+    setEditingCommentText("");
+  };
+
+  const handleDeleteComment = (CommentId: number) => {
+    const updatedComments = comments.filter(
+      (comment) => comment.id !== CommentId
+    );
+    setComments(updatedComments);
+  };
+
+  const formatRelativeTime = (isoDateString: string) => {
+    try {
+      const date = parseISO(isoDateString);
+      return formatDistanceToNow(date, { addSuffix: true, locale: ko });
+    } catch (error) {
+      // 잘못된 날짜 형식이 들어올 경우를 대비한 예외 처리
+      console.error("Invalid date format:", isoDateString);
+      return isoDateString;
+    }
+  };
+
   return (
     <div className="post-container">
       {/* ... (AnimatePresence, Sidebar 등 기존 코드는 그대로) ... */}
@@ -133,9 +217,7 @@ export default function ActionPostPage() {
               onChange={(e) => setTextContent(e.target.value)}
             />
           ) : (
-            <div className="actionpost-display">
-              {textContent || "내용이 없습니다."}
-            </div>
+            <div className="actionpost-display">{textContent}</div>
           )}
         </div>
         {/*사진 업로드 창*/}
@@ -198,6 +280,77 @@ export default function ActionPostPage() {
           >
             {isEditing ? "저장하기" : "수정하기"}
           </button>
+        </div>
+        <hr className="divider" />
+
+        <div className="comment-section-container">
+          <p className="comment-title">댓글</p>
+          <div className="comment-wrapper">
+            <input
+              type="text"
+              className="comment-input"
+              value={currentComment}
+              onChange={(e) => setCurrentComment(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <img
+              src={sendIcon}
+              className="send-icon-inside"
+              alt="저장 아이콘"
+              onClick={handleAddComment}
+            />
+          </div>
+          {/* 등록된 댓글 목록 */}
+          <div className="comment-list">
+            {comments.map((comment) => (
+              <div key={comment.id} className="comment-item">
+                {editingCommentId === comment.id ? (
+                  <div className="comment-edit-form">
+                    <input
+                      type="text"
+                      className="comment-edit-input"
+                      value={editingCommentText}
+                      onChange={(e) => setEditingCommentText(e.target.value)}
+                    />
+                    <div className="comment-edit-actions">
+                      <button onClick={() => handleSaveComment(comment.id)}>
+                        저장
+                      </button>
+                      <button onClick={handleCancelEdit}>취소</button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="comment-content">
+                      <div className="comment-header">
+                        <span className="comment-author">
+                          {comment.username}
+                        </span>
+                        <span className="comment-createdAt">
+                          {formatRelativeTime(comment.createdAt)}
+                        </span>
+                      </div>
+                      {/* [수정된 부분 2] p 태그가 comment-content 안으로 들어옴 */}
+                      <p className="comment-text">{comment.content}</p>
+                    </div>
+
+                    {/* [수정된 부분 3] 수정/삭제 버튼을 포함하는 액션 그룹 */}
+                    <div className="comment-actions">
+                      <button onClick={() => handleStartEditing(comment)}>
+                        수정
+                      </button>
+                      <img
+                        src={codelIcon}
+                        className="comment-delete-icon"
+                        onClick={() => handleDeleteComment(comment.id)}
+                        alt="삭제"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
