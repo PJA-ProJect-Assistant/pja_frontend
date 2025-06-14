@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { setAccessToken } from "../../store/authSlice";
 import axios from "axios";
 import "./LoginPage.css";
@@ -8,6 +8,9 @@ import logoImage from "../../assets/img/logo.png";
 import GoogleImage from "../../assets/img/Google.png";
 import CustomModal from "../signuppage/CustomModal";
 import { useNavigate } from "react-router-dom";
+import { useUserData } from "../../hooks/useUserData";
+import { useAuthInit } from "../../hooks/useAuthInit";
+import type { RootState } from "../../store/store";
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -18,6 +21,25 @@ const LoginPage: React.FC = () => {
   const [showModal, setShowModal] = useState<React.ReactNode>(false);
   const [modalMessage, setModalMessage] = useState<React.ReactNode>("");
   const navigate = useNavigate();
+  const token = useSelector((state: RootState) => state.auth.accessToken);
+  const authInitialized = useAuthInit();
+
+  // 토큰이 있으면 리다이렉트
+  // useEffect(() => {
+  //   if (authInitialized && token) {
+  //     navigate("/main");
+  //   }
+  // }, [authInitialized, token, navigate]);
+
+  // // 초기화 중이면 로딩
+  // if (!authInitialized) {
+  //   return <div>로딩중....</div>;
+  // }
+
+  // // 토큰이 있으면 null 반환 (useEffect에서 리다이렉트 처리됨)
+  // if (token) {
+  //   return null;
+  // }
 
   const openModal = (message: string): void => {
     setModalMessage(message);

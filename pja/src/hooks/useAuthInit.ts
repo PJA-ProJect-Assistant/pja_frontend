@@ -46,9 +46,10 @@ export function useAuthInit() {
         const token = localStorage.getItem("accessToken");
 
         if (!token || isTokenExpired(token)) {
+          console.log("토큰 갱신 시작");
           const response = await refreshAccessToken(); // 새 토큰 요청
           const accessToken = response.data?.accessToken;
-          console.log("date :", accessToken);
+          console.log("data :", accessToken);
           if (!accessToken) {
             console.warn("accessToken이 없음 - 토큰 갱신 실패 처리");
             throw new Error("토큰 갱신 실패 - accessToken 없음");
@@ -63,7 +64,6 @@ export function useAuthInit() {
       } catch (err) {
         console.warn("토큰 갱신 실패", err);
         dispatch(clearAccessToken());
-        // window.location.href = "/login";
         return;
       }
       setAuthInitialized(true);

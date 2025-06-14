@@ -40,6 +40,7 @@ export const refreshAccessToken = async (): Promise<
   ApiResponse<{ accessToken: string }>
 > => {
   try {
+    console.log("토큰 재요청api 시작");
     const response = await api.post("/auth/reissue");
     console.log("response : ", response);
 
