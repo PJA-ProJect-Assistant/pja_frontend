@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import type { workspace } from "../../../types/workspace";
 import { setSelectedWS } from "../../../store/workspaceSlice";
+import { getworkspace } from "../../../services/workspaceApi";
 import WsSidebar from "../../../components/sidebar/WsSidebar";
 import "./MainWSPage.css";
 import { useEffect, useState } from "react";
@@ -22,6 +23,21 @@ export default function MainWSPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
 
+  useEffect(() => {
+    const getws = async () => {
+      try {
+        const response = await getworkspace(Number(wsid));
+        console.log("getworkspace 결과 : ", response);
+        //redux저장
+        if (response.data) {
+          dispatch(setSelectedWS(response.data));
+        }
+      } catch (err) {
+        console.log("getworkspace 실패 : ", err);
+      }
+    }
+    getws();
+  }, [wsid])
   const renderStepComponent = () => {
     switch (stepId) {
       case "idea":
