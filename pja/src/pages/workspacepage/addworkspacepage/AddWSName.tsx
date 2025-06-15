@@ -1,37 +1,54 @@
 import "./AddWSPage.css";
 import type { IsClose } from "../../../types/common";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addworkspace } from "../../../services/workspaceApi";
 import { useNavigate } from "react-router-dom";
-import { useUserData } from "../../../hooks/useUserData";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { useDispatch } from "react-redux";
+import { initinputidea } from "../../../services/ideaApi";
 
 export default function AddWSName({ onClose }: IsClose) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { refetchWorkspaces } = useUserData();
   const [projectName, setProjectName] = useState<string>("");
   const [teamName, setTeamName] = useState<string>("");
   const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [newWSId, setNewWSId] = useState<number>();
 
   const isValid = projectName.trim() !== "" && teamName.trim() !== "";
 
-  const handleAddWS = async () => {
+  useEffect(() => {
+    if (typeof newWSId === "number") {
+      const initIdea = async () => {
+        try {
+          const response = await initinputidea(newWSId);
+          console.log("아이디어 초기화 완료:", response.data);
+          onClose();
+        } catch (error) {
+          console.error("아이디어 초기화 실패:", error);
+        }
+      };
+      initIdea();
+    }
+  }, [newWSId]);
+
+  const handleAddWS = () => {
     console.log("projectName", projectName);
     console.log("teamName", teamName);
     console.log("isPublic", isPublic);
-    try {
-      const response = await addworkspace({ projectName, teamName, isPublic });
-      console.log("워크스페이스 생성:", response.data);
-      if (response.data) {
-        dispatch(setSelectedWS(response.data));
+    const addWs = async () => {
+      try {
+        const response = await addworkspace({ projectName, teamName, isPublic });
+        console.log("워크스페이스 생성:", response.data);
+        if (response.data) {
+          dispatch(setSelectedWS(response.data));
+          setNewWSId(response.data.workspaceId);
+        }
+      } catch (error) {
+        console.error("워크스페이스 생성 실패:", error);
       }
-      refetchWorkspaces(); // 워크스페이스 새로고침
-      onClose();
-    } catch (error) {
-      console.error("워크스페이스 생성 실패:", error);
     }
+    addWs();
   };
 
   return (
