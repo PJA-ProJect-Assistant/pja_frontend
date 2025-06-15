@@ -10,12 +10,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: white;
   border-radius: 12px;
-  padding: 0 24px;
   width: 300px;
   min-height: 180px;
   z-index: 1000;
@@ -26,27 +26,32 @@
 .delete-modal-title {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+  width: 100%;
+  height: 30px;
+  margin: 0;
   background-color: #00205b;
   text-align: center;
   color: black;
 }
 
 .delete-modal-description {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-lg);
   text-align: center;
 }
 
 .delete-modal-button {
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  justify-content: center;
+  flex-direction: row;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
 .delete-modal-confirm {
   display: block;
-  width: 100%;
-  margin: 10px;
-  padding: 10px 0;
+  padding: 10px 30px;
   background-color: #00205b;
   color: white;
   border: none;
@@ -57,9 +62,7 @@
 
 .delete-modal-close {
   display: block;
-  width: 100%;
-  margin: 10px;
-  padding: 10px 0;
+  padding: 10px 30px;
   background-color: #d9d9d6;
   color: black;
   border: none;
