@@ -1,0 +1,30 @@
+.require-container {
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    min-width: 600px;
+    gap: 5px;
+}
+
+.require-title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.require-title p {
+    margin: 0;
+    font-size: var(--font-size-2xl);
+}
+
+.require-aibtn {
+    padding: 5px;
+    min-width: 88px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    background-color: #00205B;
+    color: white;
+}
