@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { IsClose } from "../../types/common";
 import "./WsSideBar.css";
@@ -10,6 +10,27 @@ import LeaveTeamModal from "../modal/LeaveTeamModal";
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  // 사이드바 전체 영역 ref
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  // 외부 클릭 감지해서 activeTab 닫기
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
+        setActiveTab(null);
+      }
+    }
+    window.addEventListener("click", handleClickOutside);
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
 
   //팀 탈퇴 메뉴 클릭 시 모달을 여는 함수
   const handleOpenModal = () => {
@@ -27,15 +48,19 @@ export default function WsSidebar({ onClose }: IsClose) {
 
   return (
     <motion.div
+      ref={sidebarRef}
       className="wssidebar-container"
       initial={{ x: "-80%", opacity: 0 }}
       animate={{ x: "0%", opacity: 1 }}
       exit={{ x: "-80%", opacity: 0 }}
       transition={{ type: "tween", duration: 0.3 }}
+      onClick={e => e.stopPropagation()}
     >
       <WSSidebarHeader onClose={onClose} />
       <div className="wssidebar-list-container">
-        <div className="wssidebar-list">
+        <div className={`wssidebar-list ${activeTab === "member" ? "active" : ""}`} onClick={() => {
+          setActiveTab(activeTab === "member" ? null : "member");
+        }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="20px"
@@ -47,7 +72,9 @@ export default function WsSidebar({ onClose }: IsClose) {
           </svg>
           <p>멤버</p>
         </div>
-        <div className="wssidebar-list">
+        <div className={`wssidebar-list ${activeTab === "notify" ? "active" : ""}`} onClick={() => {
+          setActiveTab(activeTab === "notify" ? null : "notify");
+        }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="20px"
@@ -89,8 +116,31 @@ export default function WsSidebar({ onClose }: IsClose) {
           </svg>
           <p>팀 탈퇴</p>
         </div>
+        {activeTab === "member" && (
+          <div className="tab-content">
+            <div className="tab-title">
+              <p>멤버</p>
+              <div className="membertab-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M720-400v-120H600v-80h120v-120h80v120h120v80H800v120h-80Zm-360-80q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm80-80h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T440-640q0-33-23.5-56.5T360-720q-33 0-56.5 23.5T280-640q0 33 23.5 56.5T360-560Zm0-80Zm0 400Z" /></svg><p>팀원초대</p></div>
+            </div>
+            <div className="line"></div>
+            {/* 예시: <MemberTabComponent /> */}
+          </div>
+        )}
+        {activeTab === "notify" && (
+          <div className="tab-content">
+            <div className="tab-title">
+              <p>알림</p>
+              <div className="notifytab-icons">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M638-80 468-250l56-56 114 114 226-226 56 56L638-80ZM480-520l320-200H160l320 200Zm0 80L160-640v400h206l80 80H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v174l-80 80v-174L480-440Zm0 0Zm0-80Zm0 80Z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+              </div>
+            </div>
+            <div className="line"></div>
+            {/* 예시: <MemberTabComponent /> */}
+          </div>
+        )}
       </div>
       <ProgressStep />
-    </motion.div>
+    </motion.div >
   );
 }
