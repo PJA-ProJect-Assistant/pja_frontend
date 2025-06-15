@@ -16,17 +16,19 @@ export function WsDeleteModal({ onClose, onConfirm }: WsDeleteModalProps) {
           <Dialog.Description className="delete-modal-description">
             정말 삭제하시겠습니까?
           </Dialog.Description>
-          <Dialog.Close className="delete-modal-button">
+          <div className="delete-modal-button">
             <button
               className="delete-modal-confirm"
               onClick={() => onConfirm()}
             >
               삭제
             </button>
-            <button className="delete-modal-close" onClick={() => onClose()}>
-              취소
-            </button>
-          </Dialog.Close>
+            <Dialog.Close asChild>
+              <button className="delete-modal-close" onClick={() => onClose()}>
+                취소
+              </button>
+            </Dialog.Close>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

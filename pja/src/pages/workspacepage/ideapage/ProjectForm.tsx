@@ -6,18 +6,17 @@ import type { workspace } from "../../../types/workspace";
 import type { RootState } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
+import { getidea, inputtech, inputfunc, putidea } from "../../../services/ideaApi";
+import type { IdeaData } from "../../../types/idea";
+import { StackDeleteModal, FeatureDeleteModal } from "../../../components/modal/WsmenuModal";
+import { progressworkspace } from "../../../services/workspaceApi";
 
 export default function ProhectForm() {
-  const [features, setFeatures] = useState([""]);
-  const [stacks, setStacks] = useState([""]);
-  const [projectName, setProjectName] = useState("");
-  const [projectTarget, setProjectTarget] = useState("");
-  const [projectDescription, setProjectDescription] = useState("");
-
   const [ideaDone, setIdeaDone] = useState<boolean>(false);
-
-  const addFeature = () => setFeatures([...features, ""]);
-  const addStack = () => setStacks([...stacks, ""]);
+  const [ideaId, setIdeaId] = useState<number>();
+  const [wsId, setWsId] = useState<number>();
+  const [openStackModal, setOpenStackModal] = useState<boolean>(false);
+  const [openFeatureModal, setOpenFeatureModal] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -25,21 +24,123 @@ export default function ProhectForm() {
     (state: RootState) => state.workspace.selectedWS
   );
 
+  const [features, setFeatures] = useState<{ id: number; content: string }[]>([]);
+  const [stacks, setStacks] = useState<{ id: number; content: string }[]>([]);
+  const [projectName, setProjectName] = useState("");
+  const [projectTarget, setProjectTarget] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+
+  const addFeature = async () => {
+    try {
+      if (wsId && ideaId) {
+        const response = await inputfunc(wsId, ideaId);
+        const newFeature = response.data;
+        if (newFeature) {
+          setFeatures([...features, {
+            id: newFeature.mainFunctionId,
+            content: newFeature.content,
+          }]);
+        }
+      }
+    } catch (error) {
+      console.error("기능 추가 실패:", error);
+    }
+  };
+
+  const addStack = async () => {
+    try {
+      if (wsId && ideaId) {
+        const response = await inputtech(wsId, ideaId);
+        const newStack = response.data;
+        if (newStack) {
+          setStacks([...stacks, {
+            id: newStack.techStackId,
+            content: newStack.content,
+          }]);
+        }
+      }
+    } catch (error) {
+      console.error("기술 스택 추가 실패:", error);
+    }
+  };
+
+  //기능 삭제
+  const removeFeature = (id: number) => {
+    if (features.length <= 2) {
+      setOpenFeatureModal(true);
+    }
+    else {
+      setFeatures((prev) => prev.filter((f) => f.id !== id));
+    }
+  };
+
+  //기술 삭제
+  const removeStack = (id: number) => {
+    if (stacks.length <= 2) {
+      setOpenStackModal(true);
+    }
+    setStacks((prev) => prev.filter((s) => s.id !== id));
+  };
+
   useEffect(() => {
     if (Number(selectedWS?.progressStep) > 0) {
       setIdeaDone(true);
     }
-  }, []);
+    const GetIdea = async () => {
+      try {
+        if (typeof selectedWS?.workspaceId === "number") {
+          setWsId(selectedWS.workspaceId);
+          const response = await getidea(selectedWS?.workspaceId);
+          console.log("아이디어 조회 :", response);
+          if (response.data) {
+            const data: IdeaData = response.data;
 
-  const updateFeature = (index: number, value: string) => {
-    const updated = [...features];
-    updated[index] = value;
+            setIdeaId(data.ideaInputId);
+
+            // 상태값 업데이트
+            setProjectName(data.projectName ?? "");
+            setProjectTarget(data.projectTarget ?? "");
+            setProjectDescription(data.projectDescription ?? "");
+
+            // mainFunction -> features
+            const mainFunctions = (data.mainFunction ?? []).map((f: any) => ({
+              id: f.mainFunctionId,
+              content: f.content ?? "",
+            }));
+            setFeatures(mainFunctions.length ? mainFunctions : []);
+
+            // techStack -> stacks
+            const techStacks = (data.techStack ?? []).map((t: any) => ({
+              id: t.techStackId,
+              content: t.content ?? "",
+            }));
+            setStacks(techStacks.length ? techStacks : []);
+          }
+        }
+        else {
+          console.log(
+            "워크스페이스 아이디 없음"
+          );
+
+        }
+      } catch (error) {
+        console.error("아이디어 조회 실패:", error);
+      }
+    }
+    GetIdea();
+  }, [selectedWS]);
+
+  const updateFeature = (id: number, value: string) => {
+    const updated = features.map((f) =>
+      f.id === id ? { ...f, content: value } : f
+    );
     setFeatures(updated);
   };
 
-  const updateStack = (index: number, value: string) => {
-    const updated = [...stacks];
-    updated[index] = value;
+  const updateStack = (id: number, value: string) => {
+    const updated = stacks.map((s) =>
+      s.id === id ? { ...s, content: value } : s
+    );
     setStacks(updated);
   };
 
@@ -47,25 +148,54 @@ export default function ProhectForm() {
     !projectName.trim() ||
     !projectTarget.trim() ||
     !projectDescription.trim() ||
-    stacks.some((s) => !s.trim()) ||
-    features.some((f) => !f.trim());
+    stacks.some((s) => !s.content.trim()) ||
+    features.some((f) => !f.content.trim());
 
-  const handleSubmit = () => {
-    if (!selectedWS) return;
+  const handleSubmit = async () => {
+    if (!selectedWS || typeof ideaId != "number") return;
+    try {
+      const ideaData: IdeaData = {
+        ideaInputId: ideaId,
+        projectName,
+        projectTarget,
+        mainFunction: features.map(f => ({
+          mainFunctionId: f.id,
+          content: f.content,
+        })),
+        techStack: stacks.map(s => ({
+          techStackId: s.id,
+          content: s.content,
+        })),
+        projectDescription,
+      };
 
-    const updatedWorkspace: workspace = {
-      ...selectedWS, // 기존 값 유지
-      progressStep: "1",
-    };
+      await putidea(selectedWS.workspaceId, ideaData);
+      setIdeaDone(true);
 
-    setIdeaDone(true);
-    dispatch(setSelectedWS(updatedWorkspace));
-    navigate(
-      `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
-        selectedWS?.progressStep
-      )}`
-    );
+      if (selectedWS.progressStep === "0") {
+        const response = await progressworkspace(selectedWS.workspaceId, "1");
+        console.log("next step : ", response.data);
+
+        const updatedWorkspace: workspace = {
+          ...selectedWS, // 기존 값 유지
+          progressStep: "1",
+        };
+
+        dispatch(setSelectedWS(updatedWorkspace));
+        navigate(
+          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
+            "1")}`
+        );
+      }
+    }
+    catch (err) {
+      console.log("아이디어 수정 실패 : ", err);
+    }
   };
+
+  const handlemodify = () => {
+    setIdeaDone(false);
+  }
 
   return (
     <div className="form-container">
@@ -84,6 +214,7 @@ export default function ProhectForm() {
         </label>
         <input
           type="text"
+          disabled={ideaDone}
           className="form-input-field"
           value={projectName}
           onChange={(e) => setProjectName(e.target.value)}
@@ -106,6 +237,7 @@ export default function ProhectForm() {
         </label>
         <input
           type="text"
+          disabled={ideaDone}
           className="form-input-field"
           value={projectTarget}
           onChange={(e) => setProjectTarget(e.target.value)}
@@ -127,18 +259,30 @@ export default function ProhectForm() {
           <p>메인 기능</p>
         </label>
         {features.map((feature, index) => (
-          <input
-            key={index}
-            type="text"
-            className="form-input-field"
-            placeholder={`기능 ${index + 1}`}
-            value={feature}
-            onChange={(e) => updateFeature(index, e.target.value)}
-          />
+          <div key={feature.id} className="form-input-row">
+            <input
+              type="text"
+              disabled={ideaDone}
+              className="form-input-field"
+              placeholder={`기능 ${index + 1}`}
+              value={feature.content}
+              onChange={(e) => updateFeature(feature.id, e.target.value)}
+            />
+            {!ideaDone && <svg xmlns="http://www.w3.org/2000/svg"
+              className="form-remove-button"
+              height="20px"
+              viewBox="0 -960 960 960"
+              width="20px" fill="#EA3323"
+              onClick={() => removeFeature(feature.id)}>
+              <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+            </svg>
+            }
+          </div>
         ))}
-        <button className="form-add-button" onClick={addFeature}>
+        {!ideaDone && <button className="form-add-button" onClick={addFeature}>
           + 메인 기능 추가
         </button>
+        }
       </div>
 
       <div>
@@ -155,18 +299,29 @@ export default function ProhectForm() {
           <p>기술스택</p>
         </label>
         {stacks.map((stack, index) => (
-          <input
-            key={index}
-            type="text"
-            className="form-input-field"
-            placeholder={`스택 ${index + 1}`}
-            value={stack}
-            onChange={(e) => updateStack(index, e.target.value)}
-          />
+          <div key={stack.id} className="form-input-row">
+            <input
+              type="text"
+              disabled={ideaDone}
+              className="form-input-field"
+              placeholder={`스택 ${index + 1}`}
+              value={stack.content}
+              onChange={(e) => updateStack(stack.id, e.target.value)}
+            />
+            {!ideaDone && <svg xmlns="http://www.w3.org/2000/svg"
+              className="form-remove-button"
+              height="20px"
+              viewBox="0 -960 960 960"
+              width="20px" fill="#EA3323"
+              onClick={() => removeStack(stack.id)}>
+              <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+            </svg>
+            }
+          </div>
         ))}
-        <button className="form-add-button" onClick={addStack}>
+        {!ideaDone && <button className="form-add-button" onClick={addStack}>
           + 기술 스택 추가
-        </button>
+        </button>}
       </div>
 
       <div>
@@ -184,6 +339,7 @@ export default function ProhectForm() {
         </label>
         <textarea
           className="form-input-field"
+          disabled={ideaDone}
           rows={10}
           value={projectDescription}
           onChange={(e) => setProjectDescription(e.target.value)}
@@ -192,14 +348,21 @@ export default function ProhectForm() {
       </div>
 
       <div className="form-submit-wrapper">
-        <button
+        {ideaDone ? <button
+          className="form-submit-button"
+          onClick={handlemodify}
+        >
+          수정하기
+        </button> : <button
           disabled={isFormIncomplete}
           className="form-submit-button"
           onClick={handleSubmit}
         >
-          제출하기
-        </button>
+          저장하기
+        </button>}
       </div>
+      {openFeatureModal && <FeatureDeleteModal onClose={() => setOpenFeatureModal(false)} />}
+      {openStackModal && <StackDeleteModal onClose={() => setOpenStackModal(false)} />}
     </div>
   );
 }

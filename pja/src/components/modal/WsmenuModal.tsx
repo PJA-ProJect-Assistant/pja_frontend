@@ -89,3 +89,47 @@ export function NoCgAddModal({ onClose }: IsClose) {
     </Dialog.Root>
   );
 }
+
+export function StackDeleteModal({ onClose }: IsClose) {
+  // 기술스택 2개 이하라 삭제 불가할 때 뜨는 모달달
+  return (
+    <Dialog.Root open={true} onOpenChange={onClose}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="basic-modal-overlay" />
+        <Dialog.Content className="basic-modal-content">
+          <Dialog.Title className="basic-modal-title">
+            삭제가 불가능합니다
+          </Dialog.Title>
+          <Dialog.Description className="basic-modal-description">
+            기술 스택이 최소 2개는 필요합니다
+          </Dialog.Description>
+          <Dialog.Close asChild>
+            <button className="basic-modal-close">확인</button>
+          </Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+export function FeatureDeleteModal({ onClose }: IsClose) {
+  // 메인기능능 2개 이하라 삭제 불가할 때 뜨는 모달
+  return (
+    <Dialog.Root open={true} onOpenChange={onClose}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="basic-modal-overlay" />
+        <Dialog.Content className="basic-modal-content">
+          <Dialog.Title className="basic-modal-title">
+            삭제가 불가능합니다
+          </Dialog.Title>
+          <Dialog.Description className="basic-modal-description">
+            메인 기능이 최소 2개는 필요합니다
+          </Dialog.Description>
+          <Dialog.Close asChild>
+            <button className="basic-modal-close">확인</button>
+          </Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
