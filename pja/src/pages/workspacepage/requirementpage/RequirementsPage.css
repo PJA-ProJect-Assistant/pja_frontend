@@ -1,8 +1,11 @@
 .require-container {
     flex: 1;
+    display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     width: 100%;
-    min-width: 600px;
+    height: 90%;
+    min-width: 800px;
     gap: 5px;
 }
 
@@ -11,8 +14,9 @@
     display: flex;
     align-items: center;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     gap: 10px;
+    margin: 10px 0;
 }
 
 .require-title p {
@@ -25,6 +29,49 @@
     min-width: 88px;
     box-sizing: border-box;
     border-radius: 6px;
+    font-size: var(--font-size-lg);
     background-color: #00205B;
     color: white;
+}
+
+.require-content {
+    display: flex;
+    flex: 1;
+    flex-grow: 1;
+    flex-direction: row;
+    justify-content: space-around;
+    box-sizing: border-box;
+    gap: 30px;
+    padding: 5% 10%;
+}
+
+
+.require-content-box {
+    flex: 1;
+    max-width: 500px;
+    min-width: 300px;
+    min-height: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 5px;
+}
+
+.require-content-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.require-add-button {
+    display: flex;
+    background-color: transparent;
+    flex-direction: row;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.require-add-button svg {
+    background-color: #d9d9d6;
+    border-radius: 5px;
 }
