@@ -4,6 +4,8 @@ import type { RootState } from "../../../store/store";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { useNavigate } from "react-router-dom";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
+import { useEffect, useState } from "react";
+import { progressworkspace } from "../../../services/workspaceApi";
 
 export default function ProjectSummaryPage() {
   const navigate = useNavigate();
@@ -11,19 +13,30 @@ export default function ProjectSummaryPage() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
-  const handleSummaryComplete = () => {
-    if (selectedWS) {
-      dispatch(
-        setSelectedWS({
-          ...selectedWS,
-          progressStep: "3",
-        })
-      );
-      navigate(
-        `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
-          selectedWS?.progressStep
-        )}`
-      );
+  const [summaryDone, setSummaryDone] = useState<boolean>();
+  useEffect(() => {
+    if (Number(selectedWS?.progressStep) > 2) {
+      setSummaryDone(true);
+    }
+  }, [])
+  const handleSummaryComplete = async () => {
+    if (selectedWS?.progressStep === "2") {
+      if (selectedWS) {
+        const response = await progressworkspace(selectedWS.workspaceId, "3");
+        console.log("next step : ", response.data);
+        dispatch(
+          setSelectedWS({
+            ...selectedWS,
+            progressStep: "3",
+          })
+        );
+        setSummaryDone(true);
+        navigate(
+          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
+            "3"
+          )}`
+        );
+      }
     }
   };
   return (
@@ -49,8 +62,9 @@ export default function ProjectSummaryPage() {
           </p>
         </div>
         <div className="ideasummary-btn">
-          <button>수정하기</button>
-          {selectedWS?.progressStep === "2" && (
+          {summaryDone ? (
+            <button>수정하기</button>
+          ) : (
             <button onClick={handleSummaryComplete}>완료하기</button>
           )}
         </div>
