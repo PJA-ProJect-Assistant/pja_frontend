@@ -55,30 +55,30 @@ const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
 
   return (
     <motion.div
-      className="logout-modal-overlay"
+      className="logout-confirmation-overlay"
       onClick={handleOverlayClick}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       <motion.div
-        className="logout-modal-content"
+        className="logout-confirmation-content"
         onClick={(e) => e.stopPropagation()}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="logout-modal-header-bar" />
+        <div className="logout-confirmation-header-bar" />
         <p className="logout-modal-message">로그아웃 하시겠습니까?</p>
 
-        <div className="logout-modal-actions">
+        <div className="logout-confirmation-actions">
           <button
             onClick={() => {
               console.log("🟢 버튼 클릭됨");
               handleLogout();
             }}
-            className={`logout-modal-button confirm ${
+            className={`logout-confirmation-button confirm ${
               isLoading ? "loading" : ""
             }`}
             disabled={isLoading}
@@ -87,7 +87,7 @@ const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
           </button>
           <button
             onClick={onClose}
-            className="logout-modal-button cancel"
+            className="logout-confirmation-button cancel"
             disabled={isLoading}
           >
             취소
