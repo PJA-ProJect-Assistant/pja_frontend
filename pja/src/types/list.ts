@@ -1,32 +1,41 @@
+import type { workspace_member } from "./workspace";
+
 export interface feature_category {
-    feature_category_id: number,
+    featureCategoryId: number,
     name: string,
     state: boolean,
-    order: number,
-    workspace_id: number,
-    has_test: boolean,
+    orderIndex: number,
+    has_test: boolean | null,
+    features: feature[],
 }
 export interface feature {
-    feature_id: number,
-    name: string,
-    category_id: number,
-    state: boolean,
-    order: number,
-    has_test: boolean,
+    featureId: number;
+    name: string;
+    state: boolean;
+    hasTest: boolean | null;
+    orderIndex: number;
+    actions: action[];
 }
-export type Status = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+// 이거 status바뀐건지 물어보기
+export type Status = "BEFORE" | "IN_PROGRESS" | "DONE";
 export type Importance = 0 | 1 | 2 | 3 | 4 | 5;
 export interface action {
-    action_id: number,
-    name: string,
-    start_date?: Date,
-    end_date?: Date,
-    status: Status
-    importance?: Importance,
-    has_test: boolean,
-    assignee_id?: number[],
-    order: number,
-    feature_id: number,
+    actionId: number;
+    name: string;
+    startDate: string;
+    endDate: string;
+    state: Status;
+    hasTest: boolean;
+    importance: Importance;
+    orderIndex: number;
+    actionPostId: number | null;
+    participants: workspace_member[];
+}
+
+export interface listresponse {
+    coreFeatures: string[];
+    participants: workspace_member[];
+    featureCategories: feature_category[];
 }
 
 export interface filtered {

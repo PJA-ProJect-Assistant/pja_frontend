@@ -8,15 +8,12 @@ import type {
   Importance,
 } from "../types/list";
 import type { RootState } from "../store/store";
-import {
-  features,
-  actions,
-  featureCategories,
-} from "../constants/listconstant";
-import { dummyWSMember } from "../constants/wsconstants";
+import { addAction, addcategory, addfeature, getlist } from "../services/listApi";
+import type { workspace_member } from "../types/workspace";
 
 interface UseCategoryFeatureCategoryReturn {
   categoryList: feature_category[];
+  coreFeature: string[];
   clickCg: { [key: number]: boolean };
   clickFt: { [key: number]: boolean };
   name: string;
@@ -24,16 +21,14 @@ interface UseCategoryFeatureCategoryReturn {
   editingCategoryId: number | null;
   editingFeatureId: number | null;
   editingActionId: number | null;
-  featuresByCategoryId: Map<number, feature[]>;
-  actionsByFeatureId: Map<number, action[]>;
 
-  testCheckCg: { [key: number]: boolean };
-  testCheckFt: { [key: number]: boolean };
-  testCheckAc: { [key: number]: boolean };
-  participantList: number[];
-  toggleTestCheckCg: (categoryId: number) => void;
-  toggleTestCheckFt: (categoryId: number, featureId: number) => void;
-  toggleTestCheckAc: (featureId: number, actionId: number) => void;
+  // testCheckCg: { [key: number]: boolean };
+  // testCheckFt: { [key: number]: boolean };
+  // testCheckAc: { [key: number]: boolean };
+  participantList: workspace_member[];
+  // toggleTestCheckCg: (categoryId: number) => void;
+  // toggleTestCheckFt: (categoryId: number, featureId: number) => void;
+  // toggleTestCheckAc: (featureId: number, actionId: number) => void;
   categoryCompletableMap: { [key: number]: boolean };
 
   setName: React.Dispatch<React.SetStateAction<string>>;
@@ -45,7 +40,7 @@ interface UseCategoryFeatureCategoryReturn {
   cgToggleClick: (index: number, close?: boolean) => void;
   ftToggleClick: (id: number) => void;
 
-  handleAddCategory: (workspaceId?: number) => void;
+  handleAddCategory: () => void;
   updateCategoryName: (categoryId: number, isNew?: boolean) => void;
   handleAddFeature: (categoryId: number) => void;
   updateFeatureName: (
@@ -53,46 +48,48 @@ interface UseCategoryFeatureCategoryReturn {
     featureId: number,
     isNew?: boolean
   ) => void;
-  handleAddAction: (featureId: number) => void;
+  handleAddAction: (categoryId: number, featureId: number) => void;
   updateActionName: (
+    categoryId: number,
     featureId: number,
     actionId: number,
     isNew?: boolean
   ) => void;
 
-  handleDeleteCategory: (categoryId: number) => void;
-  handleDeleteFeature: (categoryId: number, featureId: number) => void;
-  handleDeleteAction: (featureId: number, actionId: number) => void;
+  // handleDeleteCategory: (categoryId: number) => void;
+  // handleDeleteFeature: (categoryId: number, featureId: number) => void;
+  // handleDeleteAction: (featureId: number, actionId: number) => void;
 
-  updateAssignee: (
-    featureId: number,
-    actionId: number,
-    newAssignees: number[]
-  ) => void;
-  updateStatus: (
-    featureId: number,
-    actionId: number,
-    newStatus: Status
-  ) => void;
-  updateImportance: (
-    featureId: number,
-    actionId: number,
-    newImportance: Importance
-  ) => void;
-  updateStartDate: (
-    featureId: number,
-    actionId: number,
-    date: Date | null
-  ) => void;
-  updateEndDate: (
-    featureId: number,
-    actionId: number,
-    date: Date | null
-  ) => void;
+  // updateAssignee: (
+  //   featureId: number,
+  //   actionId: number,
+  //   newAssignees: number[]
+  // ) => void;
+  // updateStatus: (
+  //   featureId: number,
+  //   actionId: number,
+  //   newStatus: Status
+  // ) => void;
+  // updateImportance: (
+  //   featureId: number,
+  //   actionId: number,
+  //   newImportance: Importance
+  // ) => void;
+  // updateStartDate: (
+  //   featureId: number,
+  //   actionId: number,
+  //   date: Date | null
+  // ) => void;
+  // updateEndDate: (
+  //   featureId: number,
+  //   actionId: number,
+  //   date: Date | null
+  // ) => void;
 }
 
 export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
+  const [coreFeature, setCoreFeature] = useState<string[]>([]);
   const [clickCg, setClickCg] = useState<{ [key: number]: boolean }>({});
   const [clickFt, setClickFt] = useState<{ [key: number]: boolean }>({});
   const [name, setName] = useState<string>("");
@@ -101,119 +98,72 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   );
   const [editingFeatureId, setEditingFeatureId] = useState<number | null>(null);
   const [editingActionId, setEditingActionId] = useState<number | null>(null);
-  const [featuresByCategoryId, setFeaturesByCategoryId] = useState<
-    Map<number, feature[]>
-  >(new Map());
-  const [actionsByFeatureId, setActionsByFeatureId] = useState<
-    Map<number, action[]>
-  >(new Map());
-  const [testCheckCg, setTestCheckCg] = useState<{ [key: number]: boolean }>(
-    {}
-  );
-  const [testCheckFt, setTestCheckFt] = useState<{ [key: number]: boolean }>(
-    {}
-  );
-  const [testCheckAc, setTestCheckAc] = useState<{ [key: number]: boolean }>(
-    {}
-  );
+
+  // const [testCheckCg, setTestCheckCg] = useState<{ [key: number]: boolean }>(
+  //   {}
+  // );
+  // const [testCheckFt, setTestCheckFt] = useState<{ [key: number]: boolean }>(
+  //   {}
+  // );
+  // const [testCheckAc, setTestCheckAc] = useState<{ [key: number]: boolean }>(
+  //   {}
+  // );
   const [workspaceId, setWorkspaceId] = useState<number>();
-  const [participantList, setParticipantList] = useState<number[]>([]);
+  const [participantList, setParticipantList] = useState<workspace_member[]>([]);
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
 
-  useEffect(() => {
-    const category = featureCategories
-      .filter((cg) => cg.workspace_id === selectedWS?.workspaceId)
-      .sort((a, b) => Number(a.state) - Number(b.state));
+  const getAllList = async () => {
+    if (selectedWS?.workspaceId) {
+      setWorkspaceId(selectedWS.workspaceId);
+      try {
+        const response = await getlist(selectedWS?.workspaceId);
+        const data = response.data;
+        if (data) {
+          setParticipantList(data.participants);
+          setCategoryList(data.featureCategories.sort((a, b) => Number(a.state) - Number(b.state)));
+          setCoreFeature(data.coreFeatures);
+        }
 
-    if (!selectedWS?.workspaceId) {
-      setParticipantList([]);
-      return;
+      } catch (err) {
+        console.log("getalllist 실패");
+      }
     }
+  }
 
-    const participants = dummyWSMember
-      .filter((member) => member.workspace_id === selectedWS.workspaceId)
-      .map((member) => member.user_id); // user_id 배열로 저장 (원한다면 workspace_member_id로도 가능)
-
-    setParticipantList(participants);
-
-    setWorkspaceId(selectedWS?.workspaceId);
-    setCategoryList(category);
+  useEffect(() => {
+    getAllList();
     setClickCg({});
     setClickFt({});
-  }, [selectedWS, featureCategories]);
-
-  useEffect(() => {
-    if (categoryList.length === 0) return;
-
-    const featureMap = new Map<number, feature[]>();
-
-    features
-      .filter((ft) =>
-        categoryList.some((cg) => cg.feature_category_id === ft.category_id)
-      )
-      .forEach((ft) => {
-        if (!featureMap.has(ft.category_id)) {
-          featureMap.set(ft.category_id, []);
-        }
-        featureMap.get(ft.category_id)!.push(ft);
-      });
-
-    setFeaturesByCategoryId(featureMap);
-  }, [categoryList, features]);
-
-  useEffect(() => {
-    const allFeatures = Array.from(featuresByCategoryId.values()).flat();
-    if (allFeatures.length === 0) return;
-
-    const actionMap = new Map<number, action[]>();
-    const startDateMap: { [key: number]: Date | null } = {};
-    const endDateMap: { [key: number]: Date | null } = {};
-
-    actions
-      .filter((ac) => allFeatures.some((ft) => ft.feature_id === ac.feature_id))
-      .forEach((ac) => {
-        if (!actionMap.has(ac.feature_id)) {
-          actionMap.set(ac.feature_id, []);
-        }
-        actionMap.get(ac.feature_id)!.push(ac);
-
-        startDateMap[ac.action_id] = ac.start_date
-          ? new Date(ac.start_date)
-          : null;
-        endDateMap[ac.action_id] = ac.end_date ? new Date(ac.end_date) : null;
-      });
-
-    setActionsByFeatureId(actionMap);
-  }, [featuresByCategoryId, actions]);
+  }, [selectedWS]);
 
   // has_test 초기화 (category, feature, action 각각)
-  useEffect(() => {
-    const cgCheck: { [key: number]: boolean } = {};
-    categoryList.forEach((cg) => {
-      cgCheck[cg.feature_category_id] = cg.has_test;
-    });
-    setTestCheckCg(cgCheck);
-  }, [categoryList]);
+  // useEffect(() => {
+  //   const cgCheck: { [key: number]: boolean } = {};
+  //   categoryList.forEach((cg) => {
+  //     cgCheck[cg.feature_category_id] = cg.has_test;
+  //   });
+  //   setTestCheckCg(cgCheck);
+  // }, [categoryList]);
 
-  useEffect(() => {
-    const ftCheck: { [key: number]: boolean } = {};
-    features.forEach((ft) => {
-      ftCheck[ft.feature_id] = ft.has_test;
-    });
-    console.log("");
-    setTestCheckFt(ftCheck);
-  }, [features]);
+  // useEffect(() => {
+  //   const ftCheck: { [key: number]: boolean } = {};
+  //   features.forEach((ft) => {
+  //     ftCheck[ft.feature_id] = ft.has_test;
+  //   });
+  //   console.log("");
+  //   setTestCheckFt(ftCheck);
+  // }, [features]);
 
-  useEffect(() => {
-    const acCheck: { [key: number]: boolean } = {};
-    actions.forEach((ac) => {
-      acCheck[ac.action_id] = ac.has_test;
-    });
-    setTestCheckAc(acCheck);
-  }, [actions]);
+  // useEffect(() => {
+  //   const acCheck: { [key: number]: boolean } = {};
+  //   actions.forEach((ac) => {
+  //     acCheck[ac.action_id] = ac.has_test;
+  //   });
+  //   setTestCheckAc(acCheck);
+  // }, [actions]);
 
   //feature의 모든 action 상태를 감시해서 자동 업데이트
   // 오류 발생, 충돌발생으로 액션 바꾸고 기능 상태 업데이트 불가능...
@@ -245,20 +195,20 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const categoryCompletableMap = useMemo(() => {
     const result: { [key: number]: boolean } = {};
     for (const cg of categoryList) {
-      const children = featuresByCategoryId.get(cg.feature_category_id) || [];
-      result[cg.feature_category_id] = children.every(
+      const children = cg.features || [];
+      result[cg.featureCategoryId] = children.every(
         (ft) => ft.state === true
       );
     }
     return result;
-  }, [featuresByCategoryId, categoryList]);
+  }, [categoryList]);
 
   const handleCompleteClick = (categoryId: number) => {
     const updatedList = categoryList.map((cg) =>
-      cg.feature_category_id === categoryId ? { ...cg, state: !cg.state } : cg
+      cg.featureCategoryId === categoryId ? { ...cg, state: !cg.state } : cg
     );
     const index = categoryList.findIndex(
-      (cg) => cg.feature_category_id === categoryId
+      (cg) => cg.featureCategoryId === categoryId
     );
     if (index !== -1) {
       cgToggleClick(index, true);
@@ -271,12 +221,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     setClickCg((prev) => {
       const next = close ? false : !prev[index];
       if (!next) {
-        const categoryId = categoryList[index].feature_category_id;
-        const featuresInCategory = featuresByCategoryId.get(categoryId) || [];
+        const featuresInCategory = categoryList[index].features;
         setClickFt((prevFt) => {
           const updatedFt = { ...prevFt };
           featuresInCategory.forEach((ft) => {
-            updatedFt[ft.feature_id] = false;
+            updatedFt[ft.featureId] = false;
           });
           return updatedFt;
         });
@@ -292,319 +241,507 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const handleAddCategory = () => {
     if (!workspaceId) return;
     const newCategory: feature_category = {
-      feature_category_id: 0,
+      featureCategoryId: 0,
       name: "",
       state: false,
-      order: 0,
+      orderIndex: categoryList.length + 1,
       has_test: false,
-      workspace_id: workspaceId,
+      features: [],
     };
     setCategoryList((prev) => [...prev, newCategory]);
   };
 
-  const updateCategoryName = (categoryId: number, isNew?: boolean) => {
-    setCategoryList((prev) => {
-      if (name.trim() === "") {
-        if (isNew) {
-          return prev.filter((item) => item.feature_category_id !== categoryId);
-        } else {
-          return prev;
+  const updateCategoryName = async (categoryId: number, isNew?: boolean) => {
+    if (name.trim() === "") {
+      // 이름이 비어 있을 경우
+      setCategoryList((prev) => {
+        return isNew
+          ? prev.filter((item) => item.featureCategoryId !== categoryId)
+          : prev;
+      });
+    } else {
+      if (isNew) {
+        try {
+          if (workspaceId) {
+            const response = await addcategory(workspaceId, name); // API 호출
+            const newId = response.data;
+            if (newId) {
+              setCategoryList((prev) =>
+                prev.map((item) =>
+                  item.featureCategoryId === categoryId
+                    ? { ...item, name, featureCategoryId: newId }
+                    : item
+                )
+              );
+            }
+          }
+        } catch (err) {
+          console.error("카테고리 생성 실패", err);
+          setCategoryList((prev) =>
+            prev.filter((item) => item.featureCategoryId !== categoryId)
+          );
+        }
+      } else {
+        try {
+          // 카테고리 수정 api 추가
+          setCategoryList((prev) =>
+            prev.map((item) =>
+              item.featureCategoryId === categoryId
+                ? { ...item, name }
+                : item
+            )
+          );
+        } catch (err) {
+          console.error("카테고리 수정 실패", err);
         }
       }
-      return prev.map((item) =>
-        item.feature_category_id === categoryId ? { ...item, name } : item
-      );
-    });
+    }
     setEditingCategoryId(null);
     setName("");
   };
 
   const handleAddFeature = (categoryId: number) => {
-    setFeaturesByCategoryId((prev) => {
-      const features = prev.get(categoryId) || [];
-      const newFeature: feature = {
-        feature_id: 0,
-        name: "",
-        category_id: categoryId,
-        state: false,
-        has_test: false,
-        order: 0,
-      };
-      const updated = [...features, newFeature];
-      const newMap = new Map(prev);
-      newMap.set(categoryId, updated);
-      return newMap;
-    });
+    setCategoryList((prev) =>
+      prev.map((category) => {
+        if (category.featureCategoryId === categoryId) {
+          const newFeature: feature = {
+            featureId: 0,
+            name: "",
+            state: false,
+            hasTest: false,
+            orderIndex: category.features.length + 1, // 예: 순서 자동 부여
+            actions: [],
+          };
+
+          return {
+            ...category,
+            features: [...category.features, newFeature],
+          };
+        }
+        return category;
+      })
+    );
   };
 
-  const updateFeatureName = (
+  const updateFeatureName = async (
     categoryId: number,
     featureId: number,
     isNew?: boolean
   ) => {
-    setFeaturesByCategoryId((prev) => {
-      const features = prev.get(categoryId);
-      if (!features) return prev;
-
-      const trimmedName = name.trim();
-      if (trimmedName === "") {
-        if (isNew) {
-          const updated = features.filter(
-            (item) => item.feature_id !== featureId
+    if (name.trim() === "") {
+      // 이름이 비어 있을 경우
+      if (isNew) {
+        setCategoryList((prev) =>
+          prev.map((category) =>
+            category.featureCategoryId === categoryId
+              ? {
+                ...category,
+                features: category.features.filter(
+                  (feature) => feature.featureId !== featureId
+                ),
+              }
+              : category
+          )
+        );
+      }
+    } else {
+      if (isNew) {
+        try {
+          if (workspaceId) {
+            const response = await addfeature(workspaceId, categoryId, name); // 기능API 호출
+            const newId = response.data;
+            if (newId) {
+              setCategoryList((prev) =>
+                prev.map((category) =>
+                  category.featureCategoryId === categoryId
+                    ? {
+                      ...category,
+                      features: category.features.map((feature) =>
+                        feature.featureId === featureId
+                          ? { ...feature, name, featureId: newId }
+                          : feature
+                      ),
+                    }
+                    : category
+                )
+              );
+            }
+          }
+        } catch (err) {
+          console.error("카테고리 생성 실패", err);
+          setCategoryList((prev) =>
+            prev.map((category) =>
+              category.featureCategoryId === categoryId
+                ? {
+                  ...category,
+                  features: category.features.filter(
+                    (feature) => feature.featureId !== featureId
+                  ),
+                }
+                : category
+            )
           );
-          const newMap = new Map(prev);
-          newMap.set(categoryId, updated);
-          return newMap;
-        } else {
-          return prev;
+        }
+      } else {
+        try {
+          // 기능 수정 api 추가
+          setCategoryList((prev) =>
+            prev.map((category) =>
+              category.featureCategoryId === categoryId
+                ? {
+                  ...category,
+                  features: category.features.map((feature) =>
+                    feature.featureId === featureId
+                      ? { ...feature, name }
+                      : feature
+                  ),
+                }
+                : category
+            )
+          );
+        } catch (err) {
+          console.error("기능 수정 실패", err);
         }
       }
-      const updated = features.map((item) =>
-        item.feature_id === featureId ? { ...item, name: trimmedName } : item
-      );
-      const newMap = new Map(prev);
-      newMap.set(categoryId, updated);
-      return newMap;
-    });
+    }
     setEditingFeatureId(null);
     setName("");
   };
 
-  const handleAddAction = (featureId: number) => {
-    setActionsByFeatureId((prev) => {
-      const actions = prev.get(featureId) || [];
-      const newAction: action = {
-        action_id: 0,
-        name: "",
-        status: "NOT_STARTED",
-        importance: 0,
-        has_test: false,
-        order: 0,
-        feature_id: featureId,
-      };
-      const updated = [...actions, newAction];
-      const newMap = new Map(prev);
-      newMap.set(featureId, updated);
-      return newMap;
-    });
+  const handleAddAction = (categoryId: number, featureId: number) => {
+    setCategoryList((prev) =>
+      prev.map((category) => {
+        if (category.featureCategoryId === categoryId) {
+          return {
+            ...category,
+            features: category.features.map((feature) => {
+              if (feature.featureId === featureId) {
+                const newAction: action = {
+                  actionId: 0,
+                  name: "",
+                  startDate: "",
+                  endDate: "",
+                  state: "BEFORE",
+                  hasTest: false,
+                  importance: 0,
+                  orderIndex: feature.actions.length + 1,
+                  participants: [],
+                  actionPostId: null,
+                };
+                return {
+                  ...feature,
+                  actions: [...feature.actions, newAction],
+                };
+              }
+              return feature;
+            }),
+          };
+        }
+        return category;
+      })
+    );
   };
 
-  const updateActionName = (
+  const updateActionName = async (
+    categoryId: number,
     featureId: number,
     actionId: number,
     isNew?: boolean
   ) => {
-    setActionsByFeatureId((prev) => {
-      const actions = prev.get(featureId);
-      if (!actions) return prev;
-
-      const trimmedName = name.trim();
-      if (trimmedName === "") {
-        if (isNew) {
-          const updated = actions.filter((item) => item.action_id !== actionId);
-          const newMap = new Map(prev);
-          newMap.set(featureId, updated);
-          return newMap;
-        } else {
-          return prev;
+    if (name.trim() === "") {
+      if (isNew) {
+        // 새로 만든 액션인데 이름 없이 종료하면 삭제
+        setCategoryList((prev) =>
+          prev.map((category) =>
+            category.featureCategoryId === categoryId
+              ? {
+                ...category,
+                features: category.features.map((feature) =>
+                  feature.featureId === featureId
+                    ? {
+                      ...feature,
+                      actions: feature.actions.filter(
+                        (action) => action.actionId !== actionId
+                      ),
+                    }
+                    : feature
+                ),
+              }
+              : category
+          )
+        );
+      }
+    } else {
+      if (isNew) {
+        try {
+          if (workspaceId) {
+            const response = await addAction(workspaceId, categoryId, featureId, name);
+            const newId = response.data;
+            if (newId) {
+              setCategoryList((prev) =>
+                prev.map((category) =>
+                  category.featureCategoryId === categoryId
+                    ? {
+                      ...category,
+                      features: category.features.map((feature) =>
+                        feature.featureId === featureId
+                          ? {
+                            ...feature,
+                            actions: feature.actions.map((action) =>
+                              action.actionId === actionId
+                                ? { ...action, name, actionId: newId }
+                                : action
+                            ),
+                          }
+                          : feature
+                      ),
+                    }
+                    : category
+                )
+              );
+            }
+          }
+        } catch (err) {
+          console.error("액션 생성 실패", err);
+          // 실패 시 액션 제거
+          setCategoryList((prev) =>
+            prev.map((category) =>
+              category.featureCategoryId === categoryId
+                ? {
+                  ...category,
+                  features: category.features.map((feature) =>
+                    feature.featureId === featureId
+                      ? {
+                        ...feature,
+                        actions: feature.actions.filter(
+                          (action) => action.actionId !== actionId
+                        ),
+                      }
+                      : feature
+                  ),
+                }
+                : category
+            )
+          );
+        }
+      } else {
+        try {
+          // 액션 수정 API 호출 위치 (선택 사항)
+          setCategoryList((prev) =>
+            prev.map((category) =>
+              category.featureCategoryId === categoryId
+                ? {
+                  ...category,
+                  features: category.features.map((feature) =>
+                    feature.featureId === featureId
+                      ? {
+                        ...feature,
+                        actions: feature.actions.map((action) =>
+                          action.actionId === actionId
+                            ? { ...action, name }
+                            : action
+                        ),
+                      }
+                      : feature
+                  ),
+                }
+                : category
+            )
+          );
+        } catch (err) {
+          console.error("액션 수정 실패", err);
         }
       }
-      const updated = actions.map((item) =>
-        item.action_id === actionId ? { ...item, name } : item
-      );
-      const newMap = new Map(prev);
-      newMap.set(featureId, updated);
-      return newMap;
-    });
-    setEditingActionId(null);
+    }
+
+    setEditingActionId(null); // ✅ 상태 관리 변수 이름에 따라 조정
     setName("");
   };
+  // const handleDeleteCategory = (categoryId: number) => {
+  //   setCategoryList((prevCategories) =>
+  //     prevCategories.filter((item) => item.feature_category_id !== categoryId)
+  //   );
+  // };
 
-  const handleDeleteCategory = (categoryId: number) => {
-    setCategoryList((prevCategories) =>
-      prevCategories.filter((item) => item.feature_category_id !== categoryId)
-    );
-  };
+  // const handleDeleteFeature = (categoryId: number, featureId: number) => {
+  //   setFeaturesByCategoryId((prev) => {
+  //     const updated = new Map(prev);
+  //     const features = updated.get(categoryId);
+  //     if (!features) return prev;
 
-  const handleDeleteFeature = (categoryId: number, featureId: number) => {
-    setFeaturesByCategoryId((prev) => {
-      const updated = new Map(prev);
-      const features = updated.get(categoryId);
-      if (!features) return prev;
+  //     const newFeatures = features.filter((f) => f.feature_id !== featureId);
+  //     updated.set(categoryId, newFeatures);
+  //     return updated;
+  //   });
+  // };
 
-      const newFeatures = features.filter((f) => f.feature_id !== featureId);
-      updated.set(categoryId, newFeatures);
-      return updated;
-    });
-  };
+  // const handleDeleteAction = (featureId: number, actionId: number) => {
+  //   setActionsByFeatureId((prev) => {
+  //     const updated = new Map(prev);
+  //     const action = updated.get(featureId);
+  //     if (!action) return prev;
 
-  const handleDeleteAction = (featureId: number, actionId: number) => {
-    setActionsByFeatureId((prev) => {
-      const updated = new Map(prev);
-      const action = updated.get(featureId);
-      if (!action) return prev;
+  //     const newActions = action.filter((a) => a.action_id !== actionId);
+  //     updated.set(featureId, newActions);
+  //     return updated;
+  //   });
+  // };
 
-      const newActions = action.filter((a) => a.action_id !== actionId);
-      updated.set(featureId, newActions);
-      return updated;
-    });
-  };
+  // //테스트 체크
+  // const toggleTestCheckCg = (categoryId: number) => {
+  //   setClickCg((prev) => ({
+  //     ...prev,
+  //     [categoryId]: !prev[categoryId],
+  //   }));
+  //   setCategoryList((prev) =>
+  //     prev.map((cg) =>
+  //       cg.feature_category_id === categoryId
+  //         ? { ...cg, has_test: !cg.has_test }
+  //         : cg
+  //     )
+  //   );
+  // };
 
-  //테스트 체크
-  const toggleTestCheckCg = (categoryId: number) => {
-    setClickCg((prev) => ({
-      ...prev,
-      [categoryId]: !prev[categoryId],
-    }));
-    setCategoryList((prev) =>
-      prev.map((cg) =>
-        cg.feature_category_id === categoryId
-          ? { ...cg, has_test: !cg.has_test }
-          : cg
-      )
-    );
-  };
+  // const toggleTestCheckFt = (categoryId: number, featureId: number) => {
+  //   setTestCheckFt((prev) => ({
+  //     ...prev,
+  //     [featureId]: !prev[featureId],
+  //   }));
 
-  const toggleTestCheckFt = (categoryId: number, featureId: number) => {
-    setTestCheckFt((prev) => ({
-      ...prev,
-      [featureId]: !prev[featureId],
-    }));
+  //   setFeaturesByCategoryId((prev) => {
+  //     const features = prev.get(categoryId);
+  //     if (!features) return prev;
 
-    setFeaturesByCategoryId((prev) => {
-      const features = prev.get(categoryId);
-      if (!features) return prev;
+  //     const updatedFeatures = features.map((ft) =>
+  //       ft.feature_id === featureId ? { ...ft, has_test: !ft.has_test } : ft
+  //     );
 
-      const updatedFeatures = features.map((ft) =>
-        ft.feature_id === featureId ? { ...ft, has_test: !ft.has_test } : ft
-      );
+  //     const newMap = new Map(prev);
+  //     newMap.set(categoryId, updatedFeatures);
+  //     return newMap;
+  //   });
+  // };
 
-      const newMap = new Map(prev);
-      newMap.set(categoryId, updatedFeatures);
-      return newMap;
-    });
-  };
+  // const toggleTestCheckAc = (featureId: number, actionId: number) => {
+  //   setTestCheckAc((prev) => ({
+  //     ...prev,
+  //     [actionId]: !prev[actionId],
+  //   }));
+  //   setActionsByFeatureId((prev) => {
+  //     const actions = prev.get(featureId);
+  //     if (!actions) return prev;
 
-  const toggleTestCheckAc = (featureId: number, actionId: number) => {
-    setTestCheckAc((prev) => ({
-      ...prev,
-      [actionId]: !prev[actionId],
-    }));
-    setActionsByFeatureId((prev) => {
-      const actions = prev.get(featureId);
-      if (!actions) return prev;
+  //     const updatedActions = actions.map((ac) =>
+  //       ac.action_id === actionId ? { ...ac, has_test: !ac.has_test } : ac
+  //     );
 
-      const updatedActions = actions.map((ac) =>
-        ac.action_id === actionId ? { ...ac, has_test: !ac.has_test } : ac
-      );
+  //     const newMap = new Map(prev);
+  //     newMap.set(featureId, updatedActions);
+  //     return newMap;
+  //   });
+  // };
 
-      const newMap = new Map(prev);
-      newMap.set(featureId, updatedActions);
-      return newMap;
-    });
-  };
+  // // 참가자 업데이트
+  // const updateAssignee = (
+  //   featureId: number,
+  //   actionId: number,
+  //   newAssignee: number[]
+  // ) => {
+  //   setActionsByFeatureId((prev) => {
+  //     const actions = prev.get(featureId);
+  //     if (!actions) return prev;
 
-  // 참가자 업데이트
-  const updateAssignee = (
-    featureId: number,
-    actionId: number,
-    newAssignee: number[]
-  ) => {
-    setActionsByFeatureId((prev) => {
-      const actions = prev.get(featureId);
-      if (!actions) return prev;
+  //     const updated = actions.map((a) => {
+  //       if (a.action_id === actionId) {
+  //         return { ...a, assignee_id: newAssignee };
+  //       }
+  //       return a;
+  //     });
 
-      const updated = actions.map((a) => {
-        if (a.action_id === actionId) {
-          return { ...a, assignee_id: newAssignee };
-        }
-        return a;
-      });
+  //     const newMap = new Map(prev);
+  //     newMap.set(featureId, updated);
+  //     return newMap;
+  //   });
+  // };
 
-      const newMap = new Map(prev);
-      newMap.set(featureId, updated);
-      return newMap;
-    });
-  };
+  // // 상태 업데이트
+  // const updateStatus = (
+  //   featureId: number,
+  //   actionId: number,
+  //   newStatus: Status
+  // ) => {
+  //   setActionsByFeatureId((prev) => {
+  //     const actions = prev.get(featureId);
+  //     if (!actions) return prev;
 
-  // 상태 업데이트
-  const updateStatus = (
-    featureId: number,
-    actionId: number,
-    newStatus: Status
-  ) => {
-    setActionsByFeatureId((prev) => {
-      const actions = prev.get(featureId);
-      if (!actions) return prev;
+  //     const updatedActions = actions.map((a) =>
+  //       a.action_id === actionId ? { ...a, status: newStatus } : a
+  //     );
 
-      const updatedActions = actions.map((a) =>
-        a.action_id === actionId ? { ...a, status: newStatus } : a
-      );
+  //     const newMap = new Map(prev);
+  //     newMap.set(featureId, updatedActions);
+  //     return newMap;
+  //   });
+  // };
 
-      const newMap = new Map(prev);
-      newMap.set(featureId, updatedActions);
-      return newMap;
-    });
-  };
+  // // 중요도 업데이트
+  // const updateImportance = (
+  //   featureId: number,
+  //   actionId: number,
+  //   newImportance: Importance
+  // ) => {
+  //   setActionsByFeatureId((prev) => {
+  //     const actions = prev.get(featureId);
+  //     if (!actions) return prev;
 
-  // 중요도 업데이트
-  const updateImportance = (
-    featureId: number,
-    actionId: number,
-    newImportance: Importance
-  ) => {
-    setActionsByFeatureId((prev) => {
-      const actions = prev.get(featureId);
-      if (!actions) return prev;
+  //     const updated = actions.map((a) =>
+  //       a.action_id === actionId ? { ...a, importance: newImportance } : a
+  //     );
 
-      const updated = actions.map((a) =>
-        a.action_id === actionId ? { ...a, importance: newImportance } : a
-      );
+  //     const newMap = new Map(prev);
+  //     newMap.set(featureId, updated);
+  //     return newMap;
+  //   });
+  // };
+  // // 시작,종료 날짜 업데이트
+  // const updateStartDate = (
+  //   featureId: number,
+  //   actionId: number,
+  //   date: Date | null
+  // ) => {
+  //   console.log("updateEndDate called", featureId, actionId, date);
+  //   if (!date) return;
+  //   setActionsByFeatureId((prev) => {
+  //     const actions = prev.get(featureId);
+  //     if (!actions) return prev;
 
-      const newMap = new Map(prev);
-      newMap.set(featureId, updated);
-      return newMap;
-    });
-  };
-  // 시작,종료 날짜 업데이트
-  const updateStartDate = (
-    featureId: number,
-    actionId: number,
-    date: Date | null
-  ) => {
-    console.log("updateEndDate called", featureId, actionId, date);
-    if (!date) return;
-    setActionsByFeatureId((prev) => {
-      const actions = prev.get(featureId);
-      if (!actions) return prev;
+  //     const updated = actions.map((a) =>
+  //       a.action_id === actionId ? { ...a, start_date: date } : a
+  //     );
+  //     const newMap = new Map(prev);
+  //     newMap.set(featureId, updated);
+  //     return newMap;
+  //   });
+  // };
+  // const updateEndDate = (
+  //   featureId: number,
+  //   actionId: number,
+  //   date: Date | null
+  // ) => {
+  //   if (!date) return;
+  //   setActionsByFeatureId((prev) => {
+  //     const actions = prev.get(featureId);
+  //     if (!actions) return prev;
 
-      const updated = actions.map((a) =>
-        a.action_id === actionId ? { ...a, start_date: date } : a
-      );
-      const newMap = new Map(prev);
-      newMap.set(featureId, updated);
-      return newMap;
-    });
-  };
-  const updateEndDate = (
-    featureId: number,
-    actionId: number,
-    date: Date | null
-  ) => {
-    if (!date) return;
-    setActionsByFeatureId((prev) => {
-      const actions = prev.get(featureId);
-      if (!actions) return prev;
+  //     const updated = actions.map((a) =>
+  //       a.action_id === actionId ? { ...a, end_date: date } : a
+  //     );
 
-      const updated = actions.map((a) =>
-        a.action_id === actionId ? { ...a, end_date: date } : a
-      );
-
-      const newMap = new Map(prev);
-      newMap.set(featureId, updated);
-      return newMap;
-    });
-  };
+  //     const newMap = new Map(prev);
+  //     newMap.set(featureId, updated);
+  //     return newMap;
+  //   });
+  // };
 
   return {
     categoryList,
@@ -612,29 +749,28 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     clickFt,
     workspaceId,
     participantList,
+    coreFeature,
     name,
     editingCategoryId,
     editingFeatureId,
     editingActionId,
-    featuresByCategoryId,
-    actionsByFeatureId,
-    testCheckCg,
-    testCheckFt,
-    testCheckAc,
+    // testCheckCg,
+    // testCheckFt,
+    // testCheckAc,
     categoryCompletableMap,
 
-    toggleTestCheckCg,
-    toggleTestCheckFt,
-    toggleTestCheckAc,
+    // toggleTestCheckCg,
+    // toggleTestCheckFt,
+    // toggleTestCheckAc,
     setName,
     setEditingCategoryId,
     setEditingFeatureId,
     setEditingActionId,
-    updateAssignee,
-    updateStatus,
-    updateImportance,
-    updateStartDate,
-    updateEndDate,
+    // updateAssignee,
+    // updateStatus,
+    // updateImportance,
+    // updateStartDate,
+    // updateEndDate,
     handleCompleteClick,
     cgToggleClick,
     ftToggleClick,
@@ -644,8 +780,8 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     updateFeatureName,
     handleAddAction,
     updateActionName,
-    handleDeleteCategory,
-    handleDeleteFeature,
-    handleDeleteAction,
+    // handleDeleteCategory,
+    // handleDeleteFeature,
+    // handleDeleteAction,
   };
 }
