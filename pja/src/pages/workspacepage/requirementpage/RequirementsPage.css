@@ -2,6 +2,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
   width: 100%;
@@ -66,8 +67,7 @@
   flex-direction: column;
   max-width: 400px;
   min-width: 300px;
-  height: 100%;
-  max-height: 500px;
+  height: 98%;
   border-radius: 12px;
   box-sizing: border-box;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -80,6 +80,7 @@
   border-top-right-radius: 12px;
   padding: 5px;
 }
+
 .require-content-title p {
   text-align: center;
   font-size: var(--font-size-xl);
@@ -107,6 +108,7 @@
   background-color: #d9d9d6;
   border-radius: 5px;
 }
+
 .require-add-button p {
   font-size: var(--font-size-base);
   color: #909090;
@@ -120,6 +122,7 @@
   padding: 5px 10px;
   cursor: pointer;
 }
+
 .require-info {
   display: flex;
   align-items: center;
@@ -135,8 +138,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
-.require-info:hover {
-}
 
 .require-btn p {
   margin: 0;
@@ -145,6 +146,7 @@
 .require-lists {
   padding: 5px 0;
   flex-grow: 1;
+  width: 100%;
   box-sizing: border-box;
   overflow-y: auto;
 }
@@ -153,6 +155,7 @@
   margin: 0;
   padding-right: 5px;
 }
+
 .require-list {
   display: flex;
   flex-direction: row;
@@ -162,20 +165,28 @@
   justify-content: space-between;
   margin-top: 5px;
 }
+
 .require-list input {
   width: 100%;
 }
+
 .require-list li {
   width: 90%;
+  word-break: break-word;
+  /* 문장 줄바꿈되게 */
 }
+
 .require-list svg {
-  display: none; /*기본은 숨김*/
+  display: none;
+  /*기본은 숨김*/
   cursor: pointer;
 }
 
 .require-list:hover svg {
-  display: inline; /* hover 시 보임 */
+  display: inline;
+  /* hover 시 보임 */
 }
+
 .airequire-list {
   display: flex;
   flex-direction: row;
@@ -186,16 +197,19 @@
   margin-top: 5px;
   color: #8f8f8f;
 }
+
 .airequire-wrapper {
   display: inline;
   width: 100%;
 }
+
 .airequire-text {
   margin-right: 5px;
 }
 
 .airequire-actions {
-  display: inline-flex; /* ✅ 텍스트 뒤에 버튼들 한 줄로 나란히 */
+  display: inline-flex;
+  /* ✅ 텍스트 뒤에 버튼들 한 줄로 나란히 */
   gap: 4px;
 }
 
@@ -225,10 +239,12 @@
 }
 
 @keyframes wave {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-6px);
   }
