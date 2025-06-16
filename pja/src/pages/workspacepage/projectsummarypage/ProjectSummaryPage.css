@@ -4,8 +4,8 @@
   justify-content: center;
   width: 100%;
   min-width: 600px;
+  box-sizing: border-box;
   margin: 0 auto;
-  margin-bottom: 50px;
   padding: 0 16px;
   height: 100vh;
   background-color: white;

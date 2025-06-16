@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import PrivateRoute from "./components/common/PrivateRoute";
 import MainPage from "./pages/mainpage/MainPage";
 import LoginPage from "./pages/loginpage/LoginPage";
-import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
+// import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
 import FindIdPage from "./pages/loginpage/findid/FindIdPage";
 import FindPwPage from "./pages/loginpage/findpw/FindPwPage";
 import SignupPage from "./pages/signuppage/SignupPage";
@@ -23,7 +23,7 @@ const Router = () => {
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
-      <Route path="/oauth2/success" element={<OAuth2Success />} />
+      {/* <Route path="/oauth2/success" element={<OAuth2Success />} /> */}
       {/* 이메일 인증 페이지 */}
       <Route path="/email-verification" element={<EmailVerificationPage />} />
       <Route path="/find-id" element={<FindIdPage />} />

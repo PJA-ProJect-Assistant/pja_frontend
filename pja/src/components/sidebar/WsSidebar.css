@@ -63,9 +63,8 @@
   box-sizing: border-box;
   top: 80px;
   left: 100%;
-  /* background-color: #F0F2F7; */
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  background-color: #f0f2f7;
+  /* background-color: #f0f0f0; */
   padding: 10px 0;
   border-radius: 8px;
   height: calc(100% - 100px);
@@ -116,6 +115,6 @@
 
 .line {
   width: 100%;
-  border-top: 1px solid black;
+  border-top: 1px solid #828282;
   margin: 10px 0;
 }

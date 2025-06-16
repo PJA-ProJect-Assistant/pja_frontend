@@ -24,7 +24,7 @@ export default function ProgressStep() {
   const steps = [
     "아이디어 작성",
     "요구사항 명세서 작성",
-    "프로젝트 요약",
+    "프로젝트 정보",
     "ERD 생성",
     "API 명세서 작성",
     "프로젝트 진행",
