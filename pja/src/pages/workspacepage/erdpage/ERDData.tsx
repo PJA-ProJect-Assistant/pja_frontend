@@ -2,8 +2,9 @@ import {
     Handle,
     Position,
 } from "reactflow";
-import type { Node, Edge, NodeProps, NodeTypes } from "reactflow";
+import type { Edge, NodeProps, NodeTypes } from "reactflow";
 import { getRandomColor } from "../../../utils/colorUtils";
+import "./ERDPage.css"
 
 export interface Field {
     name: string;
@@ -121,11 +122,11 @@ export const tableData: { id: string; data: TableData }[] = [
 ];
 
 // 노드 생성 함수 (2열 종대 배치)
-export function generateNodes(): Node<TableData>[] {
+export function generateNodesFromData(data: typeof tableData) {
     const gapX = 550;
     const gapY = 220;
 
-    return tableData.map((table, index) => {
+    return data.map((table, index) => {
         const col = index % 2;
         const row = Math.floor(index / 2);
         return {
