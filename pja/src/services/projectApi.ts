@@ -37,7 +37,7 @@ export const getProject = async (
   workspaceId: number
 ): Promise<ApiResponse<getproject>> => {
   try {
-    const response = await api.get(`/workspaces/${workspaceId}/prject-info`);
+    const response = await api.get(`/workspaces/${workspaceId}/project-info`);
     console.log("프로젝트 조회 :", response);
     return response.data;
   } catch (error: any) {
