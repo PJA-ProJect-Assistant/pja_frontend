@@ -8,7 +8,31 @@ import type {
   Importance,
 } from "../types/list";
 import type { RootState } from "../store/store";
-import { addAction, addcategory, addfeature, getlist } from "../services/listApi";
+import { getlist } from "../services/listapi/listApi";
+import {
+  addcategory,
+  deletecategory,
+  patchcategoryname,
+  patchcategorystate,
+  patchcategorytest,
+} from "../services/listapi/CategoryApi";
+import {
+  addfeature,
+  deletefeature,
+  patchfeaturename,
+  patchfeaturetest,
+} from "../services/listapi/FeatureApi";
+import {
+  addaction,
+  deleteaction,
+  patchactionend,
+  patchactionimportance,
+  patchactionname,
+  patchactionparti,
+  patchactionstart,
+  patchactionstate,
+  patchactiontest,
+} from "../services/listapi/ActionApi";
 import type { workspace_member } from "../types/workspace";
 
 interface UseCategoryFeatureCategoryReturn {
@@ -21,14 +45,14 @@ interface UseCategoryFeatureCategoryReturn {
   editingCategoryId: number | null;
   editingFeatureId: number | null;
   editingActionId: number | null;
-
-  // testCheckCg: { [key: number]: boolean };
-  // testCheckFt: { [key: number]: boolean };
-  // testCheckAc: { [key: number]: boolean };
   participantList: workspace_member[];
-  // toggleTestCheckCg: (categoryId: number) => void;
-  // toggleTestCheckFt: (categoryId: number, featureId: number) => void;
-  // toggleTestCheckAc: (featureId: number, actionId: number) => void;
+  toggleTestCheckCg: (categoryId: number) => void;
+  toggleTestCheckFt: (categoryId: number, featureId: number) => void;
+  toggleTestCheckAc: (
+    categoryId: number,
+    featureId: number,
+    actionId: number
+  ) => void;
   categoryCompletableMap: { [key: number]: boolean };
 
   setName: React.Dispatch<React.SetStateAction<string>>;
@@ -41,50 +65,54 @@ interface UseCategoryFeatureCategoryReturn {
   ftToggleClick: (id: number) => void;
 
   handleAddCategory: () => void;
-  updateCategoryName: (categoryId: number, isNew?: boolean) => void;
+  updateCategoryName: (isNew?: boolean) => void;
   handleAddFeature: (categoryId: number) => void;
-  updateFeatureName: (
-    categoryId: number,
-    featureId: number,
-    isNew?: boolean
-  ) => void;
+  updateFeatureName: (categoryId: number, isNew?: boolean) => void;
   handleAddAction: (categoryId: number, featureId: number) => void;
   updateActionName: (
     categoryId: number,
     featureId: number,
-    actionId: number,
     isNew?: boolean
   ) => void;
 
-  // handleDeleteCategory: (categoryId: number) => void;
-  // handleDeleteFeature: (categoryId: number, featureId: number) => void;
-  // handleDeleteAction: (featureId: number, actionId: number) => void;
+  handleDeleteCategory: (categoryId: number) => void;
+  handleDeleteFeature: (categoryId: number, featureId: number) => void;
+  handleDeleteAction: (
+    categoryId: number,
+    featureId: number,
+    actionId: number
+  ) => void;
 
-  // updateAssignee: (
-  //   featureId: number,
-  //   actionId: number,
-  //   newAssignees: number[]
-  // ) => void;
-  // updateStatus: (
-  //   featureId: number,
-  //   actionId: number,
-  //   newStatus: Status
-  // ) => void;
-  // updateImportance: (
-  //   featureId: number,
-  //   actionId: number,
-  //   newImportance: Importance
-  // ) => void;
-  // updateStartDate: (
-  //   featureId: number,
-  //   actionId: number,
-  //   date: Date | null
-  // ) => void;
-  // updateEndDate: (
-  //   featureId: number,
-  //   actionId: number,
-  //   date: Date | null
-  // ) => void;
+  updateAssignee: (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    newAssignees: number[]
+  ) => void;
+  updateStatus: (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    newStatus: Status
+  ) => void;
+  updateImportance: (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    newImportance: Importance
+  ) => void;
+  updateStartDate: (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    date: Date | null
+  ) => void;
+  updateEndDate: (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    date: Date | null
+  ) => void;
 }
 
 export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
@@ -99,21 +127,21 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const [editingFeatureId, setEditingFeatureId] = useState<number | null>(null);
   const [editingActionId, setEditingActionId] = useState<number | null>(null);
 
-  // const [testCheckCg, setTestCheckCg] = useState<{ [key: number]: boolean }>(
-  //   {}
-  // );
-  // const [testCheckFt, setTestCheckFt] = useState<{ [key: number]: boolean }>(
-  //   {}
-  // );
-  // const [testCheckAc, setTestCheckAc] = useState<{ [key: number]: boolean }>(
-  //   {}
-  // );
   const [workspaceId, setWorkspaceId] = useState<number>();
-  const [participantList, setParticipantList] = useState<workspace_member[]>([]);
+  const [participantList, setParticipantList] = useState<workspace_member[]>(
+    []
+  );
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+
+  //시작전이 완료보다 먼저 나오게
+  const statusOrder: Record<string, number> = {
+    BEFORE: 0,
+    IN_PROGRESS: 1,
+    DONE: 2,
+  };
 
   const getAllList = async () => {
     if (selectedWS?.workspaceId) {
@@ -123,15 +151,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         const data = response.data;
         if (data) {
           setParticipantList(data.participants);
-          setCategoryList(data.featureCategories.sort((a, b) => Number(a.state) - Number(b.state)));
+          setCategoryList(
+            data.featureCategories.sort(
+              (a, b) => statusOrder[a.state] - statusOrder[b.state]
+            )
+          );
           setCoreFeature(data.coreFeatures);
         }
-
       } catch (err) {
         console.log("getalllist 실패");
       }
     }
-  }
+  };
 
   useEffect(() => {
     getAllList();
@@ -139,82 +170,135 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     setClickFt({});
   }, [selectedWS]);
 
-  // has_test 초기화 (category, feature, action 각각)
-  // useEffect(() => {
-  //   const cgCheck: { [key: number]: boolean } = {};
-  //   categoryList.forEach((cg) => {
-  //     cgCheck[cg.feature_category_id] = cg.has_test;
-  //   });
-  //   setTestCheckCg(cgCheck);
-  // }, [categoryList]);
-
-  // useEffect(() => {
-  //   const ftCheck: { [key: number]: boolean } = {};
-  //   features.forEach((ft) => {
-  //     ftCheck[ft.feature_id] = ft.has_test;
-  //   });
-  //   console.log("");
-  //   setTestCheckFt(ftCheck);
-  // }, [features]);
-
-  // useEffect(() => {
-  //   const acCheck: { [key: number]: boolean } = {};
-  //   actions.forEach((ac) => {
-  //     acCheck[ac.action_id] = ac.has_test;
-  //   });
-  //   setTestCheckAc(acCheck);
-  // }, [actions]);
-
-  //feature의 모든 action 상태를 감시해서 자동 업데이트
-  // 오류 발생, 충돌발생으로 액션 바꾸고 기능 상태 업데이트 불가능...
-  // useEffect(() => {
-  //     // featuresByCategoryId와 actionsByFeatureId가 모두 세팅된 후 동작
-  //     if (featuresByCategoryId.size === 0 || actionsByFeatureId.size === 0) return;
-
-  //     setFeaturesByCategoryId((prev) => {
-  //         const newMap = new Map(prev);
-
-  //         for (const [categoryId, features] of newMap.entries()) {
-  //             const updatedFeatures = features.map((ft) => {
-  //                 const relatedActions = actionsByFeatureId.get(ft.feature_id) || [];
-  //                 const allComplete = relatedActions.length > 0 && relatedActions.every((a) => a.status === "COMPLETED");
-
-  //                 // 상태가 다르면 업데이트
-  //                 if (ft.state !== allComplete) {
-  //                     return { ...ft, state: allComplete };
-  //                 }
-  //                 return ft;
-  //             });
-  //             newMap.set(categoryId, updatedFeatures);
-  //         }
-
-  //         return newMap;
-  //     });
-  // }, [actionsByFeatureId]); // <- 핵심: 액션 바뀌면 자동 감지
-
   const categoryCompletableMap = useMemo(() => {
     const result: { [key: number]: boolean } = {};
     for (const cg of categoryList) {
       const children = cg.features || [];
       result[cg.featureCategoryId] = children.every(
-        (ft) => ft.state === true
+        (ft) => ft.state === "DONE" //나중에 boolean으로 수정
       );
     }
     return result;
   }, [categoryList]);
 
-  const handleCompleteClick = (categoryId: number) => {
-    const updatedList = categoryList.map((cg) =>
-      cg.featureCategoryId === categoryId ? { ...cg, state: !cg.state } : cg
+  //카테고리 리스트의 feature 수정
+  const updateFeatureInCategoryList = (
+    list: feature_category[],
+    categoryId: number,
+    featureId: number,
+    updater: (feature: feature) => feature
+  ): feature_category[] => {
+    return list.map((category) =>
+      category.featureCategoryId === categoryId
+        ? {
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId ? updater(feature) : feature
+            ),
+          }
+        : category
     );
-    const index = categoryList.findIndex(
-      (cg) => cg.featureCategoryId === categoryId
+  };
+
+  //제사용 함수
+  //카테고리 리스트의 feature 삭제
+  const deleteFeatureFromCategoryList = (
+    list: feature_category[],
+    categoryId: number,
+    featureId: number
+  ): feature_category[] => {
+    return list.map((category) =>
+      category.featureCategoryId === categoryId
+        ? {
+            ...category,
+            features: category.features.filter(
+              (feature) => feature.featureId !== featureId
+            ),
+          }
+        : category
     );
-    if (index !== -1) {
-      cgToggleClick(index, true);
+  };
+
+  // CategoryList의 action 수정
+  const updateActionInCategoryList = (
+    list: feature_category[],
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    updater: (action: action) => action
+  ): feature_category[] => {
+    return list.map((category) =>
+      category.featureCategoryId === categoryId
+        ? {
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.map((action) =>
+                      action.actionId === actionId ? updater(action) : action
+                    ),
+                  }
+                : feature
+            ),
+          }
+        : category
+    );
+  };
+
+  // CategoryList의 action 삭제
+  const deleteActionFromCategoryList = (
+    list: feature_category[],
+    categoryId: number,
+    featureId: number,
+    actionId: number
+  ): feature_category[] => {
+    return list.map((category) =>
+      category.featureCategoryId === categoryId
+        ? {
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.filter(
+                      (action) => action.actionId !== actionId
+                    ),
+                  }
+                : feature
+            ),
+          }
+        : category
+    );
+  };
+
+  //카테고리 완료
+  const handleCompleteClick = async (categoryId: number) => {
+    if (workspaceId) {
+      const currentstate = categoryList.find(
+        (cg) => cg.featureCategoryId === categoryId
+      )?.state;
+      const changestate = currentstate === "BEFORE" ? "DONE" : "BEFORE";
+      //카테고리 완료 수정 api
+      try {
+        await patchcategorystate(workspaceId, categoryId, changestate);
+        const updatedList = categoryList.map((cg) =>
+          cg.featureCategoryId === categoryId
+            ? { ...cg, state: changestate as Status }
+            : cg
+        );
+        const index = categoryList.findIndex(
+          (cg) => cg.featureCategoryId === categoryId
+        );
+        if (index !== -1) {
+          cgToggleClick(index, true);
+        }
+        updatedList.sort((a, b) => statusOrder[a.state] - statusOrder[b.state]);
+        setCategoryList(updatedList);
+      } catch (err) {
+        console.log("카테고리 상태 수정 실패");
+      }
     }
-    updatedList.sort((a, b) => Number(a.state) - Number(b.state));
-    setCategoryList(updatedList);
   };
 
   const cgToggleClick = (index: number, close?: boolean) => {
@@ -243,7 +327,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     const newCategory: feature_category = {
       featureCategoryId: 0,
       name: "",
-      state: false,
+      state: "BEFORE",
       orderIndex: categoryList.length + 1,
       has_test: false,
       features: [],
@@ -251,24 +335,25 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     setCategoryList((prev) => [...prev, newCategory]);
   };
 
-  const updateCategoryName = async (categoryId: number, isNew?: boolean) => {
+  const updateCategoryName = async (isNew?: boolean) => {
     if (name.trim() === "") {
       // 이름이 비어 있을 경우
       setCategoryList((prev) => {
         return isNew
-          ? prev.filter((item) => item.featureCategoryId !== categoryId)
+          ? prev.filter((item) => item.featureCategoryId !== editingCategoryId)
           : prev;
       });
     } else {
+      if (!editingCategoryId) return;
       if (isNew) {
         try {
           if (workspaceId) {
-            const response = await addcategory(workspaceId, name); // API 호출
+            const response = await addcategory(workspaceId, name); // 카테고리 생성 API 호출
             const newId = response.data;
             if (newId) {
               setCategoryList((prev) =>
                 prev.map((item) =>
-                  item.featureCategoryId === categoryId
+                  item.featureCategoryId === editingCategoryId
                     ? { ...item, name, featureCategoryId: newId }
                     : item
                 )
@@ -278,19 +363,22 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         } catch (err) {
           console.error("카테고리 생성 실패", err);
           setCategoryList((prev) =>
-            prev.filter((item) => item.featureCategoryId !== categoryId)
+            prev.filter((item) => item.featureCategoryId !== editingCategoryId)
           );
         }
       } else {
         try {
-          // 카테고리 수정 api 추가
-          setCategoryList((prev) =>
-            prev.map((item) =>
-              item.featureCategoryId === categoryId
-                ? { ...item, name }
-                : item
-            )
-          );
+          if (workspaceId) {
+            // 카테고리 이름 수정 api
+            await patchcategoryname(workspaceId, editingCategoryId, name);
+            setCategoryList((prev) =>
+              prev.map((item) =>
+                item.featureCategoryId === editingCategoryId
+                  ? { ...item, name }
+                  : item
+              )
+            );
+          }
         } catch (err) {
           console.error("카테고리 수정 실패", err);
         }
@@ -307,7 +395,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
           const newFeature: feature = {
             featureId: 0,
             name: "",
-            state: false,
+            state: "BEFORE",
             hasTest: false,
             orderIndex: category.features.length + 1, // 예: 순서 자동 부여
             actions: [],
@@ -323,46 +411,36 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     );
   };
 
-  const updateFeatureName = async (
-    categoryId: number,
-    featureId: number,
-    isNew?: boolean
-  ) => {
+  const updateFeatureName = async (categoryId: number, isNew?: boolean) => {
+    if (!editingFeatureId) return;
     if (name.trim() === "") {
       // 이름이 비어 있을 경우
       if (isNew) {
         setCategoryList((prev) =>
-          prev.map((category) =>
-            category.featureCategoryId === categoryId
-              ? {
-                ...category,
-                features: category.features.filter(
-                  (feature) => feature.featureId !== featureId
-                ),
-              }
-              : category
-          )
+          deleteFeatureFromCategoryList(prev, categoryId, editingFeatureId)
         );
       }
     } else {
       if (isNew) {
         try {
           if (workspaceId) {
-            const response = await addfeature(workspaceId, categoryId, name); // 기능API 호출
+            const response = await addfeature(
+              workspaceId,
+              editingFeatureId,
+              name
+            ); // 기능생성 API 호출
             const newId = response.data;
             if (newId) {
               setCategoryList((prev) =>
-                prev.map((category) =>
-                  category.featureCategoryId === categoryId
-                    ? {
-                      ...category,
-                      features: category.features.map((feature) =>
-                        feature.featureId === featureId
-                          ? { ...feature, name, featureId: newId }
-                          : feature
-                      ),
-                    }
-                    : category
+                updateFeatureInCategoryList(
+                  prev,
+                  categoryId,
+                  editingFeatureId,
+                  (feature) => ({
+                    ...feature,
+                    name,
+                    featureId: newId,
+                  })
                 )
               );
             }
@@ -370,35 +448,31 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         } catch (err) {
           console.error("카테고리 생성 실패", err);
           setCategoryList((prev) =>
-            prev.map((category) =>
-              category.featureCategoryId === categoryId
-                ? {
-                  ...category,
-                  features: category.features.filter(
-                    (feature) => feature.featureId !== featureId
-                  ),
-                }
-                : category
-            )
+            deleteFeatureFromCategoryList(prev, categoryId, editingFeatureId)
           );
         }
       } else {
         try {
-          // 기능 수정 api 추가
-          setCategoryList((prev) =>
-            prev.map((category) =>
-              category.featureCategoryId === categoryId
-                ? {
-                  ...category,
-                  features: category.features.map((feature) =>
-                    feature.featureId === featureId
-                      ? { ...feature, name }
-                      : feature
-                  ),
-                }
-                : category
-            )
-          );
+          if (workspaceId) {
+            // 기능 이름 수정 api
+            await patchfeaturename(
+              workspaceId,
+              categoryId,
+              editingFeatureId,
+              name
+            );
+            setCategoryList((prev) =>
+              updateFeatureInCategoryList(
+                prev,
+                categoryId,
+                editingFeatureId,
+                (feature) => ({
+                  ...feature,
+                  name,
+                })
+              )
+            );
+          }
         } catch (err) {
           console.error("기능 수정 실패", err);
         }
@@ -419,8 +493,8 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
                 const newAction: action = {
                   actionId: 0,
                   name: "",
-                  startDate: "",
-                  endDate: "",
+                  startDate: null,
+                  endDate: null,
                   state: "BEFORE",
                   hasTest: false,
                   importance: 0,
@@ -445,29 +519,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const updateActionName = async (
     categoryId: number,
     featureId: number,
-    actionId: number,
     isNew?: boolean
   ) => {
+    if (!editingActionId) return;
     if (name.trim() === "") {
       if (isNew) {
         // 새로 만든 액션인데 이름 없이 종료하면 삭제
         setCategoryList((prev) =>
-          prev.map((category) =>
-            category.featureCategoryId === categoryId
-              ? {
-                ...category,
-                features: category.features.map((feature) =>
-                  feature.featureId === featureId
-                    ? {
-                      ...feature,
-                      actions: feature.actions.filter(
-                        (action) => action.actionId !== actionId
-                      ),
-                    }
-                    : feature
-                ),
-              }
-              : category
+          deleteActionFromCategoryList(
+            prev,
+            categoryId,
+            featureId,
+            editingActionId
           )
         );
       }
@@ -475,273 +538,377 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       if (isNew) {
         try {
           if (workspaceId) {
-            const response = await addAction(workspaceId, categoryId, featureId, name);
-            const newId = response.data;
-            if (newId) {
+            // 새로운 액션 생성 api
+            const response = await addaction(
+              workspaceId,
+              categoryId,
+              featureId,
+              name
+            );
+            const data = response.data;
+            if (data) {
               setCategoryList((prev) =>
-                prev.map((category) =>
-                  category.featureCategoryId === categoryId
-                    ? {
-                      ...category,
-                      features: category.features.map((feature) =>
-                        feature.featureId === featureId
-                          ? {
-                            ...feature,
-                            actions: feature.actions.map((action) =>
-                              action.actionId === actionId
-                                ? { ...action, name, actionId: newId }
-                                : action
-                            ),
-                          }
-                          : feature
-                      ),
-                    }
-                    : category
+                updateActionInCategoryList(
+                  prev,
+                  categoryId,
+                  featureId,
+                  editingActionId,
+                  (action) => ({
+                    ...action,
+                    name,
+                    actionId: data.actionId,
+                    actionPostId: data.actionPostId,
+                  })
                 )
               );
             }
           }
         } catch (err) {
           console.error("액션 생성 실패", err);
-          // 실패 시 액션 제거
+          // 실패 시 categorylsit의 액션 제거
           setCategoryList((prev) =>
-            prev.map((category) =>
-              category.featureCategoryId === categoryId
-                ? {
-                  ...category,
-                  features: category.features.map((feature) =>
-                    feature.featureId === featureId
-                      ? {
-                        ...feature,
-                        actions: feature.actions.filter(
-                          (action) => action.actionId !== actionId
-                        ),
-                      }
-                      : feature
-                  ),
-                }
-                : category
+            deleteActionFromCategoryList(
+              prev,
+              categoryId,
+              featureId,
+              editingActionId
             )
           );
         }
       } else {
         try {
-          // 액션 수정 API 호출 위치 (선택 사항)
-          setCategoryList((prev) =>
-            prev.map((category) =>
-              category.featureCategoryId === categoryId
-                ? {
-                  ...category,
-                  features: category.features.map((feature) =>
-                    feature.featureId === featureId
-                      ? {
-                        ...feature,
-                        actions: feature.actions.map((action) =>
-                          action.actionId === actionId
-                            ? { ...action, name }
-                            : action
-                        ),
-                      }
-                      : feature
-                  ),
-                }
-                : category
-            )
-          );
+          if (workspaceId) {
+            // 액션 이름 수정 API 호출
+            await patchactionname(
+              workspaceId,
+              categoryId,
+              featureId,
+              editingActionId,
+              name
+            );
+            setCategoryList((prev) =>
+              updateActionInCategoryList(
+                prev,
+                categoryId,
+                featureId,
+                editingActionId,
+                (action) => ({
+                  ...action,
+                  name,
+                })
+              )
+            );
+          }
         } catch (err) {
           console.error("액션 수정 실패", err);
         }
       }
     }
-
     setEditingActionId(null); // ✅ 상태 관리 변수 이름에 따라 조정
     setName("");
   };
-  // const handleDeleteCategory = (categoryId: number) => {
-  //   setCategoryList((prevCategories) =>
-  //     prevCategories.filter((item) => item.feature_category_id !== categoryId)
-  //   );
-  // };
+  const handleDeleteCategory = async (categoryId: number) => {
+    try {
+      if (workspaceId) {
+        //카테고리 삭제 api
+        await deletecategory(workspaceId, categoryId);
+        setCategoryList((prev) =>
+          prev.filter((item) => item.featureCategoryId !== categoryId)
+        );
+      }
+    } catch (err) {
+      console.log("카테고리 삭제 실패", err);
+    }
+  };
 
-  // const handleDeleteFeature = (categoryId: number, featureId: number) => {
-  //   setFeaturesByCategoryId((prev) => {
-  //     const updated = new Map(prev);
-  //     const features = updated.get(categoryId);
-  //     if (!features) return prev;
+  const handleDeleteFeature = async (categoryId: number, featureId: number) => {
+    try {
+      if (workspaceId) {
+        //기능 삭제 api
+        await deletefeature(workspaceId, categoryId, featureId);
+        setCategoryList((prev) =>
+          deleteFeatureFromCategoryList(prev, categoryId, featureId)
+        );
+      }
+    } catch (err) {
+      console.log("기능 삭제 실패", err);
+    }
+  };
 
-  //     const newFeatures = features.filter((f) => f.feature_id !== featureId);
-  //     updated.set(categoryId, newFeatures);
-  //     return updated;
-  //   });
-  // };
+  const handleDeleteAction = async (
+    categoryId: number,
+    featureId: number,
+    actionId: number
+  ) => {
+    try {
+      if (workspaceId) {
+        //액션 삭제 api추가하기
+        await deleteaction(workspaceId, categoryId, featureId, actionId);
+        setCategoryList((prev) =>
+          deleteActionFromCategoryList(prev, categoryId, featureId, actionId)
+        );
+      }
+    } catch (err) {
+      console.log("액션 삭제 실패", err);
+    }
+  };
 
-  // const handleDeleteAction = (featureId: number, actionId: number) => {
-  //   setActionsByFeatureId((prev) => {
-  //     const updated = new Map(prev);
-  //     const action = updated.get(featureId);
-  //     if (!action) return prev;
+  //테스트 체크
+  const toggleTestCheckCg = async (categoryId: number) => {
+    try {
+      if (workspaceId) {
+        const currunttest = categoryList.find(
+          (cg) => cg.featureCategoryId === categoryId
+        )?.state;
+        // 카테고리 테스트 수정api
+        await patchcategorytest(workspaceId, categoryId, !currunttest);
+        setCategoryList((prev) =>
+          prev.map((cg) =>
+            cg.featureCategoryId === categoryId
+              ? { ...cg, has_test: !currunttest }
+              : cg
+          )
+        );
+      }
+    } catch (err) {
+      console.log("카테고리 테스트 수정 실패");
+    }
+  };
 
-  //     const newActions = action.filter((a) => a.action_id !== actionId);
-  //     updated.set(featureId, newActions);
-  //     return updated;
-  //   });
-  // };
+  const toggleTestCheckFt = async (categoryId: number, featureId: number) => {
+    try {
+      if (workspaceId) {
+        const currenttest = categoryList
+          .find((cg) => cg.featureCategoryId === categoryId)
+          ?.features.find((ft) => ft.featureId === featureId)?.hasTest;
 
-  // //테스트 체크
-  // const toggleTestCheckCg = (categoryId: number) => {
-  //   setClickCg((prev) => ({
-  //     ...prev,
-  //     [categoryId]: !prev[categoryId],
-  //   }));
-  //   setCategoryList((prev) =>
-  //     prev.map((cg) =>
-  //       cg.feature_category_id === categoryId
-  //         ? { ...cg, has_test: !cg.has_test }
-  //         : cg
-  //     )
-  //   );
-  // };
+        if (currenttest === undefined) return;
+        // 기능 테스트 수정api
+        await patchfeaturetest(
+          workspaceId,
+          categoryId,
+          featureId,
+          !currenttest
+        );
+        setCategoryList((prev) =>
+          updateFeatureInCategoryList(
+            prev,
+            categoryId,
+            featureId,
+            (feature) => ({
+              ...feature,
+              hasTest: !currenttest,
+            })
+          )
+        );
+      }
+    } catch (err) {
+      console.log("기능 테스트 수정 실패");
+    }
+  };
 
-  // const toggleTestCheckFt = (categoryId: number, featureId: number) => {
-  //   setTestCheckFt((prev) => ({
-  //     ...prev,
-  //     [featureId]: !prev[featureId],
-  //   }));
+  const toggleTestCheckAc = async (
+    categoryId: number,
+    featureId: number,
+    actionId: number
+  ) => {
+    try {
+      if (workspaceId) {
+        const currenttest = categoryList
+          .find((cg) => cg.featureCategoryId === categoryId)
+          ?.features.find((ft) => ft.featureId === featureId)
+          ?.actions.find((ac) => ac.actionId === actionId)?.hasTest;
 
-  //   setFeaturesByCategoryId((prev) => {
-  //     const features = prev.get(categoryId);
-  //     if (!features) return prev;
+        if (currenttest === undefined) return;
+        // 액션 테스트 수정api
+        await patchactiontest(
+          workspaceId,
+          categoryId,
+          featureId,
+          actionId,
+          !currenttest
+        );
+        setCategoryList((prev) =>
+          updateActionInCategoryList(
+            prev,
+            categoryId,
+            featureId,
+            actionId,
+            (action) => ({
+              ...action,
+              hasTest: !currenttest,
+            })
+          )
+        );
+      }
+    } catch (err) {
+      console.log("기능 테스트 수정 실패");
+    }
+  };
 
-  //     const updatedFeatures = features.map((ft) =>
-  //       ft.feature_id === featureId ? { ...ft, has_test: !ft.has_test } : ft
-  //     );
+  // 참가자 업데이트
+  const updateAssignee = async (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    newAssignee: number[]
+  ) => {
+    try {
+      if (workspaceId) {
+        //참가자 업데이트 api
+        await patchactionparti(
+          workspaceId,
+          categoryId,
+          featureId,
+          actionId,
+          newAssignee
+        );
+        //참가자 업데이트 시 반환 값이 따로 없어서 아예 모든 정보를 가져와야함
+        getAllList();
+      }
+    } catch (err) {
+      console.log("참가자 업데이트 실패");
+    }
+  };
 
-  //     const newMap = new Map(prev);
-  //     newMap.set(categoryId, updatedFeatures);
-  //     return newMap;
-  //   });
-  // };
+  // 상태 업데이트
+  const updateStatus = async (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    newStatus: Status
+  ) => {
+    try {
+      if (workspaceId) {
+        //액션 상태업데이트 api
+        await patchactionstate(
+          workspaceId,
+          categoryId,
+          featureId,
+          actionId,
+          newStatus
+        );
+        setCategoryList((prev) =>
+          updateActionInCategoryList(
+            prev,
+            categoryId,
+            featureId,
+            actionId,
+            (action) => ({
+              ...action,
+              state: newStatus,
+            })
+          )
+        );
+      }
+    } catch (err) {
+      console.log("참가자 업데이트 실패");
+    }
+  };
 
-  // const toggleTestCheckAc = (featureId: number, actionId: number) => {
-  //   setTestCheckAc((prev) => ({
-  //     ...prev,
-  //     [actionId]: !prev[actionId],
-  //   }));
-  //   setActionsByFeatureId((prev) => {
-  //     const actions = prev.get(featureId);
-  //     if (!actions) return prev;
-
-  //     const updatedActions = actions.map((ac) =>
-  //       ac.action_id === actionId ? { ...ac, has_test: !ac.has_test } : ac
-  //     );
-
-  //     const newMap = new Map(prev);
-  //     newMap.set(featureId, updatedActions);
-  //     return newMap;
-  //   });
-  // };
-
-  // // 참가자 업데이트
-  // const updateAssignee = (
-  //   featureId: number,
-  //   actionId: number,
-  //   newAssignee: number[]
-  // ) => {
-  //   setActionsByFeatureId((prev) => {
-  //     const actions = prev.get(featureId);
-  //     if (!actions) return prev;
-
-  //     const updated = actions.map((a) => {
-  //       if (a.action_id === actionId) {
-  //         return { ...a, assignee_id: newAssignee };
-  //       }
-  //       return a;
-  //     });
-
-  //     const newMap = new Map(prev);
-  //     newMap.set(featureId, updated);
-  //     return newMap;
-  //   });
-  // };
-
-  // // 상태 업데이트
-  // const updateStatus = (
-  //   featureId: number,
-  //   actionId: number,
-  //   newStatus: Status
-  // ) => {
-  //   setActionsByFeatureId((prev) => {
-  //     const actions = prev.get(featureId);
-  //     if (!actions) return prev;
-
-  //     const updatedActions = actions.map((a) =>
-  //       a.action_id === actionId ? { ...a, status: newStatus } : a
-  //     );
-
-  //     const newMap = new Map(prev);
-  //     newMap.set(featureId, updatedActions);
-  //     return newMap;
-  //   });
-  // };
-
-  // // 중요도 업데이트
-  // const updateImportance = (
-  //   featureId: number,
-  //   actionId: number,
-  //   newImportance: Importance
-  // ) => {
-  //   setActionsByFeatureId((prev) => {
-  //     const actions = prev.get(featureId);
-  //     if (!actions) return prev;
-
-  //     const updated = actions.map((a) =>
-  //       a.action_id === actionId ? { ...a, importance: newImportance } : a
-  //     );
-
-  //     const newMap = new Map(prev);
-  //     newMap.set(featureId, updated);
-  //     return newMap;
-  //   });
-  // };
-  // // 시작,종료 날짜 업데이트
-  // const updateStartDate = (
-  //   featureId: number,
-  //   actionId: number,
-  //   date: Date | null
-  // ) => {
-  //   console.log("updateEndDate called", featureId, actionId, date);
-  //   if (!date) return;
-  //   setActionsByFeatureId((prev) => {
-  //     const actions = prev.get(featureId);
-  //     if (!actions) return prev;
-
-  //     const updated = actions.map((a) =>
-  //       a.action_id === actionId ? { ...a, start_date: date } : a
-  //     );
-  //     const newMap = new Map(prev);
-  //     newMap.set(featureId, updated);
-  //     return newMap;
-  //   });
-  // };
-  // const updateEndDate = (
-  //   featureId: number,
-  //   actionId: number,
-  //   date: Date | null
-  // ) => {
-  //   if (!date) return;
-  //   setActionsByFeatureId((prev) => {
-  //     const actions = prev.get(featureId);
-  //     if (!actions) return prev;
-
-  //     const updated = actions.map((a) =>
-  //       a.action_id === actionId ? { ...a, end_date: date } : a
-  //     );
-
-  //     const newMap = new Map(prev);
-  //     newMap.set(featureId, updated);
-  //     return newMap;
-  //   });
-  // };
+  // 중요도 업데이트
+  const updateImportance = async (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    newImportance: Importance
+  ) => {
+    try {
+      if (workspaceId) {
+        //중요도 업데이트 api
+        await patchactionimportance(
+          workspaceId,
+          categoryId,
+          featureId,
+          actionId,
+          newImportance
+        );
+        setCategoryList((prev) =>
+          updateActionInCategoryList(
+            prev,
+            categoryId,
+            featureId,
+            actionId,
+            (action) => ({
+              ...action,
+              importance: newImportance,
+            })
+          )
+        );
+      }
+    } catch (err) {
+      console.log("참가자 업데이트 실패");
+    }
+  };
+  // 시작,종료 날짜 업데이트
+  const updateStartDate = async (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    date: Date | null
+  ) => {
+    if (!date) return;
+    try {
+      if (workspaceId) {
+        //시작 날짜 업데이트api
+        await patchactionstart(
+          workspaceId,
+          categoryId,
+          featureId,
+          actionId,
+          date
+        );
+        setCategoryList((prev) =>
+          updateActionInCategoryList(
+            prev,
+            categoryId,
+            featureId,
+            actionId,
+            (action) => ({
+              ...action,
+              startDate: date,
+            })
+          )
+        );
+      }
+    } catch (err) {
+      console.log("참가자 업데이트 실패");
+    }
+  };
+  const updateEndDate = async (
+    categoryId: number,
+    featureId: number,
+    actionId: number,
+    date: Date | null
+  ) => {
+    if (!date) return;
+    try {
+      if (workspaceId) {
+        //마감날짜 업데이트 api
+        await patchactionend(
+          workspaceId,
+          categoryId,
+          featureId,
+          actionId,
+          date
+        );
+        setCategoryList((prev) =>
+          updateActionInCategoryList(
+            prev,
+            categoryId,
+            featureId,
+            actionId,
+            (action) => ({
+              ...action,
+              endDate: date,
+            })
+          )
+        );
+      }
+    } catch (err) {
+      console.log("참가자 업데이트 실패");
+    }
+  };
 
   return {
     categoryList,
@@ -754,23 +921,20 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     editingCategoryId,
     editingFeatureId,
     editingActionId,
-    // testCheckCg,
-    // testCheckFt,
-    // testCheckAc,
     categoryCompletableMap,
 
-    // toggleTestCheckCg,
-    // toggleTestCheckFt,
-    // toggleTestCheckAc,
+    toggleTestCheckCg,
+    toggleTestCheckFt,
+    toggleTestCheckAc,
     setName,
     setEditingCategoryId,
     setEditingFeatureId,
     setEditingActionId,
-    // updateAssignee,
-    // updateStatus,
-    // updateImportance,
-    // updateStartDate,
-    // updateEndDate,
+    updateAssignee,
+    updateStatus,
+    updateImportance,
+    updateStartDate,
+    updateEndDate,
     handleCompleteClick,
     cgToggleClick,
     ftToggleClick,
@@ -780,8 +944,8 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     updateFeatureName,
     handleAddAction,
     updateActionName,
-    // handleDeleteCategory,
-    // handleDeleteFeature,
-    // handleDeleteAction,
+    handleDeleteCategory,
+    handleDeleteFeature,
+    handleDeleteAction,
   };
 }
