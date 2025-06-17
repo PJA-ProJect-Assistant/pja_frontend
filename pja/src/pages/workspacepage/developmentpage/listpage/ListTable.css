@@ -19,7 +19,7 @@
   align-items: center;
   justify-content: space-around;
   flex-direction: row;
-  background-color: #00205B;
+  background-color: #00205b;
   border: none;
   color: white;
   padding: 5px;
@@ -285,7 +285,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-width: 370px;
+  min-width: 300px;
   box-sizing: border-box;
   background-color: white;
   border: 1px solid #ccc;
@@ -372,7 +372,6 @@
   transform: scale(1.1);
   cursor: pointer;
 }
-
 
 .filter-apply-btn {
   height: 30px;
