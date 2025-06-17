@@ -6,7 +6,8 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 1000;
-  display: flex; /* 중앙 정렬을 위한 flex 설정 */
+  display: flex;
+  /* 중앙 정렬을 위한 flex 설정 */
   align-items: center;
   justify-content: center;
 }
@@ -21,7 +22,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  z-index: 2000; /* overlay보다 높게 */
+  z-index: 2000;
+  /* overlay보다 높게 */
   padding: 24px;
 }
 
@@ -29,8 +31,8 @@
   width: 100%;
   background-color: #00205b;
   /*margin-bottom: 20px;*/
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
 }
 
 /*메세지 텍스트*/
@@ -39,6 +41,7 @@
   font-weight: 500;
   color: #333;
 }
+
 /* 버튼들을 담는 컨테이너 */
 .logout-modal-actions {
   display: flex;
@@ -61,9 +64,11 @@
 }
 
 .logout-modal-button.confirm {
-  background-color: #00205b; /* 짙은 남색 */
+  background-color: #00205b;
+  /* 짙은 남색 */
   color: white;
 }
+
 .logout-modal-button.confirm:hover {
   background-color: #0a2145;
 }
@@ -71,6 +76,7 @@
 .logout-modal-button.cancel {
   background-color: #d9d9d6;
 }
+
 .logout-modal-button.cancel:hover {
   background-color: #d1d1d1;
 }
@@ -83,6 +89,7 @@
   text-align: center;
   border: 1px solid #fcc;
 }
+
 .logout-modal-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;

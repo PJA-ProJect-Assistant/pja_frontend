@@ -5,7 +5,7 @@ import "./IdeaPage.css";
 export default function IdeaPage() {
   return (
     <div className="ideapage-container">
-      <WSHeader title="아이디어 요약" />
+      <WSHeader title="아이디어 입력" />
       <ProjectForm />
     </div>
   );

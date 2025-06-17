@@ -1,36 +1,54 @@
+import type { workspace_member } from "./workspace";
+
+//카테고리랑 기능 state boolean인데 지금만 Status로
+export type Status = "BEFORE" | "IN_PROGRESS" | "DONE";
+
 export interface feature_category {
-    feature_category_id: number,
-    name: string,
-    state: boolean,
-    order: number,
-    workspace_id: number,
-    has_test: boolean,
+  featureCategoryId: number;
+  name: string;
+  state: Status;
+  orderIndex: number;
+  has_test: boolean | null;
+  features: feature[];
 }
 export interface feature {
-    feature_id: number,
-    name: string,
-    category_id: number,
-    state: boolean,
-    order: number,
-    has_test: boolean,
+  featureId: number;
+  name: string;
+  state: Status;
+  hasTest: boolean | null;
+  orderIndex: number;
+  actions: action[];
 }
-export type Status = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+
 export type Importance = 0 | 1 | 2 | 3 | 4 | 5;
-export interface action {
-    action_id: number,
-    name: string,
-    start_date?: Date,
-    end_date?: Date,
-    status: Status
-    importance?: Importance,
-    has_test: boolean,
-    assignee_id?: number[],
-    order: number,
-    feature_id: number,
+export interface responseactionid {
+  actionId: number;
+  actionPostId: number | null;
+}
+
+export interface action extends responseactionid {
+  name: string;
+  startDate: Date | null;
+  endDate: Date | null;
+  state: Status;
+  hasTest: boolean;
+  importance: Importance;
+  orderIndex: number;
+  participants: workspace_member[];
+}
+export interface responseactionid {
+  actionId: number;
+  actionPostId: number | null;
+}
+
+export interface listresponse {
+  coreFeatures: string[];
+  participants: workspace_member[];
+  featureCategories: feature_category[];
 }
 
 export interface filtered {
-    selectedCategories: number[];
-    selectedAssignees: number[];
-    selectedStatuses: Status[];
+  selectedCategories: number[];
+  selectedAssignees: number[];
+  selectedStatuses: Status[];
 }

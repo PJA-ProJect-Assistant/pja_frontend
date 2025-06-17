@@ -10,7 +10,7 @@ export default function CategoryProgress() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
-  const wsid = selectedWS?.workspace_id;
+  const wsid = selectedWS?.workspaceId;
   const [wscategories, setWscategories] = useState<feature_category[]>([]);
   const [totalCg, setTotalCg] = useState<number>();
   const [completeCg, setCompleteCg] = useState<number>();
