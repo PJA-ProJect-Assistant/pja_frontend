@@ -1,17 +1,23 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import { WSHeader } from "../../../components/header/WSHeader";
-import ReactFlow, {
-  Background,
-  Controls,
-  useReactFlow,
-} from "reactflow";
+import ReactFlow, { Background, Controls, useReactFlow } from "reactflow";
 import type { Node } from "reactflow";
 import "reactflow/dist/style.css";
 import "./ERDPage.css";
 import { useEffect, useState } from "react";
-import { edges, generateNodesFromData, nodeTypes, tableData, type TableData } from "./ERDData";
+import {
+  edges,
+  generateNodesFromData,
+  nodeTypes,
+  tableData,
+  type TableData,
+} from "./ERDData";
 import React from "react";
+import { progressworkspace } from "../../../services/workspaceApi";
+import { useNavigate } from "react-router-dom";
+import { setSelectedWS } from "../../../store/workspaceSlice";
+import { getStepIdFromNumber } from "../../../utils/projectSteps";
 
 export default function ERDPage() {
   const dispatch = useDispatch();
@@ -20,13 +26,20 @@ export default function ERDPage() {
   );
   const [isEditMode, setIsEditMode] = useState(false);
   const [nodes, setNodes] = React.useState<Node<TableData>[]>();
-  const [tableList, setTableList] = useState<{ id: string; data: TableData }[]>(tableData);
+  const [tableList, setTableList] =
+    useState<{ id: string; data: TableData }[]>(tableData);
+  const [erdDone, setErdDone] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const { fitView } = useReactFlow();
 
   useEffect(() => {
-    setNodes(generateNodesFromData(tableList))
-  }, [])
+    //이거 나중에 erd 가져오는 api 해야함
+    setNodes(generateNodesFromData(tableList));
+    if (Number(selectedWS?.progressStep) > 3) {
+      setErdDone(true);
+    }
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,6 +66,35 @@ export default function ERDPage() {
     // };
     // setTableList((prev) => [...prev, newTable]);
     // // setNodes();
+  };
+  const handleErdComplete = async () => {
+    if (selectedWS?.progressStep === "3") {
+      try {
+        //여기에 API명세서 호출 api 선언하면 됨
+
+        // API생성 후 data 있어야 넘어가게
+        // if (!apidata || !apidata.data)
+        //   throw new Error("프로젝트 정보 생성 실패");
+        // else {
+        //   console.log("프로젝트 정보 : ", apidata);
+        // }
+
+        await progressworkspace(selectedWS.workspaceId, "4");
+        console.log("API페이지로 이동");
+        dispatch(
+          setSelectedWS({
+            ...selectedWS,
+            progressStep: "4",
+          })
+        );
+        setErdDone(true);
+        navigate(
+          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("4")}`
+        );
+      } catch (err) {
+        console.log("api명세서 ai생성 실패", err);
+      }
+    }
   };
 
   return (
@@ -87,11 +129,10 @@ export default function ERDPage() {
           <Controls />
         </ReactFlow>
         <div className="erd-complete-btn-container">
-          <div className="erd-complete-btn">
+          <div className="erd-complete-btn" onClick={handleErdComplete}>
             저장하기
           </div>
         </div>
-
       </div>
     </>
   );

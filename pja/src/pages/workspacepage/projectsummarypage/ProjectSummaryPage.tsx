@@ -70,23 +70,38 @@ export default function ProjectSummaryPage() {
       try {
         //프로젝트 수정 api
 
-        if (selectedWS?.progressStep === "2") {
-          await progressworkspace(selectedWS.workspaceId, "3");
-          console.log("ERD페이지로 이동");
-          dispatch(
-            setSelectedWS({
-              ...selectedWS,
-              progressStep: "3",
-            })
-          );
-          setSummaryDone(true);
-          navigate(
-            `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("3")}`
-          );
-        } else {
-          setSummaryDone(true);
+        try {
+          if (selectedWS?.progressStep === "2") {
+            //ERD생성 api 호출
+
+            //ERD생성 후 data 있어야 넘어가게
+            // if (!erddata || !erddata.data)
+            //   throw new Error("프로젝트 정보 생성 실패");
+            // else {
+            //   console.log("프로젝트 정보 : ", erddata);
+            // }
+
+            await progressworkspace(selectedWS.workspaceId, "3");
+            console.log("ERD페이지로 이동");
+            dispatch(
+              setSelectedWS({
+                ...selectedWS,
+                progressStep: "3",
+              })
+            );
+            setSummaryDone(true);
+            navigate(
+              `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("3")}`
+            );
+          } else {
+            setSummaryDone(true);
+          }
+        } catch (err) {
+          console.log("ERD ai생성 실패 ", err);
         }
-      } catch (err) {}
+      } catch (err) {
+        console.log("프로젝트 수정 실패 ", err);
+      }
     }
   };
   return (
