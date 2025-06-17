@@ -15,7 +15,6 @@ import { NoCgAddModal } from "../../../../components/modal/WsmenuModal";
 export default function ListTable() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isFilter, setIsFilter] = useState<boolean>(false);
-  // const [showFilter, setShowFilter] = useState<Boolean>(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedAssignees, setSelectedAssignees] = useState<number[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<Status[]>([]);
@@ -99,9 +98,6 @@ export default function ListTable() {
         <button
           onClick={() => {
             setIsFilter(true);
-            setShowCategory(false);
-            setShowParticipant(false);
-            setShowStatus(false);
           }}
         >
           <p>필터</p>
@@ -292,9 +288,6 @@ export default function ListTable() {
                 )}
               </div>
             </div>
-            {/* <button onClick={() => {}} className="filter-apply-btn">
-              확인
-            </button> */}
             <button
               onClick={() => {
                 setIsFilter(false);
@@ -309,7 +302,7 @@ export default function ListTable() {
           </div>
         )}
       </div>
-      {isFilter ? (
+      {isFilter && categoryList.length > 0 ? (
         <FilterTable
           selectedCategories={selectedCategories}
           selectedAssignees={selectedAssignees}
