@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import IdeaPage from "../ideapage/IdeaPage";
 import RequirementsPage from "../requirementpage/RequirementsPage";
-import ERDPage from "../erdpage/ERDPage";
+// import ERDPage from "../erdpage/ERDPage";
 import ApiPage from "../apispecpage/ApiPage";
 import DevelopmentPage from "../developmentpage/DevelopmentPage";
 import ProjectSummaryPage from "../projectsummarypage/ProjectSummaryPage";
@@ -47,11 +47,7 @@ export default function MainWSPage() {
       case "project":
         return <ProjectSummaryPage />;
       case "erd":
-        return (
-          <ReactFlowProvider>
-            <ERDPage />
-          </ReactFlowProvider>
-        );
+        return <ReactFlowProvider>{/* <ERDPage /> */}</ReactFlowProvider>;
       case "api":
         return <ApiPage />;
       case "develop":

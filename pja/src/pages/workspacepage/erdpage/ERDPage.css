@@ -50,7 +50,7 @@
 
 .erd-complete-btn {
   box-sizing: border-box;
-  background: #FE5000;
+  background: #fe5000;
   color: white;
   padding: 5px 10px;
   border-radius: 6px;
@@ -141,4 +141,14 @@
 .field-type {
   color: #9ca3af;
   font-size: 0.75rem;
+}
+.erd-edit-modal {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  width: 300px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  z-index: 100;
 }

@@ -29,3 +29,14 @@ export interface erd_relationships {
   from_erd_table_id: number;
   to_erd_table_id: number;
 }
+export interface Field {
+  name: string;
+  type: string;
+  isPrimary?: boolean;
+  isForeign?: boolean;
+}
+
+export interface TableData {
+  tableName: string;
+  fields: Field[];
+}
