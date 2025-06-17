@@ -186,7 +186,7 @@ export default function RequirementsPage() {
     setNextPageLoading(true);
     try {
       if (selectedWS.progressStep === "1") {
-        //프로젝트 요약 가져오는 api
+        //프로젝트 정보 생성해주는 api
         const setrequirements: setrequire[] = requirements.map(
           ({ requirementType, content }) => ({
             requirementType,
@@ -197,7 +197,12 @@ export default function RequirementsPage() {
           selectedWS.workspaceId,
           setrequirements
         );
-        console.log("프로젝트 요약 : ", projectdata.data);
+
+        if (!projectdata || !projectdata.data)
+          throw new Error("프로젝트 정보 생성 실패");
+        else {
+          console.log("프로젝트 정보 : ", projectdata);
+        }
 
         await progressworkspace(selectedWS.workspaceId, "2");
         console.log("다음페이지로 넘어가기");
