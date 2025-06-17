@@ -333,9 +333,12 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       features: [],
     };
     setCategoryList((prev) => [...prev, newCategory]);
+    console.log("카테고리 생성 완료 : ", categoryList);
   };
 
   const updateCategoryName = async (isNew?: boolean) => {
+    console.log("업데이트카테고리네임 돌입");
+
     if (name.trim() === "") {
       // 이름이 비어 있을 경우
       setCategoryList((prev) => {
@@ -344,10 +347,16 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
           : prev;
       });
     } else {
-      if (!editingCategoryId) return;
+      if (editingCategoryId === null) {
+        console.log("카테고리 아이디 존재하지 않음");
+
+        return;
+      }
       if (isNew) {
+        console.log("카테고리 이름 있음");
         try {
           if (workspaceId) {
+            console.log("카테고리 api 시작");
             const response = await addcategory(workspaceId, name); // 카테고리 생성 API 호출
             const newId = response.data;
             if (newId) {
@@ -412,7 +421,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   };
 
   const updateFeatureName = async (categoryId: number, isNew?: boolean) => {
-    if (!editingFeatureId) return;
+    if (editingFeatureId === null) return;
     if (name.trim() === "") {
       // 이름이 비어 있을 경우
       if (isNew) {
@@ -521,7 +530,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     featureId: number,
     isNew?: boolean
   ) => {
-    if (!editingActionId) return;
+    if (editingActionId === null) return;
     if (name.trim() === "") {
       if (isNew) {
         // 새로 만든 액션인데 이름 없이 종료하면 삭제

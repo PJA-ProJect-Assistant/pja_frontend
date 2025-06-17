@@ -11,10 +11,10 @@ export const addcategory = async (
   try {
     console.log("카테고리 생성 api");
     const response = await api.post(
-      `/workspaces/${workspaceId}project/category`,
+      `/workspaces/${workspaceId}/project/category`,
       {
         name,
-        state: false,
+        state: "BEFORE",
         hasTest: false,
       }
     );
