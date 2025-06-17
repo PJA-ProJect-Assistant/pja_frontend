@@ -92,13 +92,13 @@ export default function ProjectSummaryPage() {
   return (
     <>
       <WSHeader title="프로젝트 정보" />
-      <div className="ideasummary-container">
+      <div className="projectsummary-container">
         {selectedWS?.progressStep === "2" && (
-          <h2>✨입력하신 프로젝트를 요약하였어요</h2>
+          <h2>✨입력하신 프로젝트를 정리하였어요</h2>
         )}
-        <div className="ideasummary-box">
-          <div className="ideasummary-content">
-            <p>
+        <div className="projectsummary-box">
+          <div className="projectsummary-content">
+            <div>
               프로젝트명 :
               {editingField === "title" ? (
                 <input
@@ -115,9 +115,9 @@ export default function ProjectSummaryPage() {
                   {title || ""}
                 </span>
               )}
-            </p>
+            </div>
 
-            <p>
+            <div>
               카테고리 :
               {editingField === "category" ? (
                 <input
@@ -135,9 +135,9 @@ export default function ProjectSummaryPage() {
                   {category || ""}
                 </span>
               )}
-            </p>
+            </div>
 
-            <p>
+            <div>
               서비스 대상 :
               <ul>
                 {targetUsers.map((target, index) =>
@@ -167,10 +167,10 @@ export default function ProjectSummaryPage() {
                   )
                 )}
               </ul>
-            </p>
+            </div>
 
-            <p>
-              확정된 기술 스택:
+            <div>
+              확정된 기술 스택 :
               <ul>
                 {technologyStack.map((tech, index) =>
                   editingField === `tech-${index}` ? (
@@ -199,10 +199,10 @@ export default function ProjectSummaryPage() {
                   )
                 )}
               </ul>
-            </p>
+            </div>
 
-            <p>
-              메인 기능:
+            <div>
+              메인 기능 :
               <ul>
                 {coreFeatures.map((feature, index) =>
                   editingField === `feature-${index}` ? (
@@ -231,9 +231,9 @@ export default function ProjectSummaryPage() {
                   )
                 )}
               </ul>
-            </p>
+            </div>
 
-            <p>
+            <div>
               현재 문제 :
               {editingField === "problem" ? (
                 <input
@@ -250,9 +250,9 @@ export default function ProjectSummaryPage() {
                   {currentProblem || ""}
                 </span>
               )}
-            </p>
+            </div>
 
-            <p>
+            <div>
               해결 아이디어 :
               {editingField === "solution" ? (
                 <input
@@ -269,10 +269,10 @@ export default function ProjectSummaryPage() {
                   {solutionIdea || ""}
                 </span>
               )}
-            </p>
+            </div>
 
-            <p>
-              기대 효과:
+            <div>
+              기대 효과 :
               <ul>
                 {expectedBenefits.map((benefit, index) =>
                   editingField === `benefit-${index}` ? (
@@ -301,11 +301,12 @@ export default function ProjectSummaryPage() {
                   )
                 )}
               </ul>
-            </p>
+            </div>
           </div>
-          <div className="ideasummary-btn">
+          <div className="projectsummary-btn">
             {summaryDone ? (
-              <button>수정하기</button>
+              // <button onClick={() => setSummaryDone(false)}>수정하기</button>
+              <></>
             ) : (
               <button onClick={handleSummaryComplete}>완료하기</button>
             )}
