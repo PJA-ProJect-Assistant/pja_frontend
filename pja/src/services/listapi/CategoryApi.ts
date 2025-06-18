@@ -1,6 +1,5 @@
 import api from "../../lib/axios";
 import type { ApiResponse } from "../../types/common";
-import type { Status } from "../../types/list";
 //카테고리 관련 api
 
 //카테고리 생성 -> 생성된 카테고리 기본키 반환
@@ -14,7 +13,7 @@ export const addcategory = async (
       `/workspaces/${workspaceId}/project/category`,
       {
         name,
-        state: "BEFORE",
+        state: false,
         hasTest: false,
       }
     );
@@ -70,7 +69,7 @@ export const patchcategoryname = async (
 export const patchcategorystate = async (
   workspaceId: number,
   categoryId: number,
-  state: Status
+  state: boolean
 ) => {
   try {
     console.log("카테고리 상태 수정 api");

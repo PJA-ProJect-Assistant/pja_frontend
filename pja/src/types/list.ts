@@ -6,7 +6,7 @@ export type Status = "BEFORE" | "IN_PROGRESS" | "DONE";
 export interface feature_category {
   featureCategoryId: number;
   name: string;
-  state: Status;
+  state: boolean;
   orderIndex: number;
   has_test: boolean | null;
   features: feature[];
@@ -14,7 +14,7 @@ export interface feature_category {
 export interface feature {
   featureId: number;
   name: string;
-  state: Status;
+  state: boolean;
   hasTest: boolean | null;
   orderIndex: number;
   actions: action[];
@@ -35,10 +35,6 @@ export interface action extends responseactionid {
   importance: Importance;
   orderIndex: number;
   participants: workspace_member[];
-}
-export interface responseactionid {
-  actionId: number;
-  actionPostId: number | null;
 }
 
 export interface listresponse {

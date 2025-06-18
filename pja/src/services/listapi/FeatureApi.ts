@@ -1,6 +1,5 @@
 import api from "../../lib/axios";
 import type { ApiResponse } from "../../types/common";
-import type { Status } from "../../types/list";
 //기능 관련 api
 
 //기능 생성 -> 생성된 기능 기본키 반환
@@ -73,7 +72,7 @@ export const patchfeaturestate = async (
   workspaceId: number,
   categoryId: number,
   featureId: number,
-  state: Status
+  state: boolean
 ) => {
   try {
     console.log("기능 상태 수정 api");
