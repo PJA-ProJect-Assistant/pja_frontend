@@ -197,12 +197,12 @@ export default function RequirementsPage() {
           selectedWS.workspaceId,
           setrequirements
         );
-
-        if (!projectdata || !projectdata.data)
-          throw new Error("프로젝트 정보 생성 실패");
-        else {
-          console.log("프로젝트 정보 : ", projectdata);
-        }
+        console.log("프로젝트 정보 : ", projectdata);
+        // if (!projectdata || !projectdata.data)
+        //   throw new Error("프로젝트 정보 생성 실패");
+        // else {
+        //   console.log("프로젝트 정보 : ", projectdata);
+        // }
 
         await progressworkspace(selectedWS.workspaceId, "2");
         console.log("다음페이지로 넘어가기");
