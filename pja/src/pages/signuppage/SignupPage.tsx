@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { ChangeEvent } from "react";
-
 import "./SignupPage.css";
 import logoImage from "../../assets/img/logo.png";
 import personIcon from "../../assets/img/person.png";
@@ -14,6 +13,7 @@ import { validateId } from "./idValidator";
 import { validateName } from "./nameValidator";
 import { validateEmail, EMAIL_VALIDATION_MESSAGES } from "./emailValidator";
 import { validatePassword } from "./passwordValidator";
+import api from "../../lib/axios";
 
 interface SignupApiResponse {
   status: string;
@@ -116,8 +116,8 @@ const SignupPage: React.FC = () => {
 
     try {
       // 새로운 API 엔드포인트로 요청
-      const response = await axios.get<IdCheckApiResponse>(
-        `http://localhost:8080/api/auth/check-uid?uid=${id}`,
+      const response = await api.get<IdCheckApiResponse>(
+        `/auth/check-uid?uid=${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -223,13 +223,8 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.get<EmailCheckApiResponse>(
-        `http://localhost:8080/api/auth/check-email?email=${email}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const response = await api.get<EmailCheckApiResponse>(
+        `/auth/check-email?email=${email}`
       );
 
       // 응답 성공 시 (status code 200)
@@ -350,8 +345,8 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const response: AxiosResponse<SignupApiResponse> = await axios.post(
-        "http://localhost:8080/api/auth/signup",
+      const response: AxiosResponse<SignupApiResponse> = await api.post(
+        "/auth/signup",
         {
           uid: id,
           name: name,
@@ -369,15 +364,7 @@ const SignupPage: React.FC = () => {
 
         // 회원가입 성공 후 이메일 인증 요청
         try {
-          const emailResponse = await axios.post(
-            `http://localhost:8080/api/auth/send-email`,
-            { email },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          const emailResponse = await api.post(`/auth/send-email`, { email });
 
           if (
             emailResponse.status === 200 &&

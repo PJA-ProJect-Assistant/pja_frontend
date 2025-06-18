@@ -6,6 +6,7 @@ import emailLogoImage from "../../../assets/img/emailLogo.png";
 import verficatedemailIcon from "../../../assets/img/verficatedemail.png";
 import hintIcon from "../../../assets/img/hint.png";
 import CustomModal from "../CustomModal";
+import api from "../../../lib/axios";
 
 interface EmailVerificationApiResponse {
   status: string;
@@ -63,8 +64,8 @@ const EmailVerificationPage: React.FC = () => {
       //   }
       // );
 
-      const response = await axios.post(
-        `http://localhost:8080/api/auth/verify-email`,
+      const response = await api.post(
+        `/auth/verify-email`,
         {
           email: userEmail,
           token: verificationToken,
@@ -115,8 +116,8 @@ const EmailVerificationPage: React.FC = () => {
 
     setIsResending(true);
     try {
-      const response = await axios.post(
-        `http://localhost:8080/api/auth/send-email`,
+      const response = await api.post(
+        `/auth/send-email`,
         { email: userEmail },
         {
           headers: {
