@@ -14,7 +14,7 @@ import AccountSettingPage from "./pages/accountsettingpage/AccountSettingPage";
 import WorkspaceSettingPage from "./pages/workspacesettingpage/WorkspaceSettingPage";
 import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/ActionPostPage";
 import RootRedirect from "./components/common/RootRedirect";
-import AcceptInvitePage from "./pages/invitepage/AcceptInvitePage";
+// import AcceptInvitePage from "./pages/invitepage/AcceptInvitePage";
 
 const Router = () => {
   return (
@@ -81,7 +81,7 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-      <Route path="/invite" element={<AcceptInvitePage />} />
+      {/* <Route path="/invite/accept" element={<AcceptInvitePage />} /> */}
     </Routes>
   );
 };

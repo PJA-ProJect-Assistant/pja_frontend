@@ -183,11 +183,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-            ...category,
-            features: category.features.map((feature) =>
-              feature.featureId === featureId ? updater(feature) : feature
-            ),
-          }
+          ...category,
+          features: category.features.map((feature) =>
+            feature.featureId === featureId ? updater(feature) : feature
+          ),
+        }
         : category
     );
   };
@@ -202,11 +202,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-            ...category,
-            features: category.features.filter(
-              (feature) => feature.featureId !== featureId
-            ),
-          }
+          ...category,
+          features: category.features.filter(
+            (feature) => feature.featureId !== featureId
+          ),
+        }
         : category
     );
   };
@@ -222,18 +222,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-            ...category,
-            features: category.features.map((feature) =>
-              feature.featureId === featureId
-                ? {
-                    ...feature,
-                    actions: feature.actions.map((action) =>
-                      action.actionId === actionId ? updater(action) : action
-                    ),
-                  }
-                : feature
-            ),
-          }
+          ...category,
+          features: category.features.map((feature) =>
+            feature.featureId === featureId
+              ? {
+                ...feature,
+                actions: feature.actions.map((action) =>
+                  action.actionId === actionId ? updater(action) : action
+                ),
+              }
+              : feature
+          ),
+        }
         : category
     );
   };
@@ -248,18 +248,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-            ...category,
-            features: category.features.map((feature) =>
-              feature.featureId === featureId
-                ? {
-                    ...feature,
-                    actions: feature.actions.filter(
-                      (action) => action.actionId !== actionId
-                    ),
-                  }
-                : feature
-            ),
-          }
+          ...category,
+          features: category.features.map((feature) =>
+            feature.featureId === featureId
+              ? {
+                ...feature,
+                actions: feature.actions.filter(
+                  (action) => action.actionId !== actionId
+                ),
+              }
+              : feature
+          ),
+        }
         : category
     );
   };
