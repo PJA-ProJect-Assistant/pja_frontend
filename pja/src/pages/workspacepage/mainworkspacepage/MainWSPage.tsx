@@ -19,7 +19,7 @@ export default function MainWSPage() {
     wsid: string;
     stepId: string;
   }>();
-  const dispatch = useDispatch(); //redux에 값 저장하는 함수 필요요
+  const dispatch = useDispatch(); //redux에 값 저장하는 함수 필요
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
 
