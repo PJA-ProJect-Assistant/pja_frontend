@@ -84,30 +84,31 @@ export default function ProhectForm() {
 
   //기능 삭제
   const removeFeature = async (id: number) => {
-    //기능 삭제 api
-    try {
-      await deletetech(selectedWS?.workspaceId ?? 0, id);
-      if (features.length <= 2) {
-        setOpenFeatureModal(true);
-      } else {
+    if (features.length <= 2) {
+      setOpenFeatureModal(true);
+    } else {
+      //기능 삭제 api
+      try {
+        await deletefunc(selectedWS?.workspaceId ?? 0, id);
         setFeatures((prev) => prev.filter((f) => f.id !== id));
+      } catch (err) {
+        console.log("기능 삭제 실패", err);
       }
-    } catch (err) {
-      console.log("기능 삭제 실패", err);
     }
   };
 
   //기술 삭제
   const removeStack = async (id: number) => {
-    //기술삭제 api
-    try {
-      await deletefunc(selectedWS?.workspaceId ?? 0, id);
-      if (stacks.length <= 2) {
-        setOpenStackModal(true);
+    if (stacks.length <= 2) {
+      setOpenStackModal(true);
+    } else {
+      //기술삭제 api
+      try {
+        await deletetech(selectedWS?.workspaceId ?? 0, id);
+        setStacks((prev) => prev.filter((s) => s.id !== id));
+      } catch (err) {
+        console.log("기술 삭제 실패", err);
       }
-      setStacks((prev) => prev.filter((s) => s.id !== id));
-    } catch (err) {
-      console.log("기술 삭제 실패", err);
     }
   };
 
@@ -397,12 +398,17 @@ export default function ProhectForm() {
           </button>
         )}
       </div>
-      {openFeatureModal && (
-        <FeatureDeleteModal onClose={() => setOpenFeatureModal(false)} />
-      )}
-      {openStackModal && (
-        <StackDeleteModal onClose={() => setOpenStackModal(false)} />
-      )}
-    </div>
+
+      {
+        openFeatureModal && (
+          <FeatureDeleteModal onClose={() => setOpenFeatureModal(false)} />
+        )
+      }
+      {
+        openStackModal && (
+          <StackDeleteModal onClose={() => setOpenStackModal(false)} />
+        )
+      }
+    </div >
   );
 }
