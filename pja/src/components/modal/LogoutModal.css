@@ -80,7 +80,8 @@
 
 .logout-modal-button.confirm:hover {
 
-  background-color: #0a2145;
+  
+  background-color: #0a2145; /*배경색*/
 }
 
 .logout-confirmation-button.cancel {

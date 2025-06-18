@@ -21,7 +21,6 @@ const Router = () => {
     <Routes>
       {/* 기본 경로에서 토큰이 있으면 메인, 없으면 로그인으로 리다이렉트 */}
       <Route path="/" element={<RootRedirect />} />
-
       {/* 공개 라우트 */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
@@ -41,7 +40,6 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/addws"
         element={
@@ -75,7 +73,6 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/workspace-setting"
         element={
@@ -84,7 +81,7 @@ const Router = () => {
           </PrivateRoute>
         }
       />
-      <Route path="/invite/accept" element={<AcceptInvitePage />} />
+      <Route path="/invite" element={<AcceptInvitePage />} />
     </Routes>
   );
 };
