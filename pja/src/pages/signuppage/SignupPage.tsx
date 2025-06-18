@@ -375,16 +375,6 @@ const SignupPage: React.FC = () => {
               "이메일 인증 메일 발송에 실패했지만 회원가입은 완료되었습니다."
             );
           }
-
-          const emailResponse = await axios.post(
-            `http://localhost:8080/api/auth/send-email`,
-            { email },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
         } catch (emailError) {
           console.error("이메일 발송 실패:", emailError);
         }
@@ -429,7 +419,7 @@ const SignupPage: React.FC = () => {
             } else {
               openModal(
                 data.message ||
-                  "중복된 정보가 있습니다.\n입력 정보를 확인해주세요."
+                "중복된 정보가 있습니다.\n입력 정보를 확인해주세요."
               );
             }
             break;
@@ -437,14 +427,14 @@ const SignupPage: React.FC = () => {
           case 500:
             openModal(
               data.message ||
-                "서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요."
+              "서버 오류가 발생했습니다.\n잠시 후 다시 시도해주세요."
             );
             break;
 
           default:
             openModal(
               data.message ||
-                `오류가 발생했습니다 (${status}).\n다시 시도해주세요.`
+              `오류가 발생했습니다 (${status}).\n다시 시도해주세요.`
             );
             break;
         }
@@ -481,13 +471,12 @@ const SignupPage: React.FC = () => {
                 className={`id-input ${
                   // 클래스 적용 로직 복원
                   id && !idValidation.isValid ? "input-error" : ""
-                } ${
-                  isIdChecked
+                  } ${isIdChecked
                     ? isIdAvailable
                       ? "input-success"
                       : "input-error"
                     : ""
-                }`}
+                  }`}
                 value={id}
                 onChange={handleIdChange}
                 onFocus={(e) => {
@@ -540,9 +529,8 @@ const SignupPage: React.FC = () => {
               {/*중복확인 결과 메세지*/}
               {isIdChecked && idValidation.isValid && (
                 <div
-                  className={`validation-message ${
-                    isIdAvailable ? "success" : "error"
-                  }`}
+                  className={`validation-message ${isIdAvailable ? "success" : "error"
+                    }`}
                 >
                   {isIdAvailable
                     ? "✓ 사용 가능한 아이디입니다."
@@ -562,9 +550,8 @@ const SignupPage: React.FC = () => {
               <input
                 type="text"
                 placeholder="이름"
-                className={`name-input ${
-                  name && !nameValidation.isValid ? "input-error" : ""
-                }`}
+                className={`name-input ${name && !nameValidation.isValid ? "input-error" : ""
+                  }`}
                 value={name}
                 onChange={handleNameChange}
                 onFocus={(e) => {
@@ -612,13 +599,12 @@ const SignupPage: React.FC = () => {
               <input
                 type="text"
                 placeholder="이메일"
-                className={`email-input ${
-                  isEmailChecked
-                    ? isEmailAvailable
-                      ? "input-success"
-                      : "input-error"
-                    : ""
-                }`}
+                className={`email-input ${isEmailChecked
+                  ? isEmailAvailable
+                    ? "input-success"
+                    : "input-error"
+                  : ""
+                  }`}
                 value={email}
                 onChange={handleEmailChange}
                 onFocus={(e) => {
@@ -670,9 +656,8 @@ const SignupPage: React.FC = () => {
             {/* 중복확인 결과 메시지 */}
             {isEmailChecked && (
               <div
-                className={`validation-message ${
-                  isEmailAvailable ? "success" : "error"
-                }`}
+                className={`validation-message ${isEmailAvailable ? "success" : "error"
+                  }`}
               >
                 {isEmailAvailable
                   ? "✓ 사용 가능한 이메일입니다"
@@ -688,9 +673,8 @@ const SignupPage: React.FC = () => {
               <input
                 type={showPassword ? "text" : "password"} /*type 동적 변경*/
                 placeholder="비밀번호"
-                className={`pw-input ${
-                  password && !passwordValidation.isValid ? "input-error" : ""
-                }`}
+                className={`pw-input ${password && !passwordValidation.isValid ? "input-error" : ""
+                  }`}
                 value={password}
                 onChange={handlePasswordChange}
                 onFocus={(e) => {
@@ -790,7 +774,7 @@ const SignupPage: React.FC = () => {
                   passwordConfirm && password !== passwordConfirm
                     ? "input-error"
                     : ""
-                }`}
+                  }`}
                 value={passwordConfirm}
                 onChange={handlePasswordConfirmChange}
                 onFocus={(e) => {
