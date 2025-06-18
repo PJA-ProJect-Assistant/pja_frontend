@@ -9,6 +9,7 @@ import { progressworkspace } from "../../../services/workspaceApi";
 import type { getproject } from "../../../types/project";
 import { getProject } from "../../../services/projectApi";
 import { WSHeader } from "../../../components/header/WSHeader";
+import { postErd, postErdAI } from "../../../services/erdApi";
 
 export default function ProjectSummaryPage() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function ProjectSummaryPage() {
   const [solutionIdea, setSolutionIdea] = useState<string>("");
   const [expectedBenefits, setExpectedBenefits] = useState<string[]>([]);
   const [editingField, setEditingField] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
@@ -68,31 +70,35 @@ export default function ProjectSummaryPage() {
   const handleSummaryComplete = async () => {
     if (selectedWS?.workspaceId) {
       try {
+        setIsLoading(true);
         //프로젝트 수정 api
-
         try {
           if (selectedWS?.progressStep === "2") {
-            //ERD생성 api 호출
+            const response = await postErd(selectedWS?.workspaceId);
+            const erdId = response.data?.erdId;
+            console.log("erd 생성 성공 erdId : ", erdId);
 
-            //ERD생성 후 data 있어야 넘어가게
-            // if (!erddata || !erddata.data)
-            //   throw new Error("프로젝트 정보 생성 실패");
-            // else {
-            //   console.log("프로젝트 정보 : ", erddata);
-            // }
+            if (erdId) {
+              console.log("erd 생성 성공 erdId : ", erdId);
 
-            await progressworkspace(selectedWS.workspaceId, "3");
-            console.log("ERD페이지로 이동");
-            dispatch(
-              setSelectedWS({
-                ...selectedWS,
-                progressStep: "3",
-              })
-            );
-            setSummaryDone(true);
-            navigate(
-              `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("3")}`
-            );
+              //ERDAI 생성 api 호출
+              await postErdAI(selectedWS?.workspaceId);
+
+              await progressworkspace(selectedWS.workspaceId, "3");
+              console.log("ERD페이지로 이동");
+              dispatch(
+                setSelectedWS({
+                  ...selectedWS,
+                  progressStep: "3",
+                })
+              );
+              setSummaryDone(true);
+              navigate(
+                `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
+                  "3"
+                )}/erd/${erdId}`
+              );
+            }
           } else {
             setSummaryDone(true);
           }
@@ -101,10 +107,14 @@ export default function ProjectSummaryPage() {
         }
       } catch (err) {
         console.log("프로젝트 수정 실패 ", err);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
-  return (
+  return isLoading ? (
+    <p>로딩 중</p>
+  ) : (
     <>
       <WSHeader title="프로젝트 정보" />
       <div className="projectsummary-container">

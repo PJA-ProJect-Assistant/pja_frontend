@@ -20,6 +20,7 @@ import {
   addfeature,
   deletefeature,
   patchfeaturename,
+  patchfeaturestate,
   patchfeaturetest,
 } from "../services/listapi/FeatureApi";
 import {
@@ -136,13 +137,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     (state: RootState) => state.workspace.selectedWS
   );
 
-  //시작전이 완료보다 먼저 나오게
-  const statusOrder: Record<string, number> = {
-    BEFORE: 0,
-    IN_PROGRESS: 1,
-    DONE: 2,
-  };
-
   const getAllList = async () => {
     if (selectedWS?.workspaceId) {
       setWorkspaceId(selectedWS.workspaceId);
@@ -153,7 +147,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
           setParticipantList(data.participants);
           setCategoryList(
             data.featureCategories.sort(
-              (a, b) => statusOrder[a.state] - statusOrder[b.state]
+              (a, b) => Number(a.state) - Number(b.state)
             )
           );
           setCoreFeature(data.coreFeatures);
@@ -174,9 +168,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     const result: { [key: number]: boolean } = {};
     for (const cg of categoryList) {
       const children = cg.features || [];
-      result[cg.featureCategoryId] = children.every(
-        (ft) => ft.state === "DONE" //나중에 boolean으로 수정
-      );
+      result[cg.featureCategoryId] = children.every((ft) => ft.state === true);
     }
     return result;
   }, [categoryList]);
@@ -278,13 +270,13 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       const currentstate = categoryList.find(
         (cg) => cg.featureCategoryId === categoryId
       )?.state;
-      const changestate = currentstate === "BEFORE" ? "DONE" : "BEFORE";
+      const changestate = !currentstate;
       //카테고리 완료 수정 api
       try {
         await patchcategorystate(workspaceId, categoryId, changestate);
         const updatedList = categoryList.map((cg) =>
           cg.featureCategoryId === categoryId
-            ? { ...cg, state: changestate as Status }
+            ? { ...cg, state: changestate }
             : cg
         );
         const index = categoryList.findIndex(
@@ -293,7 +285,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         if (index !== -1) {
           cgToggleClick(index, true);
         }
-        updatedList.sort((a, b) => statusOrder[a.state] - statusOrder[b.state]);
+        updatedList.sort((a, b) => Number(a.state) - Number(b.state));
         setCategoryList(updatedList);
       } catch (err) {
         console.log("카테고리 상태 수정 실패");
@@ -327,7 +319,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     const newCategory: feature_category = {
       featureCategoryId: 0,
       name: "",
-      state: "BEFORE",
+      state: false,
       orderIndex: categoryList.length + 1,
       has_test: false,
       features: [],
@@ -398,13 +390,14 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   };
 
   const handleAddFeature = (categoryId: number) => {
+    console.log("기능 생성 버튼 클릭", categoryId);
     setCategoryList((prev) =>
       prev.map((category) => {
         if (category.featureCategoryId === categoryId) {
           const newFeature: feature = {
             featureId: 0,
             name: "",
-            state: "BEFORE",
+            state: false,
             hasTest: false,
             orderIndex: category.features.length + 1, // 예: 순서 자동 부여
             actions: [],
@@ -418,10 +411,13 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         return category;
       })
     );
+    console.log("기능 생성 완료 : ", categoryList);
   };
 
   const updateFeatureName = async (categoryId: number, isNew?: boolean) => {
     if (editingFeatureId === null) return;
+    console.log("카테고리 아이디", categoryId);
+
     if (name.trim() === "") {
       // 이름이 비어 있을 경우
       if (isNew) {
@@ -433,11 +429,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       if (isNew) {
         try {
           if (workspaceId) {
-            const response = await addfeature(
-              workspaceId,
-              editingFeatureId,
-              name
-            ); // 기능생성 API 호출
+            const response = await addfeature(workspaceId, categoryId, name); // 기능생성 API 호출
             const newId = response.data;
             if (newId) {
               setCategoryList((prev) =>
@@ -797,21 +789,62 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
           actionId,
           newStatus
         );
+
+        let shouldUpdateFeatureStatus = false;
+        let newFeatureStatus = false;
         setCategoryList((prev) =>
-          updateActionInCategoryList(
-            prev,
-            categoryId,
-            featureId,
-            actionId,
-            (action) => ({
-              ...action,
-              state: newStatus,
-            })
-          )
+          prev.map((category) => {
+            if (category.featureCategoryId !== categoryId) return category;
+
+            return {
+              ...category,
+              features: category.features.map((feature) => {
+                if (feature.featureId !== featureId) return feature;
+
+                // ✅ 1. 액션 상태 업데이트
+                const updatedActions = feature.actions.map((action) =>
+                  action.actionId === actionId
+                    ? { ...action, state: newStatus }
+                    : action
+                );
+
+                // ✅ 2. 모든 액션이 DONE이면 feature.status = true
+                const allDone = updatedActions.every(
+                  (action) => action.state === "DONE"
+                );
+
+                // 이전과 비교해서 status가 바뀌었는지 체크
+                if (feature.state !== allDone) {
+                  shouldUpdateFeatureStatus = true;
+                  newFeatureStatus = allDone;
+                }
+
+                return {
+                  ...feature,
+                  actions: updatedActions,
+                  status: allDone, // true or false
+                };
+              }),
+            };
+          })
         );
+        if (shouldUpdateFeatureStatus) {
+          console.log("feature상태 변경 시작");
+          try {
+            await patchfeaturestate(
+              workspaceId,
+              categoryId,
+              featureId,
+              newFeatureStatus
+            );
+            console.log("feature상태 변경 성공");
+          } catch {
+            console.log("feature상태 변경 실패");
+          }
+        }
       }
     } catch (err) {
-      console.log("참가자 업데이트 실패");
+      console.log("상태 업데이트 실패");
     }
   };
 
@@ -846,7 +879,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         );
       }
     } catch (err) {
-      console.log("참가자 업데이트 실패");
+      console.log("중요도 업데이트 실패");
     }
   };
   // 시작,종료 날짜 업데이트
@@ -881,7 +914,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         );
       }
     } catch (err) {
-      console.log("참가자 업데이트 실패");
+      console.log("시작일 업데이트 실패");
     }
   };
   const updateEndDate = async (
@@ -915,7 +948,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         );
       }
     } catch (err) {
-      console.log("참가자 업데이트 실패");
+      console.log("종료일 업데이트 실패");
     }
   };
 

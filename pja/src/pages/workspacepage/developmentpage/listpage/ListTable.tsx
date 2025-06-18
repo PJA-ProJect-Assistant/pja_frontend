@@ -323,7 +323,7 @@ export default function ListTable() {
           </thead>
           <tbody>
             {categoryList.map((cg, index) => {
-              const isCompleted = cg.state === "DONE";
+              const isCompleted = cg.state === true;
 
               return (
                 <React.Fragment key={cg.featureCategoryId}>
@@ -356,14 +356,14 @@ export default function ListTable() {
                               viewBox="0 -960 960 960"
                               width="20px"
                               fill="#000"
-                              onClick={() =>
-                                cgToggleClick(cg.featureCategoryId)
-                              }
+                              onClick={() => {
+                                cgToggleClick(index);
+                              }}
                               style={{ cursor: "pointer" }}
                             >
                               <path
                                 d={
-                                  clickCg[cg.featureCategoryId]
+                                  clickCg[index]
                                     ? "M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z" // ▼
                                     : "M522-480 333-669l51-51 240 240-240 240-51-51 189-189Z" // ▶
                                 }
@@ -489,7 +489,7 @@ export default function ListTable() {
                                     }}
                                     onBlur={() => {
                                       updateFeatureName(
-                                        ft.featureId,
+                                        cg.featureCategoryId,
                                         ft.name === ""
                                       );
                                     }}
@@ -503,9 +503,9 @@ export default function ListTable() {
                                       viewBox="0 -960 960 960"
                                       width="20px"
                                       fill="#000"
-                                      onClick={() =>
-                                        ftToggleClick(ft.featureId)
-                                      }
+                                      onClick={() => {
+                                        ftToggleClick(ft.featureId);
+                                      }}
                                       style={{ cursor: "pointer" }}
                                     >
                                       <path
@@ -516,6 +516,7 @@ export default function ListTable() {
                                         }
                                       />
                                     </svg>
+
                                     <svg
                                       className="ftlist-icon"
                                       xmlns="http://www.w3.org/2000/svg"
