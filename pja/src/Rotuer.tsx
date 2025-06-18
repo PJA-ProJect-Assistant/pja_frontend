@@ -5,6 +5,7 @@ import LoginPage from "./pages/loginpage/LoginPage";
 // import OAuth2Success from "./pages/loginpage/success/OAuth2SuccessPage";
 import FindIdPage from "./pages/loginpage/findid/FindIdPage";
 import FindPwPage from "./pages/loginpage/findpw/FindPwPage";
+import ResetPasswordPage from "./pages/resetpasswordpage/ResetPasswordPage";
 import SignupPage from "./pages/signuppage/SignupPage";
 import EmailVerificationPage from "./pages/signuppage/emailverificationpage/EmailVerificationPage";
 import AddWSPage from "./pages/workspacepage/addworkspacepage/AddWSPage";
@@ -13,6 +14,7 @@ import AccountSettingPage from "./pages/accountsettingpage/AccountSettingPage";
 import WorkspaceSettingPage from "./pages/workspacesettingpage/WorkspaceSettingPage";
 import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/ActionPostPage";
 import RootRedirect from "./components/common/RootRedirect";
+import AcceptInvitePage from "./pages/invitepage/AcceptInvitePage";
 
 const Router = () => {
   return (
@@ -28,6 +30,8 @@ const Router = () => {
       <Route path="/email-verification" element={<EmailVerificationPage />} />
       <Route path="/find-id" element={<FindIdPage />} />
       <Route path="/find-pw" element={<FindPwPage />} />
+      {/* 비밀번호 재설정 페이지 */}
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       {/* 인증 필요 라우트 */}
       <Route
         path="/main"
@@ -80,6 +84,7 @@ const Router = () => {
           </PrivateRoute>
         }
       />
+      <Route path="/invite/accept" element={<AcceptInvitePage />} />
     </Routes>
   );
 };

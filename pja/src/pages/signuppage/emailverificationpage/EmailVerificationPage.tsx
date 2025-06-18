@@ -78,7 +78,7 @@ const EmailVerificationPage: React.FC = () => {
       );
 
       if (response.status === 200 && response.data.status === "success") {
-        openModal("이메일 인증이 완료되었습니다!");
+        openModal("회원가입이 완료되었습니다!");
         // 로그인 페이지로 이동
         window.location.href = "/login";
       } else {
@@ -204,7 +204,7 @@ const EmailVerificationPage: React.FC = () => {
           </div>
           <div className="verification-message">
             <span className="first-line">
-              해당 이메일로 인증 토큰이 발송되었습니다😄
+              해당 이메일로 인증 번호가 발송되었습니다😄
             </span>
             <br />
           </div>

@@ -1,10 +1,26 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 import type { ChangeEvent } from "react";
 import "./AccountSettingPage.css";
 import profileIcon from "../../assets/img/profile.png";
 import profilepersonIcon from "../../assets/img/profileperson.png";
 import profilelockIcon from "../../assets/img/profilelock.png";
 import { validateNewPassword } from "./newPasswordValidator";
+
+//백엔드 api 응답 타입 정의
+interface UserInfoResponse {
+  status: string;
+  message: string;
+  data: {
+    name: string;
+    prosileImage: string;
+  };
+}
+
+interface ErrorResponse {
+  status: string;
+  message: string;
+}
 
 const AccountSettingPage: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -18,6 +34,50 @@ const AccountSettingPage: React.FC = () => {
 
   //비밀번호 중복 확인
   const [isPasswordChecked, setIsPasswordChecked] = useState<boolean>(false);
+
+  //로딩 및 에러 상태
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  //사용자 정보 조회
+  const fetchUserInfo = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
+
+      //LocalStorage에서 accessToken 가져오기
+      const accessToken = localStorage.getItem("accessToken");
+
+      if (!accessToken) {
+        throw new Error("인증 토큰이 없습니다.");
+      }
+
+      const response = await fetch("http://localhost:8080/api/user/read-info", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData: ErrorResponse = await response.json();
+        throw new Error(
+          errorData.message || "사용자 정보 조회에 실패했습니다."
+        );
+      }
+
+      const data: UserInfoResponse = await response.json();
+
+      setName(data.data.name || "");
+    } catch (err: any) {
+      setError(err.message || "사용자 정보 조회에 실패했습니다.");
+    }
+  };
 
   const handleNameChange = (event: {
     target: { value: React.SetStateAction<string> };
