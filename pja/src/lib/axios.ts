@@ -32,10 +32,7 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // 네트워크 에러 + 재시도 횟수 제한 체크
-    if (
-      !originalRequest._retryCount &&
-      error.message === "Network Error"
-    ) {
+    if (!originalRequest._retryCount && error.message === "Network Error") {
       originalRequest._retryCount = 0;
     }
 
@@ -45,7 +42,9 @@ api.interceptors.response.use(
     ) {
       originalRequest._retryCount += 1;
       // 재시도 전 약간 대기 (exponential backoff 적용 가능)
-      await new Promise(res => setTimeout(res, 500 * originalRequest._retryCount));
+      await new Promise((res) =>
+        setTimeout(res, 500 * originalRequest._retryCount)
+      );
       return api(originalRequest);
     }
 

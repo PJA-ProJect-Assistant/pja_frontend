@@ -56,7 +56,6 @@ export function useAuthInit() {
   const dispatch = useDispatch();
   const TIMEOUT_MS = 5000; //5초
 
-  //토큰이 저장되는 동안 privateroute에서 토큰이 없다고 판단해서 리다이렉트된 것 같음
   const [authInitialized, setAuthInitialized] = useState(false);
 
   useEffect(() => {
@@ -88,6 +87,7 @@ export function useAuthInit() {
           console.warn("토큰 갱신 실패", err);
         }
         dispatch(clearAccessToken());
+        setAuthInitialized(true);
         return;
       }
       setAuthInitialized(true);

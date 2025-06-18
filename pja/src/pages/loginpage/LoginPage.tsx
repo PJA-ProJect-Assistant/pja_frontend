@@ -8,9 +8,9 @@ import logoImage from "../../assets/img/logo.png";
 import GoogleImage from "../../assets/img/Google.png";
 import CustomModal from "../signuppage/CustomModal";
 import { useNavigate } from "react-router-dom";
-import { useUserData } from "../../hooks/useUserData";
-import { useAuthInit } from "../../hooks/useAuthInit";
-import type { RootState } from "../../store/store";
+// import { useUserData } from "../../hooks/useUserData";
+// import { useAuthInit } from "../../hooks/useAuthInit";
+// import type { RootState } from "../../store/store";
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -21,8 +21,8 @@ const LoginPage: React.FC = () => {
   const [showModal, setShowModal] = useState<React.ReactNode>(false);
   const [modalMessage, setModalMessage] = useState<React.ReactNode>("");
   const navigate = useNavigate();
-  const token = useSelector((state: RootState) => state.auth.accessToken);
-  const authInitialized = useAuthInit();
+  // const token = useSelector((state: RootState) => state.auth.accessToken);
+  // const authInitialized = useAuthInit();
 
   // 토큰이 있으면 리다이렉트
   // useEffect(() => {
@@ -110,10 +110,10 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // 3. Google 로그인도 프록시를 통해 상대 경로로 요청
-    window.location.href = "/oauth2/authorization/google";
-  };
+  // const handleGoogleLogin = () => {
+  //   // 3. Google 로그인도 프록시를 통해 상대 경로로 요청
+  //   window.location.href = "/oauth2/authorization/google";
+  // };
 
   return (
     <div className="login-container">
@@ -260,7 +260,8 @@ const LoginPage: React.FC = () => {
         </div>
 
         <div className="google-login-wrapper">
-          <button className="google-login-button" onClick={handleGoogleLogin}>
+          {/* <button className="google-login-button" onClick={handleGoogleLogin}> */}
+          <button className="google-login-button">
             <img src={GoogleImage} alt="Google logo" className="google-logo" />
             <span className="google-text">Google 계정으로 로그인</span>
           </button>

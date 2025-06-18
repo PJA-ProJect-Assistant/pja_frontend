@@ -18,9 +18,8 @@ export interface setworkspace {
 export type Role = "OWNER" | "MEMBER" | "GUEST";
 
 export interface workspace_member {
-  workspace_member_id: number;
-  user_id: number;
-  workspace_id: number;
+  memberId: number;
+  username: string;
+  profileImage: string | null;
   role: Role;
-  joined_at: Date;
 }

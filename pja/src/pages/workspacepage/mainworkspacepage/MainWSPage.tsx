@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import type { workspace } from "../../../types/workspace";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getworkspace } from "../../../services/workspaceApi";
 import WsSidebar from "../../../components/sidebar/WsSidebar";
@@ -12,6 +11,7 @@ import RequirementsPage from "../requirementpage/RequirementsPage";
 import ERDPage from "../erdpage/ERDPage";
 import ApiPage from "../apispecpage/ApiPage";
 import DevelopmentPage from "../developmentpage/DevelopmentPage";
+import ProjectSummaryPage from "../projectsummarypage/ProjectSummaryPage";
 import { ReactFlowProvider } from "reactflow";
 
 export default function MainWSPage() {
@@ -35,9 +35,9 @@ export default function MainWSPage() {
       } catch (err) {
         console.log("getworkspace 실패 : ", err);
       }
-    }
+    };
     getws();
-  }, [wsid])
+  }, [wsid]);
   const renderStepComponent = () => {
     switch (stepId) {
       case "idea":
@@ -45,7 +45,7 @@ export default function MainWSPage() {
       case "requirements":
         return <RequirementsPage />;
       case "project":
-        return;
+        return <ProjectSummaryPage />;
       case "erd":
         return (
           <ReactFlowProvider>
