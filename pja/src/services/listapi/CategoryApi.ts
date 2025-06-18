@@ -13,7 +13,7 @@ export const addcategory = async (
       `/workspaces/${workspaceId}/project/category`,
       {
         name,
-        state: false,
+        state: "BEFORE", // 이거 false넣으면 오류남ㅠㅜㅠ
         hasTest: false,
       }
     );
