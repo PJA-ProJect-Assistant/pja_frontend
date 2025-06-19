@@ -1,26 +1,21 @@
 import "./CategoryProgress.css";
 import { PieChart, Pie, Cell } from "recharts";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../../../store/store";
-import { featureCategories } from "../../../../constants/listconstant";
-import type { feature_category } from "../../../../types/list";
 import { useEffect, useState } from "react";
 import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
 
+console.log("📄 categoryprogress.tsx 파일 로드됨!");
+
 export default function CategoryProgress() {
-  const selectedWS = useSelector(
-    (state: RootState) => state.workspace.selectedWS
-  );
-  const wsid = selectedWS?.workspaceId;
   const [totalCg, setTotalCg] = useState<number>();
   const [completeCg, setCompleteCg] = useState<number>();
   const [completePg, setCompletePg] = useState<number>();
-  const {
-    categoryList
-  } = useCategoryFeatureCategory();
+
+  const { categoryList, workspaceId } = useCategoryFeatureCategory();
 
   useEffect(() => {
-    if (wsid) {
+    console.log("categoryList updated:", categoryList);
+
+    if (workspaceId) {
       setTotalCg(categoryList.length);
       let completedCount = 0;
       for (const cg of categoryList) {
@@ -28,6 +23,8 @@ export default function CategoryProgress() {
       }
       setCompleteCg(completedCount);
       setCompletePg((completedCount / categoryList.length) * 100);
+    } else {
+      console.log("❌ workspaceId가 없어서 계산 스킵");
     }
   }, [categoryList]);
 
@@ -51,6 +48,7 @@ export default function CategoryProgress() {
             stroke="none"
             startAngle={90}
             endAngle={-270}
+            style={{ pointerEvents: "none" }}
           >
             {data.map((entry, index) => (
               <Cell
