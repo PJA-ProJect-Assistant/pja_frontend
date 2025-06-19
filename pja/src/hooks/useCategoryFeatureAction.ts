@@ -42,6 +42,9 @@ interface UseCategoryFeatureCategoryReturn {
   clickCg: { [key: number]: boolean };
   clickFt: { [key: number]: boolean };
   name: string;
+  totalCg: number;
+  completeCg: number;
+  completePg: number;
   workspaceId: number | undefined;
   editingCategoryId: number | null;
   editingFeatureId: number | null;
@@ -132,6 +135,10 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const [participantList, setParticipantList] = useState<workspace_member[]>(
     []
   );
+  //카테고리 진행도 변수
+  const [totalCg, setTotalCg] = useState<number>(0);
+  const [completeCg, setCompleteCg] = useState<number>(0);
+  const [completePg, setCompletePg] = useState<number>(0);
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -157,9 +164,23 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       }
     }
   };
+
+  // categoryList가 변경될 때마다 자동 계산
   useEffect(() => {
-    console.log("categorylist 변경", categoryList);
-  }, [categoryList]);
+    if (workspaceId && categoryList.length > 0) {
+      console.log("🔢 Hook에서 progress 계산 중...");
+
+      const total = categoryList.length;
+      const completed = categoryList.filter((cg) => cg.state).length;
+      const percentage = (completed / total) * 100;
+
+      setTotalCg(total);
+      setCompleteCg(completed);
+      setCompletePg(percentage);
+
+      console.log("🔢 계산 완료:", { total, completed, percentage });
+    }
+  }, [categoryList, workspaceId]);
 
   useEffect(() => {
     getAllList();
@@ -981,6 +1002,9 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     editingFeatureId,
     editingActionId,
     categoryCompletableMap,
+    totalCg,
+    completeCg,
+    completePg,
 
     toggleTestCheckCg,
     toggleTestCheckFt,

@@ -6,27 +6,8 @@ import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeature
 console.log("📄 categoryprogress.tsx 파일 로드됨!");
 
 export default function CategoryProgress() {
-  const [totalCg, setTotalCg] = useState<number>();
-  const [completeCg, setCompleteCg] = useState<number>();
-  const [completePg, setCompletePg] = useState<number>();
-
-  const { categoryList, workspaceId } = useCategoryFeatureCategory();
-
-  useEffect(() => {
-    console.log("categoryList updated:", categoryList);
-
-    if (workspaceId) {
-      setTotalCg(categoryList.length);
-      let completedCount = 0;
-      for (const cg of categoryList) {
-        if (cg.state) completedCount++;
-      }
-      setCompleteCg(completedCount);
-      setCompletePg((completedCount / categoryList.length) * 100);
-    } else {
-      console.log("❌ workspaceId가 없어서 계산 스킵");
-    }
-  }, [categoryList]);
+  const { categoryList, totalCg, completeCg, completePg } =
+    useCategoryFeatureCategory();
 
   const data = [
     { name: "완료", value: completePg ?? 0 },
