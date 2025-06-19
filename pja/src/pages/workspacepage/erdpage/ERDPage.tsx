@@ -1,9 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import { WSHeader } from "../../../components/header/WSHeader";
-import { ReactFlow, useReactFlow, type Edge } from "reactflow";
+import { Controls, ReactFlow, useReactFlow, type Edge } from "reactflow";
 import type { Node } from "reactflow";
-import { generateEdgesFromData, generateNodesFromData } from "./ERDData";
+import {
+  generateEdgesFromData,
+  generateNodesFromData,
+} from "../../../utils/erdUtils";
 import { nodeTypes } from "./TableNode";
 import { progressworkspace } from "../../../services/workspaceApi";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +15,9 @@ import { getStepIdFromNumber } from "../../../utils/projectSteps";
 import { useEffect, useState } from "react";
 // import ERDEdit from "./ERDEdit";
 import "./ERDPage.css";
+import "reactflow/dist/style.css";
 import { getAllErd, getErdId } from "../../../services/erdApi";
+import ERDEdit from "./ERDEdit";
 
 export default function ERDPage() {
   const dispatch = useDispatch();
@@ -20,7 +25,6 @@ export default function ERDPage() {
     (state: RootState) => state.workspace.selectedWS
   );
 
-  const [erdId, setErdId] = useState<number>();
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
@@ -30,14 +34,15 @@ export default function ERDPage() {
   const navigate = useNavigate();
 
   const geterd = async () => {
-    // 여기에 erdId조회api
+    // erdId조회api
     try {
       if (selectedWS?.workspaceId) {
         const getid = await getErdId(selectedWS.workspaceId);
         console.log("erdId 성공", getid.data);
-        const ERDID = getid.data;
+        const ERDID = getid.data?.erdId;
+        console.log(ERDID);
+
         if (ERDID) {
-          setErdId(ERDID);
           try {
             const getallerd = await getAllErd(selectedWS?.workspaceId, ERDID);
             console.log("getallerd 결과", getallerd);
@@ -68,35 +73,37 @@ export default function ERDPage() {
       setErdDone(true);
     }
   }, [selectedWS]);
+  useEffect(() => {
+    console.log(
+      "✅ nodes 상태 확인",
+      nodes.map((n) => n.position)
+    );
+  }, [nodes]);
   const { fitView } = useReactFlow();
-  const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
 
-  const onInit = (instance: any) => {
-    setReactFlowInstance(instance);
-  };
   useEffect(() => {
     const handleResize = () => {
       fitView({ padding: 0.2 });
     };
 
-    if (reactFlowInstance) {
-      window.addEventListener("resize", handleResize);
-    }
-
     return () => window.removeEventListener("resize", handleResize);
   }, [nodes, fitView]);
+
+  useEffect(() => {
+    console.log("🔍 전체 노드 데이터:");
+    nodes.forEach((node, index) => {
+      console.log(`Node ${index}:`, {
+        id: node.id,
+        position: node.position,
+        tableName: node.data?.tableName,
+      });
+    });
+  }, [nodes]);
   //완료 버튼
   const handleErdComplete = async () => {
     if (selectedWS?.progressStep === "3") {
       try {
         //여기에 API명세서 호출 api 선언하면 됨
-
-        // API생성 후 data 있어야 넘어가게
-        // if (!apidata || !apidata.data)
-        //   throw new Error("프로젝트 정보 생성 실패");
-        // else {
-        //   console.log("프로젝트 정보 : ", apidata);
-        // }
 
         await progressworkspace(selectedWS.workspaceId, "4");
         console.log("API페이지로 이동");
@@ -120,45 +127,40 @@ export default function ERDPage() {
     <>
       <WSHeader title="ERD 생성" />
       <div className="erd-page-container">
-        <div className="erd-page-header">
-          <p className="erd-title">
-            ✨아이디어와 명세서를 분석하여 ERD 추천을 해드려요
-          </p>
-          <div className="erd-btn-group">
-            <div
-              className="erd-btn"
-              onClick={() => setModifyMode((prev) => !prev)}
-            >
-              {modifyMode ? "완료하기" : "수정하기"}
-            </div>
-            {modifyMode && <div className="erd-btn">새 테이블 생성하기</div>}
-          </div>
-        </div>
         {/* <ReactFlow nodes={nodes} edges={initialEdges} nodeTypes={nodeTypes} /> */}
         {modifyMode ? (
-          // <ERDEdit />
-          <div>수정페이지</div>
+          <ERDEdit onClose={() => setModifyMode(false)} />
         ) : (
-          <ReactFlow
-            onInit={onInit}
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            fitView
-            fitViewOptions={{ padding: 0.2 }}
-            defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
-            zoomOnScroll={false}
-            zoomActivationKeyCode="Control" // Ctrl 키 누르고 휠 돌릴 때만 확대/축소
-            className="erdflow-container"
-          ></ReactFlow>
-        )}
-
-        {!erdDone && !modifyMode && (
-          <div className="erd-complete-btn-container">
-            <div className="erd-complete-btn" onClick={handleErdComplete}>
-              저장하기
+          <>
+            <div className="erd-page-header">
+              <p className="erd-title">
+                ✨아이디어와 명세서를 분석하여 ERD 추천을 해드려요
+              </p>
+              <div className="erd-btn-group">
+                <div className="erd-btn" onClick={() => setModifyMode(true)}>
+                  수정하기
+                </div>
+                {!erdDone && (
+                  <div className="erd-complete-btn" onClick={handleErdComplete}>
+                    저장하기
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              fitView
+              fitViewOptions={{ padding: 0.2 }}
+              defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+              zoomOnScroll={false}
+              zoomActivationKeyCode="Control" // Ctrl 키 누르고 휠 돌릴 때만 확대/축소
+              className="erdflow-container"
+            >
+              <Controls />
+            </ReactFlow>
+          </>
         )}
       </div>
     </>
