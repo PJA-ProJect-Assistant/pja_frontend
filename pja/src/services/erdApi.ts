@@ -1,6 +1,6 @@
 import api from "../lib/axios";
 import type { ApiResponse } from "../types/common";
-import type { ERDData, geterd } from "../types/erd";
+import type { ERDData, geterd, GenerateApiResponse } from "../types/erd";
 //ERD 관련 테이블
 
 //erd ai자동생성 요청
@@ -85,6 +85,32 @@ export const getErdId = async (
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getErdId] Erd id 조회 실패:", error);
+
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
+  }
+};
+
+//api 명세서 생성 요청
+export const generateApiSpec = async (
+  workspaceId: number
+): Promise<GenerateApiResponse> => {
+  try {
+    const response = await api.post<GenerateApiResponse>(
+      `/workspaces/${workspaceId}/apis/generate`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("API 명세서 생성 API 호출 실패:", error);
+    // 에러를 다시 throw하여 호출한 쪽(컴포넌트)에서 catch할 수 있도록 합니다.
 
     if (error.response) {
       console.error("응답 상태코드:", error.response.status);

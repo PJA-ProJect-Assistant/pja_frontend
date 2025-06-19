@@ -1,6 +1,14 @@
 .api-main {
   flex: 1;
   padding: 0 54px 54px 54px;
+  display: flex;
+  flex-direction: column;
+  min-height: 750px;
+}
+.api-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 .api-header {
   display: flex;
@@ -160,4 +168,25 @@
 .edit-image {
   width: 20px;
   height: 20px;
+}
+
+.api-complete-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 55px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.api-complete-btn {
+  width: 120px;
+  height: 40px;
+  background-color: #00205b;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
 }

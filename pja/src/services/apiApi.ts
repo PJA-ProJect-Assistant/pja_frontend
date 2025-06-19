@@ -97,9 +97,19 @@ export const deleteApi = async (
 
     // 성공 응답에서 실제 데이터(data)를 반환합니다.
     return response.data.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("API 삭제 요청 실패:", error);
     // 에러를 다시 throw하여 호출한 쪽에서 처리할 수 있도록 합니다.
+
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
     throw error;
   }
 };
