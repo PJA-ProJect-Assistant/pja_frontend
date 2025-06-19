@@ -85,18 +85,18 @@ export const ParticipantsCell = ({ value = [], onChange, disable }: Props) => {
       >
         <div className="selected-partinames">
           {value.map((id) => {
-            const user = Members.find((m) => m.user_id === id);
+            const user = participantList.find((m) => m.memberId === id);
             return (
               <div key={id}>
-                {user?.profile_image ? (
+                {user?.profileImage ? (
                   <img
-                    src={user.profile_image}
-                    alt={user.name}
+                    src={user.profileImage}
+                    alt={user.username}
                     className="partiprofile-img"
                   />
                 ) : (
                   <div className="partiprofile-none">
-                    {user?.name.charAt(0)}
+                    {user?.username.charAt(0)}
                   </div>
                 )}
               </div>

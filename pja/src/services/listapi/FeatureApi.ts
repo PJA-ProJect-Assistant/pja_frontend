@@ -14,7 +14,7 @@ export const addfeature = async (
       `/workspaces/${workspaceId}/project/category/${categoryId}/feature`,
       {
         name,
-        state: "BEFORE", //false넣으면 오류남,,
+        state: false, //false넣으면 오류남,,
         hasTest: false,
       }
     );

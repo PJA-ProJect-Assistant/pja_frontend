@@ -357,13 +357,13 @@ export default function ListTable() {
                               width="20px"
                               fill="#000"
                               onClick={() => {
-                                cgToggleClick(index);
+                                cgToggleClick(cg.featureCategoryId);
                               }}
                               style={{ cursor: "pointer" }}
                             >
                               <path
                                 d={
-                                  clickCg[index]
+                                  clickCg[cg.featureCategoryId]
                                     ? "M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z" // ▼
                                     : "M522-480 333-669l51-51 240 240-240 240-51-51 189-189Z" // ▶
                                 }
@@ -458,14 +458,14 @@ export default function ListTable() {
                         type="checkbox"
                         disabled={isCompleted}
                         className="list-checkbox"
-                        checked={cg.has_test ?? false}
+                        checked={cg.hasTest ?? false}
                         onChange={() => toggleTestCheckCg(cg.featureCategoryId)}
                       />
                     </td>
                   </tr>
 
                   {/* 기능 리스트 */}
-                  {clickCg[index] &&
+                  {clickCg[cg.featureCategoryId] &&
                     cg.features.map((ft) => {
                       return (
                         <React.Fragment key={ft.featureId}>
@@ -764,8 +764,6 @@ export default function ListTable() {
                                   />
                                 </td>
                                 <td>
-                                  {/* 지금 action상태변화에 따른 feature상태변화 안되는 중임 */}
-                                  {/* 오류나서 api연결하고 해야할것같음 */}
                                   <ActionStatusCell
                                     status={ac.state}
                                     disable={isCompleted}

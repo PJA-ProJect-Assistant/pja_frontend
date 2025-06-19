@@ -133,7 +133,7 @@ export default function FilterTable({
                     <td className="list-name">
                       <div className="cglist-name">
                         {category.name === "" ||
-                          editingCategoryId === category.featureCategoryId ? (
+                        editingCategoryId === category.featureCategoryId ? (
                           <input
                             type="text"
                             value={name}
@@ -158,7 +158,7 @@ export default function FilterTable({
                               width="20px"
                               fill="#000"
                               onClick={() => {
-                                cgToggleClick(index);
+                                cgToggleClick(category.featureCategoryId);
                               }}
                               style={{ cursor: "pointer" }}
                             >
@@ -230,8 +230,9 @@ export default function FilterTable({
                     <td />
                     <td>
                       <button
-                        className={`list-completebtn ${isCompleted ? "completed" : ""
-                          }`}
+                        className={`list-completebtn ${
+                          isCompleted ? "completed" : ""
+                        }`}
                         disabled={
                           !categoryCompletableMap[category.featureCategoryId]
                         }
@@ -248,7 +249,7 @@ export default function FilterTable({
                         type="checkbox"
                         disabled={isCompleted}
                         className="list-checkbox"
-                        checked={category.has_test ?? false}
+                        checked={category.hasTest ?? false}
                         onChange={() =>
                           toggleTestCheckCg(category.featureCategoryId)
                         }
@@ -262,13 +263,14 @@ export default function FilterTable({
                       return (
                         <React.Fragment key={feature.featureId}>
                           <tr
-                            className={`ft-row ${isCompleted ? "completed" : ""
-                              }`}
+                            className={`ft-row ${
+                              isCompleted ? "completed" : ""
+                            }`}
                           >
                             <td className="list-name">
                               <div className="ftlist-name">
                                 {feature.name === "" ||
-                                  editingFeatureId === feature.featureId ? (
+                                editingFeatureId === feature.featureId ? (
                                   <input
                                     type="text"
                                     value={name}
@@ -392,13 +394,14 @@ export default function FilterTable({
                             actions.map((ac) => (
                               <tr
                                 key={ac.actionId}
-                                className={`ac-row ${isCompleted ? "completed" : ""
-                                  }`}
+                                className={`ac-row ${
+                                  isCompleted ? "completed" : ""
+                                }`}
                               >
                                 <td className="list-name">
                                   <div className="aclist-name">
                                     {ac.name === "" ||
-                                      editingActionId === ac.actionId ? (
+                                    editingActionId === ac.actionId ? (
                                       <input
                                         type="text"
                                         value={name}

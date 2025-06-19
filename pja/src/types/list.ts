@@ -8,7 +8,7 @@ export interface feature_category {
   name: string;
   state: boolean;
   orderIndex: number;
-  has_test: boolean | null;
+  hasTest: boolean | null;
   features: feature[];
 }
 export interface feature {
@@ -35,6 +35,14 @@ export interface action extends responseactionid {
   importance: Importance;
   orderIndex: number;
   participants: workspace_member[];
+}
+
+export interface getaction {
+  actionId: number;
+  actionName: string;
+  startDate: Date | null;
+  endDate: Date | null;
+  actionPostId: number | null;
 }
 
 export interface listresponse {
