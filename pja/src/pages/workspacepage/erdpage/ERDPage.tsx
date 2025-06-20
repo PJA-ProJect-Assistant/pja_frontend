@@ -137,9 +137,9 @@ export default function ERDPage() {
                 ✨아이디어와 명세서를 분석하여 ERD 추천을 해드려요
               </p>
               <div className="erd-btn-group">
-                <div className="erd-btn" onClick={() => setModifyMode(true)}>
+                {/* <div className="erd-btn" onClick={() => setModifyMode(true)}>
                   수정하기
-                </div>
+                </div> */}
                 {!erdDone && (
                   <div className="erd-complete-btn" onClick={handleErdComplete}>
                     저장하기
