@@ -1,9 +1,10 @@
 import type { Node, Edge } from "reactflow";
 import { MarkerType } from "reactflow";
 import type { ERDRelation, ERDTable } from "../types/erd";
+import { getRandomColor } from "./colorUtils";
 
 export function generateEdgesFromData(relations: ERDRelation[]): Edge[] {
-  return relations.map((rel) => ({
+  return relations.map((rel, index) => ({
     id: rel.id,
     source: rel.source,
     target: rel.target,
@@ -14,7 +15,7 @@ export function generateEdgesFromData(relations: ERDRelation[]): Edge[] {
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
-    style: { stroke: "#555" },
+    style: { stroke: getRandomColor(), strokeWidth: 2 },
   }));
 }
 
@@ -39,13 +40,11 @@ export function generateNodesFromData(tables: ERDTable[]): Node[] {
 
 // 수정페이지 노드 생성 함수
 export function generateEdittableNodes(tables: ERDTable[]): Node[] {
-  const gapX = 550;
+  const gapX = 650;
   const gapY = 500;
-  const maxCols = 3; // 한 줄에 최대 3개까지
+  const maxCols = 2; // 한 줄에 최대 2개까지
 
   return tables.map((table, index) => {
-    // const col = index % 2;
-    // const row = Math.floor(index / 2);
     const col = index % maxCols;
     const row = Math.floor(index / maxCols);
     const x = col * gapX + Math.random() * 30;
@@ -66,11 +65,11 @@ export function generateEdittableRelations(relations: ERDRelation[]): Edge[] {
     id: `edge-${index}`,
     source: relation.source,
     target: relation.target,
-    sourceHandle: `source-${relation.source}-${relation.sourceHandle}`,
-    targetHandle: `target-${relation.target}-${relation.targetHandle}`,
-    type: "smoothstep",
+    sourceHandle: relation.sourceHandle,
+    targetHandle: relation.targetHandle,
+    // type: "smoothstep",
     animated: true,
     style: { stroke: "#00205B", strokeWidth: 2 },
-    label: relation.label || "1:N",
+    label: String(relation.label || "1:N"),
   }));
 }

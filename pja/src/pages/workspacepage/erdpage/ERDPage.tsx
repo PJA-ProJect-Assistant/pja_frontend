@@ -73,12 +73,12 @@ export default function ERDPage() {
       setErdDone(true);
     }
   }, [selectedWS]);
-  useEffect(() => {
-    console.log(
-      "✅ nodes 상태 확인",
-      nodes.map((n) => n.position)
-    );
-  }, [nodes]);
+  // useEffect(() => {
+  //   console.log(
+  //     "✅ nodes 상태 확인",
+  //     nodes.map((n) => n.position)
+  //   );
+  // }, [nodes]);
   const { fitView } = useReactFlow();
 
   useEffect(() => {
@@ -127,7 +127,6 @@ export default function ERDPage() {
     <>
       <WSHeader title="ERD 생성" />
       <div className="erd-page-container">
-        {/* <ReactFlow nodes={nodes} edges={initialEdges} nodeTypes={nodeTypes} /> */}
         {modifyMode ? (
           <ERDEdit onClose={() => setModifyMode(false)} />
         ) : (
