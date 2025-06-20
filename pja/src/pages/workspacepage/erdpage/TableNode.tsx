@@ -2,6 +2,7 @@ import { Handle, Position } from "reactflow";
 import type { NodeProps, NodeTypes } from "reactflow";
 import type { ERDField, ERDTable } from "../../../types/erd";
 import "./ERDPage.css";
+import "reactflow/dist/style.css";
 
 const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
   <div className="table-node">
@@ -12,7 +13,7 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
           <Handle
             type="target"
             position={Position.Left}
-            id={`target-${data.tableName}-${field.name}`}
+            id={`target-${field.name}`}
             className="handle-left"
           />
           <div className="table-node-field">
@@ -33,7 +34,7 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
           <Handle
             type="source"
             position={Position.Right}
-            id={`source-${data.tableName}-${field.name}`}
+            id={`source-${field.name}`}
             className="handle-right"
           />
         </div>

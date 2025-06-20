@@ -15,8 +15,8 @@ import { getStepIdFromNumber } from "../../../utils/projectSteps";
 import { useEffect, useState } from "react";
 // import ERDEdit from "./ERDEdit";
 import "./ERDPage.css";
-import { getAllErd, getErdId, generateApiSpec } from "../../../services/erdApi";
 import "reactflow/dist/style.css";
+import { getAllErd, getErdId } from "../../../services/erdApi";
 import ERDEdit from "./ERDEdit";
 
 export default function ERDPage() {
@@ -103,8 +103,7 @@ export default function ERDPage() {
   const handleErdComplete = async () => {
     if (selectedWS?.progressStep === "3") {
       try {
-        console.log("AI API 명세서 생성을 요청합니다...");
-        await generateApiSpec(selectedWS.workspaceId);
+        //여기에 API명세서 호출 api 선언하면 됨
 
         await progressworkspace(selectedWS.workspaceId, "4");
         console.log("API페이지로 이동");
@@ -138,9 +137,9 @@ export default function ERDPage() {
                 ✨아이디어와 명세서를 분석하여 ERD 추천을 해드려요
               </p>
               <div className="erd-btn-group">
-                {/* <div className="erd-btn" onClick={() => setModifyMode(true)}>
+                <div className="erd-btn" onClick={() => setModifyMode(true)}>
                   수정하기
-                </div> */}
+                </div>
                 {!erdDone && (
                   <div className="erd-complete-btn" onClick={handleErdComplete}>
                     저장하기

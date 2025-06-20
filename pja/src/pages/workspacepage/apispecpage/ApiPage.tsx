@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"; // React.Fragment 사용을 위해 React import
 import { setSelectedWS } from "../../../store/workspaceSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
@@ -15,7 +15,6 @@ import type {
   BackendApiSpec,
   CreateApiRequest,
 } from "../../../types/api";
-import { useParams } from "react-router-dom";
 
 import {
   createApi,
@@ -23,6 +22,8 @@ import {
   deleteApi,
   getApisByWorkspace,
 } from "../../../services/apiApi";
+import { progressworkspace } from "../../../services/workspaceApi";
+import type { workspace } from "../../../types/workspace";
 
 // --- (타입 정의 및 변환 함수들은 기존과 동일) ---
 type ApiSpecification = {
@@ -70,7 +71,6 @@ const mapFrontendToBackend = (
 };
 
 const ApiPage = () => {
-  const { workspaceId } = useParams<{ workspaceId: string }>();
   //const [isEditMode, setIsEditMode] = useState(false);
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
   const [openRowId, setOpenRowId] = useState<number | null>(null);
@@ -84,6 +84,7 @@ const ApiPage = () => {
   );
   const wsid = selectedWS?.workspaceId;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // 기본 필드 변경 핸들러
   const handleChange = (
@@ -430,6 +431,26 @@ const ApiPage = () => {
 
   const toggleAccordion = (id: number) => {
     setOpenRowId(openRowId === id ? null : id);
+  };
+
+  const handleApiComplete = async () => {
+    if (selectedWS?.progressStep === "4") {
+      try {
+        await progressworkspace(selectedWS.workspaceId, "5");
+        console.log("리스트페이지로 이동");
+        dispatch(
+          setSelectedWS({
+            ...selectedWS,
+            progressStep: "5",
+          })
+        );
+        navigate(
+          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("5")}`
+        );
+      } catch (err) {
+        console.log("진행도 업데이트", err);
+      }
+    }
   };
 
   return (
@@ -963,15 +984,7 @@ const ApiPage = () => {
           <div className="api-complete-button">
             <button
               className="api-complete-btn"
-              onClick={() => {
-                if (selectedWS && selectedWS.workspaceId) {
-                  navigate(
-                    `/ws/${selectedWS.workspaceId}/step/${getStepIdFromNumber(
-                      "5"
-                    )}`
-                  );
-                }
-              }}
+              onClick={() => handleApiComplete()}
               disabled={!selectedWS}
             >
               완료하기
@@ -984,3 +997,9 @@ const ApiPage = () => {
 };
 
 export default ApiPage;
+function dispatch(arg0: {
+  payload: workspace;
+  type: "workspace/setSelectedWS";
+}) {
+  throw new Error("Function not implemented.");
+}

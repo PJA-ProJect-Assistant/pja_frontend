@@ -19,7 +19,7 @@ export function generateEdgesFromData(relations: ERDRelation[]): Edge[] {
 }
 
 export function generateNodesFromData(tables: ERDTable[]): Node[] {
-  const gapX = 550;
+  const gapX = 600;
   const gapY = 300;
 
   return tables.map((table, index) => {

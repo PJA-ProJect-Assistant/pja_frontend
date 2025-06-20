@@ -133,7 +133,7 @@ export default function ERDEdit({ onClose }: IsClose) {
           </div>
         </div>
       </div>
-      {/* {tables.map((table, tableIdx) => (
+      {tables.map((table, tableIdx) => (
         <div key={tableIdx}>
           <h2>{table.tableName}</h2>
           {table.fields.map((field, fieldIdx) => (
@@ -141,19 +141,19 @@ export default function ERDEdit({ onClose }: IsClose) {
               <input
                 value={field.name}
                 onChange={(e) =>
-                  handleFieldChange(tableIdx, fieldIdx, "name", e.target.value)
+                  handleFieldChange(table.id, fieldIdx, "name", e.target.value)
                 }
               />
               <input
                 value={field.type ?? ""}
                 onChange={(e) =>
-                  handleFieldChange(tableIdx, fieldIdx, "type", e.target.value)
+                  handleFieldChange(table.id, fieldIdx, "type", e.target.value)
                 }
               />
             </div>
           ))}
         </div>
-      ))} */}
+      ))}
       <div
         className="erd-edit-container"
         style={{ height: "calc(100vh - 200px)" }}
