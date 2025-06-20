@@ -1,5 +1,5 @@
 import "./ListTable.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 import DateSelectCell from "../../../../components/cells/DateSelectCell";
 import { ActionStatusCell } from "../../../../components/cells/ActionStatusCell";
@@ -21,6 +21,10 @@ export default function ListTable() {
   const [showCategory, setShowCategory] = useState(false);
   const [showParticipant, setShowParticipant] = useState(false);
   const [showStatus, setShowStatus] = useState(false);
+  const [openActionMenu, setOpenActionMenu] = useState<{
+    categoryId: number;
+    featureId: number;
+  } | null>(null);
   const {
     categoryList,
     clickCg,
@@ -55,7 +59,11 @@ export default function ListTable() {
     handleAddFeature,
     updateFeatureName,
     handleAddAction,
+    handleAiActionDelete,
+    handleUpdateAIAction,
+    handleAddAIAction,
     updateActionName,
+    aiList,
 
     handleDeleteCategory,
     handleDeleteFeature,
@@ -69,6 +77,25 @@ export default function ListTable() {
   };
 
   const navigate = useNavigate();
+
+  //메뉴 모달 바깥 감지
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        actionMenuRef.current &&
+        !actionMenuRef.current.contains(event.target as Node)
+      ) {
+        setOpenActionMenu(null); // 메뉴 닫기
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const actionMenuRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="listtable-container">
@@ -357,13 +384,13 @@ export default function ListTable() {
                               width="20px"
                               fill="#000"
                               onClick={() => {
-                                cgToggleClick(index);
+                                cgToggleClick(cg.featureCategoryId);
                               }}
                               style={{ cursor: "pointer" }}
                             >
                               <path
                                 d={
-                                  clickCg[index]
+                                  clickCg[cg.featureCategoryId]
                                     ? "M480-333 240-573l51-51 189 189 189-189 51 51-240 240Z" // ▼
                                     : "M522-480 333-669l51-51 240 240-240 240-51-51 189-189Z" // ▶
                                 }
@@ -458,14 +485,14 @@ export default function ListTable() {
                         type="checkbox"
                         disabled={isCompleted}
                         className="list-checkbox"
-                        checked={cg.has_test ?? false}
+                        checked={cg.hasTest ?? false}
                         onChange={() => toggleTestCheckCg(cg.featureCategoryId)}
                       />
                     </td>
                   </tr>
 
                   {/* 기능 리스트 */}
-                  {clickCg[index] &&
+                  {clickCg[cg.featureCategoryId] &&
                     cg.features.map((ft) => {
                       return (
                         <React.Fragment key={ft.featureId}>
@@ -548,13 +575,12 @@ export default function ListTable() {
                                     </button>
                                     <div>
                                       <button
-                                        onClick={() => {
-                                          handleAddAction(
-                                            cg.featureCategoryId,
-                                            ft.featureId
-                                          );
-                                          setEditingActionId(0);
-                                        }}
+                                        onClick={() =>
+                                          setOpenActionMenu({
+                                            categoryId: cg.featureCategoryId,
+                                            featureId: ft.featureId,
+                                          })
+                                        }
                                         className="list-addbtn"
                                       >
                                         <svg
@@ -589,6 +615,37 @@ export default function ListTable() {
                                     </div>
                                   </>
                                 )}
+                                {openActionMenu &&
+                                  openActionMenu.categoryId ===
+                                    cg.featureCategoryId &&
+                                  openActionMenu.featureId === ft.featureId && (
+                                    <div
+                                      ref={actionMenuRef}
+                                      className="action-menu"
+                                    >
+                                      <button
+                                        onClick={() => {
+                                          handleAddAction(
+                                            openActionMenu.categoryId,
+                                            openActionMenu.featureId
+                                          );
+                                          setOpenActionMenu(null); // 메뉴 닫기
+                                        }}
+                                      >
+                                        일반 생성하기
+                                      </button>
+                                      <button
+                                        onClick={() => {
+                                          handleAddAIAction(
+                                            openActionMenu.featureId
+                                          );
+                                          setOpenActionMenu(null); // 메뉴 닫기
+                                        }}
+                                      >
+                                        AI 추천받기
+                                      </button>
+                                    </div>
+                                  )}
                               </div>
                             </td>
                             <td />
@@ -764,8 +821,6 @@ export default function ListTable() {
                                   />
                                 </td>
                                 <td>
-                                  {/* 지금 action상태변화에 따른 feature상태변화 안되는 중임 */}
-                                  {/* 오류나서 api연결하고 해야할것같음 */}
                                   <ActionStatusCell
                                     status={ac.state}
                                     disable={isCompleted}
@@ -811,6 +866,78 @@ export default function ListTable() {
                                     }
                                   />
                                 </td>
+                              </tr>
+                            ))}
+                          {aiList?.featureId === ft.featureId &&
+                            clickFt[ft.featureId] &&
+                            aiList.recommendedActions.map((ai, index) => (
+                              <tr key={ai.name} className="ac-row">
+                                <td className="list-name">
+                                  <div className="aclist-name">
+                                    <svg
+                                      className="aclist-icon"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      height="20px"
+                                      viewBox="0 -960 960 960"
+                                      width="20px"
+                                      fill="#FFF"
+                                    >
+                                      <path d="M336-240h288v-72H336v72Zm0-144h288v-72H336v72ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z" />
+                                    </svg>
+                                    <span title={ai.name}>✨{ai.name}</span>
+                                    <div>
+                                      <button
+                                        className="ailist-addbtn"
+                                        onClick={() =>
+                                          handleUpdateAIAction(
+                                            cg.featureCategoryId,
+                                            ft.featureId,
+                                            index
+                                          )
+                                        }
+                                      >
+                                        확인
+                                      </button>
+                                      <button
+                                        className="ailist-deletebtn"
+                                        onClick={() =>
+                                          handleAiActionDelete(index)
+                                        }
+                                      >
+                                        취소
+                                      </button>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <DateSelectCell
+                                    value={ai.startDate ?? null}
+                                    disable={true}
+                                    onChange={() => {
+                                      return;
+                                    }}
+                                  />
+                                </td>
+                                <td>
+                                  <DateSelectCell
+                                    value={ai.endDate ?? null}
+                                    disable={true}
+                                    onChange={() => {
+                                      return;
+                                    }}
+                                  />
+                                </td>
+                                <td />
+                                <td />
+                                <td>
+                                  <ImportanceCell
+                                    value={ai.importance ?? 0}
+                                    onChange={() => {
+                                      return;
+                                    }}
+                                  />
+                                </td>
+                                <td />
                               </tr>
                             ))}
                         </React.Fragment>

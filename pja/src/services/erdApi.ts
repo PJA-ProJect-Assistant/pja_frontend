@@ -78,7 +78,7 @@ export const getAllErd = async (
 //erdId 조회
 export const getErdId = async (
   workspaceId: number
-): Promise<ApiResponse<number>> => {
+): Promise<ApiResponse<{ erdId: number }>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}/erd`);
     console.log("erd id 조회 :", response);

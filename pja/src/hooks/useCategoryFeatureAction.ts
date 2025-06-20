@@ -6,6 +6,7 @@ import type {
   action,
   Status,
   Importance,
+  getaiaction,
 } from "../types/list";
 import type { RootState } from "../store/store";
 import { getlist } from "../services/listapi/listApi";
@@ -25,7 +26,9 @@ import {
 } from "../services/listapi/FeatureApi";
 import {
   addaction,
+  addAIAction,
   deleteaction,
+  getActionAI,
   patchactionend,
   patchactionimportance,
   patchactionname,
@@ -41,7 +44,11 @@ interface UseCategoryFeatureCategoryReturn {
   coreFeature: string[];
   clickCg: { [key: number]: boolean };
   clickFt: { [key: number]: boolean };
+  aiList: getaiaction | undefined;
   name: string;
+  totalCg: number;
+  completeCg: number;
+  completePg: number;
   workspaceId: number | undefined;
   editingCategoryId: number | null;
   editingFeatureId: number | null;
@@ -62,7 +69,7 @@ interface UseCategoryFeatureCategoryReturn {
   setEditingActionId: React.Dispatch<React.SetStateAction<number | null>>;
 
   handleCompleteClick: (categoryId: number) => void;
-  cgToggleClick: (index: number, close?: boolean) => void;
+  cgToggleClick: (categoryId: number, close?: boolean) => void;
   ftToggleClick: (id: number) => void;
 
   handleAddCategory: () => void;
@@ -114,11 +121,19 @@ interface UseCategoryFeatureCategoryReturn {
     actionId: number,
     date: Date | null
   ) => void;
+  handleAiActionDelete: (aiIdx: number) => void;
+  handleUpdateAIAction: (
+    categoryId: number,
+    featureId: number,
+    aiIdx: number
+  ) => void;
+  handleAddAIAction: (featureId: number) => void;
 }
 
 export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
   const [coreFeature, setCoreFeature] = useState<string[]>([]);
+  const [aiList, setAiList] = useState<getaiaction>();
   const [clickCg, setClickCg] = useState<{ [key: number]: boolean }>({});
   const [clickFt, setClickFt] = useState<{ [key: number]: boolean }>({});
   const [name, setName] = useState<string>("");
@@ -132,6 +147,10 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const [participantList, setParticipantList] = useState<workspace_member[]>(
     []
   );
+  //카테고리 진행도 변수
+  const [totalCg, setTotalCg] = useState<number>(0);
+  const [completeCg, setCompleteCg] = useState<number>(0);
+  const [completePg, setCompletePg] = useState<number>(0);
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -146,7 +165,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         if (data) {
           setParticipantList(data.participants);
           setCategoryList(
-            data.featureCategories.sort(
+            [...data.featureCategories].sort(
               (a, b) => Number(a.state) - Number(b.state)
             )
           );
@@ -157,6 +176,19 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       }
     }
   };
+
+  // categoryList가 변경될 때마다 자동 계산
+  useEffect(() => {
+    if (workspaceId && categoryList.length > 0) {
+      const total = categoryList.length;
+      const completed = categoryList.filter((cg) => cg.state).length;
+      const percentage = (completed / total) * 100;
+
+      setTotalCg(total);
+      setCompleteCg(completed);
+      setCompletePg(percentage);
+    }
+  }, [categoryList, workspaceId]);
 
   useEffect(() => {
     getAllList();
@@ -183,11 +215,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId ? updater(feature) : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId ? updater(feature) : feature
+            ),
+          }
         : category
     );
   };
@@ -202,11 +234,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.filter(
-            (feature) => feature.featureId !== featureId
-          ),
-        }
+            ...category,
+            features: category.features.filter(
+              (feature) => feature.featureId !== featureId
+            ),
+          }
         : category
     );
   };
@@ -222,18 +254,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.map((action) =>
-                  action.actionId === actionId ? updater(action) : action
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.map((action) =>
+                      action.actionId === actionId ? updater(action) : action
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -248,18 +280,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.filter(
-                  (action) => action.actionId !== actionId
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.filter(
+                      (action) => action.actionId !== actionId
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -274,6 +306,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       //카테고리 완료 수정 api
       try {
         await patchcategorystate(workspaceId, categoryId, changestate);
+        getAllList();
         const updatedList = categoryList.map((cg) =>
           cg.featureCategoryId === categoryId
             ? { ...cg, state: changestate }
@@ -293,20 +326,29 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     }
   };
 
-  const cgToggleClick = (index: number, close?: boolean) => {
+  const cgToggleClick = (categoryId: number, close?: boolean) => {
+    console.log("cg토글호출");
     setClickCg((prev) => {
-      const next = close ? false : !prev[index];
+      const next = close ? false : !prev[categoryId];
+
       if (!next) {
-        const featuresInCategory = categoryList[index].features;
-        setClickFt((prevFt) => {
-          const updatedFt = { ...prevFt };
-          featuresInCategory.forEach((ft) => {
-            updatedFt[ft.featureId] = false;
+        // categoryId로 실제 category 객체 찾기
+        const category = categoryList.find(
+          (cg) => cg.featureCategoryId === categoryId
+        );
+        if (category) {
+          const featuresInCategory = category.features;
+          setClickFt((prevFt) => {
+            const updatedFt = { ...prevFt };
+            featuresInCategory.forEach((ft) => {
+              updatedFt[ft.featureId] = false;
+            });
+            return updatedFt;
           });
-          return updatedFt;
-        });
+        }
       }
-      return { ...prev, [index]: next };
+
+      return { ...prev, [categoryId]: next };
     });
   };
 
@@ -321,7 +363,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       name: "",
       state: false,
       orderIndex: categoryList.length + 1,
-      has_test: false,
+      hasTest: false,
       features: [],
     };
     setCategoryList((prev) => [...prev, newCategory]);
@@ -360,6 +402,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
                 )
               );
             }
+            getAllList();
           }
         } catch (err) {
           console.error("카테고리 생성 실패", err);
@@ -379,6 +422,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
                   : item
               )
             );
+            getAllList();
           }
         } catch (err) {
           console.error("카테고리 수정 실패", err);
@@ -515,6 +559,92 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         return category;
       })
     );
+  };
+
+  const handleAddAIAction = async (featureId: number) => {
+    try {
+      //여기에 aiaction추천받기 추가
+      const response = await getActionAI(workspaceId ?? 0, featureId);
+      if (response.data) {
+        //ailist에 aiacion 추가
+        setAiList(response.data);
+      }
+    } catch (err) {
+      console.log("aiaction 추천 실패", err);
+    }
+  };
+  const handleUpdateAIAction = async (
+    categoryId: number,
+    featureId: number,
+    aiIdx: number
+  ) => {
+    const selectai = aiList?.recommendedActions[aiIdx];
+    if (selectai) {
+      try {
+        const response = await addAIAction(
+          selectedWS?.workspaceId ?? 0,
+          categoryId,
+          featureId,
+          selectai
+        );
+        const actionresponse = response.data;
+        if (actionresponse) {
+          setCategoryList((prev) =>
+            prev.map((category) => {
+              if (category.featureCategoryId === categoryId) {
+                return {
+                  ...category,
+                  features: category.features.map((feature) => {
+                    if (feature.featureId === featureId) {
+                      const newAction: action = {
+                        actionId: actionresponse.actionId,
+                        name: selectai.name,
+                        startDate: selectai.startDate,
+                        endDate: selectai.endDate,
+                        state: "BEFORE",
+                        hasTest: false,
+                        importance: selectai.importance,
+                        orderIndex: feature.actions.length + 1,
+                        participants: [],
+                        actionPostId: actionresponse.actionPostId,
+                      };
+                      return {
+                        ...feature,
+                        actions: [...feature.actions, newAction],
+                      };
+                    }
+                    return feature;
+                  }),
+                };
+              }
+              return category;
+            })
+          );
+          setAiList((prev) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              recommendedActions: prev.recommendedActions.filter(
+                (_, idx) => idx !== aiIdx
+              ),
+            };
+          });
+        }
+      } catch (err) {
+        console.log("ai action에 추가 실패");
+      }
+    }
+  };
+  const handleAiActionDelete = (aiIdx: number) => {
+    setAiList((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        recommendedActions: prev.recommendedActions.filter(
+          (_, idx) => idx !== aiIdx
+        ),
+      };
+    });
   };
 
   const updateActionName = async (
@@ -660,13 +790,15 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       if (workspaceId) {
         const currunttest = categoryList.find(
           (cg) => cg.featureCategoryId === categoryId
-        )?.state;
+        )?.hasTest;
+        console.log("현재 테스트 여부", currunttest);
+
         // 카테고리 테스트 수정api
         await patchcategorytest(workspaceId, categoryId, !currunttest);
         setCategoryList((prev) =>
           prev.map((cg) =>
             cg.featureCategoryId === categoryId
-              ? { ...cg, has_test: !currunttest }
+              ? { ...cg, hasTest: !currunttest }
               : cg
           )
         );
@@ -964,6 +1096,10 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     editingFeatureId,
     editingActionId,
     categoryCompletableMap,
+    totalCg,
+    completeCg,
+    completePg,
+    aiList,
 
     toggleTestCheckCg,
     toggleTestCheckFt,
@@ -989,5 +1125,8 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     handleDeleteCategory,
     handleDeleteFeature,
     handleDeleteAction,
+    handleAiActionDelete,
+    handleUpdateAIAction,
+    handleAddAIAction,
   };
 }

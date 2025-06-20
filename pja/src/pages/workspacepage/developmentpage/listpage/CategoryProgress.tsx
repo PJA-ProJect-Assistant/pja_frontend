@@ -1,35 +1,13 @@
 import "./CategoryProgress.css";
 import { PieChart, Pie, Cell } from "recharts";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../../../store/store";
-import { featureCategories } from "../../../../constants/listconstant";
-import type { feature_category } from "../../../../types/list";
 import { useEffect, useState } from "react";
 import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
 
-export default function CategoryProgress() {
-  const selectedWS = useSelector(
-    (state: RootState) => state.workspace.selectedWS
-  );
-  const wsid = selectedWS?.workspaceId;
-  const [totalCg, setTotalCg] = useState<number>();
-  const [completeCg, setCompleteCg] = useState<number>();
-  const [completePg, setCompletePg] = useState<number>();
-  const {
-    categoryList
-  } = useCategoryFeatureCategory();
+console.log("📄 categoryprogress.tsx 파일 로드됨!");
 
-  useEffect(() => {
-    if (wsid) {
-      setTotalCg(categoryList.length);
-      let completedCount = 0;
-      for (const cg of categoryList) {
-        if (cg.state) completedCount++;
-      }
-      setCompleteCg(completedCount);
-      setCompletePg((completedCount / categoryList.length) * 100);
-    }
-  }, [categoryList]);
+export default function CategoryProgress() {
+  const { categoryList, totalCg, completeCg, completePg } =
+    useCategoryFeatureCategory();
 
   const data = [
     { name: "완료", value: completePg ?? 0 },
@@ -51,6 +29,7 @@ export default function CategoryProgress() {
             stroke="none"
             startAngle={90}
             endAngle={-270}
+            style={{ pointerEvents: "none" }}
           >
             {data.map((entry, index) => (
               <Cell

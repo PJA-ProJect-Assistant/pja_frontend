@@ -13,7 +13,7 @@ export const addcategory = async (
       `/workspaces/${workspaceId}/project/category`,
       {
         name,
-        state: "BEFORE", // 이거 false넣으면 오류남ㅠㅜㅠ
+        state: false,
         hasTest: false,
       }
     );
@@ -139,6 +139,7 @@ export const patchcategorytest = async (
         hasTest,
       }
     );
+    console.log("테스트여부 수정 완료");
   } catch (error: any) {
     console.error(
       "🔴 [patchcategorytest] 카테고리 테스트여부 수정 실패:",

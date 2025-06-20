@@ -74,29 +74,29 @@ export default function ProjectSummaryPage() {
         //프로젝트 수정 api
         try {
           if (selectedWS?.progressStep === "2") {
-            // const response = await postErd(selectedWS?.workspaceId);
-            // const erdId = response.data?.erdId;
-            // console.log("erd 생성 성공 erdId : ", erdId);
+            const response = await postErd(selectedWS?.workspaceId);
+            const erdId = response.data?.erdId;
+            console.log("erd 생성 성공 erdId : ", erdId);
 
-            // if (erdId) {
-            //ERDAI 생성 api 호출
-            await postErdAI(selectedWS?.workspaceId);
+            if (erdId) {
+              //ERDAI 생성 api 호출
+              await postErdAI(selectedWS?.workspaceId);
 
-            await progressworkspace(selectedWS.workspaceId, "3");
-            console.log("ERD페이지로 이동");
-            dispatch(
-              setSelectedWS({
-                ...selectedWS,
-                progressStep: "3",
-              })
-            );
-            setSummaryDone(true);
-            navigate(
-              `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
-                "3"
-              )}`
-            );
-            // }
+              await progressworkspace(selectedWS.workspaceId, "3");
+              console.log("ERD페이지로 이동");
+              dispatch(
+                setSelectedWS({
+                  ...selectedWS,
+                  progressStep: "3",
+                })
+              );
+              setSummaryDone(true);
+              navigate(
+                `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
+                  "3"
+                )}`
+              );
+            }
           } else {
             setSummaryDone(true);
           }

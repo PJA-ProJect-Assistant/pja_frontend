@@ -8,7 +8,7 @@ export interface feature_category {
   name: string;
   state: boolean;
   orderIndex: number;
-  has_test: boolean | null;
+  hasTest: boolean | null;
   features: feature[];
 }
 export interface feature {
@@ -37,6 +37,14 @@ export interface action extends responseactionid {
   participants: workspace_member[];
 }
 
+export interface getaction {
+  actionId: number;
+  actionName: string;
+  startDate: Date | null;
+  endDate: Date | null;
+  actionPostId: number | null;
+}
+
 export interface listresponse {
   coreFeatures: string[];
   participants: workspace_member[];
@@ -47,4 +55,16 @@ export interface filtered {
   selectedCategories: number[];
   selectedAssignees: number[];
   selectedStatuses: Status[];
+}
+export interface getaiaction {
+  workspaceId: number;
+  categoryId: number;
+  featureId: number;
+  recommendedActions: recommendedActions[];
+}
+export interface recommendedActions {
+  name: string;
+  importance: Importance;
+  startDate: Date;
+  endDate: Date;
 }
