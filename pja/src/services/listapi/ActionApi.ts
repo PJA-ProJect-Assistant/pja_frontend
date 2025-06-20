@@ -2,7 +2,9 @@ import api from "../../lib/axios";
 import type { ApiResponse } from "../../types/common";
 import type {
   getaction,
+  getaiaction,
   Importance,
+  recommendedActions,
   responseactionid,
   Status,
 } from "../../types/list";
@@ -309,6 +311,71 @@ export const getactionlist = async (
     return response.data;
   } catch (error: any) {
     console.error("🔴 [geteactionlist] 액션리스트 조회 실패:", error);
+
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
+  }
+};
+
+//액션ai 추천받기
+export const getActionAI = async (
+  workspaceId: number,
+  featureId: number
+): Promise<ApiResponse<getaiaction>> => {
+  try {
+    console.log("액션리스트 조회 api");
+    const response = await api.post(
+      `/workspaces/${workspaceId}/feature/${featureId}/generation`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("🔴 [getActionAI] ai액션 가져오기 실패:", error);
+
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
+  }
+};
+//액션 ai를 메인 액션에 생성 -> 생성된 액션 기본키 반환
+export const addAIAction = async (
+  workspaceId: number,
+  categoryId: number,
+  featureId: number,
+  aiaction: recommendedActions
+): Promise<ApiResponse<responseactionid>> => {
+  try {
+    console.log("액션 생성 api");
+    const response = await api.post(
+      `/workspaces/${workspaceId}/project/category/${categoryId}/feature/${featureId}/action`,
+      {
+        name: aiaction.name,
+        startDate: aiaction.startDate,
+        endDate: aiaction.endDate,
+        state: "BEFORE",
+        hasTest: false,
+        importance: aiaction.importance,
+        participantsId: [],
+      }
+    );
+    console.log("ai액션 추가 :", response);
+    return response.data;
+  } catch (error: any) {
+    console.error("🔴 [addAIAction] ai 액션 추가 실패:", error);
 
     if (error.response) {
       console.error("응답 상태코드:", error.response.status);

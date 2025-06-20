@@ -56,3 +56,15 @@ export interface filtered {
   selectedAssignees: number[];
   selectedStatuses: Status[];
 }
+export interface getaiaction {
+  workspaceId: number;
+  categoryId: number;
+  featureId: number;
+  recommendedActions: recommendedActions[];
+}
+export interface recommendedActions {
+  name: string;
+  importance: Importance;
+  startDate: Date;
+  endDate: Date;
+}

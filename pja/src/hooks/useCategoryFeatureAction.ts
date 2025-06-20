@@ -6,6 +6,7 @@ import type {
   action,
   Status,
   Importance,
+  getaiaction,
 } from "../types/list";
 import type { RootState } from "../store/store";
 import { getlist } from "../services/listapi/listApi";
@@ -25,7 +26,9 @@ import {
 } from "../services/listapi/FeatureApi";
 import {
   addaction,
+  addAIAction,
   deleteaction,
+  getActionAI,
   patchactionend,
   patchactionimportance,
   patchactionname,
@@ -41,6 +44,7 @@ interface UseCategoryFeatureCategoryReturn {
   coreFeature: string[];
   clickCg: { [key: number]: boolean };
   clickFt: { [key: number]: boolean };
+  aiList: getaiaction | undefined;
   name: string;
   totalCg: number;
   completeCg: number;
@@ -117,11 +121,19 @@ interface UseCategoryFeatureCategoryReturn {
     actionId: number,
     date: Date | null
   ) => void;
+  handleAiActionDelete: (aiIdx: number) => void;
+  handleUpdateAIAction: (
+    categoryId: number,
+    featureId: number,
+    aiIdx: number
+  ) => void;
+  handleAddAIAction: (featureId: number) => void;
 }
 
 export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const [categoryList, setCategoryList] = useState<feature_category[]>([]);
   const [coreFeature, setCoreFeature] = useState<string[]>([]);
+  const [aiList, setAiList] = useState<getaiaction>();
   const [clickCg, setClickCg] = useState<{ [key: number]: boolean }>({});
   const [clickFt, setClickFt] = useState<{ [key: number]: boolean }>({});
   const [name, setName] = useState<string>("");
@@ -168,8 +180,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   // categoryList가 변경될 때마다 자동 계산
   useEffect(() => {
     if (workspaceId && categoryList.length > 0) {
-      console.log("🔢 Hook에서 progress 계산 중...");
-
       const total = categoryList.length;
       const completed = categoryList.filter((cg) => cg.state).length;
       const percentage = (completed / total) * 100;
@@ -177,8 +187,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       setTotalCg(total);
       setCompleteCg(completed);
       setCompletePg(percentage);
-
-      console.log("🔢 계산 완료:", { total, completed, percentage });
     }
   }, [categoryList, workspaceId]);
 
@@ -551,6 +559,92 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         return category;
       })
     );
+  };
+
+  const handleAddAIAction = async (featureId: number) => {
+    try {
+      //여기에 aiaction추천받기 추가
+      const response = await getActionAI(workspaceId ?? 0, featureId);
+      if (response.data) {
+        //ailist에 aiacion 추가
+        setAiList(response.data);
+      }
+    } catch (err) {
+      console.log("aiaction 추천 실패", err);
+    }
+  };
+  const handleUpdateAIAction = async (
+    categoryId: number,
+    featureId: number,
+    aiIdx: number
+  ) => {
+    const selectai = aiList?.recommendedActions[aiIdx];
+    if (selectai) {
+      try {
+        const response = await addAIAction(
+          selectedWS?.workspaceId ?? 0,
+          categoryId,
+          featureId,
+          selectai
+        );
+        const actionresponse = response.data;
+        if (actionresponse) {
+          setCategoryList((prev) =>
+            prev.map((category) => {
+              if (category.featureCategoryId === categoryId) {
+                return {
+                  ...category,
+                  features: category.features.map((feature) => {
+                    if (feature.featureId === featureId) {
+                      const newAction: action = {
+                        actionId: actionresponse.actionId,
+                        name: selectai.name,
+                        startDate: selectai.startDate,
+                        endDate: selectai.endDate,
+                        state: "BEFORE",
+                        hasTest: false,
+                        importance: selectai.importance,
+                        orderIndex: feature.actions.length + 1,
+                        participants: [],
+                        actionPostId: actionresponse.actionPostId,
+                      };
+                      return {
+                        ...feature,
+                        actions: [...feature.actions, newAction],
+                      };
+                    }
+                    return feature;
+                  }),
+                };
+              }
+              return category;
+            })
+          );
+          setAiList((prev) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              recommendedActions: prev.recommendedActions.filter(
+                (_, idx) => idx !== aiIdx
+              ),
+            };
+          });
+        }
+      } catch (err) {
+        console.log("ai action에 추가 실패");
+      }
+    }
+  };
+  const handleAiActionDelete = (aiIdx: number) => {
+    setAiList((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        recommendedActions: prev.recommendedActions.filter(
+          (_, idx) => idx !== aiIdx
+        ),
+      };
+    });
   };
 
   const updateActionName = async (
@@ -1005,6 +1099,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     totalCg,
     completeCg,
     completePg,
+    aiList,
 
     toggleTestCheckCg,
     toggleTestCheckFt,
@@ -1030,5 +1125,8 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     handleDeleteCategory,
     handleDeleteFeature,
     handleDeleteAction,
+    handleAiActionDelete,
+    handleUpdateAIAction,
+    handleAddAIAction,
   };
 }
