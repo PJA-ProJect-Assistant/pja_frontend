@@ -37,3 +37,35 @@ export interface geterd {
   workspaceId: number;
   tables?: ERDTable;
 }
+
+//api 명세서 요청/응답 필드
+export interface ApiField {
+  field: string;
+  type: string;
+  example: string | number | boolean;
+}
+
+//응답 상태 코드별 상세 정보
+export interface ApiResponseDetail {
+  statusCode: string;
+  message: string;
+  data: ApiField[];
+}
+
+//단일 API 명세서 구조
+export interface ApiSpec {
+  apiId: number;
+  title: string;
+  tag: string;
+  path: string;
+  httpMethod: string;
+  request: ApiField[];
+  response: ApiResponseDetail[];
+}
+
+// API 명세서 생성 성공 시 응답 타입
+export interface GenerateApiResponse {
+  status: "success";
+  message: string;
+  data: ApiSpec[];
+}
