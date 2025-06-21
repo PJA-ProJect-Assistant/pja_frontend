@@ -7,6 +7,7 @@ export interface workspace {
   ownerId: number;
   progressStep: Step;
   isPublic: boolean;
+  githubUrl: string | null;
 }
 
 export interface setworkspace {
@@ -22,4 +23,13 @@ export interface workspace_member {
   username: string;
   profileImage: string | null;
   role: Role;
+}
+
+/*워크스페이스 설정*/
+
+export interface UpdateWorkspacePayload {
+  projectName: string;
+  teamName: string;
+  isPublic: boolean;
+  githubUrl?: string;
 }
