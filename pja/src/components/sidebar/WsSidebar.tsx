@@ -12,6 +12,8 @@ import { leaveWorkspace } from "../../services/sideApi";
 import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
+import InviteModal from "../sidebarcompo/InviteModal";
+import type { Member, MemberRole } from "../../types/invite";
 
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
@@ -19,10 +21,21 @@ export default function WsSidebar({ onClose }: IsClose) {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false);
 
+  const [members, setMembers] = useState<Member[]>([]);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+
   const navigate = useNavigate();
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+
+  // ✅ 이 부분도 수정
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+  let currentUserRole: MemberRole = "ADMIN";
+  if (accessToken) {
+    //... 토큰 파싱해서 currentUserRole 설정 ...
+  }
+
   // 사이드바 전체 영역 ref
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +54,47 @@ export default function WsSidebar({ onClose }: IsClose) {
       window.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  // ✅ 3. 멤버 탭이 열릴 때 Mock 데이터
+  useEffect(() => {
+    if (activeTab === "member") {
+      setIsLoadingMembers(true);
+      // TODO: 나중에 실제 API 호출 코드로 교체
+      const mockMembers: Member[] = [
+        {
+          memberId: "2",
+          name: "박관리 (Admin)",
+          email: "admin@example.com",
+          profile: null,
+          role: "ADMIN",
+        },
+        {
+          memberId: "3",
+          name: "이멤버 (Member)",
+          email: "member@example.com",
+          profile: null,
+          role: "MEMBER",
+        },
+      ];
+      setTimeout(() => {
+        setMembers(mockMembers);
+        setIsLoadingMembers(false);
+      }, 500);
+    }
+  }, [activeTab]);
+
+  //✅멤버 수정  api
+  const handleModifyMember = (memberId: string) => {
+    alert(`(관리자 기능) ID: ${memberId} 멤버 수정`);
+  };
+
+  //멤버 삭제
+  const handleDeleteMember = (memberId: string) => {
+    if (window.confirm("정말로 이 멤버를 삭제하시겠습니까?")) {
+      alert(`(관리자 기능) ID: ${memberId} 멤버 삭제`);
+      setMembers((prev) => prev.filter((m) => m.memberId !== memberId));
+    }
+  };
 
   //팀 탈퇴 메뉴 클릭 시 모달을 여는 함수
   const handleOpenModal = () => {
@@ -215,10 +269,21 @@ export default function WsSidebar({ onClose }: IsClose) {
                 </button>
               </div>
               <div className="line"></div>
-              <MemberTabComp
-                isInviteModalOpen={isInviteModalOpen}
-                onCloseInviteModal={handleCloseInviteModal}
-              />
+              <div className="member-list-scroll-container">
+                {isLoadingMembers ? (
+                  <p>멤버 목록을 불러오는 중...</p>
+                ) : (
+                  // MemberTabComp를 한 번만 호출하고 필요한 모든 props 전달
+                  <MemberTabComp
+                    members={members} // 멤버 목록 전체 전달
+                    currentUserRole={currentUserRole}
+                    isInviteModalOpen={isInviteModalOpen} // 모달 상태 전달
+                    onCloseInviteModal={handleCloseInviteModal} // 모달 닫기 함수 전달
+                    onModify={handleModifyMember}
+                    onDelete={handleDeleteMember}
+                  />
+                )}
+              </div>
             </div>
           )}
           {activeTab === "notify" && (

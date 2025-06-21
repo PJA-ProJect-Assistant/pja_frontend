@@ -5,10 +5,18 @@
   padding: 10px 16px;
 
   border-radius: 12px;
-  width: 310px;
+  width: 340px;
   height: 50px;
-  margin-left: 30px;
+  margin-left: 18px;
   margin-top: 30px;
+  justify-content: space-between;
+}
+
+/* 왼쪽 정보 영역을 묶는 컨테이너 */
+.member-info-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .Mem-profile-img {
@@ -16,7 +24,7 @@
   height: 46px;
   border-radius: 50%;
   background-color: lightgray;
-  margin-right: 30px;
+  margin-right: 5px;
 }
 
 .Mem-user-info {
@@ -26,10 +34,60 @@
 
 .Mem-user-name {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   color: black;
 }
 
 .Mem-user-email {
-  font-size: 16px;
+  font-size: 14px;
+}
+
+.member-action-container {
+  display: flex;
+  gap: 8px;
+  /* 버튼이 하나만 있어도 너비를 유지하도록 합니다. */
+  justify-content: flex-end;
+}
+
+.member-action-container button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: none;
+
+  white-space: nowrap;
+}
+.member-modify-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/*삭제 버튼*/
+
+.member-delete-btn {
+  background-color: #fff;
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.member-delete-btn:hover {
+  background-color: #ff4d4f;
+  color: #fff;
+}
+
+/* 수정 버튼 스타일 */
+.member-modify-btn {
+  border: 1px solid #ccc;
+  color: #555;
+}
+
+.member-modify-btn:hover {
+  background-color: #f0f0f0;
 }
