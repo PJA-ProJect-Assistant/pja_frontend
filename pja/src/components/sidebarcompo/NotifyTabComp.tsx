@@ -1,21 +1,81 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./NotifyTabComp.css";
-
 import signbellIcon from "../../assets/img/signbell.png";
 import NotifyItem from "./NotifyItem";
+import axios from "axios";
+import api from "../../lib/axios";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
+
+interface Notification {
+  notificationId: number;
+  message: string;
+  createdAt: string;
+  actionPostId: number;
+  read: boolean;
+}
+
 const NotifyTabComp = () => {
-  const notifications = [
-    //실제 api 로 받아온 데이터 넣기
-    { id: 1, message: "민정님이 유민님을 초대하였습니다." },
-    { id: 2, message: "채빈님이 소현님을 초대하였습니다." },
-  ];
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  const selectedWS = useSelector(
+    (state: RootState) => state.workspace.selectedWS
+  );
+  const workspaceId = selectedWS?.workspaceId;
+  console.log("workspaceId 는 ", workspaceId);
+
+  useEffect(() => {
+    fetchNotifications();
+
+    const accessToken = localStorage.getItem("accessToken");
+    console.log("accessToken: ", accessToken);
+    
+    // SSE 연결
+    const eventSource = new EventSource(
+      `http://13.125.204.95:8080/api/workspaces/${workspaceId}/noti/subscribe?token=${accessToken}`,
+    );
+
+    eventSource.addEventListener("connect", (e) => {
+      console.log("SSE 연결 성공:", e);
+    });
+
+    eventSource.addEventListener("notification", (e) => {
+      const data: Notification = JSON.parse(e.data);
+      setNotifications((prev) => [data, ...prev]);
+    });
+
+    eventSource.onerror = (err) => {
+      console.error("SSE 오류 발생:", err);
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+          const accessToken = localStorage.getItem("accessToken");
+          const headers = {
+            Authorization: `Bearer ${accessToken}`
+          };
+          const response = await api.get(
+            `/workspaces/${workspaceId}/members`,
+            { headers }            
+          );
+          setNotifications(response.data.data);
+    } catch (err) {
+      console.error("알림 조회 실패:", err);
+    }
+  };
 
   return (
     <>
       <div className="notify-list-container">
         <img src={signbellIcon} alt="알람" className="notify-bell-icon" />
         {notifications.map((noti) => (
-          <NotifyItem key={noti.id} message={noti.message} />
+          <NotifyItem key={noti.notificationId} message={noti.message} />
         ))}
       </div>
     </>

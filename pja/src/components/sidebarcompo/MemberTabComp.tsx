@@ -32,7 +32,6 @@ const MemberTabComp = ({
   useEffect(() => {
     const fetchMembers = async() => {
       try {
-            console.log("worksapceId는 ", workspaceId)
             const accessToken = localStorage.getItem("accessToken");
             const headers = {
               Authorization: `Bearer ${accessToken}`
@@ -44,7 +43,6 @@ const MemberTabComp = ({
 
             if(response.data.status === "success") {
               setMembers(response.data.data);
-              console.log(response.data.data);
             }
           } catch (error: any) {
             if (error.response) {
