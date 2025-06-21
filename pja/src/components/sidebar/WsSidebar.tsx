@@ -11,6 +11,7 @@ import MemberTabComp from "../sidebarcompo/MemberTabComp";
 import { leaveWorkspace } from "../../services/sideApi";
 import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
+import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
 
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
@@ -237,7 +238,7 @@ export default function WsSidebar({ onClose }: IsClose) {
                 </div>
               </div>
               <div className="line"></div>
-              {/* 예시: <MemberTabComponent /> */}
+              <NotifyTabComp />
             </div>
           )}
         </div>

@@ -1,0 +1,35 @@
+.member-tab-box {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 10px 16px;
+
+  border-radius: 12px;
+  width: 310px;
+  height: 50px;
+  margin-left: 30px;
+  margin-top: 30px;
+}
+
+.Mem-profile-img {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: lightgray;
+  margin-right: 30px;
+}
+
+.Mem-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.Mem-user-name {
+  font-weight: bold;
+  font-size: 16px;
+  color: black;
+}
+
+.Mem-user-email {
+  font-size: 16px;
+}
