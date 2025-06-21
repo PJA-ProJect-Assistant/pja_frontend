@@ -1,6 +1,9 @@
 import "./MemberTabComp.css";
 import InviteModal from "./InviteModal";
+
 import type { Member, MemberRole } from "../../types/invite";
+
+
 
 interface MemberTabCompProps {
   members: Member[];
@@ -10,6 +13,7 @@ interface MemberTabCompProps {
   onModify: (memberId: string) => void;
   onDelete: (memberId: string) => void;
 }
+
 
 interface MemberListItemProps {
   member: Member;
@@ -60,6 +64,7 @@ const MemberListItem = ({
   );
 };
 
+
 const MemberTabComp = ({
   members,
   currentUserRole,
@@ -68,9 +73,47 @@ const MemberTabComp = ({
   onModify,
   onDelete,
 }: MemberTabCompProps) => {
+  const selectedWS = useSelector(
+    (state: RootState) => state.workspace.selectedWS
+  );
+  const workspaceId = selectedWS?.workspaceId;
+
+  const [members, setMembers] = useState<Member[]>([]);
+
+  useEffect(() => {
+    const fetchMembers = async() => {
+      try {
+            console.log("worksapceId는 ", workspaceId)
+            const accessToken = localStorage.getItem("accessToken");
+            const headers = {
+              Authorization: `Bearer ${accessToken}`
+            };
+            const response = await api.get(
+              `/workspaces/${workspaceId}/members`,
+              { headers }
+            );
+
+            if(response.data.status === "success") {
+              setMembers(response.data.data);
+              console.log(response.data.data);
+            }
+          } catch (error: any) {
+            if (error.response) {
+              console.error("에러:", error.response.data.message);
+            } else {
+              console.error("서버 응답 실패");
+            }
+          }
+        };
+
+        fetchMembers();
+  },[workspaceId]);
+
+
   return (
-    <>
+<>
       {isInviteModalOpen && <InviteModal onClose={onCloseInviteModal} />}
+
 
       {/* 멤버 목록을 .map()으로 순회하며 위에서 만든 MemberListItem을 렌더링합니다. */}
       {members.map((member) => (
@@ -81,6 +124,7 @@ const MemberTabComp = ({
           onModify={onModify}
           onDelete={onDelete}
         />
+
       ))}
     </>
   );
