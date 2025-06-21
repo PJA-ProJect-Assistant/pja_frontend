@@ -1,0 +1,35 @@
+/* 2. 알림 벨 아이콘 스타일 */
+.notify-bell-icon {
+  width: 43px; /* 아이콘 크기에 맞게 조절 */
+  height: 43px;
+
+  margin-left: 170px;
+  margin-top: 20px;
+}
+.notify-tab-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  width: 310px;
+  min-height: 50px;
+  margin-left: 30px;
+  margin-top: 20px; /*알림 목록들 간의 간격*/
+  font-size: 16px;
+}
+
+.notify-trash-icon {
+  width: 25px;
+  height: 25px;
+  margin-left: 50px;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+/* 텍스트를 감싸는 span */
+.text-content {
+  flex-grow: 1; /* 아이콘을 제외한 모든 공간을 차지 */
+  white-space: nowrap;
+}
