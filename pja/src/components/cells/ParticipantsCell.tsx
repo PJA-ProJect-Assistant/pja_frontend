@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Members } from "../../constants/userconstants";
 import "./ParticipantsCell.css";
 import { useCategoryFeatureCategory } from "../../hooks/useCategoryFeatureAction";
 

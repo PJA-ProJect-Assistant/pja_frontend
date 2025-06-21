@@ -183,8 +183,8 @@ export default function ListTable() {
                             setSelectedCategories((prev) =>
                               prev.includes(cg.featureCategoryId)
                                 ? prev.filter(
-                                    (id) => id !== cg.featureCategoryId
-                                  )
+                                  (id) => id !== cg.featureCategoryId
+                                )
                                 : [...prev, cg.featureCategoryId]
                             )
                           }
@@ -359,7 +359,7 @@ export default function ListTable() {
                     <td className="list-name">
                       <div className="cglist-name">
                         {cg.name === "" ||
-                        editingCategoryId === cg.featureCategoryId ? (
+                          editingCategoryId === cg.featureCategoryId ? (
                           <input
                             type="text"
                             value={name}
@@ -468,9 +468,8 @@ export default function ListTable() {
                     <td />
                     <td>
                       <button
-                        className={`list-completebtn ${
-                          isCompleted ? "completed" : ""
-                        }`}
+                        className={`list-completebtn ${isCompleted ? "completed" : ""
+                          }`}
                         disabled={!categoryCompletableMap[cg.featureCategoryId]}
                         onClick={() =>
                           handleCompleteClick(cg.featureCategoryId)
@@ -497,14 +496,13 @@ export default function ListTable() {
                       return (
                         <React.Fragment key={ft.featureId}>
                           <tr
-                            className={`ft-row ${
-                              isCompleted ? "completed" : ""
-                            }`}
+                            className={`ft-row ${isCompleted ? "completed" : ""
+                              }`}
                           >
                             <td className="list-name">
                               <div className="ftlist-name">
                                 {ft.name === "" ||
-                                editingFeatureId === ft.featureId ? (
+                                  editingFeatureId === ft.featureId ? (
                                   <input
                                     type="text"
                                     value={name}
@@ -617,7 +615,7 @@ export default function ListTable() {
                                 )}
                                 {openActionMenu &&
                                   openActionMenu.categoryId ===
-                                    cg.featureCategoryId &&
+                                  cg.featureCategoryId &&
                                   openActionMenu.featureId === ft.featureId && (
                                     <div
                                       ref={actionMenuRef}
@@ -629,6 +627,7 @@ export default function ListTable() {
                                             openActionMenu.categoryId,
                                             openActionMenu.featureId
                                           );
+                                          setEditingActionId(0);
                                           setOpenActionMenu(null); // 메뉴 닫기
                                         }}
                                       >
@@ -676,14 +675,13 @@ export default function ListTable() {
                             ft.actions.map((ac) => (
                               <tr
                                 key={ac.actionId}
-                                className={`ac-row ${
-                                  isCompleted ? "completed" : ""
-                                }`}
+                                className={`ac-row ${isCompleted ? "completed" : ""
+                                  }`}
                               >
                                 <td className="list-name">
                                   <div className="aclist-name">
                                     {ac.name === "" ||
-                                    editingActionId === ac.actionId ? (
+                                      editingActionId === ac.actionId ? (
                                       <input
                                         type="text"
                                         value={name}

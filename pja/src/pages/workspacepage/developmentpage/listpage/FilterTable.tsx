@@ -7,10 +7,8 @@ import { FeatureProgressCell } from "../../../../components/cells/FeatureProgess
 import { ImportanceCell } from "../../../../components/cells/ImportantCell";
 import { ParticipantsCell } from "../../../../components/cells/ParticipantsCell";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 import "./ListTable.css";
-import { actions, features } from "../../../../constants/listconstant";
 
 export default function FilterTable({
   selectedCategories,
@@ -133,7 +131,7 @@ export default function FilterTable({
                     <td className="list-name">
                       <div className="cglist-name">
                         {category.name === "" ||
-                        editingCategoryId === category.featureCategoryId ? (
+                          editingCategoryId === category.featureCategoryId ? (
                           <input
                             type="text"
                             value={name}
@@ -230,9 +228,8 @@ export default function FilterTable({
                     <td />
                     <td>
                       <button
-                        className={`list-completebtn ${
-                          isCompleted ? "completed" : ""
-                        }`}
+                        className={`list-completebtn ${isCompleted ? "completed" : ""
+                          }`}
                         disabled={
                           !categoryCompletableMap[category.featureCategoryId]
                         }
@@ -263,14 +260,13 @@ export default function FilterTable({
                       return (
                         <React.Fragment key={feature.featureId}>
                           <tr
-                            className={`ft-row ${
-                              isCompleted ? "completed" : ""
-                            }`}
+                            className={`ft-row ${isCompleted ? "completed" : ""
+                              }`}
                           >
                             <td className="list-name">
                               <div className="ftlist-name">
                                 {feature.name === "" ||
-                                editingFeatureId === feature.featureId ? (
+                                  editingFeatureId === feature.featureId ? (
                                   <input
                                     type="text"
                                     value={name}
@@ -394,14 +390,13 @@ export default function FilterTable({
                             actions.map((ac) => (
                               <tr
                                 key={ac.actionId}
-                                className={`ac-row ${
-                                  isCompleted ? "completed" : ""
-                                }`}
+                                className={`ac-row ${isCompleted ? "completed" : ""
+                                  }`}
                               >
                                 <td className="list-name">
                                   <div className="aclist-name">
                                     {ac.name === "" ||
-                                    editingActionId === ac.actionId ? (
+                                      editingActionId === ac.actionId ? (
                                       <input
                                         type="text"
                                         value={name}

@@ -1,7 +1,5 @@
 import { AnimatePresence } from "framer-motion";
 import WsSidebar from "../../../../components/sidebar/WsSidebar";
-import { actions } from "../../../../constants/listconstant";
-import type { action } from "../../../../types/list";
 import "./ActionPostPage.css";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -11,6 +9,7 @@ import sendIcon from "../../../../assets/img/send.png";
 import codelIcon from "../../../../assets/img/codel.png";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { ko } from "date-fns/locale";
+import type { action } from "../../../../types/list";
 
 interface Comment {
   id: number;
@@ -37,14 +36,9 @@ export default function ActionPostPage() {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingCommentText, setEditingCommentText] = useState<string>("");
 
-  const { acId } = useParams<{
-    acId: string;
-  }>();
-
-  useEffect(() => {
-    const setaction = actions.find((ac) => ac.action_id === Number(acId));
-    setSelectAction(setaction);
-  }, [acId]);
+  // const { acId } = useParams<{
+  //   acId: string;
+  // }>();
 
   const handleFileSelect = (files: FileList | null) => {
     if (files) {
