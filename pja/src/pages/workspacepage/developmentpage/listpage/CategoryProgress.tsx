@@ -1,9 +1,6 @@
 import "./CategoryProgress.css";
 import { PieChart, Pie, Cell } from "recharts";
-import { useEffect, useState } from "react";
 import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
-
-console.log("📄 categoryprogress.tsx 파일 로드됨!");
 
 export default function CategoryProgress() {
   const { categoryList, totalCg, completeCg, completePg } =

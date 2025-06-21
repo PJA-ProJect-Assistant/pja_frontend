@@ -1,0 +1,92 @@
+.myactable-container {
+    display: flex;
+    flex-direction: column;
+    width: 58%;
+    min-width: 540px;
+    height: 200px;
+    margin: 20px 10px;
+    box-sizing: border-box;
+    border: 1px solid #828282;
+    padding: 10px 30px;
+}
+
+.myactable-container p {
+    margin: 0;
+}
+
+.myaction-table {
+    width: 100%;
+    min-width: 500px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 10px 0;
+    font-size: var(--font-size-sm);
+}
+
+.myaction-table th {
+    background-color: #f0f2f7;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 5px 2px;
+}
+
+.myaction-table td {
+    position: relative;
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* 열 너비 설정 (총합 100%) */
+.myaction-table th:nth-child(1),
+/* 이름 */
+.myaction-table td:nth-child(1) {
+    width: 40%;
+}
+
+.myaction-table th:nth-child(2),
+/* 시작일 */
+.myaction-table td:nth-child(2),
+.myaction-table th:nth-child(3),
+/* 마감일 */
+.myaction-table td:nth-child(3),
+.myaction-table th:nth-child(5),
+/* 중요도 */
+.myaction-table td:nth-child(5),
+.myaction-table th:nth-child(4),
+/* 상태 */
+.myaction-table td:nth-child(4) {
+    width: 15%;
+}
+
+.myaclist-name {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0;
+    padding-left: 65px;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    min-width: 200px;
+}
+
+.myaclist-icon {
+    background-color: #fec300;
+    border-radius: 5px;
+    padding: 1px;
+    min-width: 22px;
+}
+
+.myaclist-name span {
+    display: inline-block;
+    max-width: calc(100% - 22px);
+    /* 아이콘 너비 고려 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}

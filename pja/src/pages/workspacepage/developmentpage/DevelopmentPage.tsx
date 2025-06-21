@@ -4,11 +4,12 @@ import "./DevelopmentPage.css";
 import ListPage from "./listpage/ListPage";
 import KanbanPage from "./kanbanpage/KanbanPage";
 import GanttChartPage from "./ganttchartpage/GanttChartPage";
+import Dashboard from "./dashboardpage/dashboard";
 
 export default function DevelopmentPage() {
   const [page, setPage] = useState<number>(0);
 
-  const menus = ["리스트", "칸반", "간트차트"]; //대시보드 삭제
+  const menus = ["리스트", "칸반", "간트차트", "대시보드"];
   return (
     <div className="develop-container">
       <WSHeader title="" />
@@ -27,7 +28,7 @@ export default function DevelopmentPage() {
         {page === 0 && <ListPage />}
         {page === 1 && <KanbanPage />}
         {page === 2 && <GanttChartPage />}
-        {/* {page === 3 && <GanttChartPage />} */}
+        {page === 3 && <Dashboard />}
       </div>
     </div>
   );
