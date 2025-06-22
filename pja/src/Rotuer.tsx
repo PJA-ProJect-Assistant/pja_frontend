@@ -15,7 +15,7 @@ import WorkspaceSettingPage from "./pages/workspacesettingpage/WorkspaceSettingP
 import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/ActionPostPage";
 import RootRedirect from "./components/common/RootRedirect";
 import AcceptInvitePage from "./pages/invitepage/AcceptInvitePage";
-//import LeaveServicePage from "./pages/leaveservicepage/LeaveServicePage";
+import LeaveServicePage from "./pages/leaveservicepage/LeaveServicePage";
 const Router = () => {
   return (
     <Routes>
@@ -84,14 +84,16 @@ const Router = () => {
       <Route path="/invite" element={<AcceptInvitePage />} />
 
       {/*회원탈퇴 페이지*/}
-      {/*<Route
-      /  path="/leave-service"
-        element={
-          <PrivateRoute>
-            <LeaveServicePage />
-          </PrivateRoute>
-        }
-      />*/}
+      {
+        <Route
+          path="/leave-service"
+          element={
+            <PrivateRoute>
+              <LeaveServicePage />
+            </PrivateRoute>
+          }
+        />
+      }
     </Routes>
   );
 };

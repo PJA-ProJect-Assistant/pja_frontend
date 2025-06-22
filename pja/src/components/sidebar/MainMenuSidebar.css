@@ -65,8 +65,27 @@
   width: 90%;
   margin: 0;
   height: 40px;
+  white-space: nowrap;
 }
 
 .mainmenu-list p:hover {
   background-color: #f0f0f0;
+}
+
+.mainmenu-button {
+  text-decoration: none;
+  color: inherit;
+  width: 90%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 5px;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.mainmenu-button:hover {
+  background-color: #e0e0e0;
 }
