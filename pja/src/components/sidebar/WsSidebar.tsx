@@ -8,7 +8,7 @@ import { WSSidebarHeader } from "../header/WSSidebarHeader";
 import ProgressStep from "./ProgressStep";
 import LeaveTeamModal from "../modal/LeaveTeamModal";
 import MemberTabComp from "../sidebarcompo/MemberTabComp";
-import { leaveWorkspace } from "../../services/sideApi";
+import { leaveWorkspace, getGitInfo } from "../../services/sideApi";
 import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
@@ -154,6 +154,47 @@ export default function WsSidebar({ onClose }: IsClose) {
     }
   };
 
+  //Git  연동 클릭 시 실행될 함수
+  const handleGitLinkClick = async () => {
+    if (!selectedWS || !selectedWS.workspaceId) {
+      alert("워크스페이스를 먼저 선택해주세요.");
+      return;
+    }
+    try {
+      const response = await getGitInfo(selectedWS.workspaceId);
+      const gitUrl = response.data.gitUrl;
+
+      if (gitUrl) {
+        // Git 주소가 존재하면 새 탭에서 열기
+        window.open(gitUrl, "_blank", "noopener,noreferrer");
+      } else {
+        // Git 주소가 없으면 사용자에게 알림
+        alert("연동된 Git 저장소 주소가 없습니다. 설정에서 추가해주세요.");
+      }
+    } catch (error: any) {
+      // API 호출 실패 시 에러 메시지 표시
+      let userMessage =
+        "연동된 Git 저장소 주소가 없습니다 설정에서 추가해주세요.";
+
+      if (error.response) {
+        console.error("응답 상태코드:", error.response.status);
+        console.error("서버 status:", error.response.data?.status);
+        console.error("서버 message:", error.response.data?.message);
+      } else if (error.request) {
+        // 요청은 보냈지만, 응답을 받지 못했을 경우
+        console.error("요청은 보냈지만 응답 없음:", error.request);
+        userMessage =
+          "서버로부터 응답이 없습니다. 네트워크 연결을 확인해주세요.";
+      } else {
+        // 요청을 설정하는 중에 에러가 발생했을 경우
+        console.error("요청 설정 중 에러 발생:", error.message);
+        userMessage = "요청을 보내는 중 문제가 발생했습니다.";
+      }
+
+      alert(userMessage);
+    }
+  };
+
   return (
     <>
       <motion.div
@@ -205,7 +246,7 @@ export default function WsSidebar({ onClose }: IsClose) {
             </svg>
             <p>알림</p>
           </div>
-          <div className="wssidebar-list">
+          <div className="wssidebar-list" onClick={handleGitLinkClick}>
             <div className="wssidebar-img">
               <img src={git_icon} alt="git아이콘" />
             </div>
