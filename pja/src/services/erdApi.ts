@@ -1,6 +1,7 @@
 import api from "../lib/axios";
 import type { ApiResponse } from "../types/common";
-import type { ERDData, geterd, GenerateApiResponse } from "../types/erd";
+import type { ERDData, geterd } from "../types/erd";
+import type { GenerateApiResponse } from "../types/api";
 //ERD 관련 테이블
 
 //erd ai자동생성 요청
