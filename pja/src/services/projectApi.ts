@@ -65,7 +65,7 @@ export const putProject = async (
   try {
     const response = await api.put(
       `/workspaces/${workspaceId}/prject-info/${projectInfoId}`,
-      projects
+      { projects }
     );
     console.log("프로젝트 수정 :", response);
     return response.data;
