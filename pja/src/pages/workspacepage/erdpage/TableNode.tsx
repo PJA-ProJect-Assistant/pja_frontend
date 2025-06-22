@@ -3,6 +3,7 @@ import type { NodeProps, NodeTypes } from "reactflow";
 import type { ERDField, ERDTable } from "../../../types/erd";
 import "./ERDPage.css";
 import "reactflow/dist/style.css";
+import { useState } from "react";
 
 const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
   <div className="table-node">
@@ -13,16 +14,15 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
           <Handle
             type="target"
             position={Position.Left}
-            id={`target-${field.name}`}
+            id={`target-${field.id}`}
             className="handle-left"
           />
           <div className="table-node-field">
             {field.primary && <span>🔑</span>}
             {field.foreign && <span>🔗</span>}
             <p
-              className={`field-name ${field.primary ? "font-bold" : ""} ${
-                field.foreign ? "text-foreign" : ""
-              }`}
+              className={`field-name ${field.primary ? "font-bold" : ""} ${field.foreign ? "text-foreign" : ""
+                }`}
             >
               {field.name}
             </p>
@@ -34,7 +34,7 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
           <Handle
             type="source"
             position={Position.Right}
-            id={`source-${field.name}`}
+            id={`${field.id}`}
             className="handle-right"
           />
         </div>
@@ -51,13 +51,14 @@ const EditableTableNode: React.FC<
     ERDTable & {
       onFieldChange: (
         tableId: string,
-        fieldIdx: number,
+        fieldId: string,
         key: keyof ERDField,
         value: string | boolean
       ) => void;
-      onAddField: (tableId: string, newField: ERDField) => void;
-      onDeleteField: (tableId: string, fieldIndex: number) => void; // 추가
-      onTableNameChange: (tableId: string, newName: string) => void; // 추가
+      onAddField: (tableId: string) => void;
+      onDeleteField: (tableId: string, fieldId: string) => void;
+      onTableNameChange: (tableId: string, newName: string) => void;
+      onDeleteTable: (tableId: string) => void;
     }
   >
 > = ({ data }) => {
@@ -66,20 +67,38 @@ const EditableTableNode: React.FC<
     onAddField,
     onDeleteField,
     onTableNameChange,
+    onDeleteTable,
     ...tableData
   } = data;
+  const [tempName, setTempName] = useState<string>("");
+  const [editId, setEditId] = useState<string>("");
 
   return (
     <div className="table-node editable-table-node">
       <div className="table-node-header">
         <input
           className="table-name-input"
-          value={tableData.tableName}
-          onChange={(e) => {
-            onTableNameChange(tableData.id, e.target.value); // 수정됨
-          }}
+          value={editId === "tablename" ? tempName : tableData.tableName}
+          onClick={() => {
+            setTempName(tableData.tableName);
+            setEditId("tablename");
+          }
+          }
+          onChange={(e) => setTempName(e.target.value)}
+          onBlur={() => {
+            onTableNameChange(tableData.id, tempName);
+            setEditId("");
+            setTempName("");
+          }
+          } // 포커스 아웃 시 반영
           placeholder="테이블 이름"
         />
+        <button
+          className="delete-table-btn"
+          onClick={() => data.onDeleteTable(tableData.id)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+        </button>
       </div>
       <div className="table-node-body">
         {tableData.fields.map((field, fieldIdx) => (
@@ -87,7 +106,7 @@ const EditableTableNode: React.FC<
             <Handle
               type="target"
               position={Position.Left}
-              id={`target-${field.name}`}
+              id={`target-${field.id}`}
               className="handle-left"
             />
 
@@ -100,7 +119,7 @@ const EditableTableNode: React.FC<
                 onChange={(e) =>
                   onFieldChange(
                     tableData.id,
-                    fieldIdx,
+                    field.id,
                     "primary",
                     e.target.checked
                   )
@@ -116,7 +135,7 @@ const EditableTableNode: React.FC<
                 onChange={(e) =>
                   onFieldChange(
                     tableData.id,
-                    fieldIdx,
+                    field.id,
                     "foreign",
                     e.target.checked
                   )
@@ -127,20 +146,34 @@ const EditableTableNode: React.FC<
               {/* 필드명 입력 */}
               <input
                 className="field-name-input"
-                value={field.name}
-                onChange={(e) =>
-                  onFieldChange(tableData.id, fieldIdx, "name", e.target.value)
-                }
+                value={editId === "fieldname" ? tempName : field.name}
+                onClick={() => {
+                  setTempName(field.name);
+                  setEditId("fieldname");
+                }}
+                onChange={(e) => setTempName(e.target.value)}
+                onBlur={() => {
+                  onFieldChange(tableData.id, field.id, "name", tempName);
+                  setEditId("");
+                  setTempName("");
+                }}
                 placeholder="필드명"
               />
 
               {/* 타입 입력 */}
               <input
                 className="field-type-input"
-                value={field.type || ""}
-                onChange={(e) =>
-                  onFieldChange(tableData.id, fieldIdx, "type", e.target.value)
-                }
+                value={editId === "fieldtype" ? tempName : field.type ?? ""}
+                onClick={() => {
+                  setTempName(field.type ?? "");
+                  setEditId("fieldtype");
+                }}
+                onChange={(e) => setTempName(e.target.value)}
+                onBlur={() => {
+                  onFieldChange(tableData.id, field.id, "type", tempName);
+                  setEditId("");
+                  setTempName("");
+                }}
                 placeholder="타입"
               />
 
@@ -152,7 +185,7 @@ const EditableTableNode: React.FC<
                   onChange={(e) =>
                     onFieldChange(
                       tableData.id,
-                      fieldIdx,
+                      field.id,
                       "nullable",
                       e.target.checked
                     )
@@ -162,28 +195,27 @@ const EditableTableNode: React.FC<
               </label>
 
               {/* 필드 삭제 버튼 - 새로 추가 */}
-              {tableData.fields.length > 1 && ( // 최소 1개 필드는 유지
-                <button
-                  className="delete-field-btn"
-                  onClick={() => data.onDeleteField(data.id, fieldIdx)}
+              <button
+                className="delete-field-btn"
+                onClick={() => data.onDeleteField(data.id, field.id)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#000000"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="20px"
-                    viewBox="0 -960 960 960"
-                    width="20px"
-                    fill="#000000"
-                  >
-                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                  </svg>
-                </button>
-              )}
+                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                </svg>
+              </button>
+
             </div>
 
             <Handle
               type="source"
               position={Position.Right}
-              id={`source-${field.name}`}
+              id={`${field.id}`}
               className="handle-right"
             />
           </div>
@@ -194,14 +226,7 @@ const EditableTableNode: React.FC<
           <button
             className="add-field-btn"
             onClick={() => {
-              const newField: ERDField = {
-                name: "new_field",
-                type: "",
-                nullable: false,
-                primary: false,
-                foreign: false,
-              };
-              onAddField(tableData.id, newField); // 수정됨
+              onAddField(tableData.id);
             }}
           >
             + 필드 추가

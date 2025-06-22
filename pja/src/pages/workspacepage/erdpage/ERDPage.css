@@ -64,6 +64,7 @@
 }
 
 .table-node-header {
+  position: relative;
   background: #00205b;
   color: white;
   font-weight: 700;
@@ -118,14 +119,17 @@
   width: 145px;
   padding-left: 1px;
 }
+
 /* 안의 span을 ellipsis 처리 */
 .table-node-field p {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1; /* 남은 공간을 span이 차지하게 */
+  flex: 1;
+  /* 남은 공간을 span이 차지하게 */
   margin: 0;
 }
+
 .field-name.text-foreign {
   color: #f97316;
 }
@@ -135,10 +139,12 @@
   font-size: var(--font-size-base);
   width: 120px;
 }
+
 .nullable-type {
   font-size: var(--font-size-base);
   width: 80px;
 }
+
 .erd-edit-modal {
   position: fixed;
   right: 1rem;
@@ -229,6 +235,7 @@
   min-width: 680px;
   height: 100%;
 }
+
 .delete-field-btn {
   display: flex;
   justify-content: center;
@@ -239,6 +246,19 @@
   border: none;
   cursor: pointer;
 }
+
 .delete-field-btn:hover {
   background: #e5e7eb;
+}
+
+.delete-table-btn {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 30%;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }

@@ -18,6 +18,7 @@ import "./ERDPage.css";
 import "reactflow/dist/style.css";
 import { getAllErd, getErdId } from "../../../services/erdApi";
 import ERDEdit from "./ERDEdit";
+import { setErdID } from "../../../store/erdSlice";
 
 export default function ERDPage() {
   const dispatch = useDispatch();
@@ -43,6 +44,8 @@ export default function ERDPage() {
         console.log(ERDID);
 
         if (ERDID) {
+          //redux에 저장
+          dispatch(setErdID(ERDID));
           try {
             const getallerd = await getAllErd(selectedWS?.workspaceId, ERDID);
             console.log("getallerd 결과", getallerd);
@@ -72,7 +75,7 @@ export default function ERDPage() {
     if (Number(selectedWS?.progressStep) > 3) {
       setErdDone(true);
     }
-  }, [selectedWS]);
+  }, [selectedWS, modifyMode === false]);
   // useEffect(() => {
   //   console.log(
   //     "✅ nodes 상태 확인",
