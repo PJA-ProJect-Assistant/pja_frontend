@@ -1,7 +1,6 @@
 import api from "../lib/axios";
 import type { ApiResponse } from "../types/common";
-import type { userToken } from "../types/auth";
-import axios from "axios";
+import type { userToken, CheckPasswordRequest } from "../types/auth";
 
 export const login = async (
   uid: string,
@@ -164,20 +163,11 @@ export const changePassword = async (
   confirmPw: string
 ): Promise<ApiResponse<void>> => {
   try {
-    const response = await axios.patch<ApiResponse<void>>(
-      "http://localhost:8080/api/auth/change-pw",
-      {
-        uid,
-        newPw,
-        confirmPw,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      }
-    );
+    const response = await api.patch<ApiResponse<void>>("/auth/change-pw", {
+      uid,
+      newPw,
+      confirmPw,
+    });
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.data && error.response.data.message) {
@@ -185,4 +175,16 @@ export const changePassword = async (
     }
     throw new Error("서버와 통신하는 데 실패했습니다. 네트워크를 확인해주세요");
   }
+};
+
+//탈퇴 비밀번호 확인
+export const checkPassword = async (password: string): Promise<void> => {
+  const requestBody: CheckPasswordRequest = { password };
+  await api.post("/auth/check-password", requestBody);
+};
+
+//탈퇴 api
+export const deleteUser = async (): Promise<void> => {
+  // DELETE 요청의 경우 body가 필요 없음
+  await api.delete("/user/delete");
 };

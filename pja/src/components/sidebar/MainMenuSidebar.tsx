@@ -2,7 +2,7 @@ import type { IsClose } from "../../types/common";
 import { useState } from "react";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./MainMenuSidebar.css";
 import LogoutModal from "../modal/LogoutModal";
 import { useUserData } from "../../hooks/useUserData";
@@ -70,7 +70,10 @@ export default function MainMenuSidebar({ onClose }: IsClose) {
             >
               로그아웃
             </p>
-            <p>탈퇴</p>
+
+            <Link to="/leave-service" className="mainmenu-button">
+              탈퇴
+            </Link>
           </div>
         </div>
       </motion.div>

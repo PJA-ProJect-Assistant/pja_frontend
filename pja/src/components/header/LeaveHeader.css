@@ -1,0 +1,13 @@
+.leave-div-left {
+  width: 60px;
+  cursor: pointer;
+}
+
+.leaveheader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 30px 50px 0 50px;
+}
