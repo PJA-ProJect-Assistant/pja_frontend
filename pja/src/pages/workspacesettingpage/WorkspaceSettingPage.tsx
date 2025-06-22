@@ -9,6 +9,17 @@ import {
 import type { UpdateWorkspacePayload } from "../../types/workspace";
 import "./WorkspaceSettingPage.css";
 
+//  GitHub URL 유효성 검사 함수
+const isValidGitHubUrl = (url: string): boolean => {
+  // URL이 비어있으면 유효한 것으로 간주 (필수 입력이 아닐 경우)
+  if (!url) {
+    return true;
+  }
+  // GitHub URL 정규표현식
+  const regex = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+(?:.git)?\/?$/;
+  return regex.test(url);
+};
+
 const WorkspaceSettingPage: React.FC = () => {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -20,6 +31,7 @@ const WorkspaceSettingPage: React.FC = () => {
   const [visibility, setVisibility] = useState<string>("public");
   const [githubUrl, setGithubUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [githubUrlError, setGithubUrlError] = useState<string>("");
 
   useEffect(() => {
     if (!selectedWS) {
@@ -56,6 +68,13 @@ const WorkspaceSettingPage: React.FC = () => {
   }, [selectedWS, navigate]);
 
   const handleSubmit = async () => {
+    // ✅ 3. 제출 전 유효성 검사 로직 추가
+    if (!isValidGitHubUrl(githubUrl)) {
+      setGithubUrlError("올바른 GitHub 저장소 URL을 입력해주세요.");
+      alert("입력한 GitHub 주소 형식이 올바르지 않습니다.");
+      return; // 유효하지 않으면 API 호출 중단
+    }
+
     if (!selectedWS || !selectedWS.workspaceId) {
       alert("워크스페이스 정보가 없습니다. 다시 시도해 주세요.");
       return;
@@ -82,19 +101,37 @@ const WorkspaceSettingPage: React.FC = () => {
     }
   };
 
+  //  GitHub URL 입력 시 실시간으로 유효성 검사
+  const handleGithubChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newUrl = event.target.value;
+    setGithubUrl(newUrl);
+
+    if (isValidGitHubUrl(newUrl)) {
+      // 유효하면 에러 메시지 제거
+      setGithubUrlError("");
+    } else {
+      // 유효하지 않으면 에러 메시지 설정
+      setGithubUrlError(
+        "올바른 GitHub 저장소 URL을 입력해주세요. (예: https://github.com/user/repo)"
+      );
+    }
+  };
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setProjectName(event.target.value);
   const handleTeamNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setTeamName(event.target.value);
-  const handleGithubChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setGithubUrl(event.target.value);
+
   const handleVisibilityChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => setVisibility(event.target.value);
 
   const handleClearName = () => setProjectName("");
   const handleClearTeamName = () => setTeamName("");
-  const handleClearGithubUrl = () => setGithubUrl("");
+  const handleClearGithubUrl = () => {
+    setGithubUrl("");
+    setGithubUrlError("");
+  };
 
   if (!selectedWS) {
     return <div>워크스페이스 정보를 불러오는 중...</div>;
@@ -159,8 +196,10 @@ const WorkspaceSettingPage: React.FC = () => {
               <div className="workspacesetting-Github-title">Github 주소</div>
               <input
                 type="text"
-                className="workspace-Github-input"
-                placeholder="Github"
+                className={`workspace-Github-input ${
+                  githubUrlError ? "input-error" : ""
+                }`}
+                placeholder="https://github.com/user/repository"
                 value={githubUrl}
                 onChange={handleGithubChange}
               />
@@ -170,6 +209,10 @@ const WorkspaceSettingPage: React.FC = () => {
                   onClick={handleClearGithubUrl}
                   className="workspace-team-clear-icon"
                 ></button>
+              )}
+
+              {githubUrlError && (
+                <p className="error-message">{githubUrlError}</p>
               )}
             </div>
 
