@@ -24,3 +24,11 @@
 .ftbar-section.not-started {
     background-color: #d9d9d6;
 }
+
+.ftbar-section.pending {
+    background-color: #50b5ff;
+}
+
+.ftbar-section.delete {
+    background-color: #ff4d4f;
+}
