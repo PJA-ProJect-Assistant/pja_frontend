@@ -80,3 +80,15 @@ export interface myProgress {
   total: number,
   done: number,
 }
+
+export interface taskimbalance {
+  state: Status,
+  importance: Importance,
+  taskCount: number,
+}
+
+export interface processtime {
+  userId: number;
+  importance: Importance;
+  meanHours: number;
+};
