@@ -83,12 +83,22 @@ export default function WsSidebar({ onClose }: IsClose) {
     }
   }, [activeTab]);
 
-  //✅멤버 수정  api
-  const handleModifyMember = (memberId: string) => {
-    alert(`(관리자 기능) ID: ${memberId} 멤버 수정`);
+  //✅ 멤버 역할 변경 함수
+  const handleRoleChange = (memberId: string, newRole: MemberRole) => {
+    // TODO: 나중에 실제 API 호출로 멤버 역할을 변경하는 로직을 추가해야 합니다.
+    alert(
+      `(관리자 기능) ID: ${memberId} 멤버의 역할을 ${newRole}(으)로 변경합니다.`
+    );
+
+    // 화면에 즉시 반영되도록 로컬 상태를 업데이트합니다.
+    setMembers((prevMembers) =>
+      prevMembers.map((member) =>
+        member.memberId === memberId ? { ...member, role: newRole } : member
+      )
+    );
   };
 
-  //멤버 삭제
+  //✅ 멤버 삭제
   const handleDeleteMember = (memberId: string) => {
     if (window.confirm("정말로 이 멤버를 삭제하시겠습니까?")) {
       alert(`(관리자 기능) ID: ${memberId} 멤버 삭제`);
@@ -135,13 +145,12 @@ export default function WsSidebar({ onClose }: IsClose) {
       // 성공 처리
       alert("팀에서 성공적으로 탈퇴했습니다.");
       handleCloseModal();
-      navigate("/"); // 탈퇴 후 메인 페이지 등으로 이동
+      navigate("/");
     } catch (error: any) {
-      // 실패 처리: 백엔드에서 보낸 에러 메시지를 사용자에게 보여줍니다.
+      // 실패 처리
       const errorMessage =
         error.response?.data?.message || "팀 탈퇴 중 오류가 발생했습니다.";
       alert(errorMessage);
-      // 실패 시에는 모달을 닫지 않아 사용자가 재시도할 수 있게 할 수 있습니다.
     }
   };
 
@@ -279,7 +288,7 @@ export default function WsSidebar({ onClose }: IsClose) {
                     currentUserRole={currentUserRole}
                     isInviteModalOpen={isInviteModalOpen} // 모달 상태 전달
                     onCloseInviteModal={handleCloseInviteModal} // 모달 닫기 함수 전달
-                    onModify={handleModifyMember}
+                    onRoleChange={handleRoleChange}
                     onDelete={handleDeleteMember}
                   />
                 )}
