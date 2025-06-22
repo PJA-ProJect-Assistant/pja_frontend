@@ -6,15 +6,20 @@
 
 .dashboard-info {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    gap: 10px;
     height: 230px;
     width: 100%;
 }
 
 .dashboard-box {
     width: 100%;
+    flex-grow: 1;
+    height: 70%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     gap: 30px;
-    flex-grow: 100%;
 }

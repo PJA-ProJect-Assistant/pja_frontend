@@ -1,6 +1,7 @@
 .participants-container {
   position: relative;
 }
+
 .participants-display {
   display: flex;
   width: 100%;
@@ -8,7 +9,6 @@
   min-width: 85px;
   min-height: 20px;
   gap: 3px;
-  cursor: pointer;
   flex-wrap: nowrap;
 }
 
@@ -30,6 +30,7 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
 .partiprofile-none {
   display: flex;
   justify-content: center;
@@ -61,6 +62,7 @@
   padding: 6px 8px;
   cursor: pointer;
 }
+
 .participant-option div {
   display: flex;
   flex-direction: row;
@@ -75,6 +77,7 @@
   max-width: 100px;
   display: inline-block;
 }
+
 .participant-option:hover {
   background-color: #f0f0f0;
 }
@@ -88,6 +91,7 @@
   border: none;
   cursor: pointer;
 }
+
 .remove-button:hover {
   background-color: #bbc9ec;
 }

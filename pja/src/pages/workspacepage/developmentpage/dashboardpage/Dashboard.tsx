@@ -1,18 +1,19 @@
-import "./ListPage.css";
 import MyProgress from "./myProgress";
 import { MyActionTable } from "./myActionTable";
+import { LogBox } from "./LogBox";
+import { GraphBox } from "./GraphBox";
 import "./Dashboard.css"
 
 export default function Dashboard() {
     return (
         <div className="dashboard-container">
-            <div className="dashboards-info">
+            <div className="dashboard-info">
                 <MyProgress />
                 <MyActionTable />
             </div>
             <div className="dashboard-box">
-                {/* 알림박스 */}
-                {/* 그래프 박스 */}
+                <LogBox />
+                <GraphBox />
             </div>
         </div>
     );

@@ -1,0 +1,10 @@
+.graph-container {
+    width: 60%;
+    background-color: #f0f2f7;
+    height: 100%;
+    padding: 0 20px;
+}
+
+.graph-container p {
+    font-weight: 700;
+}

@@ -1,7 +1,7 @@
 import type { workspace_member } from "./workspace";
 
 //카테고리랑 기능 state boolean인데 지금만 Status로
-export type Status = "BEFORE" | "IN_PROGRESS" | "DONE";
+export type Status = "BEFORE" | "IN_PROGRESS" | "DELETE" | "PENDING" | "DONE";
 
 export interface feature_category {
   featureCategoryId: number;
@@ -67,4 +67,16 @@ export interface recommendedActions {
   importance: Importance;
   startDate: Date;
   endDate: Date;
+}
+
+export interface myActionList {
+  actionId: number,
+  actionName: string,
+  endDate: Date,
+  state: Status,
+  importance: Importance
+}
+export interface myProgress {
+  total: number,
+  done: number,
 }

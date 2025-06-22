@@ -1,17 +1,17 @@
 .myactable-container {
     display: flex;
     flex-direction: column;
-    width: 58%;
-    min-width: 540px;
+    flex: 1;
+    min-width: 580px;
     height: 200px;
-    margin: 20px 10px;
     box-sizing: border-box;
     border: 1px solid #828282;
-    padding: 10px 30px;
+    padding: 10px;
 }
 
 .myactable-container p {
     margin: 0;
+    font-weight: 700;
 }
 
 .myaction-table {
@@ -38,6 +38,11 @@
     padding: 10px 0;
 }
 
+.myaction-tablescroll {
+    height: 150px;
+    overflow-y: auto;
+}
+
 /* 열 너비 설정 (총합 100%) */
 .myaction-table th:nth-child(1),
 /* 이름 */
@@ -60,6 +65,10 @@
     width: 15%;
 }
 
+.tbody td {
+    cursor: default;
+}
+
 .myaclist-name {
     display: flex;
     flex-direction: row;
@@ -67,7 +76,7 @@
     justify-content: flex-start;
     gap: 6px;
     padding: 0;
-    padding-left: 65px;
+    padding-left: 3px;
     box-sizing: border-box;
     height: 100%;
     width: 100%;
@@ -88,5 +97,4 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    cursor: pointer;
 }

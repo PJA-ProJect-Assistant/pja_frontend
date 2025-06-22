@@ -81,6 +81,9 @@ export const ParticipantsCell = ({ value = [], onChange, disable }: Props) => {
       <div
         className="participants-display"
         onClick={() => !disable && setIsEditing(true)}
+        style={{
+          cursor: disable ? 'default' : 'pointer'
+        }}
       >
         <div className="selected-partinames">
           {value.map((id) => {
