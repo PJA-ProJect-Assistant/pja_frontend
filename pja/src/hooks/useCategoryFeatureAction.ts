@@ -147,14 +147,22 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const [participantList, setParticipantList] = useState<workspace_member[]>(
     []
   );
-  //카테고리 진행도 변수
-  const [totalCg, setTotalCg] = useState<number>(0);
-  const [completeCg, setCompleteCg] = useState<number>(0);
-  const [completePg, setCompletePg] = useState<number>(0);
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+
+  //카테고리 진행도
+  const totalCg = useMemo(() => categoryList.length, [categoryList]);
+
+  const completeCg = useMemo(
+    () => categoryList.filter((cg) => cg.state).length,
+    [categoryList]
+  );
+
+  const completePg = useMemo(() => {
+    return totalCg > 0 ? (completeCg / totalCg) * 100 : 0;
+  }, [completeCg, totalCg]);
 
   const getAllList = async () => {
     if (selectedWS?.workspaceId) {
@@ -177,24 +185,16 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     }
   };
 
-  // categoryList가 변경될 때마다 자동 계산
-  useEffect(() => {
-    if (workspaceId && categoryList.length > 0) {
-      const total = categoryList.length;
-      const completed = categoryList.filter((cg) => cg.state).length;
-      const percentage = (completed / total) * 100;
-
-      setTotalCg(total);
-      setCompleteCg(completed);
-      setCompletePg(percentage);
-    }
-  }, [categoryList, workspaceId]);
-
   useEffect(() => {
     getAllList();
     setClickCg({});
     setClickFt({});
   }, [selectedWS]);
+
+  useEffect(() => {
+    console.log("카테고리 리스트 변경");
+
+  }, [categoryList])
 
   const categoryCompletableMap = useMemo(() => {
     const result: { [key: number]: boolean } = {};

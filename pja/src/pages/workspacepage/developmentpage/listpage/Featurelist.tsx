@@ -1,10 +1,6 @@
 import "./Featurelist.css"
-import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
 
-export default function Featurelist() {
-    const {
-        coreFeature
-    } = useCategoryFeatureCategory();
+export default function Featurelist({ coreFeature }: any) {
     return (
         <div className="featurelist-container">
             <p>프로젝트 주요 기능</p>

@@ -1,10 +1,18 @@
+import type { feature_category } from "../../../../types/list";
 import "./CategoryProgress.css";
 import { PieChart, Pie, Cell } from "recharts";
-import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
 
-export default function CategoryProgress() {
-  const { categoryList, totalCg, completeCg, completePg } =
-    useCategoryFeatureCategory();
+export default function CategoryProgress({
+  categoryList,
+  totalCg,
+  completeCg,
+  completePg,
+}: any) {
+
+  console.log("categoryList", categoryList);
+  console.log("totalCg", totalCg);
+  console.log("completeCg", completeCg);
+  console.log("completePg", completePg);
 
   const data = [
     { name: "완료", value: completePg ?? 0 },
@@ -47,14 +55,14 @@ export default function CategoryProgress() {
         <p>카테고리</p>
         <ul>
           {categoryList
-            .filter((cg) => !cg.state)
-            .map((cg, index) => (
+            .filter((cg: feature_category) => !cg.state)
+            .map((cg: feature_category, index: number) => (
               <li key={`incomplete-${index}`}>{cg.name}</li>
             ))}
 
           {categoryList
-            .filter((cg) => cg.state)
-            .map((cg, index) => (
+            .filter((cg: feature_category) => cg.state)
+            .map((cg: feature_category, index: number) => (
               <li
                 key={`complete-${index}`}
                 style={{ textDecoration: "line-through" }}

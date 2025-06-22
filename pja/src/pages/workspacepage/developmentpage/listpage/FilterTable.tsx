@@ -554,6 +554,7 @@ export default function FilterTable({
                                 <td>
                                   <ImportanceCell
                                     value={ac.importance ?? 0}
+                                    disable={isCompleted}
                                     onChange={(newVal) => {
                                       if (isCompleted) return;
                                       // 상태 업데이트

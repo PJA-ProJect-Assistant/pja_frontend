@@ -7,12 +7,53 @@ import { FeatureProgressCell } from "../../../../components/cells/FeatureProgess
 import { ImportanceCell } from "../../../../components/cells/ImportantCell";
 import { ParticipantsCell } from "../../../../components/cells/ParticipantsCell";
 import { useNavigate } from "react-router-dom";
-import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
-import type { Status } from "../../../../types/list";
+import type { feature_category, recommendedActions, Status } from "../../../../types/list";
 import FilterTable from "./FilterTable";
 import { NoCgAddModal } from "../../../../components/modal/WsmenuModal";
+import type { workspace_member } from "../../../../types/workspace";
 
-export default function ListTable() {
+export default function ListTable({ categoryList,
+  clickCg,
+  clickFt,
+  name,
+  workspaceId,
+  participantList,
+  editingCategoryId,
+  editingFeatureId,
+  editingActionId,
+  categoryCompletableMap,
+
+  toggleTestCheckCg,
+  toggleTestCheckFt,
+  toggleTestCheckAc,
+  setName,
+  setEditingCategoryId,
+  setEditingFeatureId,
+  setEditingActionId,
+
+  handleCompleteClick,
+  cgToggleClick,
+  ftToggleClick,
+
+  updateAssignee,
+  updateStatus,
+  updateImportance,
+  updateStartDate,
+  updateEndDate,
+  handleAddCategory,
+  updateCategoryName,
+  handleAddFeature,
+  updateFeatureName,
+  handleAddAction,
+  handleAiActionDelete,
+  handleUpdateAIAction,
+  handleAddAIAction,
+  updateActionName,
+  aiList,
+
+  handleDeleteCategory,
+  handleDeleteFeature,
+  handleDeleteAction, }: any) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isFilter, setIsFilter] = useState<boolean>(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -25,55 +66,13 @@ export default function ListTable() {
     categoryId: number;
     featureId: number;
   } | null>(null);
-  const {
-    categoryList,
-    clickCg,
-    clickFt,
-    name,
-    workspaceId,
-    participantList,
-    editingCategoryId,
-    editingFeatureId,
-    editingActionId,
-    categoryCompletableMap,
-
-    toggleTestCheckCg,
-    toggleTestCheckFt,
-    toggleTestCheckAc,
-    setName,
-    setEditingCategoryId,
-    setEditingFeatureId,
-    setEditingActionId,
-
-    handleCompleteClick,
-    cgToggleClick,
-    ftToggleClick,
-
-    updateAssignee,
-    updateStatus,
-    updateImportance,
-    updateStartDate,
-    updateEndDate,
-    handleAddCategory,
-    updateCategoryName,
-    handleAddFeature,
-    updateFeatureName,
-    handleAddAction,
-    handleAiActionDelete,
-    handleUpdateAIAction,
-    handleAddAIAction,
-    updateActionName,
-    aiList,
-
-    handleDeleteCategory,
-    handleDeleteFeature,
-    handleDeleteAction,
-  } = useCategoryFeatureCategory();
 
   const statusLabels: Record<Status, string> = {
     BEFORE: "진행 전",
     IN_PROGRESS: "진행 중",
     DONE: "완료",
+    PENDING: "보류",
+    DELETE: "삭제"
   };
 
   const navigate = useNavigate();
@@ -172,7 +171,7 @@ export default function ListTable() {
               <div className="dropdown-wrapper">
                 {showCategory && (
                   <div className="dropdown-absolute">
-                    {categoryList.map((cg) => (
+                    {categoryList.map((cg: feature_category) => (
                       <div key={cg.featureCategoryId}>
                         <input
                           type="checkbox"
@@ -229,7 +228,7 @@ export default function ListTable() {
               <div className="dropdown-wrapper">
                 {showParticipant && (
                   <div className="dropdown-absolute">
-                    {participantList.map((user) => (
+                    {participantList.map((user: workspace_member) => (
                       <div key={user.memberId}>
                         <input
                           type="checkbox"
@@ -349,7 +348,7 @@ export default function ListTable() {
             </tr>
           </thead>
           <tbody>
-            {categoryList.map((cg, index) => {
+            {categoryList.map((cg: feature_category, index: number) => {
               const isCompleted = cg.state === true;
 
               return (
@@ -837,6 +836,7 @@ export default function ListTable() {
                                 <td>
                                   <ImportanceCell
                                     value={ac.importance ?? 0}
+                                    disable={isCompleted}
                                     onChange={(newVal) => {
                                       if (isCompleted) return;
                                       // 상태 업데이트
@@ -868,7 +868,7 @@ export default function ListTable() {
                             ))}
                           {aiList?.featureId === ft.featureId &&
                             clickFt[ft.featureId] &&
-                            aiList.recommendedActions.map((ai, index) => (
+                            aiList.recommendedActions.map((ai: recommendedActions, index: number) => (
                               <tr key={ai.name} className="ac-row">
                                 <td className="list-name">
                                   <div className="aclist-name">
@@ -930,6 +930,7 @@ export default function ListTable() {
                                 <td>
                                   <ImportanceCell
                                     value={ai.importance ?? 0}
+                                    disable={true}
                                     onChange={() => {
                                       return;
                                     }}
