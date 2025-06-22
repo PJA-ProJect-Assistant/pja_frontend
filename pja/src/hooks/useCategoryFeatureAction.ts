@@ -435,6 +435,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
   const handleAddFeature = (categoryId: number) => {
     console.log("기능 생성 버튼 클릭", categoryId);
+    clickFt
     setCategoryList((prev) =>
       prev.map((category) => {
         if (category.featureCategoryId === categoryId) {
@@ -455,6 +456,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         return category;
       })
     );
+    setClickCg((prev) => ({ ...prev, [categoryId]: true }));
     console.log("기능 생성 완료 : ", categoryList);
   };
 
@@ -559,6 +561,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
         return category;
       })
     );
+    setClickFt((prev) => ({ ...prev, [featureId]: true }));
   };
 
   const handleAddAIAction = async (featureId: number) => {
