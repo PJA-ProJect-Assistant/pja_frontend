@@ -1,0 +1,123 @@
+.invite-modal-container {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  position: relative;
+  font-family: sans-serif;
+  margin-left: 30px;
+  margin-top: 30px;
+}
+
+/* 모달 헤더 (제목과 닫기 버튼을 포함) */
+.invite-modal-header {
+  display: flex; /* Flexbox 레이아웃 사용 */
+  justify-content: space-between; /* 양쪽 끝으로 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  margin-bottom: 16px; /* 아래쪽 여백 */
+}
+
+.invite-modal-header p {
+  font-weight: bold;
+  margin: 0;
+  font-size: 16px;
+}
+
+/* 닫기 버튼 */
+.invite-modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  font-weight: bold;
+  margin-bottom: 6px;
+  display: block;
+}
+
+form-group {
+  margin-bottom: 16px;
+}
+
+/* 이메일 입력 input 태그 */
+.form-group input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* 이메일 태그와 입력창을 감싸는 박스 */
+.email-input-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: #fefefe;
+  min-height: 40px;
+  cursor: text;
+}
+
+.email-tag {
+  background-color: #fe5000;
+  color: white;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.email-tag button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}
+
+.email-input-box input {
+  flex: 1;
+  min-width: 150px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background-color: transparent;
+}
+
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-size: 14px;
+}
+
+/* 초대하기 버튼 */
+.invite-submit-btn {
+  width: 100%;
+  background-color: #00205b;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}

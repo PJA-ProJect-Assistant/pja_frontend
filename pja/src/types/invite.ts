@@ -1,6 +1,6 @@
 export interface InviteRequest {
   emails: string[];
-  role: "MEMBER" | "ADMIN";
+  role: "MEMBER" | "GUEST";
 }
 
 // API 성공 응답의 data 필드 타입을 정의
