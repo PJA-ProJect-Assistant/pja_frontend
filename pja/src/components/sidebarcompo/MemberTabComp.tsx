@@ -26,7 +26,7 @@ const MemberListItem = ({
   onRoleChange,
   onDelete,
 }: MemberListItemProps) => {
-  const canManage = currentUserRole === "ADMIN";
+  const canManage = currentUserRole === "OWNER";
   return (
     <div className="member-tab-box">
       <div className="member-info-container">
@@ -50,8 +50,9 @@ const MemberListItem = ({
                 onRoleChange(member.memberId, e.target.value as MemberRole)
               }
             >
-              <option value="ADMIN">ADMIN</option>
+              <option value="OWNER">OWNER</option>
               <option value="MEMBER">MEMBER</option>
+              <option value="GUEST">GUEST</option>
             </select>
           </div>
         )}

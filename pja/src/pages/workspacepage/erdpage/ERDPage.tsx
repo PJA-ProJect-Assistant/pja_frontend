@@ -32,6 +32,7 @@ export default function ERDPage() {
   // const nodes = generateNodesFromData(tableData);
   const [erdDone, setErdDone] = useState<boolean>(false);
   const [modifyMode, setModifyMode] = useState<boolean>(false);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const geterd = async () => {
@@ -99,7 +100,13 @@ export default function ERDPage() {
   }, [nodes]);
   //완료 버튼
   const handleErdComplete = async () => {
+    //API 호출이 이미 진행 중이면 함수를 즉시 종료
+    if (isGenerating) {
+      console.log("이미 API 명세서 생성 요청이 진행 중입니다.");
+      return;
+    }
     if (selectedWS?.progressStep === "3") {
+      setIsGenerating(true);
       try {
         //여기에 API명세서 호출 api 선언하면 됨
         await generateApiSpec(selectedWS.workspaceId);
@@ -117,6 +124,7 @@ export default function ERDPage() {
         );
       } catch (err) {
         console.log("api명세서 ai생성 실패", err);
+        setIsGenerating(false);
       }
     }
   };
@@ -138,7 +146,12 @@ export default function ERDPage() {
                   수정하기
                 </div>
                 {!erdDone && (
-                  <div className="erd-complete-btn" onClick={handleErdComplete}>
+                  <div
+                    className={`erd-complete-btn ${
+                      isGenerating ? "disabled" : ""
+                    }`}
+                    onClick={handleErdComplete}
+                  >
                     저장하기
                   </div>
                 )}
