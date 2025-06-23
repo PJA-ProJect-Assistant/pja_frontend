@@ -57,7 +57,7 @@ const InviteModal = ({ onClose }: InviteModalProps) => {
 
     setIsLoading(true);
 
-    const apiRole = role === "멤버" ? "MEMBER" : "ADMIN";
+    const apiRole = role === "멤버" ? "MEMBER" : "GUEST";
 
     const requestData: InviteRequest = {
       emails: emails,

@@ -31,7 +31,7 @@ export default function WsSidebar({ onClose }: IsClose) {
 
   // ✅ 이 부분도 수정
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
-  let currentUserRole: MemberRole = "ADMIN";
+  let currentUserRole: MemberRole = "OWNER";
   if (accessToken) {
     //... 토큰 파싱해서 currentUserRole 설정 ...
   }
@@ -66,7 +66,7 @@ export default function WsSidebar({ onClose }: IsClose) {
           name: "박관리 (Admin)",
           email: "admin@example.com",
           profile: null,
-          role: "ADMIN",
+          role: "OWNER",
         },
         {
           memberId: "3",
