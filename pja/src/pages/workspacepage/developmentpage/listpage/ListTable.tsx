@@ -15,6 +15,7 @@ import type {
 import FilterTable from "./FilterTable";
 import { NoCgAddModal } from "../../../../components/modal/WsmenuModal";
 import type { workspace_member } from "../../../../types/workspace";
+import { statusLabels } from "../../../../constants/statecolor";
 
 export default function ListTable({
   categoryList,
@@ -72,14 +73,6 @@ export default function ListTable({
     categoryId: number;
     featureId: number;
   } | null>(null);
-
-  const statusLabels: Record<Status, string> = {
-    BEFORE: "진행 전",
-    IN_PROGRESS: "진행 중",
-    DONE: "완료",
-    PENDING: "보류",
-    DELETE: "삭제",
-  };
 
   const navigate = useNavigate();
 

@@ -1,27 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
 import type { Status } from "../../../../types/list";
+import { statusLabels, statusColors } from "../../../../constants/statecolor";
 
 import "./KanbanPage.css";
 export default function KanbanPage() {
   const navigate = useNavigate();
   const { categoryList, workspaceId } = useCategoryFeatureCategory();
-
-  const statusLabels: Record<Status, string> = {
-    BEFORE: "진행 전",
-    IN_PROGRESS: "진행 중",
-    DONE: "완료",
-    PENDING: "보류",
-    DELETE: "삭제",
-  };
-
-  const statusColors: Record<Status, string> = {
-    BEFORE: "#d9d9d6",
-    IN_PROGRESS: "#fec300",
-    DONE: "#fe5000",
-    PENDING: "#50b5ff",
-    DELETE: "#ff4d4f",
-  };
 
   const statusBgColors: Record<Status, string> = {
     BEFORE: "rgba(217, 217, 214, 0.2)",
