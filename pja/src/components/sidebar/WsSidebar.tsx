@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import type { IsClose } from "../../types/common";
-import "./WsSideBar.css";
+import "./WsSidebar.css";
 import git_icon from "../../assets/git_icon.png";
 import { WSSidebarHeader } from "../header/WSSidebarHeader";
 import ProgressStep from "./ProgressStep";
