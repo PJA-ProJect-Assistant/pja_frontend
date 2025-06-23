@@ -4,7 +4,7 @@ import type { ERDRelation, ERDTable } from "../types/erd";
 import { getRandomColor } from "./colorUtils";
 
 export function generateEdgesFromData(relations: ERDRelation[]): Edge[] {
-  return relations.map((rel, index) => ({
+  return relations.map((rel) => ({
     id: rel.id,
     source: rel.source,
     target: rel.target,
@@ -61,8 +61,8 @@ export function generateEdittableNodes(tables: ERDTable[]): Node[] {
 
 // 수정페이지 엣지 생성 함수
 export function generateEdittableRelations(relations: ERDRelation[]): Edge[] {
-  return relations.map((relation, index) => ({
-    id: `${relation.id}`,
+  return relations.map((relation) => ({
+    id: relation.id,
     source: relation.source,
     target: relation.target,
     sourceHandle: relation.sourceHandle,

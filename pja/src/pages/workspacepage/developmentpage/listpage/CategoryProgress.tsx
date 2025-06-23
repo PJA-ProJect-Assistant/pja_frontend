@@ -8,7 +8,6 @@ export default function CategoryProgress({
   completeCg,
   completePg,
 }: any) {
-
   console.log("categoryList", categoryList);
   console.log("totalCg", totalCg);
   console.log("completeCg", completeCg);
@@ -36,7 +35,7 @@ export default function CategoryProgress({
             endAngle={-270}
             style={{ pointerEvents: "none" }}
           >
-            {data.map((entry, index) => (
+            {data.map((_, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}

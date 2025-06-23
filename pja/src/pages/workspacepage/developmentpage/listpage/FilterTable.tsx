@@ -117,7 +117,7 @@ export default function FilterTable({
         </thead>
         <tbody>
           {Array.from(categoryMap.entries()).map(
-            ([categoryId, featureActionList], index) => {
+            ([categoryId, featureActionList]) => {
               const category = categoryList.find(
                 (cg) => cg.featureCategoryId === categoryId
               );

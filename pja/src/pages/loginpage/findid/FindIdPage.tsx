@@ -4,21 +4,6 @@ import "./FindIdPage.css";
 import findEmailIcon from "../../../assets/img/findEmail.png";
 import { findIdByEmail } from "../../../services/authApi";
 
-interface FindIdSuccessResponse {
-  status: "success";
-  message: string;
-  data: {
-    uid: string;
-  };
-}
-
-interface FindIdErrorResponse {
-  status: "fail" | "error";
-  message: string;
-}
-
-type FindIdResponse = FindIdSuccessResponse | FindIdErrorResponse;
-
 const FindIdPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
