@@ -64,13 +64,13 @@ export const putProject = async (
 ): Promise<ApiResponse<getproject>> => {
   try {
     const response = await api.put(
-      `/workspaces/${workspaceId}/prject-info/${projectInfoId}`,
-      { projects }
+      `/workspaces/${workspaceId}/project-info/${projectInfoId}`,
+      projects
     );
     console.log("프로젝트 수정 :", response);
     return response.data;
   } catch (error: any) {
-    console.error("🔴 [getProject] 프로젝트 수정 실패:", error);
+    console.error("🔴 [putProject] 프로젝트 수정 실패:", error);
 
     if (error.response) {
       console.error("응답 상태코드:", error.response.status);
