@@ -68,7 +68,7 @@ export default function ProjectSummaryPage() {
     getproject();
   }, [selectedWS]);
   const handleSummaryComplete = async () => {
-    if (selectedWS?.workspaceId) {
+    if (selectedWS?.workspaceId && projectInfo?.projectInfoId) {
       try {
         setIsLoading(true);
         const setpj: setproject = {
@@ -82,9 +82,13 @@ export default function ProjectSummaryPage() {
             solutionIdea,
             expectedBenefits,
           },
-        }
+        };
         //프로젝트 수정 api
-        await putProject(selectedWS.workspaceId, projectInfo?.projectInfold ?? 0, setpj)
+        await putProject(
+          selectedWS.workspaceId,
+          projectInfo?.projectInfoId,
+          setpj
+        );
         try {
           if (selectedWS?.progressStep === "2") {
             const response = await postErd(selectedWS?.workspaceId);
@@ -121,6 +125,8 @@ export default function ProjectSummaryPage() {
       } finally {
         setIsLoading(false);
       }
+    } else {
+      console.log("아이디 없음");
     }
   };
   return isLoading ? (
@@ -147,7 +153,11 @@ export default function ProjectSummaryPage() {
                   }
                 />
               ) : (
-                <span onClick={() => { !summaryDone && setEditingField("title") }}>
+                <span
+                  onClick={() => {
+                    !summaryDone && setEditingField("title");
+                  }}
+                >
                   {title || ""}
                 </span>
               )}
@@ -166,7 +176,11 @@ export default function ProjectSummaryPage() {
                   }
                 />
               ) : (
-                <span onClick={() => { !summaryDone && setEditingField("category") }}>
+                <span
+                  onClick={() => {
+                    !summaryDone && setEditingField("category");
+                  }}
+                >
                   {" "}
                   {category || ""}
                 </span>
@@ -187,7 +201,9 @@ export default function ProjectSummaryPage() {
                           updated[index] = e.target.value;
                           setTargetUsers(updated);
                         }}
-                        onBlur={() => { !summaryDone && setEditingField(null) }}
+                        onBlur={() => {
+                          !summaryDone && setEditingField(null);
+                        }}
                         onKeyDown={(e) =>
                           handleKeyDown(e, () => setEditingField(null))
                         }
@@ -197,10 +213,12 @@ export default function ProjectSummaryPage() {
                     <li
                       key={index}
                       className="summary-contentlist"
-                      onClick={() => { !summaryDone && setEditingField(`target-${index}`) }}
+                      onClick={() => {
+                        !summaryDone && setEditingField(`target-${index}`);
+                      }}
                     >
                       {target}
-                      {!summaryDone &&
+                      {!summaryDone && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="summary-remove-button"
@@ -217,16 +235,19 @@ export default function ProjectSummaryPage() {
                         >
                           <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
                         </svg>
-                      }
+                      )}
                     </li>
-                  ))
-                }
+                  )
+                )}
               </ul>
-              {!summaryDone &&
-                <button className="summary-add-button" onClick={() => setTargetUsers([...targetUsers, ""])}>
+              {!summaryDone && (
+                <button
+                  className="summary-add-button"
+                  onClick={() => setTargetUsers([...targetUsers, ""])}
+                >
                   + 항목 추가
                 </button>
-              }
+              )}
             </div>
 
             <div>
@@ -253,10 +274,12 @@ export default function ProjectSummaryPage() {
                     <li
                       key={index}
                       className="summary-contentlist"
-                      onClick={() => { !summaryDone && setEditingField(`tech-${index}`) }}
+                      onClick={() => {
+                        !summaryDone && setEditingField(`tech-${index}`);
+                      }}
                     >
                       {tech}
-                      {!summaryDone &&
+                      {!summaryDone && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="summary-remove-button"
@@ -265,24 +288,27 @@ export default function ProjectSummaryPage() {
                           width="20px"
                           fill="#EA3323"
                           onClick={() => {
-                            const updated = [...targetUsers];
+                            const updated = [...technologyStack];
                             updated.splice(index, 1);
-                            setTargetUsers(updated);
+                            setTechnologyStack(updated);
                             setEditingField(null); // 삭제 후 편집 모드 해제
                           }}
                         >
                           <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
                         </svg>
-                      }
+                      )}
                     </li>
                   )
                 )}
               </ul>
-              {!summaryDone &&
-                <button className="summary-add-button" onClick={() => setTargetUsers([...targetUsers, ""])}>
+              {!summaryDone && (
+                <button
+                  className="summary-add-button"
+                  onClick={() => setTechnologyStack([...technologyStack, ""])}
+                >
                   + 항목 추가
                 </button>
-              }
+              )}
             </div>
 
             <div>
@@ -309,10 +335,12 @@ export default function ProjectSummaryPage() {
                     <li
                       key={index}
                       className="summary-contentlist"
-                      onClick={() => { !summaryDone && setEditingField(`feature-${index}`) }}
+                      onClick={() => {
+                        !summaryDone && setEditingField(`feature-${index}`);
+                      }}
                     >
                       {feature}
-                      {!summaryDone &&
+                      {!summaryDone && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="summary-remove-button"
@@ -321,24 +349,27 @@ export default function ProjectSummaryPage() {
                           width="20px"
                           fill="#EA3323"
                           onClick={() => {
-                            const updated = [...targetUsers];
+                            const updated = [...coreFeatures];
                             updated.splice(index, 1);
-                            setTargetUsers(updated);
+                            setCoreFeatures(updated);
                             setEditingField(null); // 삭제 후 편집 모드 해제
                           }}
                         >
                           <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
                         </svg>
-                      }
+                      )}
                     </li>
                   )
                 )}
               </ul>
-              {!summaryDone &&
-                <button className="summary-add-button" onClick={() => setTargetUsers([...targetUsers, ""])}>
+              {!summaryDone && (
+                <button
+                  className="summary-add-button"
+                  onClick={() => setCoreFeatures([...coreFeatures, ""])}
+                >
                   + 항목 추가
                 </button>
-              }
+              )}
             </div>
 
             <div>
@@ -351,7 +382,11 @@ export default function ProjectSummaryPage() {
                   onBlur={() => setEditingField(null)}
                 />
               ) : (
-                <span onClick={() => { !summaryDone && setEditingField("problem") }}>
+                <span
+                  onClick={() => {
+                    !summaryDone && setEditingField("problem");
+                  }}
+                >
                   {currentProblem || ""}
                 </span>
               )}
@@ -368,7 +403,11 @@ export default function ProjectSummaryPage() {
                   onBlur={() => setEditingField(null)}
                 />
               ) : (
-                <span onClick={() => { !summaryDone && setEditingField("solution") }}>
+                <span
+                  onClick={() => {
+                    !summaryDone && setEditingField("solution");
+                  }}
+                >
                   {solutionIdea || ""}
                 </span>
               )}
@@ -398,10 +437,12 @@ export default function ProjectSummaryPage() {
                     <li
                       key={index}
                       className="summary-contentlist"
-                      onClick={() => { !summaryDone && setEditingField(`benefit-${index}`) }}
+                      onClick={() => {
+                        !summaryDone && setEditingField(`benefit-${index}`);
+                      }}
                     >
                       {benefit}
-                      {!summaryDone &&
+                      {!summaryDone && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="summary-remove-button"
@@ -410,24 +451,27 @@ export default function ProjectSummaryPage() {
                           width="20px"
                           fill="#EA3323"
                           onClick={() => {
-                            const updated = [...targetUsers];
+                            const updated = [...expectedBenefits];
                             updated.splice(index, 1);
-                            setTargetUsers(updated);
+                            setExpectedBenefits(updated);
                             setEditingField(null); // 삭제 후 편집 모드 해제
                           }}
                         >
                           <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
                         </svg>
-                      }
+                      )}
                     </li>
                   )
                 )}
               </ul>
-              {!summaryDone &&
-                <button className="summary-add-button" onClick={() => setTargetUsers([...targetUsers, ""])}>
+              {!summaryDone && (
+                <button
+                  className="summary-add-button"
+                  onClick={() => setExpectedBenefits([...expectedBenefits, ""])}
+                >
                   + 항목 추가
                 </button>
-              }
+              )}
             </div>
           </div>
           <div className="projectsummary-btn">
@@ -438,7 +482,7 @@ export default function ProjectSummaryPage() {
             )}
           </div>
         </div>
-      </div >
+      </div>
     </>
   );
 }
