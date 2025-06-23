@@ -7,7 +7,7 @@ const MAX_RETRIES = 3;
 
 // 1. axios 인스턴스 생성
 const api = axios.create({
-  baseURL: "/api", // 백엔드 API 기본 주소
+  baseURL: "http://13.125.204.95:8080/api", // 백엔드 API 기본 주소
   withCredentials: true, // 쿠키 전송 허용
 });
 
