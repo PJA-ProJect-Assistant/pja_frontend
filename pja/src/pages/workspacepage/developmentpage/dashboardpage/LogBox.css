@@ -1,5 +1,6 @@
 .log-container {
   width: 40%;
+  max-width: 300px;
   background-color: #f0f2f7;
   height: 100%;
   box-sizing: border-box;
@@ -20,6 +21,11 @@
   overflow-y: auto;
   box-sizing: border-box;
   overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.log-lists::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .log-list {

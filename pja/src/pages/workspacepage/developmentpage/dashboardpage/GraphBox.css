@@ -1,10 +1,14 @@
 .graph-container {
-    width: 60%;
-    background-color: #f0f2f7;
-    height: 100%;
-    padding: 0 20px;
+  flex: 1;
+  background-color: #f0f2f7;
+  height: 100%;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .graph-container p {
-    font-weight: 700;
+  font-weight: 700;
 }

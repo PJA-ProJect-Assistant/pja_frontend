@@ -91,6 +91,7 @@ export interface taskimbalance {
 
 export interface processtime {
   userId: number;
+  username: string;
   importance: Importance;
   meanHours: number;
 }
