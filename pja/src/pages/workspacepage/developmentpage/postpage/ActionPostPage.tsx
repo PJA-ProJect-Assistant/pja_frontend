@@ -9,7 +9,6 @@ import sendIcon from "../../../../assets/img/send.png";
 import codelIcon from "../../../../assets/img/codel.png";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { ko } from "date-fns/locale";
-import type { action } from "../../../../types/list";
 
 interface Comment {
   id: number;

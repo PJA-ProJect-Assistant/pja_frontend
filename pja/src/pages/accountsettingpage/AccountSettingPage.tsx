@@ -11,7 +11,6 @@ import {
   changePassword,
   changeName,
 } from "../../services/userApi";
-import type { user } from "../../types/user";
 
 const AccountSettingPage: React.FC = () => {
   const [initialName, setInitialName] = useState<string>("");
