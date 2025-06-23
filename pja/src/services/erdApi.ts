@@ -3,13 +3,13 @@ import type { ApiResponse } from "../types/common";
 import type {
   ERDData,
   geterd,
-  GenerateApiResponse,
   getcolumn,
   ERDField,
   gettable,
   getrelation,
   ERDRelation,
 } from "../types/erd";
+import type { GenerateApiResponse } from "../types/api";
 //ERD 관련 테이블
 
 //erd ai자동생성 요청

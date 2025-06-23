@@ -1,0 +1,140 @@
+.member-tab-box {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 10px 16px;
+
+  border-radius: 12px;
+  width: 340px;
+  height: 50px;
+  margin-left: 18px;
+  margin-top: 30px;
+  justify-content: space-between;
+}
+
+/* 왼쪽 정보 영역을 묶는 컨테이너 */
+.member-info-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.Mem-profile-img {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: lightgray;
+  margin-right: 5px;
+}
+
+.Mem-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.Mem-user-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: black;
+}
+
+.Mem-user-email {
+  font-size: 14px;
+}
+
+.member-action-container {
+  display: flex;
+  gap: 8px;
+  /* 버튼이 하나만 있어도 너비를 유지하도록 합니다. */
+  justify-content: flex-end;
+}
+
+.member-action-container button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: none;
+
+  white-space: nowrap;
+}
+.member-modify-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/*삭제 버튼*/
+
+.member-delete-btn {
+  background-color: #fff;
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.member-delete-btn:hover {
+  background-color: #ff4d4f;
+  color: #fff;
+}
+
+.member-action-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.role-select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* 기본 select 스타일 */
+.role-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background-color: white;
+  border: 1.5px solid #a0a0a0;
+  border-radius: 8px;
+
+  font-size: 10px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  min-width: 60px;
+  padding-right: 10px;
+  height: 35px;
+  text-align: left;
+
+  box-sizing: border-box;
+}
+/* 드롭다운을 감싸는 래퍼 (화살표 위치 ) */
+.role-select-wrapper {
+  align-items: center;
+}
+/* 드롭다운 포커스 시 테두리 스타일 */
+.role-select:focus {
+  outline: none;
+}
+
+/* 커스텀 화살표 아이콘  */
+.role-select-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 1px;
+  width: 15px;
+  height: 15px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23007AFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transform: translateY(-50%);
+  pointer-events: none;
+}

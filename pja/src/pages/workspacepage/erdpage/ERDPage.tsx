@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 // import ERDEdit from "./ERDEdit";
 import "./ERDPage.css";
 import "reactflow/dist/style.css";
-import { getAllErd, getErdId } from "../../../services/erdApi";
+import { getAllErd, getErdId, generateApiSpec } from "../../../services/erdApi";
 import ERDEdit from "./ERDEdit";
 import { setErdID } from "../../../store/erdSlice";
 
@@ -102,7 +102,7 @@ export default function ERDPage() {
     if (selectedWS?.progressStep === "3") {
       try {
         //여기에 API명세서 호출 api 선언하면 됨
-
+        await generateApiSpec(selectedWS.workspaceId);
         await progressworkspace(selectedWS.workspaceId, "4");
         console.log("API페이지로 이동");
         dispatch(
