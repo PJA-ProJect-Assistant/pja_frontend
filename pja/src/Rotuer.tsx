@@ -57,7 +57,7 @@ const Router = () => {
         }
       />
       <Route
-        path="/ws/:wsid/post/action/:acId"
+        path="/ws/:wsid/post/action/:acId/:acpostId"
         element={
           <PrivateRoute>
             <ActionPostPage />

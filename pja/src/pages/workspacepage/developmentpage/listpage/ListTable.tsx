@@ -7,12 +7,17 @@ import { FeatureProgressCell } from "../../../../components/cells/FeatureProgess
 import { ImportanceCell } from "../../../../components/cells/ImportantCell";
 import { ParticipantsCell } from "../../../../components/cells/ParticipantsCell";
 import { useNavigate } from "react-router-dom";
-import type { feature_category, recommendedActions, Status } from "../../../../types/list";
+import type {
+  feature_category,
+  recommendedActions,
+  Status,
+} from "../../../../types/list";
 import FilterTable from "./FilterTable";
 import { NoCgAddModal } from "../../../../components/modal/WsmenuModal";
 import type { workspace_member } from "../../../../types/workspace";
 
-export default function ListTable({ categoryList,
+export default function ListTable({
+  categoryList,
   clickCg,
   clickFt,
   name,
@@ -53,7 +58,8 @@ export default function ListTable({ categoryList,
 
   handleDeleteCategory,
   handleDeleteFeature,
-  handleDeleteAction, }: any) {
+  handleDeleteAction,
+}: any) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isFilter, setIsFilter] = useState<boolean>(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -72,7 +78,7 @@ export default function ListTable({ categoryList,
     IN_PROGRESS: "진행 중",
     DONE: "완료",
     PENDING: "보류",
-    DELETE: "삭제"
+    DELETE: "삭제",
   };
 
   const navigate = useNavigate();
@@ -182,8 +188,8 @@ export default function ListTable({ categoryList,
                             setSelectedCategories((prev) =>
                               prev.includes(cg.featureCategoryId)
                                 ? prev.filter(
-                                  (id) => id !== cg.featureCategoryId
-                                )
+                                    (id) => id !== cg.featureCategoryId
+                                  )
                                 : [...prev, cg.featureCategoryId]
                             )
                           }
@@ -358,7 +364,7 @@ export default function ListTable({ categoryList,
                     <td className="list-name">
                       <div className="cglist-name">
                         {cg.name === "" ||
-                          editingCategoryId === cg.featureCategoryId ? (
+                        editingCategoryId === cg.featureCategoryId ? (
                           <input
                             type="text"
                             value={name}
@@ -467,8 +473,9 @@ export default function ListTable({ categoryList,
                     <td />
                     <td>
                       <button
-                        className={`list-completebtn ${isCompleted ? "completed" : ""
-                          }`}
+                        className={`list-completebtn ${
+                          isCompleted ? "completed" : ""
+                        }`}
                         disabled={!categoryCompletableMap[cg.featureCategoryId]}
                         onClick={() =>
                           handleCompleteClick(cg.featureCategoryId)
@@ -495,13 +502,14 @@ export default function ListTable({ categoryList,
                       return (
                         <React.Fragment key={ft.featureId}>
                           <tr
-                            className={`ft-row ${isCompleted ? "completed" : ""
-                              }`}
+                            className={`ft-row ${
+                              isCompleted ? "completed" : ""
+                            }`}
                           >
                             <td className="list-name">
                               <div className="ftlist-name">
                                 {ft.name === "" ||
-                                  editingFeatureId === ft.featureId ? (
+                                editingFeatureId === ft.featureId ? (
                                   <input
                                     type="text"
                                     value={name}
@@ -614,7 +622,7 @@ export default function ListTable({ categoryList,
                                 )}
                                 {openActionMenu &&
                                   openActionMenu.categoryId ===
-                                  cg.featureCategoryId &&
+                                    cg.featureCategoryId &&
                                   openActionMenu.featureId === ft.featureId && (
                                     <div
                                       ref={actionMenuRef}
@@ -674,13 +682,14 @@ export default function ListTable({ categoryList,
                             ft.actions.map((ac) => (
                               <tr
                                 key={ac.actionId}
-                                className={`ac-row ${isCompleted ? "completed" : ""
-                                  }`}
+                                className={`ac-row ${
+                                  isCompleted ? "completed" : ""
+                                }`}
                               >
                                 <td className="list-name">
                                   <div className="aclist-name">
                                     {ac.name === "" ||
-                                      editingActionId === ac.actionId ? (
+                                    editingActionId === ac.actionId ? (
                                       <input
                                         type="text"
                                         value={name}
@@ -719,7 +728,7 @@ export default function ListTable({ categoryList,
                                           title={ac.name}
                                           onClick={() =>
                                             navigate(
-                                              `/ws/${workspaceId}/post/action/${ac.actionPostId}`
+                                              `/ws/${workspaceId}/post/action/${ac.actionId}/${ac.actionPostId}`
                                             )
                                           }
                                         >
@@ -868,77 +877,79 @@ export default function ListTable({ categoryList,
                             ))}
                           {aiList?.featureId === ft.featureId &&
                             clickFt[ft.featureId] &&
-                            aiList.recommendedActions.map((ai: recommendedActions, index: number) => (
-                              <tr key={ai.name} className="ac-row">
-                                <td className="list-name">
-                                  <div className="aclist-name">
-                                    <svg
-                                      className="aclist-icon"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      height="20px"
-                                      viewBox="0 -960 960 960"
-                                      width="20px"
-                                      fill="#FFF"
-                                    >
-                                      <path d="M336-240h288v-72H336v72Zm0-144h288v-72H336v72ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z" />
-                                    </svg>
-                                    <span title={ai.name}>✨{ai.name}</span>
-                                    <div>
-                                      <button
-                                        className="ailist-addbtn"
-                                        onClick={() =>
-                                          handleUpdateAIAction(
-                                            cg.featureCategoryId,
-                                            ft.featureId,
-                                            index
-                                          )
-                                        }
+                            aiList.recommendedActions.map(
+                              (ai: recommendedActions, index: number) => (
+                                <tr key={ai.name} className="ac-row">
+                                  <td className="list-name">
+                                    <div className="aclist-name">
+                                      <svg
+                                        className="aclist-icon"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        height="20px"
+                                        viewBox="0 -960 960 960"
+                                        width="20px"
+                                        fill="#FFF"
                                       >
-                                        확인
-                                      </button>
-                                      <button
-                                        className="ailist-deletebtn"
-                                        onClick={() =>
-                                          handleAiActionDelete(index)
-                                        }
-                                      >
-                                        취소
-                                      </button>
+                                        <path d="M336-240h288v-72H336v72Zm0-144h288v-72H336v72ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z" />
+                                      </svg>
+                                      <span title={ai.name}>✨{ai.name}</span>
+                                      <div>
+                                        <button
+                                          className="ailist-addbtn"
+                                          onClick={() =>
+                                            handleUpdateAIAction(
+                                              cg.featureCategoryId,
+                                              ft.featureId,
+                                              index
+                                            )
+                                          }
+                                        >
+                                          확인
+                                        </button>
+                                        <button
+                                          className="ailist-deletebtn"
+                                          onClick={() =>
+                                            handleAiActionDelete(index)
+                                          }
+                                        >
+                                          취소
+                                        </button>
+                                      </div>
                                     </div>
-                                  </div>
-                                </td>
-                                <td>
-                                  <DateSelectCell
-                                    value={ai.startDate ?? null}
-                                    disable={true}
-                                    onChange={() => {
-                                      return;
-                                    }}
-                                  />
-                                </td>
-                                <td>
-                                  <DateSelectCell
-                                    value={ai.endDate ?? null}
-                                    disable={true}
-                                    onChange={() => {
-                                      return;
-                                    }}
-                                  />
-                                </td>
-                                <td />
-                                <td />
-                                <td>
-                                  <ImportanceCell
-                                    value={ai.importance ?? 0}
-                                    disable={true}
-                                    onChange={() => {
-                                      return;
-                                    }}
-                                  />
-                                </td>
-                                <td />
-                              </tr>
-                            ))}
+                                  </td>
+                                  <td>
+                                    <DateSelectCell
+                                      value={ai.startDate ?? null}
+                                      disable={true}
+                                      onChange={() => {
+                                        return;
+                                      }}
+                                    />
+                                  </td>
+                                  <td>
+                                    <DateSelectCell
+                                      value={ai.endDate ?? null}
+                                      disable={true}
+                                      onChange={() => {
+                                        return;
+                                      }}
+                                    />
+                                  </td>
+                                  <td />
+                                  <td />
+                                  <td>
+                                    <ImportanceCell
+                                      value={ai.importance ?? 0}
+                                      disable={true}
+                                      onChange={() => {
+                                        return;
+                                      }}
+                                    />
+                                  </td>
+                                  <td />
+                                </tr>
+                              )
+                            )}
                         </React.Fragment>
                       );
                     })}
