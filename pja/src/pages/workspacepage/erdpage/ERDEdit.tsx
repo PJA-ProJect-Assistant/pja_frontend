@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
-import type { ERDField, ERDRelation, ERDTable, setRelation } from "../../../types/erd";
+import type { ERDField, ERDRelation, ERDTable } from "../../../types/erd";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
-import { deleteErdColumn, deleteErdTable, getAllErd, postErdColumn, postErdTable, putErdColumn, putErdTable } from "../../../services/erdApi";
+import {
+  deleteErdColumn,
+  deleteErdRelation,
+  deleteErdTable,
+  getAllErd,
+  postErdColumn,
+  postErdRelation,
+  postErdTable,
+  putErdColumn,
+  putErdTable,
+} from "../../../services/erdApi";
 import type { IsClose } from "../../../types/common";
 import { editableNodeTypes } from "./TableNode";
 import {
@@ -31,9 +41,7 @@ export default function ERDEdit({ onClose }: IsClose) {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
-  const erdId = useSelector(
-    (state: RootState) => state.erd.erdId
-  );
+  const erdId = useSelector((state: RootState) => state.erd.erdId);
 
   const geterd = async () => {
     // erdId조회
@@ -49,19 +57,17 @@ export default function ERDEdit({ onClose }: IsClose) {
       } catch (err) {
         console.log("getallerd 실패", err);
       }
-    };
-  }
+    }
+  };
 
   useEffect(() => {
     geterd();
   }, [selectedWS]);
 
   useEffect(() => {
-    if (tables.length > 0) {
-      const generatedNodes = generateEdittableNodes(tables);
+    const generatedNodes = generateEdittableNodes(tables);
 
-      setNodes(generatedNodes);
-    }
+    setNodes(generatedNodes);
   }, [tables]);
   useEffect(() => {
     const generatedEdges = generateEdittableRelations(edges);
@@ -107,27 +113,37 @@ export default function ERDEdit({ onClose }: IsClose) {
           foreign: key === "foreign" ? (value as boolean) : field.foreign,
           nullable: key === "nullable" ? (value as boolean) : field.nullable,
         };
+        console.log("업데이트할 필드:", updatedField);
         //수정api 호출
-        await putErdColumn(selectedWS.workspaceId, erdId, tableId, fieldId, updatedField)
+        await putErdColumn(
+          selectedWS.workspaceId,
+          erdId,
+          tableId,
+          fieldId,
+          updatedField
+        );
 
         setTables((prevTables) => {
-          return prevTables.map((table) => {
+          const newTables = prevTables.map((table) => {
             if (table.id === tableId) {
-              const updatedFields = [...table.fields];
-              const fieldIndex = updatedFields.findIndex((f) => f.id === fieldId);
-              if (fieldIndex !== -1) {
-                updatedFields[fieldIndex] = {
-                  ...updatedFields[fieldIndex],
-                  [key]: value,
-                };
-              }
+              const newFields = table.fields.map((field) => {
+                if (field.id === fieldId) {
+                  return {
+                    ...field,
+                    [key]: value,
+                  };
+                }
+                return field;
+              });
+
               return {
                 ...table,
-                fields: updatedFields,
+                fields: newFields,
               };
             }
             return table;
           });
+          return newTables;
         });
       } catch {
         console.log("필드 수정 실패");
@@ -139,7 +155,11 @@ export default function ERDEdit({ onClose }: IsClose) {
   const handleAddField = async (tableId: string) => {
     if (selectedWS?.workspaceId && erdId) {
       try {
-        const response = await postErdColumn(selectedWS?.workspaceId, erdId, tableId)
+        const response = await postErdColumn(
+          selectedWS?.workspaceId,
+          erdId,
+          tableId
+        );
         const newField: ERDField = {
           id: response.data?.columnId ?? "0",
           name: "new_field",
@@ -169,7 +189,7 @@ export default function ERDEdit({ onClose }: IsClose) {
   const handleDeleteField = async (tableId: string, fieldId: string) => {
     if (selectedWS?.workspaceId && erdId) {
       try {
-        await deleteErdColumn(selectedWS.workspaceId, erdId, tableId, fieldId)
+        await deleteErdColumn(selectedWS.workspaceId, erdId, tableId, fieldId);
         setTables((prevTables) => {
           return prevTables.map((table) => {
             if (table.id === tableId) {
@@ -209,8 +229,8 @@ export default function ERDEdit({ onClose }: IsClose) {
       } catch {
         console.log("테이블명 수정 실패");
       }
-    };
-  }
+    }
+  };
 
   // 새 테이블 추가 핸들러
   const handleAddTable = async () => {
@@ -218,6 +238,8 @@ export default function ERDEdit({ onClose }: IsClose) {
       try {
         const response = await postErdTable(selectedWS?.workspaceId, erdId);
         const newTableId = response.data?.tableId ?? "0";
+        console.log("새 테이블 아이디 : ", newTableId);
+
         const newTable: ERDTable = {
           id: newTableId,
           tableName: "새테이블",
@@ -239,10 +261,11 @@ export default function ERDEdit({ onClose }: IsClose) {
         await deleteErdTable(selectedWS?.workspaceId, erdId, tableId);
         setTables((prevTables) => {
           return prevTables.filter((table) => {
-            table.id != tableId
+            table.id != tableId;
             return table;
           });
         });
+        geterd();
       } catch {
         console.log("테이블 삭제 실패");
       }
@@ -250,33 +273,68 @@ export default function ERDEdit({ onClose }: IsClose) {
   };
 
   // 관계선 연결 핸들러 (ID 생성 수정)
-  const handleConnect = (connection: Connection) => {
-    const newRelation: ERDRelation = {
-      id: "0",
-      source: connection.source!,
-      target: connection.target!,
-      sourceHandle: connection.sourceHandle!,
-      targetHandle: connection.targetHandle!,
-      label: "1:1", // 기본값
-    };
-    setEdges((prev) => [...prev, newRelation]);
+  const handleConnect = async (connection: Connection) => {
+    if (selectedWS?.workspaceId && erdId) {
+      try {
+        const newRelation: ERDRelation = {
+          id: "0",
+          source: connection.source!,
+          target: connection.target!,
+          sourceHandle: connection.sourceHandle!,
+          targetHandle: connection.targetHandle!,
+          label: "ONE_TO_ONE", // 기본값
+        };
+        const response = await postErdRelation(
+          selectedWS.workspaceId,
+          erdId,
+          newRelation
+        );
+        if (response.data) {
+          const Relation: ERDRelation = {
+            id: response.data.relationId,
+            source: connection.source!,
+            target: connection.target!,
+            sourceHandle: connection.sourceHandle!,
+            targetHandle: connection.targetHandle!,
+            label: "1:1", // 기본값
+          };
+          setEdges((prev) => [...prev, Relation]);
+        }
+      } catch {
+        console.log("erd생성 실패");
+      }
+    }
   };
 
   // 관계선 라벨 변경 핸들러
   const handleEdgeLabelChange = (edgeId: string, newLabel: string) => {
-    console.log("라벨 수정 핸들러 실행");
-    setEdges((prev) =>
-      prev.map((edge) =>
-        edge.id === edgeId ? { ...edge, label: newLabel } : edge
-      )
-    );
+    if (selectedWS?.workspaceId && erdId) {
+      try {
+        console.log("라벨 수정 핸들러 실행");
+        setEdges((prev) =>
+          prev.map((edge) =>
+            edge.id === edgeId ? { ...edge, label: newLabel } : edge
+          )
+        );
+        // geterd();
+      } catch {
+        console.log("관계선 라벨 변경 실패");
+      }
+    }
   };
 
   // 관계선 삭제 핸들러
-  const handleEdgeDelete = (edgeId: string) => {
-    setEdges((prev) => prev.filter((edge) => edge.id !== edgeId));
+  const handleEdgeDelete = async (edgeId: string) => {
+    if (selectedWS?.workspaceId && erdId) {
+      try {
+        console.log("관계 삭제 핸들러 실행", edgeId);
+        await deleteErdRelation(selectedWS.workspaceId, erdId, edgeId);
+        setEdges((prev) => prev.filter((edge) => edge.id !== edgeId));
+      } catch {
+        console.log("관계 삭제 실패");
+      }
+    }
   };
-
 
   return (
     <>
@@ -321,6 +379,8 @@ export default function ERDEdit({ onClose }: IsClose) {
           fitViewOptions={{ padding: 0.2 }}
           defaultViewport={{ x: 0, y: 0, zoom: 0.7 }}
           className="erdflow-container"
+          minZoom={0.1}
+          maxZoom={2}
           nodesDraggable={true}
           nodesConnectable={true}
           elementsSelectable={true}
@@ -331,49 +391,47 @@ export default function ERDEdit({ onClose }: IsClose) {
             setLabelMenuPos({ x: event.clientX, y: event.clientY });
           }}
         />
-        {
-          labelMenuPos && selectedEdge && (
-            <div
-              style={{
-                position: "absolute",
-                top: labelMenuPos.y,
-                left: labelMenuPos.x,
-                background: "#fff",
-                border: "1px solid #ccc",
-                padding: "8px",
-                zIndex: 999,
-              }}
-            >
-              {["1:1", "1:N", "N:1", "N:N"].map((label) => (
-                <div
-                  key={label}
-                  style={{ padding: "4px", cursor: "pointer" }}
-                  onClick={() => {
-                    handleEdgeLabelChange(selectedEdge.id, label);
-                    setSelectedEdge(null);
-                    setLabelMenuPos(null);
-                  }}
-                >
-                  {label}
-                </div>
-              ))}
-              {/* 🔥 삭제 버튼 추가 */}
+        {labelMenuPos && selectedEdge && (
+          <div
+            style={{
+              position: "absolute",
+              top: labelMenuPos.y,
+              left: labelMenuPos.x,
+              background: "#fff",
+              border: "1px solid #ccc",
+              padding: "8px",
+              zIndex: 999,
+            }}
+          >
+            {["1:1", "1:N", "N:1", "N:N"].map((label) => (
               <div
-                style={{ padding: "4px", cursor: "pointer", color: "red" }}
+                key={label}
+                style={{ padding: "4px", cursor: "pointer" }}
                 onClick={() => {
-                  if (selectedEdge) {
-                    handleEdgeDelete(selectedEdge.id);
-                  }
+                  handleEdgeLabelChange(selectedEdge.id, label);
                   setSelectedEdge(null);
                   setLabelMenuPos(null);
                 }}
               >
-                ❌ 관계선 삭제
+                {label}
               </div>
+            ))}
+            {/* 🔥 삭제 버튼 추가 */}
+            <div
+              style={{ padding: "4px", cursor: "pointer", color: "red" }}
+              onClick={() => {
+                if (selectedEdge) {
+                  handleEdgeDelete(selectedEdge.id);
+                }
+                setSelectedEdge(null);
+                setLabelMenuPos(null);
+              }}
+            >
+              ❌ 관계선 삭제
             </div>
-          )
-        }
-      </div >
+          </div>
+        )}
+      </div>
     </>
   );
 }

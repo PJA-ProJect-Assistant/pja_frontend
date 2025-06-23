@@ -62,7 +62,7 @@ export function generateEdittableNodes(tables: ERDTable[]): Node[] {
 // 수정페이지 엣지 생성 함수
 export function generateEdittableRelations(relations: ERDRelation[]): Edge[] {
   return relations.map((relation, index) => ({
-    id: `edge-${index}`,
+    id: `${relation.id}`,
     source: relation.source,
     target: relation.target,
     sourceHandle: relation.sourceHandle,

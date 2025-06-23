@@ -76,12 +76,7 @@ export default function ERDPage() {
       setErdDone(true);
     }
   }, [selectedWS, modifyMode === false]);
-  // useEffect(() => {
-  //   console.log(
-  //     "✅ nodes 상태 확인",
-  //     nodes.map((n) => n.position)
-  //   );
-  // }, [nodes]);
+
   const { fitView } = useReactFlow();
 
   useEffect(() => {

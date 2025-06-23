@@ -14,15 +14,16 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
           <Handle
             type="target"
             position={Position.Left}
-            id={`target-${field.id}`}
+            id={`${field.id}`}
             className="handle-left"
           />
           <div className="table-node-field">
             {field.primary && <span>🔑</span>}
             {field.foreign && <span>🔗</span>}
             <p
-              className={`field-name ${field.primary ? "font-bold" : ""} ${field.foreign ? "text-foreign" : ""
-                }`}
+              className={`field-name ${field.primary ? "font-bold" : ""} ${
+                field.foreign ? "text-foreign" : ""
+              }`}
             >
               {field.name}
             </p>
@@ -82,31 +83,37 @@ const EditableTableNode: React.FC<
           onClick={() => {
             setTempName(tableData.tableName);
             setEditId("tablename");
-          }
-          }
+          }}
           onChange={(e) => setTempName(e.target.value)}
           onBlur={() => {
             onTableNameChange(tableData.id, tempName);
             setEditId("");
             setTempName("");
-          }
-          } // 포커스 아웃 시 반영
+          }} // 포커스 아웃 시 반영
           placeholder="테이블 이름"
         />
         <button
           className="delete-table-btn"
           onClick={() => data.onDeleteTable(tableData.id)}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="20px"
+            viewBox="0 -960 960 960"
+            width="20px"
+            fill="#FFFFFF"
+          >
+            <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+          </svg>
         </button>
       </div>
       <div className="table-node-body">
-        {tableData.fields.map((field, fieldIdx) => (
-          <div key={fieldIdx} className="table-node-row editable-row">
+        {tableData.fields.map((field) => (
+          <div key={field.id} className="table-node-row editable-row">
             <Handle
               type="target"
               position={Position.Left}
-              id={`target-${field.id}`}
+              id={`${field.id}`}
               className="handle-left"
             />
 
@@ -146,10 +153,12 @@ const EditableTableNode: React.FC<
               {/* 필드명 입력 */}
               <input
                 className="field-name-input"
-                value={editId === "fieldname" ? tempName : field.name}
+                value={
+                  editId === `${field.id}-fieldname` ? tempName : field.name
+                }
                 onClick={() => {
                   setTempName(field.name);
-                  setEditId("fieldname");
+                  setEditId(`${field.id}-fieldname`);
                 }}
                 onChange={(e) => setTempName(e.target.value)}
                 onBlur={() => {
@@ -163,10 +172,14 @@ const EditableTableNode: React.FC<
               {/* 타입 입력 */}
               <input
                 className="field-type-input"
-                value={editId === "fieldtype" ? tempName : field.type ?? ""}
+                value={
+                  editId === `${field.id}-fieldtype`
+                    ? tempName
+                    : field.type ?? ""
+                }
                 onClick={() => {
                   setTempName(field.type ?? "");
-                  setEditId("fieldtype");
+                  setEditId(`${field.id}-fieldtype`);
                 }}
                 onChange={(e) => setTempName(e.target.value)}
                 onBlur={() => {
@@ -209,7 +222,6 @@ const EditableTableNode: React.FC<
                   <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                 </svg>
               </button>
-
             </div>
 
             <Handle
