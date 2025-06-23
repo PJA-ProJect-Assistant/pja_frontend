@@ -31,11 +31,26 @@ export function TaskImbalance() {
   const getimblance = async () => {
     try {
       const response = await getTaskImbalance(selectedWS?.workspaceId ?? 0);
-      const data = response.data ?? [];
+      const data: taskimbalance[] = [
+        {
+          memberId: 14,
+          username: "조유민",
+          state: "DONE",
+          importance: 3,
+          taskCount: 5,
+        },
+        {
+          memberId: 14,
+          username: "조유민",
+          state: "IN_PROGRESS",
+          importance: 3,
+          taskCount: 3,
+        },
+      ];
       console.log("data :", data);
 
       // 전체 데이터 저장
-      setAllUserData(data);
+      if (data.length > 0) setAllUserData(data);
 
       // 사용자 목록 생성 (중복 제거)
       const users = data.reduce((acc, item) => {
@@ -89,7 +104,7 @@ export function TaskImbalance() {
     <>
       {userList.length > 0 && (
         <>
-          <div style={{ marginBottom: "20px" }}>
+          <div style={{ margin: "20px 0" }}>
             <label htmlFor="user-select" style={{ marginRight: "10px" }}>
               담당자 선택:
             </label>
