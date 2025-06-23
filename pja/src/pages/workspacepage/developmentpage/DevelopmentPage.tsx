@@ -4,7 +4,7 @@ import "./DevelopmentPage.css";
 import ListPage from "./listpage/ListPage";
 import KanbanPage from "./kanbanpage/KanbanPage";
 import GanttChartPage from "./ganttchartpage/GanttChartPage";
-import Dashboard from "./dashboardpage/dashboard";
+import Dashboard from "./dashboardpage/Dashboard";
 
 export default function DevelopmentPage() {
   const [page, setPage] = useState<number>(0);
