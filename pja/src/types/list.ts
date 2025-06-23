@@ -70,25 +70,35 @@ export interface recommendedActions {
 }
 
 export interface myActionList {
-  actionId: number,
-  actionName: string,
-  endDate: Date,
-  state: Status,
-  importance: Importance
+  actionId: number;
+  actionName: string;
+  endDate: Date;
+  state: Status;
+  importance: Importance;
 }
 export interface myProgress {
-  total: number,
-  done: number,
+  total: number;
+  done: number;
 }
 
 export interface taskimbalance {
-  state: Status,
-  importance: Importance,
-  taskCount: number,
+  memberId: number;
+  username: string;
+  state: Status;
+  importance: Importance;
+  taskCount: number;
 }
 
 export interface processtime {
   userId: number;
   importance: Importance;
   meanHours: number;
-};
+}
+
+export interface wsActivity {
+  username: string;
+  userProfile: string | null;
+  actionType: string;
+  targetType: string;
+  relativeDateLabel: string;
+}
