@@ -4,7 +4,6 @@ import type {
   // GET 요청의 응답 타입을 위해 BackendApiSpec 타입을 import 합니다.
   BackendApiSpec,
   CreateApiRequest,
-  CreatedApiData,
   ApiSuccessResponse,
   ApiErrorResponse,
   GetApisResponse,

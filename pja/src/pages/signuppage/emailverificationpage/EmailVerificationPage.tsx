@@ -8,18 +8,6 @@ import hintIcon from "../../../assets/img/hint.png";
 import CustomModal from "../CustomModal";
 import api from "../../../lib/axios";
 
-interface EmailVerificationApiResponse {
-  status: string;
-  message?: string;
-  data?: any;
-}
-
-interface VerificationCheckApiResponse {
-  status: string;
-  message?: string;
-  data?: any;
-}
-
 const EmailVerificationPage: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string>("");
   const [verificationToken, setVerificationToken] = useState<string>("");

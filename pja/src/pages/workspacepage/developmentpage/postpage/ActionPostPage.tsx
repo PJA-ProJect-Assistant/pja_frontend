@@ -1,8 +1,8 @@
 import { AnimatePresence } from "framer-motion";
 import WsSidebar from "../../../../components/sidebar/WsSidebar";
 import "./ActionPostPage.css";
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useRef, useState } from "react";
+// import { useParams } from "react-router-dom";
 import { PostHeader } from "../../../../components/header/PostHeader";
 import imageUpIcon from "../../../../assets/img/imageUp.png";
 import sendIcon from "../../../../assets/img/send.png";
@@ -21,15 +21,15 @@ interface Comment {
 export default function ActionPostPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
-  const [selectAction, setSelectAction] = useState<action>();
+  // const [selectAction, setSelectAction] = useState<action>();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [textContent, setTextContent] = useState<string>("");
-  const [originalTextContent, setOriginalTextContent] = useState<string>("");
-  const [originalImages, setOriginalImages] = useState<File[]>([]);
+  // const [originalTextContent, setOriginalTextContent] = useState<string>("");
+  // const [originalImages, setOriginalImages] = useState<File[]>([]);
 
   const [currentComment, setCurrentComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
@@ -86,8 +86,8 @@ export default function ActionPostPage() {
     if (!isEditing) {
       //수정모드
       setIsEditing(true);
-      setOriginalTextContent(textContent);
-      setOriginalImages([...selectedImages]);
+      // setOriginalTextContent(textContent);
+      // setOriginalImages([...selectedImages]);
     } else {
       //저장하고 수정 모드 종료
       setIsEditing(false);
@@ -201,7 +201,7 @@ export default function ActionPostPage() {
       )}
       <div className="actionpost-container">
         <PostHeader />
-        <h2>{selectAction?.name}</h2>
+        {/* <h2>{selectAction?.name}</h2> */}
         <div className="actionpost-wrapper">
           {isEditing ? (
             <textarea

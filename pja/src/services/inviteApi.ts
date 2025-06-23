@@ -1,10 +1,6 @@
 import api from "../lib/axios";
 import type { ApiResponse } from "../types/common";
-import type {
-  InviteRequest,
-  InviteSuccessData,
-  InviteApiResponse,
-} from "../types/invite";
+import type { InviteRequest, InviteSuccessData } from "../types/invite";
 import { AxiosError } from "axios";
 // 초대 정보 조회 응답 데이터 타입
 export interface InviteInfo {
@@ -42,13 +38,13 @@ export interface DeclineInvitationSuccessResponse {
   data: AcceptDeclineResponseData;
 }
 
-const handleResponse = async (response: Response) => {
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.message || "알 수 없는 오류가 발생했습니다.");
-  }
-  return result;
-};
+// const handleResponse = async (response: Response) => {
+//   const result = await response.json();
+//   if (!response.ok) {
+//     throw new Error(result.message || "알 수 없는 오류가 발생했습니다.");
+//   }
+//   return result;
+// };
 
 export const getInvitationInfo = async (
   token: string,

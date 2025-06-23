@@ -14,7 +14,6 @@ import {
 //import { verify } from "crypto";
 
 const FindPwPage: React.FC = () => {
-  const [clickBtn, setClickBtn] = useState(false);
   const [id, setId] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 

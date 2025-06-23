@@ -354,7 +354,7 @@ export default function ListTable({
             </tr>
           </thead>
           <tbody>
-            {categoryList.map((cg: feature_category, index: number) => {
+            {categoryList.map((cg: feature_category) => {
               const isCompleted = cg.state === true;
 
               return (

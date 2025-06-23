@@ -12,7 +12,6 @@ import { leaveWorkspace, getGitInfo } from "../../services/sideApi";
 import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
-import InviteModal from "../sidebarcompo/InviteModal";
 import type { Member, MemberRole } from "../../types/invite";
 
 export default function WsSidebar({ onClose }: IsClose) {
@@ -31,7 +30,7 @@ export default function WsSidebar({ onClose }: IsClose) {
 
   // ✅ 이 부분도 수정
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
-  let currentUserRole: MemberRole = "ADMIN";
+  const currentUserRole: MemberRole = "ADMIN";
   if (accessToken) {
     //... 토큰 파싱해서 currentUserRole 설정 ...
   }
@@ -115,10 +114,6 @@ export default function WsSidebar({ onClose }: IsClose) {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  //const handleConfirmLeave = () => {
-  //  handleCloseModal();
-  //};
 
   //팀원 초대 모달을 여는 함수
   const handleInviteClick = () => {

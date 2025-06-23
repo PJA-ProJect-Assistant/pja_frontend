@@ -84,11 +84,11 @@ export interface getrelation {
   fromTable: {
     erdId: number;
     tableId: string;
-    tableName: String;
+    tableName: string;
   };
   toTable: {
     erdId: number;
     tableId: string;
-    tableName: String;
+    tableName: string;
   };
 }
