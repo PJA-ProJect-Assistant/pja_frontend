@@ -104,7 +104,7 @@ export function TaskImbalance() {
     <>
       {userList.length > 0 && (
         <>
-          <div style={{ margin: "20px 0" }}>
+          <div style={{ margin: "20px" }}>
             <label htmlFor="user-select" style={{ marginRight: "10px" }}>
               담당자 선택:
             </label>
