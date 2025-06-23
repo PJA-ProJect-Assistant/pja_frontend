@@ -39,9 +39,16 @@ export default function GanttChartPage() {
   const startDates = actionList.map((t) => new Date(t.startDate ?? new Date()));
   const endDates = actionList.map((t) => new Date(t.endDate ?? new Date()));
   const chartStart = new Date(Math.min(...startDates.map((d) => d.getTime())));
-  const chartEnd = new Date(Math.max(...endDates.map((d) => d.getTime())));
-  const totalDays = dateDiffInDays(chartStart, chartEnd);
+  let chartEnd = new Date(Math.max(...endDates.map((d) => d.getTime())));
   const today = formatDate(new Date());
+
+  // 최소 17일 보장
+  let totalDays = dateDiffInDays(chartStart, chartEnd);
+  if (totalDays < 16) {
+    chartEnd = new Date(chartStart);
+    chartEnd.setDate(chartEnd.getDate() + 16); // 16일 더해서 총 17일
+    totalDays = 16;
+  }
 
   const dates: string[] = [];
   for (let i = 0; i <= totalDays; i++) {
