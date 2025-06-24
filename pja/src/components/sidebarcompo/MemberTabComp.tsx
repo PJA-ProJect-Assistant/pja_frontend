@@ -77,6 +77,44 @@ const MemberTabComp = ({
   onRoleChange,
   onDelete,
 }: MemberTabCompProps) => {
+// <<<<<<< HEAD
+// =======
+//   const selectedWS = useSelector(
+//     (state: RootState) => state.workspace.selectedWS
+//   );
+//   const workspaceId = selectedWS?.workspaceId;
+
+//   const [members, setMembers] = useState<Member[]>([]);
+
+//   useEffect(() => {
+//     const fetchMembers = async() => {
+//       try {
+//             const accessToken = localStorage.getItem("accessToken");
+//             const headers = {
+//               Authorization: `Bearer ${accessToken}`
+//             };
+//             const response = await api.get(
+//               `/workspaces/${workspaceId}/members`,
+//               { headers }
+//             );
+
+//             if(response.data.status === "success") {
+//               setMembers(response.data.data);
+//             }
+//           } catch (error: any) {
+//             if (error.response) {
+//               console.error("에러:", error.response.data.message);
+//             } else {
+//               console.error("서버 응답 실패");
+//             }
+//           }
+//         };
+
+//         fetchMembers();
+//   },[workspaceId]);
+
+
+// >>>>>>> workspace-notification-api
   return (
     <>
       {isInviteModalOpen && <InviteModal onClose={onCloseInviteModal} />}
