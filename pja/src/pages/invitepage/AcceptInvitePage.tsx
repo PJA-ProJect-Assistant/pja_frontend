@@ -44,14 +44,14 @@ const AcceptInvitePage = () => {
       }
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
-        const redirectPath = window.location.pathname + window.location.search;
+        const redirectPath = encodeURIComponent(
+          window.location.pathname + window.location.search
+        );
         console.log("=== 초대 페이지에서 로그인으로 이동 ===");
         console.log("현재 경로:", redirectPath);
 
         setLoading(false);
-        navigate("/login", {
-          state: { from: redirectPath },
-        });
+        navigate(`/login?redirect=${redirectPath}`);
         return;
       }
 
