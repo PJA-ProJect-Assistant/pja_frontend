@@ -74,9 +74,7 @@ const LoginPage: React.FC = () => {
     try {
       const result = await login(id, password);
       const accessToken = result.data?.accessToken;
-
       if (result.status === "success" && accessToken) {
-        localStorage.setItem("accessToken", accessToken); // 로컬스토리지 저장
         dispatch(setAccessToken(accessToken)); // redux 저장
         openModal(result.message);
 
