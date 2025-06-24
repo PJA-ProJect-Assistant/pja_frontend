@@ -6,10 +6,13 @@ export const login = async (
   uid: string,
   password: string
 ): Promise<ApiResponse<userToken>> => {
+  console.log("로그인 시작");
+
   const response = await api.post<ApiResponse<userToken>>("/auth/login", {
     uid,
     password,
   });
+
   return response.data;
 };
 
