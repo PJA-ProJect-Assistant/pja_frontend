@@ -3,6 +3,21 @@ import type { workspace_member } from "./workspace";
 //카테고리랑 기능 state boolean인데 지금만 Status로
 export type Status = "BEFORE" | "IN_PROGRESS" | "DELETE" | "PENDING" | "DONE";
 
+export interface aiRecommendCateories {
+  workspace_id: number;
+  recommendedCategories: [
+    {
+      name: string;
+      features: [
+        {
+          name: string;
+          actions: [{ name: string; Importance: Importance }];
+        }
+      ];
+    }
+  ];
+}
+
 export interface feature_category {
   featureCategoryId: number;
   name: string;
