@@ -204,9 +204,8 @@ export default function WsSidebar({ onClose }: IsClose) {
         <WSSidebarHeader onClose={onClose} />
         <div className="wssidebar-list-container">
           <div
-            className={`wssidebar-list ${
-              activeTab === "member" ? "active" : ""
-            }`}
+            className={`wssidebar-list ${activeTab === "member" ? "active" : ""
+              }`}
             onClick={() => {
               setActiveTab(activeTab === "member" ? null : "member");
             }}
@@ -223,9 +222,8 @@ export default function WsSidebar({ onClose }: IsClose) {
             <p>멤버</p>
           </div>
           <div
-            className={`wssidebar-list ${
-              activeTab === "notify" ? "active" : ""
-            }`}
+            className={`wssidebar-list ${activeTab === "notify" ? "active" : ""
+              }`}
             onClick={() => {
               setActiveTab(activeTab === "notify" ? null : "notify");
             }}
@@ -245,9 +243,10 @@ export default function WsSidebar({ onClose }: IsClose) {
             <div className="wssidebar-img">
               <img src={git_icon} alt="git아이콘" />
             </div>
-            <p>Git 연동</p>
+            <p>Git</p>
           </div>
-          <div className="wssidebar-list">
+          <div className="wssidebar-list"
+            onClick={() => navigate(`/ws/${selectedWS?.workspaceId}/search`)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="20px"
