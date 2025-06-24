@@ -11,12 +11,24 @@ import sendIcon from "../../../../assets/img/send.png";
 import codelIcon from "../../../../assets/img/codel.png";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { ko } from "date-fns/locale";
+import {
+  getPostDetails,
+  updatePostDetails,
+  createComment,
+  updateComment,
+  deleteComment,
+} from "../../../../services/postApi";
 
 interface Comment {
   id: number;
   content: string;
   username: string;
   createdAt: string;
+}
+
+interface FileInfo {
+  filePath: string;
+  contentType: string;
 }
 
 export default function ActionPostPage() {
@@ -26,25 +38,86 @@ export default function ActionPostPage() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  //게시물 제목
+  const [actionName, setActionName] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [textContent, setTextContent] = useState<string>("");
   const [originalTextContent, setOriginalTextContent] = useState<string>("");
-  const [originalImages, setOriginalImages] = useState<File[]>([]);
+  const [fileList, setFileList] = useState<FileInfo[]>([]);
 
   const [currentComment, setCurrentComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingCommentText, setEditingCommentText] = useState<string>("");
 
-  const { acId } = useParams<{
+  //UI/ 편집 관련 상태
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 삭제될 기존 이미지의 경로를 저장할 상태
+  const [removedImagePaths, setRemovedImagePaths] = useState<string[]>([]);
+
+  const { wsid, acId, acpostId } = useParams<{
+    wsid: string;
     acId: string;
+    acpostId: string;
   }>();
 
+  //액션 게시물 조회 api
   useEffect(() => {
-    const setaction = actions.find((ac) => ac.action_id === Number(acId));
-    setSelectAction(setaction);
-  }, [acId]);
+    // acpostId가 없으면 아무것도 하지 않습니다.
+    if (!wsid || !acId || !acpostId) {
+      setIsLoading(false);
+      setError("페이지 정보를 불러올 수 없습니다.");
+      return;
+    }
+
+    const fetchAndSetData = async () => {
+      try {
+        setIsLoading(true); // 로딩 시작
+        setError(null);
+
+        const postData = await getPostDetails(wsid, acId, acpostId);
+
+        // 받아온 데이터로 상태 업데이트
+        setActionName(postData.actionName);
+        setTextContent(postData.content);
+        setFileList(postData.fileList || []);
+
+        // 백엔드 댓글(commentList)을 프론트엔드 댓글(comments) 타입으로 변환
+        const formattedComments = postData.commentList.map((c) => ({
+          id: c.commentId,
+          content: c.content,
+          username: c.authorName,
+          createdAt: c.updatedAt,
+        }));
+        setComments(formattedComments);
+      } catch (err: any) {
+        console.error(err);
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "알 수 없는 오류가 발생했습니다."
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAndSetData();
+  }, [wsid, acId, acpostId]);
+
+  // 기존 이미지 삭제 처리
+  const handleRemoveExistingImage = (indexToRemove: number) => {
+    const imageToRemove = fileList[indexToRemove];
+    if (!imageToRemove) return;
+
+    // 1. 화면에 보이는 fileList에서 해당 이미지를 제거
+    setFileList((prev) => prev.filter((_, index) => index !== indexToRemove));
+
+    // 2. 나중에 서버에 "이 파일들을 삭제해달라"고 요청하기 위해 경로를 따로 저장
+    setRemovedImagePaths((prev) => [...prev, imageToRemove.filePath]);
+  };
 
   const handleFileSelect = (files: FileList | null) => {
     if (files) {
@@ -88,35 +161,101 @@ export default function ActionPostPage() {
   };
 
   //수정하기 클릭 시 수정/저장 토글 함수
-  const handleToggleEdit = () => {
+  const handleToggleEdit = async () => {
     if (!isEditing) {
-      //수정모드
+      // 수정 모드 시작
       setIsEditing(true);
       setOriginalTextContent(textContent);
-      setOriginalImages([...selectedImages]);
+      // 수정 시작 시, 새로 추가되거나 삭제된 이미지 목록을 초기화
+      setSelectedImages([]);
+      setRemovedImagePaths([]);
     } else {
-      //저장하고 수정 모드 종료
-      setIsEditing(false);
-      console.log("저장된 내용:", textContent);
-      console.log("저장된 이미지:", selectedImages);
+      const isContentUnchanged = originalTextContent === textContent;
+      const noNewImages = selectedImages.length === 0;
+      const noRemovedImages = removedImagePaths.length === 0;
+
+      if (isContentUnchanged && noNewImages && noRemovedImages) {
+        setIsEditing(false); // 수정 모드만 종료
+        return;
+      }
+
+      // 저장 로직 실행
+      if (!wsid || !acId || !acpostId) {
+        alert("필수 정보가 없어 저장할 수 없습니다.");
+        return;
+      }
+
+      try {
+        const updatedData = await updatePostDetails(wsid, acId, acpostId, {
+          content: textContent,
+          files: selectedImages,
+          // removedFilePaths: removedImagePaths, // API 명세에 따라 필요 시 추가
+        });
+
+        //   성공 시, 반환된 최신 데이터로 화면 상태 업데이트
+        setTextContent(updatedData.content);
+        setFileList(updatedData.fileList || []);
+        // 수정 후에는 새로 추가/삭제한 이미지 목록 비움
+        setSelectedImages([]);
+        setRemovedImagePaths([]);
+
+        alert("게시글이 성공적으로 수정되었습니다.");
+      } catch (err: any) {
+        console.error("게시글 수정 실패:", err);
+        alert(
+          err.response?.data?.message ||
+            err.message ||
+            "수정 중 오류가 발생했습니다."
+        );
+      } finally {
+        setIsEditing(false);
+      }
     }
   };
 
   //댓글 기능 함수
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (currentComment.trim() === "") {
       return;
     }
-    //새 댓글
-    const newComment: Comment = {
-      id: Date.now(),
-      content: currentComment,
-      username: "testuser1",
-      createdAt: new Date().toISOString(),
-    };
-    //댓글 상태 업데이트
-    setComments((prevComments) => [...prevComments, newComment]);
+
+    if (!wsid || !acId || !acpostId) {
+      alert("댓글을 작성하기 위한 정보가 부족합니다.");
+      return;
+    }
+
+    // API 호출 전에 현재 댓글 내용 저장하고 입력창 비우기
+    const commentToPost = currentComment;
     setCurrentComment("");
+
+    try {
+      //  API를 호출하여 서버에 댓글을 생성/저장
+      const createdCommentData = await createComment(
+        wsid,
+        acId,
+        acpostId,
+        commentToPost
+      );
+      //새 댓글
+      const newCommentFromServer: Comment = {
+        id: createdCommentData.commentId,
+        content: createdCommentData.content,
+        username: createdCommentData.username,
+        createdAt: createdCommentData.createdAt,
+      };
+
+      //댓글 상태 업데이트
+      setComments((prevComments) => [...prevComments, newCommentFromServer]);
+    } catch (err: any) {
+      console.error("댓글 생성 실패:", err);
+      alert(
+        err.response?.data?.message ||
+          err.message ||
+          "댓글 작성 중 오류가 발생했습니다."
+      );
+      // 실패 시, 입력창에 다시 내용 복원
+      setCurrentComment(commentToPost);
+    }
   };
 
   //Enter 키를 누를 때 댓글을 추가하는 함수
@@ -137,42 +276,109 @@ export default function ActionPostPage() {
     setEditingCommentText("");
   };
 
-  const handleSaveComment = (commentId: number) => {
-    const updateComments = comments.map((comment) => {
-      if (comment.id === commentId) {
-        return {
-          ...comment,
-          content: editingCommentText,
-        };
-      }
-      return comment;
-    });
-    setComments(updateComments);
-    setEditingCommentId(null);
-    setEditingCommentText("");
+  const handleSaveComment = async (commentId: number) => {
+    if (editingCommentText.trim() === "") {
+      alert("댓글을 입력해주세요.");
+      return;
+    }
+
+    // API 호출에 필요한 ID들이 있는지 확인
+    if (!wsid || !acId) {
+      alert("댓글을 수정하기 위한 정보가 부족합니다.");
+      return;
+    }
+
+    try {
+      // 1. API를 호출하여 댓글 수정 요청
+      const updatedCommentData = await updateComment(
+        wsid,
+        acId,
+        commentId,
+        editingCommentText
+      );
+
+      // 2. 성공 시, comments 배열에서 해당 댓글을 찾아 최신 정보로 업데이트
+      const updatedComments = comments.map((comment) => {
+        if (comment.id === commentId) {
+          // 서버로부터 받은 최신 데이터로 교체
+          return {
+            id: commentId, // ID는 그대로
+            content: updatedCommentData.content,
+            username: updatedCommentData.username,
+            createdAt: updatedCommentData.createdAt,
+          };
+        }
+        return comment;
+      });
+
+      setComments(updatedComments);
+
+      setEditingCommentId(null);
+      setEditingCommentText("");
+    } catch (err: any) {
+      console.error("댓글 수정 실패:", err);
+      alert(
+        err.response?.data?.message ||
+          err.message ||
+          "댓글 수정 중 오류가 발생했습니다."
+      );
+    }
   };
 
-  const handleDeleteComment = (CommentId: number) => {
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== CommentId
-    );
-    setComments(updatedComments);
+  const handleDeleteComment = async (commentIdToDelete: number) => {
+    // API 호출에 필요한 ID들이 있는지 확인
+    if (!wsid || !acId) {
+      alert("댓글을 삭제하기 위한 정보가 부족합니다.");
+      return;
+    }
+
+    try {
+      await deleteComment(wsid, acId, commentIdToDelete);
+
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.id !== commentIdToDelete)
+      );
+
+      alert("댓글이 삭제되었습니다.");
+    } catch (err: any) {
+      console.error("댓글 삭제 실패:", err);
+      alert(
+        err.response?.data?.message ||
+          err.message ||
+          "댓글 삭제 중 오류가 발생했습니다."
+      );
+    }
   };
 
   const formatRelativeTime = (isoDateString: string) => {
     try {
-      const date = parseISO(isoDateString);
+      // 1. 서버가 보낸 시간 문자열에 'Z'가 없는 경우, 수동으로 붙여서 UTC임을 명시
+      const utcDateString = isoDateString.endsWith("Z")
+        ? isoDateString
+        : `${isoDateString}Z`;
+
+      // 2. 이제 이 문자열을 파싱
+      const date = parseISO(utcDateString);
+
+      // 3. 현재 시간과 비교하여 상대 시간을 계산
       return formatDistanceToNow(date, { addSuffix: true, locale: ko });
     } catch (error) {
-      // 잘못된 날짜 형식이 들어올 경우를 대비한 예외 처리
       console.error("Invalid date format:", isoDateString);
       return isoDateString;
     }
   };
 
+  //  로딩 및 에러 상태에 따른 UI 처리
+  if (isLoading) {
+    return <div>로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div>오류: {error}</div>;
+  }
+
   return (
     <div className="post-container">
-      {/* ... (AnimatePresence, Sidebar 등 기존 코드는 그대로) ... */}
       <AnimatePresence
         onExitComplete={() => {
           setShowIcon(true);
@@ -207,7 +413,7 @@ export default function ActionPostPage() {
       )}
       <div className="actionpost-container">
         <PostHeader />
-        <h2>{selectAction?.name}</h2>
+        <h2>{actionName}</h2>
         <div className="actionpost-wrapper">
           {isEditing ? (
             <textarea
@@ -221,58 +427,92 @@ export default function ActionPostPage() {
           )}
         </div>
         {/*사진 업로드 창*/}
-        <div className="image-upload-container">
-          {/* 파일 input (숨김) */}
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileInputChange}
-            ref={fileInputRef}
-            style={{ display: "none" }}
-          />
-
-          {/* 이미지 업로드 클릭*/}
-          <div
-            className={`image-upload-area ${dragActive ? "drag-active" : ""}`}
-            onClick={handleUploadAreaClick}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-          >
-            {/*  업로드 전 안내 문구 & 아이콘 */}
-            {selectedImages.length === 0 && (
-              <>
-                <span className="upload-placeholder">
-                  여기에 이미지를 드래그하거나 클릭하여 업로드하세요
-                </span>
-                <img
-                  src={imageUpIcon}
-                  className="image-upload-icon"
-                  alt="업로드 아이콘"
-                />
-              </>
-            )}
-
-            {/*  업로드된 파일 이름 표시 */}
-            {selectedImages.length > 0 && (
-              <div className="uploaded-files">
-                {selectedImages.map((image, index) => (
-                  <div key={index} className="uploaded-file-name">
-                    <span>{image.name}</span>
-                    <button
-                      className="remove-btn"
-                      onClick={() => removeImage(index)}
-                    >
-                      X
-                    </button>
+        <div className="image-section-container">
+          {/* 평상시 & 수정 모드에서 기존 이미지 표시 */}
+          {fileList.length > 0 && (
+            <div className="existing-images-container">
+              <p className="image-section-title">첨부된 이미지</p>
+              <div className="image-grid">
+                {fileList.map((file, index) => (
+                  <div key={index} className="image-item">
+                    <img src={file.filePath} alt={`첨부 이미지 ${index + 1}`} />
+                    {/* 수정 모드일 때만 삭제 버튼 표시 */}
+                    {isEditing && (
+                      <button
+                        className="remove-existing-image-btn"
+                        onClick={() => handleRemoveExistingImage(index)}
+                      >
+                        X
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* 수정 모드일 때만 새 이미지 업로드 UI 표시 */}
+          {isEditing && (
+            <div className="image-upload-container">
+              {/* 파일 숨김 */}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileInputChange}
+                ref={fileInputRef}
+                style={{ display: "none" }}
+              />
+
+              {/* 이미지 업로드 클릭 & 드래그앤드롭 영역 */}
+              <div
+                className={`image-upload-area ${
+                  dragActive ? "drag-active" : ""
+                }`}
+                onClick={handleUploadAreaClick}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+              >
+                {/* 새로 선택된 이미지가 없을 때 */}
+                {selectedImages.length === 0 && (
+                  <>
+                    <span className="upload-placeholder">
+                      여기에 이미지를 드래그하거나 클릭하여 업로드하세요
+                    </span>
+                    <img
+                      src={imageUpIcon}
+                      className="image-upload-icon"
+                      alt="업로드 아이콘"
+                    />
+                  </>
+                )}
+
+                {/* 새로 선택된 이미지 목록 표시 */}
+                {selectedImages.length > 0 && (
+                  <div className="uploaded-files">
+                    {selectedImages.map((image, index) => (
+                      <div key={index} className="uploaded-file-name">
+                        <span>{image.name}</span>
+                        <button
+                          className="remove-btn"
+                          onClick={(e) => {
+                            e.stopPropagation(); // 부모 div의 클릭 이벤트 방지
+                            removeImage(index);
+                          }}
+                        >
+                          X
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
+
         <div className="actionpost-button-container">
           <button
             className={isEditing ? "save-button" : "modify-button"}
@@ -316,29 +556,26 @@ export default function ActionPostPage() {
                       <button onClick={() => handleSaveComment(comment.id)}>
                         저장
                       </button>
-                      <button onClick={handleCancelEdit}>취소</button>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <div className="comment-content">
-                      <div className="comment-header">
+                    <div className="comment-top-row">
+                      <div className="comment-meta">
                         <span className="comment-author">
                           {comment.username}
                         </span>
                         <span className="comment-createdAt">
                           {formatRelativeTime(comment.createdAt)}
                         </span>
+                        <button
+                          className="comment-edit-button"
+                          onClick={() => handleStartEditing(comment)}
+                        >
+                          수정
+                        </button>
                       </div>
-                      {/* [수정된 부분 2] p 태그가 comment-content 안으로 들어옴 */}
-                      <p className="comment-text">{comment.content}</p>
-                    </div>
 
-                    {/* [수정된 부분 3] 수정/삭제 버튼을 포함하는 액션 그룹 */}
-                    <div className="comment-actions">
-                      <button onClick={() => handleStartEditing(comment)}>
-                        수정
-                      </button>
                       <img
                         src={codelIcon}
                         className="comment-delete-icon"
@@ -346,6 +583,8 @@ export default function ActionPostPage() {
                         alt="삭제"
                       />
                     </div>
+
+                    <p className="comment-text">{comment.content}</p>
                   </>
                 )}
               </div>
