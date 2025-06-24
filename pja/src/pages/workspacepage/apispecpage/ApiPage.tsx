@@ -614,7 +614,7 @@ const ApiPage = () => {
                                       style={{
                                         marginBottom: "10px",
                                         padding: "10px",
-                                        border: "1px solid #ddd",
+                                        border: "none", //테두리 제거
                                         borderRadius: "4px",
                                       }}
                                     >
@@ -631,9 +631,7 @@ const ApiPage = () => {
                                             fontWeight: "bold",
                                             fontSize: "14px",
                                           }}
-                                        >
-                                          필드 {index + 1}
-                                        </span>
+                                        ></span>
                                         <button
                                           onClick={() =>
                                             removeRequestField(row.id, index)
@@ -682,7 +680,7 @@ const ApiPage = () => {
                                             style={{
                                               width: "100%",
                                               padding: "4px",
-                                              fontSize: "12px",
+                                              fontSize: "15px",
                                               border: "1px solid #ccc",
                                               borderRadius: "3px",
                                             }}
@@ -712,7 +710,7 @@ const ApiPage = () => {
                                             style={{
                                               width: "100%",
                                               padding: "4px",
-                                              fontSize: "12px",
+                                              fontSize: "15px",
                                               border: "1px solid #ccc",
                                               borderRadius: "3px",
                                             }}
@@ -742,7 +740,7 @@ const ApiPage = () => {
                                             style={{
                                               width: "100%",
                                               padding: "4px",
-                                              fontSize: "12px",
+                                              fontSize: "15px",
                                               border: "1px solid #ccc",
                                               borderRadius: "3px",
                                             }}
@@ -755,12 +753,14 @@ const ApiPage = () => {
                               ) : (
                                 <pre
                                   style={{
-                                    fontSize: "12px",
+                                    whiteSpace: "nowrap",
+                                    fontSize: "13px",
                                     maxHeight: "200px",
                                     overflow: "auto",
+                                    minWidth: "100px",
                                   }}
                                 >
-                                  {JSON.stringify(row.request, null, 2)}
+                                  {JSON.stringify(row.request, null)}
                                 </pre>
                               )}
                             </div>
@@ -787,7 +787,7 @@ const ApiPage = () => {
                                       padding: "5px 10px",
                                       borderRadius: "3px",
                                       cursor: "pointer",
-                                      fontSize: "12px",
+                                      fontSize: "15px",
                                     }}
                                   ></button>
                                 )}
@@ -956,7 +956,7 @@ const ApiPage = () => {
                                     overflow: "auto",
                                   }}
                                 >
-                                  {JSON.stringify(row.response, null, 2)}
+                                  {JSON.stringify(row.response, null)}
                                 </pre>
                               )}
                             </div>

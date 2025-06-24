@@ -125,13 +125,13 @@ const FindPwPage: React.FC = () => {
       <img src={logoImage} alt="PJA Logo" className="logo" />
       <h2 className="title">비밀번호 찾기</h2>
 
-      <div className="form-group">
-        <label htmlFor="username">아이디</label>
-        <div className="input-wrapper">
+      <div className="pw-form-group">
+        <label htmlFor="id">아이디</label>
+        <div className="pw-input-wrapper">
           <img src={findPwIcon} alt="아이디 아이콘" className="icon" />
           <input
             type="text"
-            id="username"
+            id="id"
             placeholder="아이디"
             value={id}
             onChange={handleIdChange}
@@ -164,10 +164,9 @@ const FindPwPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="form-group">
+      <div className="pw-form-group">
         <label htmlFor="email">이메일</label>
-
-        <div className="input-wrapper">
+        <div className="pw-input-wrapper">
           <img src={findEmailIcon} alt="이메일 아이콘" className="icon" />
           <input
             type="email"
@@ -221,9 +220,9 @@ const FindPwPage: React.FC = () => {
         {error && <p className="error">{error}</p>}
       </div>
 
-      <div className="form-group">
+      <div className="pw-form-group">
         <label htmlFor="code">인증번호</label>
-        <div className="input-wrapper">
+        <div className="pw-input-wrapper">
           <img src={authIcon} alt="이메일 아이콘" className="icon" />
           <input
             type="text"
@@ -259,7 +258,7 @@ const FindPwPage: React.FC = () => {
             </button>
           )}
 
-          <div className="pw-button-item">
+          <div className="button-group">
             <button
               className="pw-btn confirm"
               onClick={handleVerifyCode}
