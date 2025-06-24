@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAccessToken } from "../../store/authSlice";
 import axios from "axios";
-import "./LoginPage.css";
+import "./LoginPage.module.css";
 import { login } from "../../services/authApi";
 import logoImage from "../../assets/img/logo.png";
 import GoogleImage from "../../assets/img/Google.png";
