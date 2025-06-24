@@ -25,6 +25,10 @@
   border-radius: 50%;
   background-color: lightgray;
   margin-right: 5px;
+
+  background-size: cover;
+  background-position: center; /*중앙 기준으로 채움*/
+  background-repeat: no-repeat;
 }
 
 .Mem-user-info {

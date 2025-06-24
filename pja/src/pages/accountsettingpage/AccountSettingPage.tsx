@@ -12,6 +12,10 @@ import {
   changeName,
 } from "../../services/userApi";
 
+import type { user } from "../../types/user";
+
+
+
 const AccountSettingPage: React.FC = () => {
   const [initialName, setInitialName] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -174,6 +178,10 @@ const AccountSettingPage: React.FC = () => {
       try {
         await updateProfileImage(file);
         alert("프로필 이미지가 성공적으로 변경되었습니다");
+        const userData = await getuser();
+        if (userData.data) {
+          setProfileImage(userData.data.profileImage);
+        }
       } catch (err: any) {
         alert(
           `프로필 이미지 변경에 실패했습니다: ${
