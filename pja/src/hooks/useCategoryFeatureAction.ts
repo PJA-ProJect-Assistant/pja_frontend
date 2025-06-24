@@ -193,8 +193,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
   useEffect(() => {
     console.log("카테고리 리스트 변경");
-
-  }, [categoryList])
+  }, [categoryList]);
 
   const categoryCompletableMap = useMemo(() => {
     const result: { [key: number]: boolean } = {};
@@ -215,11 +214,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId ? updater(feature) : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId ? updater(feature) : feature
+            ),
+          }
         : category
     );
   };
@@ -234,11 +233,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.filter(
-            (feature) => feature.featureId !== featureId
-          ),
-        }
+            ...category,
+            features: category.features.filter(
+              (feature) => feature.featureId !== featureId
+            ),
+          }
         : category
     );
   };
@@ -254,18 +253,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.map((action) =>
-                  action.actionId === actionId ? updater(action) : action
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.map((action) =>
+                      action.actionId === actionId ? updater(action) : action
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -280,18 +279,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.filter(
-                  (action) => action.actionId !== actionId
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.filter(
+                      (action) => action.actionId !== actionId
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -435,7 +434,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
   const handleAddFeature = (categoryId: number) => {
     console.log("기능 생성 버튼 클릭", categoryId);
-    clickFt
+    clickFt;
     setCategoryList((prev) =>
       prev.map((category) => {
         if (category.featureCategoryId === categoryId) {
@@ -571,6 +570,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       if (response.data) {
         //ailist에 aiacion 추가
         setAiList(response.data);
+        setClickFt((prev) => ({ ...prev, [featureId]: true }));
       }
     } catch (err) {
       console.log("aiaction 추천 실패", err);
