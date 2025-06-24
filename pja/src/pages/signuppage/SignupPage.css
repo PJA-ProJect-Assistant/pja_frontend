@@ -30,27 +30,33 @@
   color: #1f2937;
 }
 
-/* 입력 필드 wrapper */
-.input-wrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  border-radius: 5px;
-  width: 100%;
-  max-width: 600px;
-  /*padding-right: 120px;*/
-}
-
-.id-input,
-.name-input,
-.email-input {
+.id-input {
   padding: 12px 0px 12px 50px;
   outline: none;
   box-sizing: border-box;
   border-radius: 5px;
   border: 1px solid #d1d5db;
   font-size: 15px;
+}
+
+.signname-input {
+  padding: 12px 0px 12px 50px;
+  outline: none;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  width: 100%;
+}
+
+.signemail-input {
+  padding: 12px 0px 12px 50px;
+  outline: none;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  width: 100%;
 }
 
 .pw-input {
