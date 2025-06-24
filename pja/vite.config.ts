@@ -12,7 +12,7 @@ export default defineConfig({
     https: {},
     proxy: {
       "/api": {
-        target: "http://13.125.204.95:8080",
+        target: "https://api.pja.kr",
         // 배포하면 proxy삭제해도 됨
       },
     },
