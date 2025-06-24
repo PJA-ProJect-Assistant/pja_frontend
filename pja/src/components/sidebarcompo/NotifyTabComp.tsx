@@ -25,6 +25,9 @@ const NotifyTabComp = () => {
   console.log("workspaceId 는 ", workspaceId);
 
   useEffect(() => {
+    // 워크스페이스 아이디 없을 경우
+    if(!workspaceId) return;
+    
     fetchNotifications();
 
     const accessToken = localStorage.getItem("accessToken");
