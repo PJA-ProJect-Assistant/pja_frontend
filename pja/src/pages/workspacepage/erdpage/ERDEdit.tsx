@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import type { ERDField, ERDRelation, ERDTable } from "../../../types/erd";
+import type {
+  ERDField,
+  ERDRelation,
+  ERDTable,
+  RelationType,
+} from "../../../types/erd";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import {
@@ -7,6 +12,7 @@ import {
   deleteErdRelation,
   deleteErdTable,
   getAllErd,
+  patchRelationLabel,
   postErdColumn,
   postErdRelation,
   postErdTable,
@@ -38,6 +44,14 @@ export default function ERDEdit({ onClose }: IsClose) {
     x: number;
     y: number;
   } | null>(null);
+
+  const labelMap: Record<string, string> = {
+    "1:1": "ONE_TO_ONE",
+    "1:N": "ONE_TO_MANY",
+    "N:1": "MANY_TO_ONE",
+    "N:N": "MANY_TO_MANY",
+  };
+
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
@@ -307,10 +321,17 @@ export default function ERDEdit({ onClose }: IsClose) {
   };
 
   // 관계선 라벨 변경 핸들러
-  const handleEdgeLabelChange = (edgeId: string, newLabel: string) => {
+  const handleEdgeLabelChange = async (edgeId: string, newLabel: string) => {
     if (selectedWS?.workspaceId && erdId) {
       try {
         console.log("라벨 수정 핸들러 실행");
+        const labeltype = labelMap[newLabel] as RelationType;
+        await patchRelationLabel(
+          selectedWS.workspaceId,
+          erdId,
+          edgeId,
+          labeltype
+        );
         setEdges((prev) =>
           prev.map((edge) =>
             edge.id === edgeId ? { ...edge, label: newLabel } : edge
