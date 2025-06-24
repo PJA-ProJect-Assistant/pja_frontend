@@ -35,7 +35,7 @@ const NotifyTabComp = () => {
     
     // SSE 연결
     const eventSource = new EventSource(
-      `https://pja-server.kr/api/workspaces/${workspaceId}/noti/subscribe?token=${accessToken}`,
+      `https://api.pja.kr/api/workspaces/${workspaceId}/noti/subscribe?token=${accessToken}`,
     );
 
     eventSource.addEventListener("connect", (e) => {
