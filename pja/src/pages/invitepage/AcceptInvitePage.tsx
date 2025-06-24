@@ -30,7 +30,6 @@ const AcceptInvitePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [declineMessage, setDeclineMessage] = useState<string | null>(null);
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
@@ -127,7 +126,6 @@ const AcceptInvitePage = () => {
 
     setIsSubmitting(true);
     setError(null);
-    setDeclineMessage(null);
     const accessToken = localStorage.getItem("accessToken");
 
     if (!accessToken) {
@@ -140,8 +138,6 @@ const AcceptInvitePage = () => {
       const response = await declineInvitation(token, accessToken);
 
       if (response.status === "success") {
-        setDeclineMessage(response.message); // "초대를 성공적으로 수락하였습니다."
-
         // 거절 메시지를 1.5초간 보여준 후 메인 페이지로 이동합니다.
         setTimeout(() => {
           navigate("/"); // 거절했으므로 워크스페이스가 아닌 메인 페이지 등으로 이동

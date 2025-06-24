@@ -7,10 +7,8 @@ import { FeatureProgressCell } from "../../../../components/cells/FeatureProgess
 import { ImportanceCell } from "../../../../components/cells/ImportantCell";
 import { ParticipantsCell } from "../../../../components/cells/ParticipantsCell";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 import "./ListTable.css";
-import { actions, features } from "../../../../constants/listconstant";
 
 export default function FilterTable({
   selectedCategories,
@@ -119,7 +117,7 @@ export default function FilterTable({
         </thead>
         <tbody>
           {Array.from(categoryMap.entries()).map(
-            ([categoryId, featureActionList], index) => {
+            ([categoryId, featureActionList]) => {
               const category = categoryList.find(
                 (cg) => cg.featureCategoryId === categoryId
               );
@@ -559,6 +557,7 @@ export default function FilterTable({
                                 <td>
                                   <ImportanceCell
                                     value={ac.importance ?? 0}
+                                    disable={isCompleted}
                                     onChange={(newVal) => {
                                       if (isCompleted) return;
                                       // 상태 업데이트

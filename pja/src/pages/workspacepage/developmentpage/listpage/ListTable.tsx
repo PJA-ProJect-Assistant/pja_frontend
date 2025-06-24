@@ -7,12 +7,60 @@ import { FeatureProgressCell } from "../../../../components/cells/FeatureProgess
 import { ImportanceCell } from "../../../../components/cells/ImportantCell";
 import { ParticipantsCell } from "../../../../components/cells/ParticipantsCell";
 import { useNavigate } from "react-router-dom";
-import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
-import type { Status } from "../../../../types/list";
+import type {
+  feature_category,
+  recommendedActions,
+  Status,
+} from "../../../../types/list";
 import FilterTable from "./FilterTable";
 import { NoCgAddModal } from "../../../../components/modal/WsmenuModal";
+import type { workspace_member } from "../../../../types/workspace";
+import { statusLabels } from "../../../../constants/statecolor";
 
-export default function ListTable() {
+export default function ListTable({
+  categoryList,
+  clickCg,
+  clickFt,
+  name,
+  workspaceId,
+  participantList,
+  editingCategoryId,
+  editingFeatureId,
+  editingActionId,
+  categoryCompletableMap,
+
+  toggleTestCheckCg,
+  toggleTestCheckFt,
+  toggleTestCheckAc,
+  setName,
+  setEditingCategoryId,
+  setEditingFeatureId,
+  setEditingActionId,
+
+  handleCompleteClick,
+  cgToggleClick,
+  ftToggleClick,
+
+  updateAssignee,
+  updateStatus,
+  updateImportance,
+  updateStartDate,
+  updateEndDate,
+  handleAddCategory,
+  updateCategoryName,
+  handleAddFeature,
+  updateFeatureName,
+  handleAddAction,
+  handleAiActionDelete,
+  handleUpdateAIAction,
+  handleAddAIAction,
+  updateActionName,
+  aiList,
+
+  handleDeleteCategory,
+  handleDeleteFeature,
+  handleDeleteAction,
+}: any) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isFilter, setIsFilter] = useState<boolean>(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -25,56 +73,6 @@ export default function ListTable() {
     categoryId: number;
     featureId: number;
   } | null>(null);
-  const {
-    categoryList,
-    clickCg,
-    clickFt,
-    name,
-    workspaceId,
-    participantList,
-    editingCategoryId,
-    editingFeatureId,
-    editingActionId,
-    categoryCompletableMap,
-
-    toggleTestCheckCg,
-    toggleTestCheckFt,
-    toggleTestCheckAc,
-    setName,
-    setEditingCategoryId,
-    setEditingFeatureId,
-    setEditingActionId,
-
-    handleCompleteClick,
-    cgToggleClick,
-    ftToggleClick,
-
-    updateAssignee,
-    updateStatus,
-    updateImportance,
-    updateStartDate,
-    updateEndDate,
-    handleAddCategory,
-    updateCategoryName,
-    handleAddFeature,
-    updateFeatureName,
-    handleAddAction,
-    handleAiActionDelete,
-    handleUpdateAIAction,
-    handleAddAIAction,
-    updateActionName,
-    aiList,
-
-    handleDeleteCategory,
-    handleDeleteFeature,
-    handleDeleteAction,
-  } = useCategoryFeatureCategory();
-
-  const statusLabels: Record<Status, string> = {
-    BEFORE: "진행 전",
-    IN_PROGRESS: "진행 중",
-    DONE: "완료",
-  };
 
   const navigate = useNavigate();
 
@@ -172,7 +170,7 @@ export default function ListTable() {
               <div className="dropdown-wrapper">
                 {showCategory && (
                   <div className="dropdown-absolute">
-                    {categoryList.map((cg) => (
+                    {categoryList.map((cg: feature_category) => (
                       <div key={cg.featureCategoryId}>
                         <input
                           type="checkbox"
@@ -229,7 +227,7 @@ export default function ListTable() {
               <div className="dropdown-wrapper">
                 {showParticipant && (
                   <div className="dropdown-absolute">
-                    {participantList.map((user) => (
+                    {participantList.map((user: workspace_member) => (
                       <div key={user.memberId}>
                         <input
                           type="checkbox"
@@ -349,7 +347,7 @@ export default function ListTable() {
             </tr>
           </thead>
           <tbody>
-            {categoryList.map((cg, index) => {
+            {categoryList.map((cg: feature_category) => {
               const isCompleted = cg.state === true;
 
               return (
@@ -629,6 +627,7 @@ export default function ListTable() {
                                             openActionMenu.categoryId,
                                             openActionMenu.featureId
                                           );
+                                          setEditingActionId(0);
                                           setOpenActionMenu(null); // 메뉴 닫기
                                         }}
                                       >
@@ -839,6 +838,7 @@ export default function ListTable() {
                                 <td>
                                   <ImportanceCell
                                     value={ac.importance ?? 0}
+                                    disable={isCompleted}
                                     onChange={(newVal) => {
                                       if (isCompleted) return;
                                       // 상태 업데이트
@@ -870,76 +870,79 @@ export default function ListTable() {
                             ))}
                           {aiList?.featureId === ft.featureId &&
                             clickFt[ft.featureId] &&
-                            aiList.recommendedActions.map((ai, index) => (
-                              <tr key={ai.name} className="ac-row">
-                                <td className="list-name">
-                                  <div className="aclist-name">
-                                    <svg
-                                      className="aclist-icon"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      height="20px"
-                                      viewBox="0 -960 960 960"
-                                      width="20px"
-                                      fill="#FFF"
-                                    >
-                                      <path d="M336-240h288v-72H336v72Zm0-144h288v-72H336v72ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z" />
-                                    </svg>
-                                    <span title={ai.name}>✨{ai.name}</span>
-                                    <div>
-                                      <button
-                                        className="ailist-addbtn"
-                                        onClick={() =>
-                                          handleUpdateAIAction(
-                                            cg.featureCategoryId,
-                                            ft.featureId,
-                                            index
-                                          )
-                                        }
+                            aiList.recommendedActions.map(
+                              (ai: recommendedActions, index: number) => (
+                                <tr key={ai.name} className="ac-row">
+                                  <td className="list-name">
+                                    <div className="aclist-name">
+                                      <svg
+                                        className="aclist-icon"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        height="20px"
+                                        viewBox="0 -960 960 960"
+                                        width="20px"
+                                        fill="#FFF"
                                       >
-                                        확인
-                                      </button>
-                                      <button
-                                        className="ailist-deletebtn"
-                                        onClick={() =>
-                                          handleAiActionDelete(index)
-                                        }
-                                      >
-                                        취소
-                                      </button>
+                                        <path d="M336-240h288v-72H336v72Zm0-144h288v-72H336v72ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z" />
+                                      </svg>
+                                      <span title={ai.name}>✨{ai.name}</span>
+                                      <div>
+                                        <button
+                                          className="ailist-addbtn"
+                                          onClick={() =>
+                                            handleUpdateAIAction(
+                                              cg.featureCategoryId,
+                                              ft.featureId,
+                                              index
+                                            )
+                                          }
+                                        >
+                                          확인
+                                        </button>
+                                        <button
+                                          className="ailist-deletebtn"
+                                          onClick={() =>
+                                            handleAiActionDelete(index)
+                                          }
+                                        >
+                                          취소
+                                        </button>
+                                      </div>
                                     </div>
-                                  </div>
-                                </td>
-                                <td>
-                                  <DateSelectCell
-                                    value={ai.startDate ?? null}
-                                    disable={true}
-                                    onChange={() => {
-                                      return;
-                                    }}
-                                  />
-                                </td>
-                                <td>
-                                  <DateSelectCell
-                                    value={ai.endDate ?? null}
-                                    disable={true}
-                                    onChange={() => {
-                                      return;
-                                    }}
-                                  />
-                                </td>
-                                <td />
-                                <td />
-                                <td>
-                                  <ImportanceCell
-                                    value={ai.importance ?? 0}
-                                    onChange={() => {
-                                      return;
-                                    }}
-                                  />
-                                </td>
-                                <td />
-                              </tr>
-                            ))}
+                                  </td>
+                                  <td>
+                                    <DateSelectCell
+                                      value={ai.startDate ?? null}
+                                      disable={true}
+                                      onChange={() => {
+                                        return;
+                                      }}
+                                    />
+                                  </td>
+                                  <td>
+                                    <DateSelectCell
+                                      value={ai.endDate ?? null}
+                                      disable={true}
+                                      onChange={() => {
+                                        return;
+                                      }}
+                                    />
+                                  </td>
+                                  <td />
+                                  <td />
+                                  <td>
+                                    <ImportanceCell
+                                      value={ai.importance ?? 0}
+                                      disable={true}
+                                      onChange={() => {
+                                        return;
+                                      }}
+                                    />
+                                  </td>
+                                  <td />
+                                </tr>
+                              )
+                            )}
                         </React.Fragment>
                       );
                     })}

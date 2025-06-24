@@ -11,5 +11,5 @@ export interface setproject {
   };
 }
 export interface getproject extends setproject {
-  projectInfold: number;
+  projectInfoId: number;
 }

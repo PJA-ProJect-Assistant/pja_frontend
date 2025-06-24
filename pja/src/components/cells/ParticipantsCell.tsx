@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Members } from "../../constants/userconstants";
 import "./ParticipantsCell.css";
 import { useCategoryFeatureCategory } from "../../hooks/useCategoryFeatureAction";
 
@@ -82,6 +81,9 @@ export const ParticipantsCell = ({ value = [], onChange, disable }: Props) => {
       <div
         className="participants-display"
         onClick={() => !disable && setIsEditing(true)}
+        style={{
+          cursor: disable ? 'default' : 'pointer'
+        }}
       >
         <div className="selected-partinames">
           {value.map((id) => {

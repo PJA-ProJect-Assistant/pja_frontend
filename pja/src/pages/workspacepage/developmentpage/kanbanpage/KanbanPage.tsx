@@ -1,28 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
 import type { Status } from "../../../../types/list";
+import { statusLabels, statusColors } from "../../../../constants/statecolor";
 
 import "./KanbanPage.css";
 export default function KanbanPage() {
   const navigate = useNavigate();
   const { categoryList, workspaceId } = useCategoryFeatureCategory();
 
-  const statusLabels: Record<Status, string> = {
-    BEFORE: "진행 전",
-    IN_PROGRESS: "진행 중",
-    DONE: "완료",
-  };
-
-  const statusColors: Record<Status, string> = {
-    BEFORE: "#d9d9d6",
-    IN_PROGRESS: "#fec300",
-    DONE: "#fe5000",
-  };
-
   const statusBgColors: Record<Status, string> = {
     BEFORE: "rgba(217, 217, 214, 0.2)",
     IN_PROGRESS: "rgba(254, 195, 0, 0.2)",
     DONE: "rgba(254, 80, 0, 0.2)",
+    PENDING: "rgba(80, 181, 255, 0.2)",
+    DELETE: "rgba(255, 77, 79, 0.2)",
   };
 
   // ✅ 남은 날짜 계산 함수
@@ -110,16 +101,18 @@ export default function KanbanPage() {
 
   return (
     <div className="kanban-board">
-      {(["BEFORE", "IN_PROGRESS", "DONE"] as Status[]).map((statusKey) => (
-        <div
-          className="kanban-column"
-          key={statusKey}
-          style={{ backgroundColor: statusBgColors[statusKey] }}
-        >
-          <div className="kanban-column-title">{statusLabels[statusKey]}</div>
-          {renderKanbanCards(statusKey)}
-        </div>
-      ))}
+      {(["BEFORE", "IN_PROGRESS", "DONE", "PENDING", "DELETE"] as Status[]).map(
+        (statusKey) => (
+          <div
+            className="kanban-column"
+            key={statusKey}
+            style={{ backgroundColor: statusBgColors[statusKey] }}
+          >
+            <div className="kanban-column-title">{statusLabels[statusKey]}</div>
+            {renderKanbanCards(statusKey)}
+          </div>
+        )
+      )}
     </div>
   );
 }

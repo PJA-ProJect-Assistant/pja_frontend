@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import type { IsClose } from "../../types/common";
-import "./WsSideBar.css";
+import "./WsSidebar.css";
 import git_icon from "../../assets/git_icon.png";
 import { WSSidebarHeader } from "../header/WSSidebarHeader";
 import ProgressStep from "./ProgressStep";
@@ -12,7 +12,6 @@ import { leaveWorkspace, getGitInfo } from "../../services/sideApi";
 import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
-import InviteModal from "../sidebarcompo/InviteModal";
 import type { Member, MemberRole } from "../../types/invite";
 
 export default function WsSidebar({ onClose }: IsClose) {
@@ -115,10 +114,6 @@ export default function WsSidebar({ onClose }: IsClose) {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  //const handleConfirmLeave = () => {
-  //  handleCloseModal();
-  //};
 
   //팀원 초대 모달을 여는 함수
   const handleInviteClick = () => {

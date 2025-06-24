@@ -13,7 +13,6 @@ interface LogoutModalProps {
 
 const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleOverlayClick = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget && !isLoading) {
@@ -23,7 +22,6 @@ const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
 
   const handleLogout = async () => {
     setIsLoading(true);
-    setError(null);
 
     try {
       await logoutUser();
@@ -36,7 +34,6 @@ const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
       const errorMessage =
         error instanceof Error ? error.message : "로그아웃에 실패했습니다.";
       console.error("❌ 로그아웃 실패:", errorMessage);
-      setError(errorMessage);
 
       // 401 오류인 경우 토큰이 이미 만료되었으므로 강제 로그아웃
       if (errorMessage.includes("인증이 만료")) {

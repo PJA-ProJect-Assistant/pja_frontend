@@ -10,7 +10,6 @@
     height: 13px;
     border-radius: 50%;
     background-color: #d9d9d6;
-    cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 }
 

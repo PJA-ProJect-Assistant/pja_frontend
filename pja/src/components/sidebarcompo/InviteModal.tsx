@@ -4,11 +4,6 @@ import { inviteMembersToWorkspace } from "../../services/inviteApi";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import type { InviteRequest } from "../../types/invite";
-interface InviteApiResponse {
-  status: "success" | "fail" | "error";
-  message: string;
-  data?: any;
-}
 interface InviteModalProps {
   onClose: () => void;
 }

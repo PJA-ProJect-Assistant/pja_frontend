@@ -1,4 +1,3 @@
-import React from "react";
 import "./NotifyTabComp.css";
 
 import signbellIcon from "../../assets/img/signbell.png";

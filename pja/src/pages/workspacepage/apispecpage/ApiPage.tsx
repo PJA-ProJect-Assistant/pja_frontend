@@ -23,7 +23,6 @@ import {
   getApisByWorkspace,
 } from "../../../services/apiApi";
 import { progressworkspace } from "../../../services/workspaceApi";
-import type { workspace } from "../../../types/workspace";
 
 // --- (타입 정의 및 변환 함수들은 기존과 동일) ---
 type ApiSpecification = {
@@ -339,8 +338,7 @@ const ApiPage = () => {
   // ... 기타 핸들러 함수들
   const handleDeleteRow = async (workspaceId: number, apiId: number) => {
     // 워크스페이스 ID 확인
-    const currentWorkspaceId = selectedWS?.workspaceId;
-    if (!currentWorkspaceId) {
+    if (!workspaceId) {
       alert("워크스페이스 정보가 없습니다. 페이지를 새로고침 해주세요.");
       return;
     }
@@ -356,7 +354,7 @@ const ApiPage = () => {
 
     try {
       // 서버에 삭제 요청 보내기
-      await deleteApi(currentWorkspaceId, apiId);
+      await deleteApi(workspaceId, apiId);
 
       // 요청 성공 시, 프론트엔드 상태에서도 해당 행 제거
       setRows((prevRows) => prevRows.filter((row) => row.id !== apiId));
@@ -997,9 +995,3 @@ const ApiPage = () => {
 };
 
 export default ApiPage;
-function dispatch(arg0: {
-  payload: workspace;
-  type: "workspace/setSelectedWS";
-}) {
-  throw new Error("Function not implemented.");
-}

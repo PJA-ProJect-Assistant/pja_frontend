@@ -11,7 +11,10 @@ import {
   changePassword,
   changeName,
 } from "../../services/userApi";
+
 import type { user } from "../../types/user";
+
+
 
 const AccountSettingPage: React.FC = () => {
   const [initialName, setInitialName] = useState<string>("");
@@ -24,14 +27,9 @@ const AccountSettingPage: React.FC = () => {
   //프로필 변경
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  //비밀번호 중복 확인
-  const [isPasswordChecked, setIsPasswordChecked] = useState<boolean>(false);
-
   //로딩 및 에러 상태
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-
-  const [userInfo, setUserInfo] = useState<user | null>(null);
 
   //비밀번호 유효성 검사 상태
   const [passwordValidation, setPasswordValidation] = useState<{

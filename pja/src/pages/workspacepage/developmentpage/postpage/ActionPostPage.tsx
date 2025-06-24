@@ -1,9 +1,8 @@
 import { AnimatePresence } from "framer-motion";
 import WsSidebar from "../../../../components/sidebar/WsSidebar";
-import { actions } from "../../../../constants/listconstant";
 import type { action } from "../../../../types/list";
 import "./ActionPostPage.css";
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PostHeader } from "../../../../components/header/PostHeader";
 import imageUpIcon from "../../../../assets/img/imageUp.png";
@@ -34,7 +33,7 @@ interface FileInfo {
 export default function ActionPostPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
-  const [selectAction, setSelectAction] = useState<action>();
+  // const [selectAction, setSelectAction] = useState<action>();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -42,13 +41,19 @@ export default function ActionPostPage() {
   const [actionName, setActionName] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [textContent, setTextContent] = useState<string>("");
+
   const [originalTextContent, setOriginalTextContent] = useState<string>("");
   const [fileList, setFileList] = useState<FileInfo[]>([]);
+
+  
+  
+
 
   const [currentComment, setCurrentComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingCommentText, setEditingCommentText] = useState<string>("");
+
 
   //UI/ 편집 관련 상태
   const [isLoading, setIsLoading] = useState(true);
@@ -119,6 +124,11 @@ export default function ActionPostPage() {
     setRemovedImagePaths((prev) => [...prev, imageToRemove.filePath]);
   };
 
+  
+  
+  
+
+
   const handleFileSelect = (files: FileList | null) => {
     if (files) {
       const imageFiles = Array.from(files).filter((file) =>
@@ -165,10 +175,15 @@ export default function ActionPostPage() {
     if (!isEditing) {
       // 수정 모드 시작
       setIsEditing(true);
+
       setOriginalTextContent(textContent);
       // 수정 시작 시, 새로 추가되거나 삭제된 이미지 목록을 초기화
       setSelectedImages([]);
       setRemovedImagePaths([]);
+
+      
+      
+
     } else {
       const isContentUnchanged = originalTextContent === textContent;
       const noNewImages = selectedImages.length === 0;
@@ -271,10 +286,7 @@ export default function ActionPostPage() {
     setEditingCommentText(comment.content);
   };
 
-  const handleCancelEdit = () => {
-    setEditingCommentId(null);
-    setEditingCommentText("");
-  };
+
 
   const handleSaveComment = async (commentId: number) => {
     if (editingCommentText.trim() === "") {
@@ -413,7 +425,11 @@ export default function ActionPostPage() {
       )}
       <div className="actionpost-container">
         <PostHeader />
+
         <h2>{actionName}</h2>
+
+       
+
         <div className="actionpost-wrapper">
           {isEditing ? (
             <textarea

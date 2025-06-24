@@ -64,6 +64,7 @@
 }
 
 .table-node-header {
+  position: relative;
   background: #00205b;
   color: white;
   font-weight: 700;
@@ -118,14 +119,17 @@
   width: 145px;
   padding-left: 1px;
 }
+
 /* 안의 span을 ellipsis 처리 */
 .table-node-field p {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1; /* 남은 공간을 span이 차지하게 */
+  flex: 1;
+  /* 남은 공간을 span이 차지하게 */
   margin: 0;
 }
+
 .field-name.text-foreign {
   color: #f97316;
 }
@@ -135,10 +139,12 @@
   font-size: var(--font-size-base);
   width: 120px;
 }
+
 .nullable-type {
   font-size: var(--font-size-base);
   width: 80px;
 }
+
 .erd-edit-modal {
   position: fixed;
   right: 1rem;
@@ -149,16 +155,22 @@
   padding: 1rem;
   z-index: 100;
 }
+
 .editable-table-node {
-  min-width: 400px;
-  border: 2px solid #00205b;
-  background: white;
-  border-radius: 8px;
+  width: 540px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .table-name-input {
   background: #00205b;
   color: white;
+  font-weight: 700;
+  font-size: var(--font-size-2xl);
   border: none;
   padding: 10px;
   width: 100%;
@@ -183,14 +195,14 @@
   border: 1px solid #d1d5db;
   padding: 4px 8px;
   border-radius: 4px;
-  min-width: 100px;
+  width: 150px;
 }
 
-.field-type-select {
+.field-type-input {
   border: 1px solid #d1d5db;
   padding: 4px 8px;
   border-radius: 4px;
-  min-width: 120px;
+  width: 100px;
 }
 
 .nullable-label {
@@ -206,20 +218,47 @@
 }
 
 .add-field-btn {
-  background: #f3f4f6;
-  border: 2px dashed #d1d5db;
+  background-color: #f3f4f6;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
   color: #6b7280;
+  border: none;
 }
 
 .add-field-btn:hover {
   background: #e5e7eb;
-  border-color: #9ca3af;
 }
 
 .erd-edit-container {
   width: 100%;
-  position: relative;
+  min-width: 680px;
+  height: 100%;
+}
+
+.delete-field-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px;
+  background-color: #f3f4f6;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-field-btn:hover {
+  background: #e5e7eb;
+}
+
+.delete-table-btn {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 30%;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }

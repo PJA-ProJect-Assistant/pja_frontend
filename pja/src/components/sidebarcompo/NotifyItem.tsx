@@ -1,4 +1,3 @@
-import React from "react";
 import "./NotifyTabComp.css";
 import trashIcon from "../../assets/img/trash.png";
 

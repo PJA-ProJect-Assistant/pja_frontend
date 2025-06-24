@@ -1,13 +1,11 @@
 import api from "../lib/axios";
-import type { ApiResponse } from "../types/common";
 
 // 멤버 삭제
-export const deleteMember = async (
-    workspaceId: number,
-    memberId: number
-) => {
+export const deleteMember = async (workspaceId: number, memberId: number) => {
   try {
-    const response = await api.delete(`workspaces/${workspaceId}/members/${memberId}`);
+    const response = await api.delete(
+      `workspaces/${workspaceId}/members/${memberId}`
+    );
     return response.data;
   } catch (error: any) {
     console.error("멤버 삭제 실패", error);

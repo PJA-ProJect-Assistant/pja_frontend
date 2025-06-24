@@ -33,10 +33,10 @@ export default function DateSelectCell({
         style={{
           background: "none",
           border: "none",
-          cursor: "pointer",
           display: "flex",
           alignItems: "center",
           gap: "4px",
+          cursor: disable ? 'default' : 'pointer'
         }}
       >
         {parsedDate ? (
@@ -61,20 +61,22 @@ export default function DateSelectCell({
         )}
       </button>
 
-      {isOpen && (
-        <div style={{ position: "absolute", zIndex: 10 }}>
-          <DatePicker
-            selected={value}
-            onChange={(date) => {
-              onChange(date);
-              setIsOpen(false);
-            }}
-            locale={ko}
-            dateFormat="yyyy.MM.dd"
-            inline
-          />
-        </div>
-      )}
-    </div>
+      {
+        isOpen && (
+          <div style={{ position: "absolute", zIndex: 10 }}>
+            <DatePicker
+              selected={value}
+              onChange={(date) => {
+                onChange(date);
+                setIsOpen(false);
+              }}
+              locale={ko}
+              dateFormat="yyyy.MM.dd"
+              inline
+            />
+          </div>
+        )
+      }
+    </div >
   );
 }
