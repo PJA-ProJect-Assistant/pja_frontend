@@ -97,7 +97,7 @@ export default function ERDEdit({ onClose }: IsClose) {
     };
 
     return () => window.removeEventListener("resize", handleResize);
-  }, [nodes, fitView]);
+  }, []);
 
   // 필드 변경 핸들러
   const handleFieldChange = async (
