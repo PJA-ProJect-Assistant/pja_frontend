@@ -45,13 +45,13 @@ const AcceptInvitePage = () => {
       }
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
-        // 로그인 페이지로 보내고, 로그인 후 돌아올 현재 경로를 state로 전달할 수 있습니다.
-        setError(
-          "로그인이 필요합니다. 초대받은 이메일로 로그인 후 다시 시도해주세요."
-        );
+        const redirectPath = window.location.pathname + window.location.search;
+        console.log("=== 초대 페이지에서 로그인으로 이동 ===");
+        console.log("현재 경로:", redirectPath);
+
         setLoading(false);
         navigate("/login", {
-          state: { from: window.location.pathname + window.location.search },
+          state: { from: redirectPath },
         });
         return;
       }
