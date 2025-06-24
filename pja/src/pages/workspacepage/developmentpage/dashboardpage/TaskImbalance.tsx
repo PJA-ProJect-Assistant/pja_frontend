@@ -31,22 +31,7 @@ export function TaskImbalance() {
   const getimblance = async () => {
     try {
       const response = await getTaskImbalance(selectedWS?.workspaceId ?? 0);
-      const data: taskimbalance[] = [
-        {
-          memberId: 14,
-          username: "조유민",
-          state: "DONE",
-          importance: 3,
-          taskCount: 5,
-        },
-        {
-          memberId: 14,
-          username: "조유민",
-          state: "IN_PROGRESS",
-          importance: 3,
-          taskCount: 3,
-        },
-      ];
+      const data = response.data ?? [];
       console.log("data :", data);
 
       // 전체 데이터 저장
