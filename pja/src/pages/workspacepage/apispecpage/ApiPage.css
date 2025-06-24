@@ -31,6 +31,7 @@
 .api-table td {
   border: 1px solid #00205b;
   text-align: center;
+  padding: 13px 5px;
 }
 .api-table-title {
   font-weight: bold;
