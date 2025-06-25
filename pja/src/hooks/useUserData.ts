@@ -10,12 +10,10 @@ export function useUserData() {
   const [userData, setUserData] = useState<user>();
   const [myWSData, setMyWSData] = useState<workspace>();
 
-  // ✅ useEffect 및 return보다 위에서 정의해야 함
   const fetchUser = async () => {
     try {
       const response = await getuser();
       setUserData(response.data);
-      //여기에 사용자 id 반환하는거 있어야 할듯,,?
     } catch (error) {
       console.error("❌ 유저 정보 불러오기 실패:", error);
     }
