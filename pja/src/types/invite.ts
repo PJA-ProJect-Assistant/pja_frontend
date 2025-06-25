@@ -21,5 +21,5 @@ export interface Member {
   name: string;
   email: string;
   profile: string | null;
-  role: MemberRole;
+  workspaceRole: MemberRole;
 }

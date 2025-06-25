@@ -1,21 +1,20 @@
 import "./MemberTabComp.css";
 import InviteModal from "./InviteModal";
 import type { Member, MemberRole } from "../../types/invite";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { getMemberList, deleteMember, getMemberRole } from "../../services/workspaceMemberApi";
+import type { RootState } from "../../store/store";
 
 interface MemberTabCompProps {
-  members: Member[];
-  currentUserRole: MemberRole;
   isInviteModalOpen: boolean;
   onCloseInviteModal: () => void;
-  //  역할 변경을 처리할  prop
   onRoleChange: (memberId: string, newRole: MemberRole) => void;
-  onDelete: (memberId: string) => void;
 }
 
 interface MemberListItemProps {
   member: Member;
   currentUserRole: MemberRole;
-  // 역할 변경을 처리할  prop
   onRoleChange: (memberId: string, newRole: MemberRole) => void;
   onDelete: (memberId: string) => void;
 }
@@ -26,7 +25,9 @@ const MemberListItem = ({
   onRoleChange,
   onDelete,
 }: MemberListItemProps) => {
+  console.log("currentUserRole :", currentUserRole);
   const canManage = currentUserRole === "OWNER";
+  console.log("멤버 역할은?? ", member.workspaceRole)
   return (
     <div className="member-tab-box">
       <div className="member-info-container">
@@ -40,12 +41,12 @@ const MemberListItem = ({
         </div>
       </div>
       <div className="member-action-container">
-        {/*  역할 변경 드롭다운 추가 */}
-        {canManage && (
+        {canManage ? (
+        <div className="member-action-container">
           <div className="role-select-wrapper">
             <select
               className="role-select"
-              value={member.role}
+              value={member.workspaceRole}
               onChange={(e) =>
                 onRoleChange(member.memberId, e.target.value as MemberRole)
               }
@@ -55,78 +56,83 @@ const MemberListItem = ({
               <option value="GUEST">GUEST</option>
             </select>
           </div>
-        )}
 
-        {/* '삭제' 버튼은 항상 렌더링합니다. */}
-        <button
-          className="member-delete-btn"
-          onClick={() => onDelete(member.memberId)}
-        >
-          삭제
-        </button>
+          <button
+            className="member-delete-btn"
+            onClick={() => onDelete(member.memberId)}
+          >
+            삭제
+          </button>
+        </div>
+      ) : (
+
+        <div className="member-role-text">{member.workspaceRole}</div>
+      )}
+      
       </div>
     </div>
   );
 };
 
 const MemberTabComp = ({
-  members,
-  currentUserRole,
   isInviteModalOpen,
   onCloseInviteModal,
-  onRoleChange,
-  onDelete,
+  onRoleChange
 }: MemberTabCompProps) => {
-// <<<<<<< HEAD
-// =======
-//   const selectedWS = useSelector(
-//     (state: RootState) => state.workspace.selectedWS
-//   );
-//   const workspaceId = selectedWS?.workspaceId;
+  const selectedWS = useSelector((state: RootState) => state.workspace.selectedWS);
+  const workspaceId = selectedWS?.workspaceId;
+  const [members, setMembers] = useState<Member[]>([]);
+  const [currentUserRole, setCurrentUserRole] = useState<MemberRole>("GUEST"); // 기본값: GUEST
 
-//   const [members, setMembers] = useState<Member[]>([]);
+  const fetchMembers = async () => {
+    if (!workspaceId) return;
+    try {
+      const res = await getMemberList(workspaceId);
+      if (res.status === "success") {
+        setMembers(res.data);
+      }
+    } catch (err) {
+      console.error("멤버 불러오기 실패", err);
+    }
+  };
 
-//   useEffect(() => {
-//     const fetchMembers = async() => {
-//       try {
-//             const accessToken = localStorage.getItem("accessToken");
-//             const headers = {
-//               Authorization: `Bearer ${accessToken}`
-//             };
-//             const response = await api.get(
-//               `/workspaces/${workspaceId}/members`,
-//               { headers }
-//             );
+    const fetchRole = async () => {
+    if (!workspaceId) return;
+    try {
+      const res = await getMemberRole(workspaceId);
+      if (res.status === "success") {
+        setCurrentUserRole(res.data.role);
+      }
+    } catch (err) {
+      console.error("멤버 역할 불러오기 실패", err);
+    }
+  };
 
-//             if(response.data.status === "success") {
-//               setMembers(response.data.data);
-//             }
-//           } catch (error: any) {
-//             if (error.response) {
-//               console.error("에러:", error.response.data.message);
-//             } else {
-//               console.error("서버 응답 실패");
-//             }
-//           }
-//         };
+  useEffect(() => {
+    fetchMembers();
+    fetchRole();
+  }, [workspaceId]);
 
-//         fetchMembers();
-//   },[workspaceId]);
+    const handleDelete = async (memberId: string) => {
+    if (!workspaceId) return;
+    try {
+      await deleteMember(workspaceId, Number(memberId));
+      await fetchMembers(); // 삭제 후 다시 불러오기
+    } catch (err) {
+      console.error("멤버 삭제 실패", err);
+    }
+  };
 
-
-// >>>>>>> workspace-notification-api
   return (
     <>
       {isInviteModalOpen && <InviteModal onClose={onCloseInviteModal} />}
-
-      {/* 멤버 목록을 .map()으로 순회하며 위에서 만든 MemberListItem을 렌더링합니다. */}
       {members.map((member) => (
         <MemberListItem
           key={member.memberId}
           member={member}
           currentUserRole={currentUserRole}
           onRoleChange={onRoleChange}
-          onDelete={onDelete}
+          onDelete={handleDelete}
         />
       ))}
     </>
