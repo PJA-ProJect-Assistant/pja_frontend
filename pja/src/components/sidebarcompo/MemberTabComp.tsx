@@ -3,7 +3,11 @@ import InviteModal from "./InviteModal";
 import type { Member, MemberRole } from "../../types/invite";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getMemberList, deleteMember, getMemberRole } from "../../services/workspaceMemberApi";
+import {
+  getMemberList,
+  deleteMember,
+  getMemberRole,
+} from "../../services/workspaceMemberApi";
 import type { RootState } from "../../store/store";
 
 interface MemberTabCompProps {
@@ -27,7 +31,7 @@ const MemberListItem = ({
 }: MemberListItemProps) => {
   console.log("currentUserRole :", currentUserRole);
   const canManage = currentUserRole === "OWNER";
-  console.log("멤버 역할은?? ", member.workspaceRole)
+  console.log("멤버 역할은?? ", member.workspaceRole);
   return (
     <div className="member-tab-box">
       <div className="member-info-container">
@@ -42,33 +46,31 @@ const MemberListItem = ({
       </div>
       <div className="member-action-container">
         {canManage ? (
-        <div className="member-action-container">
-          <div className="role-select-wrapper">
-            <select
-              className="role-select"
-              value={member.workspaceRole}
-              onChange={(e) =>
-                onRoleChange(member.memberId, e.target.value as MemberRole)
-              }
+          <div className="member-action-container">
+            <div className="role-select-wrapper">
+              <select
+                className="role-select"
+                value={member.workspaceRole}
+                onChange={(e) =>
+                  onRoleChange(member.memberId, e.target.value as MemberRole)
+                }
+              >
+                <option value="OWNER">OWNER</option>
+                <option value="MEMBER">MEMBER</option>
+                <option value="GUEST">GUEST</option>
+              </select>
+            </div>
+
+            <button
+              className="member-delete-btn"
+              onClick={() => onDelete(member.memberId)}
             >
-              <option value="OWNER">OWNER</option>
-              <option value="MEMBER">MEMBER</option>
-              <option value="GUEST">GUEST</option>
-            </select>
+              삭제
+            </button>
           </div>
-
-          <button
-            className="member-delete-btn"
-            onClick={() => onDelete(member.memberId)}
-          >
-            삭제
-          </button>
-        </div>
-      ) : (
-
-        <div className="member-role-text">{member.workspaceRole}</div>
-      )}
-      
+        ) : (
+          <div className="member-role-text">{member.workspaceRole}</div>
+        )}
       </div>
     </div>
   );
@@ -77,9 +79,11 @@ const MemberListItem = ({
 const MemberTabComp = ({
   isInviteModalOpen,
   onCloseInviteModal,
-  onRoleChange
+  onRoleChange,
 }: MemberTabCompProps) => {
-  const selectedWS = useSelector((state: RootState) => state.workspace.selectedWS);
+  const selectedWS = useSelector(
+    (state: RootState) => state.workspace.selectedWS
+  );
   const workspaceId = selectedWS?.workspaceId;
   const [members, setMembers] = useState<Member[]>([]);
   const [currentUserRole, setCurrentUserRole] = useState<MemberRole>("GUEST"); // 기본값: GUEST
@@ -96,7 +100,7 @@ const MemberTabComp = ({
     }
   };
 
-    const fetchRole = async () => {
+  const fetchRole = async () => {
     if (!workspaceId) return;
     try {
       const res = await getMemberRole(workspaceId);
@@ -113,7 +117,7 @@ const MemberTabComp = ({
     fetchRole();
   }, [workspaceId]);
 
-    const handleDelete = async (memberId: string) => {
+  const handleDelete = async (memberId: string) => {
     if (!workspaceId) return;
     try {
       await deleteMember(workspaceId, Number(memberId));
