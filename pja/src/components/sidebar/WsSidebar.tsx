@@ -261,7 +261,6 @@ export default function WsSidebar({ onClose }: IsClose) {
               </div>
               <div className="line"></div>
               <div className="member-list-scroll-container">
-                // MemberTabComp를 한 번만 호출하고 필요한 모든 props 전달
                 <MemberTabComp
                   isInviteModalOpen={isInviteModalOpen} // 모달 상태 전달
                   onCloseInviteModal={handleCloseInviteModal} // 모달 닫기 함수 전달
