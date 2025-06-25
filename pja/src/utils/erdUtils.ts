@@ -21,7 +21,7 @@ export function generateEdgesFromData(relations: ERDRelation[]): Edge[] {
 
 export function generateNodesFromData(tables: ERDTable[]): Node[] {
   const gapX = 600;
-  const baseGapY = 100; // 기본 간격 (필드가 1개일 때)
+  const baseGapY = 150; // 기본 간격 (필드가 1개일 때)
   const fieldHeight = 40; // 필드 1개당 높이
 
   let currentYRow = [0, 0]; // 두 컬럼 각각의 현재 Y 위치
@@ -52,7 +52,7 @@ export function generateNodesFromData(tables: ERDTable[]): Node[] {
 
 // 수정페이지 노드 생성 함수
 export function generateEdittableNodes(tables: ERDTable[]): Node[] {
-  const gapX = 600;
+  const gapX = 650;
   const baseGapY = 200; // 기본 간격 (필드가 1개일 때)
   const fieldHeight = 40; // 필드 1개당 높이
 
@@ -87,7 +87,6 @@ export function generateEdittableRelations(relations: ERDRelation[]): Edge[] {
     target: relation.target,
     sourceHandle: relation.sourceHandle,
     targetHandle: relation.targetHandle,
-    // type: "smoothstep",
     animated: true,
     style: { stroke: "#00205B", strokeWidth: 2 },
     label: String(relation.label || "1:N"),
