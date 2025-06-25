@@ -360,8 +360,6 @@ const ApiPage = () => {
 
       // 요청 성공 시, 프론트엔드 상태에서도 해당 행 제거
       setRows((prevRows) => prevRows.filter((row) => row.id !== apiId));
-
-      alert("API가 성공적으로 삭제되었습니다.");
     } catch (error) {
       console.error("API 삭제 실패:", error);
       if (error instanceof Error) {
@@ -416,7 +414,6 @@ const ApiPage = () => {
         prevRows.map((row) => (row.id === apiId ? updatedRow : row))
       );
 
-      alert("API가 성공적으로 수정되었습니다.");
       setEditingRowId(null); // 수정 모드 종료
       setOpenRowId(null); // 아코디언 닫기
     } catch (error) {
@@ -585,8 +582,9 @@ const ApiPage = () => {
                     {/* --- 아코디언 내용 표시 --- */}
                     {openRowId === row.id && (
                       <tr className="accordion-content">
-                        {/* --- 열이 하나 추가되었으므로 colSpan을 6으로 변경 --- */}
-                        <td colSpan={6} className="api-accordion-cell">
+                        <td className="api-table-content no-border"></td>
+                        <td colSpan={4} className="api-accordion-cell">
+                          <td className="api-table-content no-border"></td>
                           <div className="accordion-box-wrapper">
                             {/* Request 섹션 */}
                             <div className="accordion-box">
@@ -765,7 +763,7 @@ const ApiPage = () => {
                               ) : (
                                 <pre
                                   style={{
-                                    whiteSpace: "nowrap",
+                                    whiteSpace: "pre-wrap",
                                     fontSize: "13px",
                                     maxHeight: "200px",
                                     overflow: "auto",
@@ -799,9 +797,11 @@ const ApiPage = () => {
                                       padding: "5px 10px",
                                       borderRadius: "3px",
                                       cursor: "pointer",
-                                      fontSize: "15px",
+                                      fontSize: "12px",
                                     }}
-                                  ></button>
+                                  >
+                                    + 필드 추가
+                                  </button>
                                 )}
                               </div>
 
@@ -813,7 +813,7 @@ const ApiPage = () => {
                                       style={{
                                         marginBottom: "10px",
                                         padding: "10px",
-                                        border: "1px solid #ddd",
+                                        border: "none",
                                         borderRadius: "4px",
                                       }}
                                     >
@@ -830,9 +830,7 @@ const ApiPage = () => {
                                             fontWeight: "bold",
                                             fontSize: "14px",
                                           }}
-                                        >
-                                          응답 {index + 1}
-                                        </span>
+                                        ></span>
                                         <button
                                           onClick={() =>
                                             removeResponseField(row.id, index)
@@ -862,8 +860,8 @@ const ApiPage = () => {
                                           <label
                                             style={{
                                               display: "block",
-                                              fontSize: "20px",
-                                              marginBottom: "3px",
+                                              fontSize: "15px",
+                                              marginBottom: "5px",
                                             }}
                                           >
                                             Status Code:
@@ -892,8 +890,8 @@ const ApiPage = () => {
                                           <label
                                             style={{
                                               display: "block",
-                                              fontSize: "20px",
-                                              marginBottom: "3px",
+                                              fontSize: "15px",
+                                              marginBottom: "5px",
                                             }}
                                           >
                                             Message:
@@ -930,6 +928,7 @@ const ApiPage = () => {
                                           Data (JSON):
                                         </label>
                                         <textarea
+                                          className="api-json-input"
                                           value={
                                             typeof res.data === "string"
                                               ? res.data
@@ -946,14 +945,6 @@ const ApiPage = () => {
                                               e.target.value
                                             )
                                           }
-                                          style={{
-                                            width: "100%",
-                                            height: "100px",
-                                            padding: "4px",
-                                            fontSize: "12px",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "3px",
-                                          }}
                                           placeholder="JSON 형식으로 입력하세요"
                                         />
                                       </div>
@@ -965,7 +956,6 @@ const ApiPage = () => {
                                   style={{
                                     fontSize: "12px",
                                     maxHeight: "200px",
-                                    overflow: "auto",
                                   }}
                                 >
                                   {JSON.stringify(row.response, null)}
