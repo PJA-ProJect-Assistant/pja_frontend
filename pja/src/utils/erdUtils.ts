@@ -21,11 +21,23 @@ export function generateEdgesFromData(relations: ERDRelation[]): Edge[] {
 
 export function generateNodesFromData(tables: ERDTable[]): Node[] {
   const gapX = 600;
-  const gapY = 300;
+  const baseGapY = 100; // 기본 간격 (필드가 1개일 때)
+  const fieldHeight = 40; // 필드 1개당 높이
+
+  let currentYRow = [0, 0]; // 두 컬럼 각각의 현재 Y 위치
 
   return tables.map((table, index) => {
-    const col = index % 2;
-    const row = Math.floor(index / 2);
+    const col = index % 2; // 2열 배치
+    const fieldsCount = table.fields?.length || 0;
+    const tableHeight = baseGapY + fieldsCount * fieldHeight;
+
+    const position = {
+      x: col * gapX,
+      y: currentYRow[col],
+    };
+
+    currentYRow[col] += tableHeight;
+
     return {
       id: table.id,
       type: "tableNode",
@@ -33,28 +45,36 @@ export function generateNodesFromData(tables: ERDTable[]): Node[] {
         tableName: table.tableName,
         fields: table.fields,
       },
-      position: { x: col * gapX, y: row * gapY },
+      position,
     };
   });
 }
 
 // 수정페이지 노드 생성 함수
 export function generateEdittableNodes(tables: ERDTable[]): Node[] {
-  const gapX = 650;
-  const gapY = 500;
-  const maxCols = 2; // 한 줄에 최대 2개까지
+  const gapX = 600;
+  const baseGapY = 200; // 기본 간격 (필드가 1개일 때)
+  const fieldHeight = 40; // 필드 1개당 높이
+
+  let currentYRow = [0, 0]; // 두 컬럼 각각의 현재 Y 위치
 
   return tables.map((table, index) => {
-    const col = index % maxCols;
-    const row = Math.floor(index / maxCols);
-    const x = col * gapX + Math.random() * 30;
-    const y = row * gapY + Math.random() * 30;
+    const col = index % 2; // 2열 배치
+    const fieldsCount = table.fields?.length || 0;
+    const tableHeight = baseGapY + fieldsCount * fieldHeight;
+
+    const position = {
+      x: col * gapX,
+      y: currentYRow[col],
+    };
+
+    currentYRow[col] += tableHeight;
 
     return {
       id: table.id,
       type: "editableTableNode",
-      position: { x, y },
       data: table,
+      position,
     };
   });
 }
