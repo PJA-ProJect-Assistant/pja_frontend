@@ -65,7 +65,7 @@ export const getMyAction = async (
 //담당자 불균형 분석 그래프 조회
 export const getTaskImbalance = async (
   workspaceId: number
-): Promise<ApiResponse<taskimbalance[]>> => {
+): Promise<ApiResponse<taskimbalance>> => {
   try {
     console.log("불균형 그래프 가져오기 api");
     const response = await api.get(`/workspaces/${workspaceId}/task-imbalance`);
