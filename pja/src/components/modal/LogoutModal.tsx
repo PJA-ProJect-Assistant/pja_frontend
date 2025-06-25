@@ -5,7 +5,6 @@ import { logoutUser } from "../../services/authApi";
 import "./LogoutModal.css";
 import { store } from "../../store/store";
 import { clearAccessToken } from "../../store/authSlice";
-import { clearUserId } from "../../store/userSlice";
 
 interface LogoutModalProps {
   onConfirm: () => void;
@@ -29,7 +28,6 @@ const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
 
       // 로그아웃 성공 시 모든 인증 관련 데이터 제거
       store.dispatch(clearAccessToken());
-      store.dispatch(clearUserId());
 
       onConfirm(); // 성공 콜백 호출
     } catch (error) {
@@ -41,7 +39,6 @@ const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
       if (errorMessage.includes("인증이 만료")) {
         console.log("🔧 토큰 만료로 인한 강제 로그아웃");
         store.dispatch(clearAccessToken());
-        store.dispatch(clearUserId());
 
         // 약간의 지연 후 자동으로 로그아웃 처리
         setTimeout(() => {
@@ -78,8 +75,9 @@ const LogoutModal: FC<LogoutModalProps> = ({ onConfirm, onClose }) => {
               console.log("🟢 버튼 클릭됨");
               handleLogout();
             }}
-            className={`logout-confirmation-button confirm ${isLoading ? "loading" : ""
-              }`}
+            className={`logout-confirmation-button confirm ${
+              isLoading ? "loading" : ""
+            }`}
             disabled={isLoading}
           >
             {isLoading ? "로그아웃 중..." : "로그아웃"}
