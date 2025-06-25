@@ -91,6 +91,12 @@
   padding: 4px;
 }
 
+.api-path-cell {
+  white-space: normal;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
 /*아코디언*/
 .api-table-row {
   cursor: pointer;

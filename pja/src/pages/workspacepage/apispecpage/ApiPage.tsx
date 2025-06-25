@@ -535,7 +535,12 @@ const ApiPage = () => {
 
                       {(["title", "tag", "http_method", "path"] as const).map(
                         (field) => (
-                          <td className="api-table-content " key={field}>
+                          <td
+                            className={`api-table-content ${
+                              field === "path" ? "api-path-cell" : ""
+                            }`}
+                            key={field}
+                          >
                             {/* --- isEditMode를 isEditing으로 변경 --- */}
                             {isEditing ? (
                               <input
