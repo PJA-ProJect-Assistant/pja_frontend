@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getworkspace } from "../../../services/workspaceApi";
@@ -21,6 +21,7 @@ export default function MainWSPage() {
     wsid: string;
     stepId: string;
   }>();
+  const navigate = useNavigate();
   const dispatch = useDispatch(); //redux에 값 저장하는 함수 필요
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
@@ -37,14 +38,16 @@ export default function MainWSPage() {
           dispatch(setSelectedWS(response.data));
           setWsPublic(response.data.isPublic);
         }
-      } catch (err) {
-        console.log("getworkspace 실패 : ", err);
+      } catch (err: any) {
+        console.log("워크스페이스 정보 가져오기 실패");
+        throw new Error("워크스페이스 정보 가져오기 실패");
       }
     };
     const getrole = async () => {
       const response = await getUserRole(Number(wsid));
       console.log("사용자 역할 : ", response.data?.role);
       dispatch(setUserRole(response.data?.role ?? null));
+      serUserRole(response.data?.role ?? null);
     };
     getws();
     getrole();

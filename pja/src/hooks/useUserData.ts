@@ -16,6 +16,7 @@ export function useUserData() {
       setUserData(response.data);
     } catch (error) {
       console.error("❌ 유저 정보 불러오기 실패:", error);
+      throw new Error("유저 정보 불러오기 실패");
     }
   };
 
@@ -24,7 +25,8 @@ export function useUserData() {
       const response = await getmyworkspaces();
       setMyWSData(response.data);
     } catch (error) {
-      console.error("❌ 내 워크스페이스 정보 불러오기 실패:", error);
+      console.log("❌ 워크스페이스 가져오기 에러", error);
+      throw new Error("내 워크스페이스 정보 불러오기 실패");
     }
   };
 
