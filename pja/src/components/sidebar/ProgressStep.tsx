@@ -15,9 +15,7 @@ export default function ProgressStep() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const handleStepClick = (step: Status) => {
     if (Number(step) <= Number(selectedWS?.progressStep)) {
-      navigate(
-        `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(step)}`
-      );
+      navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber(step)}`);
     } else setModalOpen(true);
   };
   console.log({ selectedWS });

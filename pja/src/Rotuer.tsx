@@ -11,12 +11,10 @@ import EmailVerificationPage from "./pages/signuppage/emailverificationpage/Emai
 import AddWSPage from "./pages/workspacepage/addworkspacepage/AddWSPage";
 import MainWSPage from "./pages/workspacepage/mainworkspacepage/MainWSPage";
 import AccountSettingPage from "./pages/accountsettingpage/AccountSettingPage";
-import WorkspaceSettingPage from "./pages/workspacesettingpage/WorkspaceSettingPage";
 import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/ActionPostPage";
 import RootRedirect from "./components/common/RootRedirect";
 import AcceptInvitePage from "./pages/invitepage/AcceptInvitePage";
 import LeaveServicePage from "./pages/leaveservicepage/LeaveServicePage";
-import SearchProjectpage from "./pages/searchproject/SearchProjectpage";
 import { ErrorPage } from "./error/ErrorPage";
 
 const Router = () => {
@@ -55,18 +53,10 @@ const Router = () => {
         }
       />
       <Route
-        path="/ws/:wsid/step/:stepId"
+        path="/ws/:wsid/:stepId"
         element={
           <PrivateRoute>
             <MainWSPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/ws/:wsid/search"
-        element={
-          <PrivateRoute>
-            <SearchProjectpage />
           </PrivateRoute>
         }
       />
@@ -84,14 +74,6 @@ const Router = () => {
         element={
           <PrivateRoute>
             <AccountSettingPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/workspace/:workspaceId/settings"
-        element={
-          <PrivateRoute>
-            <WorkspaceSettingPage />
           </PrivateRoute>
         }
       />

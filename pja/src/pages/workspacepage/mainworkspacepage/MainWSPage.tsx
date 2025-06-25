@@ -15,6 +15,8 @@ import ProjectSummaryPage from "../projectsummarypage/ProjectSummaryPage";
 import { ReactFlowProvider } from "reactflow";
 import { getUserRole } from "../../../services/userApi";
 import { setUserRole } from "../../../store/userSlice";
+import SearchProjectpage from "../../searchproject/SearchProjectpage";
+import { WorkspaceSettingPage } from "../../workspacesettingpage/WorkspaceSettingPage";
 
 export default function MainWSPage() {
   const { wsid, stepId } = useParams<{
@@ -70,6 +72,10 @@ export default function MainWSPage() {
       case "develop":
       case "complete":
         return <DevelopmentPage />;
+      case "search":
+        return <SearchProjectpage />;
+      case "settings":
+        return <WorkspaceSettingPage />;
       default:
         return <div>잘못된 스텝입니다.</div>;
     }

@@ -65,6 +65,9 @@ export default function ProjectSummaryPage() {
         console.log("프로젝트 가져오기 실패 : ", err);
       }
     };
+    if (selectedWS?.progressStep === "2") {
+      setSummaryDone(false);
+    }
     getproject();
   }, [selectedWS]);
   const handleSummaryComplete = async () => {
@@ -109,9 +112,7 @@ export default function ProjectSummaryPage() {
               );
               setSummaryDone(true);
               navigate(
-                `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
-                  "3"
-                )}`
+                `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("3")}`
               );
             }
           } else {

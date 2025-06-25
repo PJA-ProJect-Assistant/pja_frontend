@@ -41,7 +41,7 @@ export function Myworkspace() {
 
   const handleClickWS = (ws: workspace) => {
     const stepId = getStepIdFromNumber(ws.progressStep);
-    navigate(`/ws/${ws.workspaceId}/step/${stepId}`);
+    navigate(`/ws/${ws.workspaceId}/${stepId}`);
   };
 
   const toggleMenu = (workspaceId: number) => {

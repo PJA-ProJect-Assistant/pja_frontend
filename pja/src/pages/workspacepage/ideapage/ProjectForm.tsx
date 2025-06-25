@@ -210,9 +210,7 @@ export default function ProhectForm() {
         };
 
         dispatch(setSelectedWS(updatedWorkspace));
-        navigate(
-          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("1")}`
-        );
+        navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("1")}`);
       }
     } catch (err) {
       console.log("아이디어 수정 실패 : ", err);
