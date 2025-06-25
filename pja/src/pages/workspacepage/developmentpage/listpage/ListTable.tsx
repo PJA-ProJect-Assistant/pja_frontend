@@ -16,6 +16,8 @@ import FilterTable from "./FilterTable";
 import { NoCgAddModal } from "../../../../components/modal/WsmenuModal";
 import type { workspace_member } from "../../../../types/workspace";
 import { statusLabels } from "../../../../constants/statecolor";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../../store/store";
 
 export default function ListTable({
   categoryList,
@@ -73,6 +75,8 @@ export default function ListTable({
     categoryId: number;
     featureId: number;
   } | null>(null);
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
 
   const navigate = useNavigate();
 
@@ -101,11 +105,12 @@ export default function ListTable({
       <div className="listtable-btn-container">
         <button
           onClick={() => {
-            if (isFilter) {
+            if (isFilter && CanEdit) {
               setIsModalOpen(true);
-            } else {
+            } else if (CanEdit) {
               handleAddCategory();
               setEditingCategoryId(0);
+            } else {
             }
           }}
         >
@@ -414,7 +419,7 @@ export default function ListTable({
                               <path d="M48-144v-72h864v72H48Zm120-120q-29.7 0-50.85-21.15Q96-306.3 96-336v-408q0-29.7 21.15-50.85Q138.3-816 168-816h624q29.7 0 50.85 21.15Q864-773.7 864-744v408q0 29.7-21.15 50.85Q821.7-264 792-264H168Zm0-72h624v-408H168v408Zm0 0v-408 408Z" />
                             </svg>
                             <span title={cg.name}>{cg.name}</span>
-                            {!isCompleted && (
+                            {!isCompleted && CanEdit && (
                               <>
                                 <button
                                   className="list-modifybtn"
@@ -482,7 +487,10 @@ export default function ListTable({
                         className={`list-completebtn ${
                           isCompleted ? "completed" : ""
                         }`}
-                        disabled={!categoryCompletableMap[cg.featureCategoryId]}
+                        disabled={
+                          !categoryCompletableMap[cg.featureCategoryId] ||
+                          !CanEdit
+                        }
                         onClick={() =>
                           handleCompleteClick(cg.featureCategoryId)
                         }
@@ -494,7 +502,7 @@ export default function ListTable({
                     <td>
                       <input
                         type="checkbox"
-                        disabled={isCompleted}
+                        disabled={isCompleted || !CanEdit}
                         className="list-checkbox"
                         checked={cg.hasTest ?? false}
                         onChange={() => toggleTestCheckCg(cg.featureCategoryId)}
@@ -567,7 +575,7 @@ export default function ListTable({
                                     </svg>
 
                                     <span title={ft.name}>{ft.name}</span>
-                                    {!isCompleted && (
+                                    {!isCompleted && CanEdit && (
                                       <>
                                         <button
                                           className="list-modifybtn"
@@ -675,7 +683,7 @@ export default function ListTable({
                             <td>
                               <input
                                 type="checkbox"
-                                disabled={isCompleted}
+                                disabled={isCompleted || !CanEdit}
                                 className="list-checkbox"
                                 checked={ft.hasTest || false}
                                 onChange={() =>
@@ -745,7 +753,7 @@ export default function ListTable({
                                         >
                                           {ac.name}
                                         </span>
-                                        {!isCompleted && (
+                                        {!isCompleted && CanEdit && (
                                           <>
                                             <button
                                               className="list-modifybtn"
@@ -795,9 +803,9 @@ export default function ListTable({
                                 <td>
                                   <DateSelectCell
                                     value={ac.startDate ?? null}
-                                    disable={isCompleted}
+                                    disable={isCompleted || !CanEdit}
                                     onChange={(date) => {
-                                      if (isCompleted) return;
+                                      if (isCompleted || !CanEdit) return;
                                       updateStartDate(
                                         cg.featureCategoryId,
                                         ft.featureId,
@@ -810,9 +818,9 @@ export default function ListTable({
                                 <td>
                                   <DateSelectCell
                                     value={ac.endDate ?? null}
-                                    disable={isCompleted}
+                                    disable={isCompleted || !CanEdit}
                                     onChange={(date) => {
-                                      if (isCompleted) return;
+                                      if (isCompleted || !CanEdit) return;
                                       updateEndDate(
                                         cg.featureCategoryId,
                                         ft.featureId,
@@ -828,9 +836,9 @@ export default function ListTable({
                                     value={ac.participants.map(
                                       (p) => p.memberId
                                     )}
-                                    disable={isCompleted}
+                                    disable={isCompleted || !CanEdit}
                                     onChange={(newParti) => {
-                                      if (isCompleted) return;
+                                      if (isCompleted || !CanEdit) return;
                                       // 상태 업데이트
                                       updateAssignee(
                                         cg.featureCategoryId,
@@ -844,9 +852,9 @@ export default function ListTable({
                                 <td>
                                   <ActionStatusCell
                                     status={ac.state}
-                                    disable={isCompleted}
+                                    disable={isCompleted || !CanEdit}
                                     onChange={(newStatus) => {
-                                      if (isCompleted) return;
+                                      if (isCompleted || !CanEdit) return;
 
                                       updateStatus(
                                         cg.featureCategoryId,
@@ -860,9 +868,9 @@ export default function ListTable({
                                 <td>
                                   <ImportanceCell
                                     value={ac.importance ?? 0}
-                                    disable={isCompleted}
+                                    disable={isCompleted || !CanEdit}
                                     onChange={(newVal) => {
-                                      if (isCompleted) return;
+                                      if (isCompleted || !CanEdit) return;
                                       // 상태 업데이트
                                       updateImportance(
                                         cg.featureCategoryId,
@@ -876,7 +884,7 @@ export default function ListTable({
                                 <td>
                                   <input
                                     type="checkbox"
-                                    disabled={isCompleted}
+                                    disabled={isCompleted || !CanEdit}
                                     className="list-checkbox"
                                     checked={ac.hasTest || false}
                                     onChange={() =>
@@ -902,6 +910,7 @@ export default function ListTable({
                                         <button
                                           className="ailist-addbtn"
                                           onClick={() =>
+                                            CanEdit &&
                                             handleUpdateAIAction(
                                               cg.featureCategoryId,
                                               ft.featureId,
@@ -914,6 +923,7 @@ export default function ListTable({
                                         <button
                                           className="ailist-deletebtn"
                                           onClick={() =>
+                                            CanEdit &&
                                             handleAiActionDelete(index)
                                           }
                                         >

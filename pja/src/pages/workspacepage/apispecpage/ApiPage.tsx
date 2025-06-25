@@ -460,6 +460,9 @@ const ApiPage = () => {
     }
   };
 
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
+
   return !isAiLoading ? (
     <div>
       <WSHeader title="API 명세서" />
@@ -981,15 +984,17 @@ const ApiPage = () => {
             </button>
           </div>
 
-          <div className="api-complete-button">
-            <button
-              className="api-complete-btn"
-              onClick={() => handleApiComplete()}
-              disabled={!selectedWS}
-            >
-              완료하기
-            </button>
-          </div>
+          {CanEdit && (
+            <div className="api-complete-button">
+              <button
+                className="api-complete-btn"
+                onClick={() => handleApiComplete()}
+                disabled={!selectedWS}
+              >
+                완료하기
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
