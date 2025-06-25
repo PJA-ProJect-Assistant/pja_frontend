@@ -25,6 +25,8 @@ export default function ERDPage() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
 
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -141,21 +143,23 @@ export default function ERDPage() {
               <p className="erd-title">
                 ✨아이디어와 명세서를 분석하여 ERD 추천을 해드려요
               </p>
-              <div className="erd-btn-group">
-                <div className="erd-btn" onClick={() => setModifyMode(true)}>
-                  수정하기
-                </div>
-                {!erdDone && (
-                  <div
-                    className={`erd-complete-btn ${
-                      isGenerating ? "disabled" : ""
-                    }`}
-                    onClick={handleErdComplete}
-                  >
-                    저장하기
+              {CanEdit && (
+                <div className="erd-btn-group">
+                  <div className="erd-btn" onClick={() => setModifyMode(true)}>
+                    수정하기
                   </div>
-                )}
-              </div>
+                  {!erdDone && (
+                    <div
+                      className={`erd-complete-btn ${
+                        isGenerating ? "disabled" : ""
+                      }`}
+                      onClick={handleErdComplete}
+                    >
+                      저장하기
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <ReactFlow
               nodes={nodes}

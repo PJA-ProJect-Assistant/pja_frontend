@@ -25,6 +25,9 @@ export default function RequirementsPage() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
+
   const [requireDone, setRequireDone] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
   const [nextPageloading, setNextPageLoading] = useState(false);
@@ -243,7 +246,7 @@ export default function RequirementsPage() {
               key={req.requirementId}
               onClick={() => {
                 {
-                  !requireDone && handleEditClick(req);
+                  !requireDone && CanEdit && handleEditClick(req);
                 }
               }}
               style={{ cursor: "pointer" }}
@@ -263,19 +266,21 @@ export default function RequirementsPage() {
                 )}
               </li>
 
-              {!requireDone && <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="#EA3323"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleReqDelete(req.requirementId);
-                }}
-              >
-                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-              </svg>}
+              {!requireDone && CanEdit && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#EA3323"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReqDelete(req.requirementId);
+                  }}
+                >
+                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                </svg>
+              )}
             </div>
           ))}
       </ul>
@@ -295,13 +300,13 @@ export default function RequirementsPage() {
                   <span className="airequire-actions">
                     <button
                       className="airequire-accept-btn"
-                      onClick={() => handleAiAccept(ai)}
+                      onClick={() => CanEdit && handleAiAccept(ai)}
                     >
                       완료
                     </button>
                     <button
                       className="airequire-cancel-btn"
-                      onClick={() => handleAiCancel(ai)}
+                      onClick={() => CanEdit && handleAiCancel(ai)}
                     >
                       취소
                     </button>
@@ -313,11 +318,14 @@ export default function RequirementsPage() {
       </ul>
     );
   };
-  return (
+  return nextPageloading ? (
+    <div>로딩 중입니다...</div>
+  ) : (
     <>
       <WSHeader title="요구사항 명세서" />
       <div className="require-container">
         {selectedWS?.progressStep === "1" &&
+          CanEdit &&
           (loading ? (
             <div className="airequire-title wave-text">
               {"✨ AI 추천 중이에요".split("").map((char, idx) => (
@@ -342,7 +350,7 @@ export default function RequirementsPage() {
             <div className="require-lists">
               {renderList("FUNCTIONAL")}
               {airenderList("FUNCTIONAL")}
-              {!requireDone && (
+              {!requireDone && CanEdit && (
                 <button
                   className="require-add-button"
                   onClick={() => handleAddFunction("")}
@@ -368,7 +376,7 @@ export default function RequirementsPage() {
             <div className="require-lists">
               {renderList("PERFORMANCE")}
               {airenderList("PERFORMANCE")}
-              {!requireDone && (
+              {!requireDone && CanEdit && (
                 <button
                   className="require-add-button"
                   onClick={() => handleAddPerformance("")}
@@ -388,21 +396,26 @@ export default function RequirementsPage() {
             </div>
           </div>
         </div>
-        <div className="require-btn">
-          {requireDone ? (
-            <p onClick={() => setRequireDone(false)}>수정하기</p>
-          ) : (
-            <p onClick={handleCompleteReq}>저장하기</p>
-          )}
-          {selectedWS?.progressStep === "1" && (
-            <div className="require-info">?</div>
-          )}
-        </div>
+        {CanEdit && (
+          <div className="require-btn">
+            {requireDone ? (
+              <p onClick={() => setRequireDone(false)}>수정하기</p>
+            ) : (
+              <p onClick={handleCompleteReq}>저장하기</p>
+            )}
+
+            {selectedWS?.progressStep === "1" && (
+              <div className="require-info-container">
+                <div className="require-info">?</div>
+                <div className="require-tooltip">
+                  저장한 후에는 ai추천받기 기능이 비활성화됩니다
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         {openAIModal && (
           <RequireCancleModal onClose={() => setOpenAIModal(false)} />
-        )}
-        {nextPageloading && (
-          <div>로딩 중입니다...</div> // 여기에 나중에 가이드 페이지
         )}
       </div>
     </>
