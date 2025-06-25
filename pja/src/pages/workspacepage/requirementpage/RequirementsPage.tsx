@@ -217,9 +217,7 @@ export default function RequirementsPage() {
         };
 
         dispatch(setSelectedWS(updatedWorkspace));
-        navigate(
-          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("2")}`
-        );
+        navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("2")}`);
       }
       setRequireDone(true);
     } catch (err) {

@@ -91,7 +91,7 @@ export default function AddWSTeam() {
       if (response.status === 200 && response.data.status === "success") {
         alert(response.data.message);
         // 성공 후 페이지 이동 시에도 안전하게 selectedWS.workspaceId를 사용합니다.
-        navigate(`/ws/${selectedWS.workspaceId}/step/${stepId}`);
+        navigate(`/ws/${selectedWS.workspaceId}/${stepId}`);
       } else {
         alert(
           response.data.message ||
@@ -194,7 +194,7 @@ export default function AddWSTeam() {
             onClick={() => {
               // 6. '넘어가기' 버튼도 동일한 selectedWS 변수와 안정성 검사를 사용합니다.
               if (selectedWS && selectedWS.workspaceId) {
-                navigate(`/ws/${selectedWS.workspaceId}/step/${stepId}`);
+                navigate(`/ws/${selectedWS.workspaceId}/${stepId}`);
               }
             }}
             disabled={!selectedWS}

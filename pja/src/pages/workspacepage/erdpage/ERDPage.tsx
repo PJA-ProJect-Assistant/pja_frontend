@@ -121,9 +121,7 @@ export default function ERDPage() {
           })
         );
         setErdDone(true);
-        navigate(
-          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("4")}`
-        );
+        navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("4")}`);
       } catch (err) {
         console.log("api명세서 ai생성 실패", err);
         setIsGenerating(false);
