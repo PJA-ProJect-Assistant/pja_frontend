@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getworkspace } from "../../../services/workspaceApi";
@@ -13,15 +13,20 @@ import ApiPage from "../apispecpage/ApiPage";
 import DevelopmentPage from "../developmentpage/DevelopmentPage";
 import ProjectSummaryPage from "../projectsummarypage/ProjectSummaryPage";
 import { ReactFlowProvider } from "reactflow";
+import { getUserRole } from "../../../services/userApi";
+import { setUserRole } from "../../../store/userSlice";
 
 export default function MainWSPage() {
   const { wsid, stepId } = useParams<{
     wsid: string;
     stepId: string;
   }>();
+  const navigate = useNavigate();
   const dispatch = useDispatch(); //redux에 값 저장하는 함수 필요
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
+  const [userRole, serUserRole] = useState<string | null>(null);
+  const [wsPublic, setWsPublic] = useState<boolean>(true);
 
   useEffect(() => {
     const getws = async () => {
@@ -31,12 +36,21 @@ export default function MainWSPage() {
         //redux저장
         if (response.data) {
           dispatch(setSelectedWS(response.data));
+          setWsPublic(response.data.isPublic);
         }
-      } catch (err) {
-        console.log("getworkspace 실패 : ", err);
+      } catch (err: any) {
+        console.log("워크스페이스 정보 가져오기 실패");
+        throw new Error("워크스페이스 정보 가져오기 실패");
       }
     };
+    const getrole = async () => {
+      const response = await getUserRole(Number(wsid));
+      console.log("사용자 역할 : ", response.data?.role);
+      dispatch(setUserRole(response.data?.role ?? null));
+      serUserRole(response.data?.role ?? null);
+    };
     getws();
+    getrole();
   }, [wsid]);
   const renderStepComponent = () => {
     switch (stepId) {
@@ -62,7 +76,12 @@ export default function MainWSPage() {
     }
   };
 
-  return (
+  return !wsPublic && userRole === null ? (
+    <div className="NoEnty-mainws">
+      <p>해당 워크스페이스를 조회할 권한이 없습니다</p>
+      <button onClick={() => history.back()}>돌아가기</button>
+    </div>
+  ) : (
     <div className="mainws-container">
       <AnimatePresence
         onExitComplete={() => {

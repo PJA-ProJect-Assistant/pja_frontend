@@ -10,14 +10,13 @@ export function useUserData() {
   const [userData, setUserData] = useState<user>();
   const [myWSData, setMyWSData] = useState<workspace>();
 
-  // ✅ useEffect 및 return보다 위에서 정의해야 함
   const fetchUser = async () => {
     try {
       const response = await getuser();
       setUserData(response.data);
-      //여기에 사용자 id 반환하는거 있어야 할듯,,?
     } catch (error) {
       console.error("❌ 유저 정보 불러오기 실패:", error);
+      throw new Error("유저 정보 불러오기 실패");
     }
   };
 
@@ -26,7 +25,8 @@ export function useUserData() {
       const response = await getmyworkspaces();
       setMyWSData(response.data);
     } catch (error) {
-      console.error("❌ 내 워크스페이스 정보 불러오기 실패:", error);
+      console.log("❌ 워크스페이스 가져오기 에러", error);
+      throw new Error("내 워크스페이스 정보 불러오기 실패");
     }
   };
 

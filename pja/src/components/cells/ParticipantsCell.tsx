@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./ParticipantsCell.css";
 import { useCategoryFeatureCategory } from "../../hooks/useCategoryFeatureAction";
 
@@ -11,6 +11,7 @@ type Props = {
 export const ParticipantsCell = ({ value = [], onChange, disable }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const { participantList } = useCategoryFeatureCategory();
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleSelect = (userId: number) => {
     if (!value.includes(userId)) {
@@ -25,10 +26,29 @@ export const ParticipantsCell = ({ value = [], onChange, disable }: Props) => {
     setIsEditing(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsEditing(false);
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isEditing]);
+
   return (
     <div className="paricipants-container">
       {isEditing && !disable && (
-        <div className="participants-dropdown">
+        <div className="participants-dropdown" ref={dropdownRef}>
           {participantList.map((member) => {
             const isSelected = value.includes(member.memberId);
             return (
@@ -82,7 +102,7 @@ export const ParticipantsCell = ({ value = [], onChange, disable }: Props) => {
         className="participants-display"
         onClick={() => !disable && setIsEditing(true)}
         style={{
-          cursor: disable ? 'default' : 'pointer'
+          cursor: disable ? "default" : "pointer",
         }}
       >
         <div className="selected-partinames">

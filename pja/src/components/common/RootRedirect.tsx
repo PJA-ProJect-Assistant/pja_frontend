@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import type { RootState } from "../../store/store";
 import { useAuthInit } from "../../hooks/useAuthInit";
+import LoadingSpinner from "../../pages/loadingpage/LoadingSpinner";
 
 const RootRedirect = () => {
   const token = useSelector((state: RootState) => state.auth.accessToken);
@@ -10,7 +11,7 @@ const RootRedirect = () => {
 
   // 초기화가 완료되지 않았으면 로딩
   if (!authInitialized) {
-    return <>로딩중....</>;
+    return <LoadingSpinner />;
     // 나중에 여기에 로딩 페이지 만들게....
   }
 
