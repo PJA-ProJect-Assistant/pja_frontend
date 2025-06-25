@@ -1,5 +1,43 @@
 import api from "../lib/axios";
 
+// 멤버 불러오기
+export const getMemberList = async(workspaceId: number) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const response = await api.get(`/workspaces/${workspaceId}/members`, {
+      headers,
+    });
+
+    return response.data;
+  } catch (error: any) {
+    console.error("멤버 목록 불러오기 실패", error);
+    throw error;
+  }
+};
+
+// 멤버 역할 불러오기
+export const getMemberRole = async(workspaceId: number) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const response = await api.get(`/workspaces/${workspaceId}/role`, {
+      headers,
+    });
+
+    return response.data;
+  } catch(error: any) {
+    console.error("멤버 역할 불러오기 실패", error);
+    throw error;
+  }
+}
+
 // 멤버 삭제
 export const deleteMember = async (workspaceId: number, memberId: number) => {
   try {
