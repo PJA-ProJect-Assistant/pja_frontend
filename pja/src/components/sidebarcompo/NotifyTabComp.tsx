@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./NotifyTabComp.css";
 import signbellIcon from "../../assets/img/signbell.png";
 import NotifyItem from "./NotifyItem";
-import axios from "axios";
 import api from "../../lib/axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
@@ -26,16 +25,16 @@ const NotifyTabComp = () => {
 
   useEffect(() => {
     // 워크스페이스 아이디 없을 경우
-    if(!workspaceId) return;
-    
+    if (!workspaceId) return;
+
     fetchNotifications();
 
     const accessToken = localStorage.getItem("accessToken");
     console.log("accessToken: ", accessToken);
-    
+
     // SSE 연결
     const eventSource = new EventSource(
-      `https://api.pja.kr/api/workspaces/${workspaceId}/noti/subscribe?token=${accessToken}`,
+      `https://api.pja.kr/api/workspaces/${workspaceId}/noti/subscribe?token=${accessToken}`
     );
 
     eventSource.addEventListener("connect", (e) => {
@@ -59,15 +58,14 @@ const NotifyTabComp = () => {
 
   const fetchNotifications = async () => {
     try {
-          const accessToken = localStorage.getItem("accessToken");
-          const headers = {
-            Authorization: `Bearer ${accessToken}`
-          };
-          const response = await api.get(
-            `/workspaces/${workspaceId}/members`,
-            { headers }            
-          );
-          setNotifications(response.data.data);
+      const accessToken = localStorage.getItem("accessToken");
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+      const response = await api.get(`/workspaces/${workspaceId}/members`, {
+        headers,
+      });
+      setNotifications(response.data.data);
     } catch (err) {
       console.error("알림 조회 실패:", err);
     }
