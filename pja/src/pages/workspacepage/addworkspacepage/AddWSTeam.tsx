@@ -5,6 +5,7 @@ import { getStepIdFromNumber } from "../../../utils/projectSteps";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import axios from "axios";
+import api from "../../../lib/axios";
 
 // API 응답 데이터의 타입을 명확하게 정의합니다.
 interface InviteResponse {
@@ -81,8 +82,8 @@ export default function AddWSTeam() {
     };
 
     try {
-      const response = await axios.post<InviteResponse>(
-        `/api/workspaces/${selectedWS.workspaceId}/invite`,
+      const response = await api.post<InviteResponse>(
+        `/workspaces/${selectedWS.workspaceId}/invite`,
         body,
         { headers }
       );
@@ -97,22 +98,31 @@ export default function AddWSTeam() {
             "초대에 성공했으나 예기치 않은 응답을 받았습니다."
         );
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("🔴 [inputtech] 팀원 초대 API 호출 실패:", error);
+
       if (axios.isAxiosError(error) && error.response) {
+        // 서버에서 내려준 응답이 있을 때
+        console.error("응답 상태코드:", error.response.status);
+        console.error("서버 응답 데이터:", error.response.data);
+        console.log("✅ 백엔드 메시지:", error.response.data.message);
         const errorData = error.response.data as InviteResponse;
         const errorMessage =
-          errorData.message || "알 수 없는 오류가 발생했습니다.";
-
+          errorData.message || "알 수 없는 서버 오류가 발생했습니다.";
         alert(errorMessage);
 
         if (error.response.status === 401) {
           navigate("/login");
         }
-
-        console.error("API Error:", error.response.data);
+      } else if (axios.isAxiosError(error) && error.request) {
+        // 요청은 보냈지만 응답이 없을 때
+        console.error("요청은 보냈지만 응답 없음:", error.request);
+        alert("서버 응답이 없습니다. 네트워크 상태를 확인해주세요.");
       } else {
-        alert("네트워크 연결을 확인해주세요.");
-        console.error("Network or other error:", error);
+        // axios 외 다른 에러
+        console.error("알 수 없는 에러 발생:", error.message);
+        console.log("✅ 백엔드 메시지:", error.response.data.message);
+        alert("알 수 없는 오류가 발생했습니다.");
       }
     }
   };

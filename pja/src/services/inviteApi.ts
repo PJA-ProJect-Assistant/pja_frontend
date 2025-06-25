@@ -59,11 +59,29 @@ export const getInvitationInfo = async (
     });
     return response.data.data;
   } catch (error: any) {
-    // axios 에러 객체는 response.data.message에 서버 에러 메시지를 포함하는 경우가 많습니다.
+    // 1) 에러 발생 시 상세 로그 남기기
+    console.error("🔴 [inputtech] 초대 정보 조회 실패:", error);
+
+    if (error.response) {
+      // 서버 응답이 있었을 때
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      // 요청은 보냈지만 응답이 없을 때
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      // 그 외 요청 설정 중 에러
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+
+    // 2) 사용자에게 보여줄 에러 메시지 생성
     const errorMessage =
       error.response?.data?.message ||
       error.message ||
       "알 수 없는 오류가 발생했습니다.";
+
+    // 3) 에러 던지기
     throw new Error(errorMessage);
   }
 };
@@ -81,11 +99,16 @@ export const acceptInvitation = async (
     });
     return response.data;
   } catch (error: any) {
-    const errorMessage =
-      error.response?.data?.message ||
-      error.message ||
-      "알 수 없는 오류가 발생했습니다.";
-    throw new Error(errorMessage);
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
   }
 };
 
