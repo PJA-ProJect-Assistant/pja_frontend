@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { statusLabels, statusColors } from "../../../../constants/statecolor";
-import type { imbalanceassignees, imbalancegraphData, Importance, Status, taskimbalance } from "../../../../types/list";
+import type { imbalanceassignees, imbalancegraphData, Importance, Status } from "../../../../types/list";
 import type { RootState } from "../../../../store/store";
 import { useEffect, useState } from "react";
 import {
