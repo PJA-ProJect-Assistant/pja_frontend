@@ -1,7 +1,7 @@
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function DateSelectCell({
   value,
@@ -13,6 +13,25 @@ export default function DateSelectCell({
   disable?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   let parsedDate: Date | null = null;
 
@@ -36,7 +55,7 @@ export default function DateSelectCell({
           display: "flex",
           alignItems: "center",
           gap: "4px",
-          cursor: disable ? 'default' : 'pointer'
+          cursor: disable ? "default" : "pointer",
         }}
       >
         {parsedDate ? (
@@ -61,22 +80,20 @@ export default function DateSelectCell({
         )}
       </button>
 
-      {
-        isOpen && (
-          <div style={{ position: "absolute", zIndex: 10 }}>
-            <DatePicker
-              selected={value}
-              onChange={(date) => {
-                onChange(date);
-                setIsOpen(false);
-              }}
-              locale={ko}
-              dateFormat="yyyy.MM.dd"
-              inline
-            />
-          </div>
-        )
-      }
-    </div >
+      {isOpen && (
+        <div style={{ position: "absolute", zIndex: 10 }} ref={dropdownRef}>
+          <DatePicker
+            selected={value}
+            onChange={(date) => {
+              onChange(date);
+              setIsOpen(false);
+            }}
+            locale={ko}
+            dateFormat="yyyy.MM.dd"
+            inline
+          />
+        </div>
+      )}
+    </div>
   );
 }

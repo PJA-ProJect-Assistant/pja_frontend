@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Status } from "../../types/list";
 import "./ActionStatusCell.css"; // CSS 파일 임포트
 import { statusLabels, statusColors } from "../../constants/statecolor";
@@ -15,6 +15,7 @@ export const ActionStatusCell = ({
   disable,
 }: StatusCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleSelect = (newStatus: Status) => {
     console.log("selected status:", newStatus);
@@ -22,10 +23,29 @@ export const ActionStatusCell = ({
     setIsEditing(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsEditing(false);
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isEditing]);
+
   return (
     <div className="status-td">
       {isEditing && !disable ? (
-        <div className="status-dropdown">
+        <div className="status-dropdown" ref={dropdownRef}>
           {(
             ["BEFORE", "IN_PROGRESS", "DONE", "PENDING", "DELETE"] as Status[]
           ).map((s) => (

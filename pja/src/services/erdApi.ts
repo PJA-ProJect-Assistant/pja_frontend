@@ -8,6 +8,7 @@ import type {
   gettable,
   getrelation,
   ERDRelation,
+  RelationType,
 } from "../types/erd";
 import type { GenerateApiResponse } from "../types/api";
 //ERD 관련 테이블
@@ -331,7 +332,7 @@ export const postErdRelation = async (
   }
 };
 
-//erd 관계 생성
+//erd 관계 삭제
 export const deleteErdRelation = async (
   workspaceId: number,
   erdId: number,
@@ -345,6 +346,36 @@ export const deleteErdRelation = async (
     return response.data;
   } catch (error: any) {
     console.error("🔴 [deleteErdRelation] Erd 관계 삭제 실패:", error);
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
+  }
+};
+
+//erd 관계 라벨 수정
+export const patchRelationLabel = async (
+  workspaceId: number,
+  erdId: number,
+  relationId: string,
+  type: RelationType
+) => {
+  try {
+    await api.patch(
+      `/workspaces/${workspaceId}/erd/${erdId}/relation/${relationId}/type`,
+      {
+        type,
+      }
+    );
+    console.log("erd 관계 라벨 수정 :");
+  } catch (error: any) {
+    console.error("🔴 [patchRelationLabel] Erd 관계 라벨 수정 실패:", error);
     if (error.response) {
       console.error("응답 상태코드:", error.response.status);
       console.error("서버 status:", error.response.data?.status);

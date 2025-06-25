@@ -3,7 +3,7 @@ import { setAccessToken, clearAccessToken } from "../store/authSlice";
 import { store } from "../store/store";
 import { refreshAccessToken } from "../services/authApi";
 
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 2;
 
 // 1. axios 인스턴스 생성
 const api = axios.create({
@@ -52,7 +52,8 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !isRefreshing
+      !isRefreshing &&
+      !originalRequest.url.includes("/auth/login") // 로그인 요청 예외 처리
     ) {
       originalRequest._retry = true;
       isRefreshing = true;

@@ -145,7 +145,7 @@ export default function WsSidebar({ onClose }: IsClose) {
       // 실패 처리
       const errorMessage =
         error.response?.data?.message || "팀 탈퇴 중 오류가 발생했습니다.";
-      alert(errorMessage);
+      console.log(errorMessage);
     }
   };
 
@@ -245,9 +245,12 @@ export default function WsSidebar({ onClose }: IsClose) {
             <div className="wssidebar-img">
               <img src={git_icon} alt="git아이콘" />
             </div>
-            <p>Git 연동</p>
+            <p>Git</p>
           </div>
-          <div className="wssidebar-list">
+          <div
+            className="wssidebar-list"
+            onClick={() => navigate(`/ws/${selectedWS?.workspaceId}/search`)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="20px"

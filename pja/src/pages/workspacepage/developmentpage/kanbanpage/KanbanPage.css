@@ -3,6 +3,7 @@
   justify-content: space-around;
   gap: 20px;
   padding: 20px 0;
+  flex-grow: 1;
 }
 
 .kanban-column {
@@ -10,8 +11,9 @@
   border-radius: 8px;
   padding: 12px;
   flex: 1;
+  flex-grow: 1;
+  height: 100%;
   min-width: 180px;
-  min-height: 500px;
   display: flex;
   flex-direction: column;
   gap: 20px;

@@ -6,14 +6,19 @@ export const login = async (
   uid: string,
   password: string
 ): Promise<ApiResponse<userToken>> => {
-  console.log("로그인 시작");
+  try {
+    console.log("로그인 시작");
+    const response = await api.post<ApiResponse<userToken>>("/auth/login", {
+      uid,
+      password,
+    });
+    console.log("로그인 실행 결과", response.data);
 
-  const response = await api.post<ApiResponse<userToken>>("/auth/login", {
-    uid,
-    password,
-  });
-
-  return response.data;
+    return response.data;
+  } catch (err) {
+    console.log("로그인 실패 err", err);
+    throw err;
+  }
 };
 
 export const logoutUser = async (): Promise<ApiResponse<void>> => {

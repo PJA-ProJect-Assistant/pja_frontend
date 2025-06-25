@@ -26,11 +26,15 @@
   width: 100%;
   margin-top: 10px;
   border-collapse: collapse; /*셀 경계 중첩 제거*/
+  /* 추가: 테이블 오버플로우 방지 */
+  table-layout: fixed;
+  max-width: 100%;
 }
 .api-table th,
 .api-table td {
   border: 1px solid #00205b;
   text-align: center;
+  padding: 13px 5px;
 }
 .api-table-title {
   font-weight: bold;
@@ -51,9 +55,6 @@
   width: 50px;
   height: 50px;
   border: none;
-}
-.api-add-button img {
-  /* object-fit: contain; */
 }
 
 .api-delete-row-button {
@@ -93,12 +94,25 @@
 /*아코디언*/
 .api-table-row {
   cursor: pointer;
+  position: relative;
+}
+
+/* 2) .finish-button 기본 마진 제거 */
+.api-table-row .finish-button {
+  margin: 0; /* 기존 margin-left: 10px; 제거 */
 }
 
 .accordion-content {
   background-color: #f9f9f9;
+  overflow-x: hidden;
 }
 
+.api-table-row .edit-controls {
+  position: absolute;
+  left: -50px; /* 밖으로 얼마나 뺄지 조절 */
+  top: 50%;
+  transform: translateY(-50%);
+}
 /* 아코디언 셀 스타일 */
 .api-accordion-cell {
   background-color: #f9fafb;
@@ -106,6 +120,9 @@
   border-top: none;
   text-align: left;
   padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  border-top: none;
 }
 
 .accordion-box {
@@ -118,6 +135,9 @@
   padding: 15px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   min-height: 150px;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .accordion-box-wrapper {
@@ -127,6 +147,9 @@
   width: 100%; /* 부모(td)의 너비를 꽉 채우도록 명시 */
   box-sizing: border-box;
   padding: 16px;
+
+  max-width: 100%;
+  overflow: hidden;
 }
 .accordion-two-box {
   flex: 1;
@@ -135,6 +158,28 @@
   border-radius: 8px;
   background-color: #ffffff;
   min-height: 150px;
+  max-width: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.accordion-box input,
+.accordion-box textarea,
+.accordion-two-box input,
+.accordion-two-box textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* pre 태그의 오버플로우도 처리 */
+.accordion-box pre,
+.accordion-two-box pre {
+  max-width: 100%;
+  overflow: auto;
+  white-space: pre-wrap !important;
+  word-wrap: break-word;
+  overflow-wrap: anywhere !important;
 }
 
 .api-edit-textarea {
@@ -150,8 +195,8 @@
 }
 
 .finish-button {
-  padding: 2px 12px;
-
+  padding: 6px 15px;
+  margin-left: 10px;
   background-color: #00205b;
   color: white;
   border-radius: 5px;
@@ -159,11 +204,14 @@
 
 /*연필 버튼*/
 .edit-button {
+  position: absolute;
+  left: -30px; /* 셀 바깥으로 얼마나 꺼낼지 */
+  top: 50%; /* 세로 중앙 정렬 */
+  transform: translateY(-50%);
   background: none;
   border: none;
-  padding: 0;
   cursor: pointer;
-  display: inline-flex;
+  padding: 0;
 }
 .edit-image {
   width: 20px;
@@ -189,4 +237,36 @@
   cursor: pointer;
   font-size: 20px;
   font-weight: bold;
+}
+
+.api-accordion-cell .accordion-box pre,
+.api-accordion-cell .accordion-two-box pre {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+}
+
+.api-accordion-cell .api-json-input {
+  overflow-y: hidden;
+  resize: vertical;
+}
+.api-json-input {
+  width: 100%;
+  min-height: 120px; /* 최소 높이 지정 */
+  height: auto; /* 내용에 따라 늘어나게 */
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+  overflow-y: hidden !important; /* 세로 스크롤 숨김 */
+  resize: vertical; /* 세로 크기 조절만 가능 */
+}
+
+.api-accordion-cell input,
+.api-accordion-cell textarea {
+  box-sizing: border-box;
 }

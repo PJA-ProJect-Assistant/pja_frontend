@@ -23,6 +23,7 @@ import {
   getApisByWorkspace,
 } from "../../../services/apiApi";
 import { progressworkspace } from "../../../services/workspaceApi";
+import { postAiList } from "../../../services/listapi/listApi";
 
 // --- (타입 정의 및 변환 함수들은 기존과 동일) ---
 type ApiSpecification = {
@@ -76,6 +77,7 @@ const ApiPage = () => {
 
   const [rows, setRows] = useState<ApiSpecification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const selectedWS = useSelector(
@@ -358,8 +360,6 @@ const ApiPage = () => {
 
       // 요청 성공 시, 프론트엔드 상태에서도 해당 행 제거
       setRows((prevRows) => prevRows.filter((row) => row.id !== apiId));
-
-      alert("API가 성공적으로 삭제되었습니다.");
     } catch (error) {
       console.error("API 삭제 실패:", error);
       if (error instanceof Error) {
@@ -414,7 +414,6 @@ const ApiPage = () => {
         prevRows.map((row) => (row.id === apiId ? updatedRow : row))
       );
 
-      alert("API가 성공적으로 수정되었습니다.");
       setEditingRowId(null); // 수정 모드 종료
       setOpenRowId(null); // 아코디언 닫기
     } catch (error) {
@@ -434,24 +433,34 @@ const ApiPage = () => {
   const handleApiComplete = async () => {
     if (selectedWS?.progressStep === "4") {
       try {
-        await progressworkspace(selectedWS.workspaceId, "5");
-        console.log("리스트페이지로 이동");
-        dispatch(
-          setSelectedWS({
-            ...selectedWS,
-            progressStep: "5",
-          })
-        );
-        navigate(
-          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("5")}`
-        );
-      } catch (err) {
-        console.log("진행도 업데이트", err);
+        setIsAiLoading(true);
+        const response = await postAiList(selectedWS.workspaceId);
+        console.log("프로젝트 진행 ai추천 성공", response.data);
+
+        try {
+          await progressworkspace(selectedWS.workspaceId, "5");
+          console.log("리스트페이지로 이동");
+          dispatch(
+            setSelectedWS({
+              ...selectedWS,
+              progressStep: "5",
+            })
+          );
+          navigate(
+            `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("5")}`
+          );
+        } catch (err) {
+          console.log("진행도 업데이트", err);
+        }
+      } catch {
+        console.log("프로젝트 진행 ai 가져오기 실패");
+      } finally {
+        setIsAiLoading(false);
       }
     }
   };
 
-  return (
+  return !isAiLoading ? (
     <div>
       <WSHeader title="API 명세서" />
       <div className="api-main">
@@ -573,8 +582,9 @@ const ApiPage = () => {
                     {/* --- 아코디언 내용 표시 --- */}
                     {openRowId === row.id && (
                       <tr className="accordion-content">
-                        {/* --- 열이 하나 추가되었으므로 colSpan을 6으로 변경 --- */}
-                        <td colSpan={6} className="api-accordion-cell">
+                        <td className="api-table-content no-border"></td>
+                        <td colSpan={4} className="api-accordion-cell">
+                          <td className="api-table-content no-border"></td>
                           <div className="accordion-box-wrapper">
                             {/* Request 섹션 */}
                             <div className="accordion-box">
@@ -614,7 +624,7 @@ const ApiPage = () => {
                                       style={{
                                         marginBottom: "10px",
                                         padding: "10px",
-                                        border: "1px solid #ddd",
+                                        border: "none", //테두리 제거
                                         borderRadius: "4px",
                                       }}
                                     >
@@ -631,9 +641,7 @@ const ApiPage = () => {
                                             fontWeight: "bold",
                                             fontSize: "14px",
                                           }}
-                                        >
-                                          필드 {index + 1}
-                                        </span>
+                                        ></span>
                                         <button
                                           onClick={() =>
                                             removeRequestField(row.id, index)
@@ -682,7 +690,7 @@ const ApiPage = () => {
                                             style={{
                                               width: "100%",
                                               padding: "4px",
-                                              fontSize: "12px",
+                                              fontSize: "15px",
                                               border: "1px solid #ccc",
                                               borderRadius: "3px",
                                             }}
@@ -712,7 +720,7 @@ const ApiPage = () => {
                                             style={{
                                               width: "100%",
                                               padding: "4px",
-                                              fontSize: "12px",
+                                              fontSize: "15px",
                                               border: "1px solid #ccc",
                                               borderRadius: "3px",
                                             }}
@@ -742,7 +750,7 @@ const ApiPage = () => {
                                             style={{
                                               width: "100%",
                                               padding: "4px",
-                                              fontSize: "12px",
+                                              fontSize: "15px",
                                               border: "1px solid #ccc",
                                               borderRadius: "3px",
                                             }}
@@ -755,12 +763,14 @@ const ApiPage = () => {
                               ) : (
                                 <pre
                                   style={{
-                                    fontSize: "12px",
+                                    whiteSpace: "pre-wrap",
+                                    fontSize: "13px",
                                     maxHeight: "200px",
                                     overflow: "auto",
+                                    minWidth: "100px",
                                   }}
                                 >
-                                  {JSON.stringify(row.request, null, 2)}
+                                  {JSON.stringify(row.request, null)}
                                 </pre>
                               )}
                             </div>
@@ -789,7 +799,9 @@ const ApiPage = () => {
                                       cursor: "pointer",
                                       fontSize: "12px",
                                     }}
-                                  ></button>
+                                  >
+                                    + 필드 추가
+                                  </button>
                                 )}
                               </div>
 
@@ -801,7 +813,7 @@ const ApiPage = () => {
                                       style={{
                                         marginBottom: "10px",
                                         padding: "10px",
-                                        border: "1px solid #ddd",
+                                        border: "none",
                                         borderRadius: "4px",
                                       }}
                                     >
@@ -818,9 +830,7 @@ const ApiPage = () => {
                                             fontWeight: "bold",
                                             fontSize: "14px",
                                           }}
-                                        >
-                                          응답 {index + 1}
-                                        </span>
+                                        ></span>
                                         <button
                                           onClick={() =>
                                             removeResponseField(row.id, index)
@@ -850,8 +860,8 @@ const ApiPage = () => {
                                           <label
                                             style={{
                                               display: "block",
-                                              fontSize: "20px",
-                                              marginBottom: "3px",
+                                              fontSize: "15px",
+                                              marginBottom: "5px",
                                             }}
                                           >
                                             Status Code:
@@ -880,8 +890,8 @@ const ApiPage = () => {
                                           <label
                                             style={{
                                               display: "block",
-                                              fontSize: "20px",
-                                              marginBottom: "3px",
+                                              fontSize: "15px",
+                                              marginBottom: "5px",
                                             }}
                                           >
                                             Message:
@@ -918,6 +928,7 @@ const ApiPage = () => {
                                           Data (JSON):
                                         </label>
                                         <textarea
+                                          className="api-json-input"
                                           value={
                                             typeof res.data === "string"
                                               ? res.data
@@ -934,14 +945,6 @@ const ApiPage = () => {
                                               e.target.value
                                             )
                                           }
-                                          style={{
-                                            width: "100%",
-                                            height: "100px",
-                                            padding: "4px",
-                                            fontSize: "12px",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "3px",
-                                          }}
                                           placeholder="JSON 형식으로 입력하세요"
                                         />
                                       </div>
@@ -953,10 +956,9 @@ const ApiPage = () => {
                                   style={{
                                     fontSize: "12px",
                                     maxHeight: "200px",
-                                    overflow: "auto",
                                   }}
                                 >
-                                  {JSON.stringify(row.response, null, 2)}
+                                  {JSON.stringify(row.response, null)}
                                 </pre>
                               )}
                             </div>
@@ -991,6 +993,9 @@ const ApiPage = () => {
         </div>
       </div>
     </div>
+  ) : (
+    // 나중에 여기에 로딩가이드페이지 추가하면 됨
+    <div>로딩중...</div>
   );
 };
 

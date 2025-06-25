@@ -142,7 +142,9 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   );
   const [editingFeatureId, setEditingFeatureId] = useState<number | null>(null);
   const [editingActionId, setEditingActionId] = useState<number | null>(null);
-
+  const [categoryCompletableMap, setCategoryCompletableMap] = useState<{
+    [key: number]: boolean;
+  }>({});
   const [workspaceId, setWorkspaceId] = useState<number>();
   const [participantList, setParticipantList] = useState<workspace_member[]>(
     []
@@ -193,17 +195,16 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
   useEffect(() => {
     console.log("카테고리 리스트 변경");
-
-  }, [categoryList])
-
-  const categoryCompletableMap = useMemo(() => {
-    const result: { [key: number]: boolean } = {};
-    for (const cg of categoryList) {
-      const children = cg.features || [];
-      result[cg.featureCategoryId] = children.every((ft) => ft.state === true);
-    }
-    return result;
   }, [categoryList]);
+
+  // const categoryCompletableMap = useMemo(() => {
+  //   const result: { [key: number]: boolean } = {};
+  //   for (const cg of categoryList) {
+  //     const children = cg.features || [];
+  //     result[cg.featureCategoryId] = children.every((ft) => ft.state === true);
+  //   }
+  //   return result;
+  // }, [categoryList]);
 
   //카테고리 리스트의 feature 수정
   const updateFeatureInCategoryList = (
@@ -215,11 +216,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId ? updater(feature) : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId ? updater(feature) : feature
+            ),
+          }
         : category
     );
   };
@@ -234,11 +235,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.filter(
-            (feature) => feature.featureId !== featureId
-          ),
-        }
+            ...category,
+            features: category.features.filter(
+              (feature) => feature.featureId !== featureId
+            ),
+          }
         : category
     );
   };
@@ -254,18 +255,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.map((action) =>
-                  action.actionId === actionId ? updater(action) : action
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.map((action) =>
+                      action.actionId === actionId ? updater(action) : action
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -280,18 +281,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.filter(
-                  (action) => action.actionId !== actionId
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.filter(
+                      (action) => action.actionId !== actionId
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -435,7 +436,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
   const handleAddFeature = (categoryId: number) => {
     console.log("기능 생성 버튼 클릭", categoryId);
-    clickFt
+    clickFt;
     setCategoryList((prev) =>
       prev.map((category) => {
         if (category.featureCategoryId === categoryId) {
@@ -571,6 +572,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       if (response.data) {
         //ailist에 aiacion 추가
         setAiList(response.data);
+        setClickFt((prev) => ({ ...prev, [featureId]: true }));
       }
     } catch (err) {
       console.log("aiaction 추천 실패", err);
@@ -927,42 +929,53 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
         let shouldUpdateFeatureStatus = false;
         let newFeatureStatus = false;
-        setCategoryList((prev) =>
-          prev.map((category) => {
+        setCategoryList((prev) => {
+          const updated = prev.map((category) => {
             if (category.featureCategoryId !== categoryId) return category;
+
+            const updatedFeatures = category.features.map((feature) => {
+              if (feature.featureId !== featureId) return feature;
+
+              const updatedActions = feature.actions.map((action) =>
+                action.actionId === actionId
+                  ? { ...action, state: newStatus }
+                  : action
+              );
+
+              const allDone = updatedActions.every(
+                (action) => action.state === "DONE"
+              );
+
+              if (feature.state !== allDone) {
+                shouldUpdateFeatureStatus = true;
+                newFeatureStatus = allDone;
+              }
+
+              return {
+                ...feature,
+                actions: updatedActions,
+                state: allDone,
+              };
+            });
 
             return {
               ...category,
-              features: category.features.map((feature) => {
-                if (feature.featureId !== featureId) return feature;
-
-                // ✅ 1. 액션 상태 업데이트
-                const updatedActions = feature.actions.map((action) =>
-                  action.actionId === actionId
-                    ? { ...action, state: newStatus }
-                    : action
-                );
-
-                // ✅ 2. 모든 액션이 DONE이면 feature.status = true
-                const allDone = updatedActions.every(
-                  (action) => action.state === "DONE"
-                );
-
-                // 이전과 비교해서 status가 바뀌었는지 체크
-                if (feature.state !== allDone) {
-                  shouldUpdateFeatureStatus = true;
-                  newFeatureStatus = allDone;
-                }
-
-                return {
-                  ...feature,
-                  actions: updatedActions,
-                  status: allDone, // true or false
-                };
-              }),
+              features: updatedFeatures,
             };
-          })
-        );
+          });
+
+          // 🔄 여기서 카테고리 완료 여부 계산
+          const newMap: { [key: number]: boolean } = {};
+          for (const cg of updated) {
+            newMap[cg.featureCategoryId] = cg.features.every(
+              (ft) => ft.state === true
+            );
+          }
+
+          setCategoryCompletableMap(newMap);
+
+          return updated;
+        });
         if (shouldUpdateFeatureStatus) {
           console.log("feature상태 변경 시작");
           try {

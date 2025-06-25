@@ -16,6 +16,9 @@ import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/Actio
 import RootRedirect from "./components/common/RootRedirect";
 import AcceptInvitePage from "./pages/invitepage/AcceptInvitePage";
 import LeaveServicePage from "./pages/leaveservicepage/LeaveServicePage";
+import SearchProjectpage from "./pages/searchproject/SearchProjectpage";
+import { ErrorPage } from "./error/ErrorPage";
+
 const Router = () => {
   return (
     <Routes>
@@ -31,6 +34,9 @@ const Router = () => {
       <Route path="/find-pw" element={<FindPwPage />} />
       {/* 비밀번호 재설정 페이지 */}
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+      {/* 에러 페이지 */}
+      <Route path="*" element={<ErrorPage code={404} />} />
       {/* 인증 필요 라우트 */}
       <Route
         path="/main"
@@ -53,6 +59,14 @@ const Router = () => {
         element={
           <PrivateRoute>
             <MainWSPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/ws/:wsid/search"
+        element={
+          <PrivateRoute>
+            <SearchProjectpage />
           </PrivateRoute>
         }
       />

@@ -425,6 +425,10 @@
   background-color: #f0f0f0;
 }
 
+.ailist-btngroup {
+  min-width: 80px;
+}
+
 .ailist-deletebtn {
   display: flex;
   border-radius: 3px;
@@ -433,6 +437,7 @@
   color: black;
   text-align: center;
   border: none;
+  margin-right: 1px;
 }
 
 .ailist-addbtn {
@@ -443,4 +448,5 @@
   color: white;
   text-align: center;
   border: none;
+  margin-right: 3px;
 }

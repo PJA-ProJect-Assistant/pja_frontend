@@ -52,20 +52,7 @@ export function TaskProcessTime() {
     return { LinechartData, userIds, userMap };
   };
 
-  const [processTime, setProcessTime] = useState<processtime[]>([
-    {
-      userId: 1,
-      username: "조유민",
-      importance: 3,
-      meanHours: 280,
-    },
-    {
-      userId: 1,
-      username: "조유민",
-      importance: 5,
-      meanHours: 20,
-    },
-  ]);
+  const [processTime, setProcessTime] = useState<processtime[]>([]);
   const { LinechartData, userIds, userMap } = TransformLineData(processTime);
 
   useEffect(() => {
@@ -88,55 +75,55 @@ export function TaskProcessTime() {
 
   return (
     <>
-      {/* {LinechartData.length > 0 && ( */}
-      <>
-        <p>중요도별 평균 작업 시간</p>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={LinechartData}
-            margin={{ top: 20, right: 40, left: 20, bottom: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="importance"
-              tickFormatter={(tick) => `중요도 ${tick}`}
-              label={{
-                value: "중요도",
-                position: "insideBottom",
-                offset: -5,
-              }}
-            />
-            <YAxis
-              label={{
-                value: "시간 (h)",
-                angle: -90,
-                position: "insideLeft",
-              }}
-            />
-            <Tooltip
-              labelFormatter={(label) => `중요도 ${label}`}
-              formatter={(value: any, name: string) => {
-                const userId = parseInt(name.replace("user_", ""));
-                const userName = userMap.get(userId) || name;
-                return [value ? `${value}시간` : "데이터 없음", userName];
-              }}
-            />
-            <Legend layout="vertical" align="right" verticalAlign="middle" />
-            {userIds.map((userId, idx) => (
-              <Line
-                key={userId}
-                type="monotone"
-                dataKey={`user_${userId}`}
-                stroke={getSequentialColor(Gantt_COLORS, idx)}
-                name={userMap.get(userId) || `User ${userId}`}
-                connectNulls
-                dot={{ r: 3 }}
+      {LinechartData.length > 0 && (
+        <>
+          <p>중요도별 평균 작업 시간</p>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart
+              data={LinechartData}
+              margin={{ top: 20, right: 40, left: 20, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="importance"
+                tickFormatter={(tick) => `중요도 ${tick}`}
+                label={{
+                  value: "중요도",
+                  position: "insideBottom",
+                  offset: -5,
+                }}
               />
-            ))}
-          </LineChart>
-        </ResponsiveContainer>
-      </>
-      {/* )} */}
+              <YAxis
+                label={{
+                  value: "시간 (h)",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip
+                labelFormatter={(label) => `중요도 ${label}`}
+                formatter={(value: any, name: string) => {
+                  const userId = parseInt(name.replace("user_", ""));
+                  const userName = userMap.get(userId) || name;
+                  return [value ? `${value}시간` : "데이터 없음", userName];
+                }}
+              />
+              <Legend layout="vertical" align="right" verticalAlign="middle" />
+              {userIds.map((userId, idx) => (
+                <Line
+                  key={userId}
+                  type="monotone"
+                  dataKey={`user_${userId}`}
+                  stroke={getSequentialColor(Gantt_COLORS, idx)}
+                  name={userMap.get(userId) || `User ${userId}`}
+                  connectNulls
+                  dot={{ r: 3 }}
+                />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
+        </>
+      )}
     </>
   );
 }
