@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getworkspace } from "../../../services/workspaceApi";
