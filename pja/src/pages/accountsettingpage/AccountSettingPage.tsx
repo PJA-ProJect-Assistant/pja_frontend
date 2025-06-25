@@ -12,9 +12,7 @@ import {
   changeName,
 } from "../../services/userApi";
 
-import type { user } from "../../types/user";
-
-
+import { LeaveHeader } from "../../components/header/LeaveHeader";
 
 const AccountSettingPage: React.FC = () => {
   const [initialName, setInitialName] = useState<string>("");
@@ -249,10 +247,13 @@ const AccountSettingPage: React.FC = () => {
   };
 
   return (
-    <div>
-      <div className="accountsetting-wrapper">
+    <div className="accountsetting-wrapper">
+      <div className="accounting-service-header">
+        <LeaveHeader />
+
         <h1 className="accountsetting-title">계정설정</h1>
-        <div className="underline" />
+        <div />
+        <div className="account-underline" />
         <div className="accountsetting-content">
           <div className="profile-title">프로필 변경</div>
 

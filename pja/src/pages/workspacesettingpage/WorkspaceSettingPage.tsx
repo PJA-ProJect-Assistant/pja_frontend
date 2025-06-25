@@ -141,7 +141,7 @@ const WorkspaceSettingPage: React.FC = () => {
     <div>
       <div className="workspacesetting-wrapper">
         <h1 className="workspacesetting-title">설정</h1>
-        <div className="underline" />
+        <div className="workspacesetting-underline" />
         <div className="workspacesetting-content">
           <div className="workspacesetting-input-section">
             <div className="workspacesetting-input-wrapper">
