@@ -35,7 +35,7 @@ export function TaskImbalance() {
       console.log("data :", data);
 
       // 전체 데이터 저장
-      setAllUserData(data);
+      if (data.length > 0) setAllUserData(data);
 
       // 사용자 목록 생성 (중복 제거)
       const users = data.reduce((acc, item) => {
@@ -89,7 +89,7 @@ export function TaskImbalance() {
     <>
       {userList.length > 0 && (
         <>
-          <div style={{ marginBottom: "20px" }}>
+          <div style={{ margin: "20px" }}>
             <label htmlFor="user-select" style={{ marginRight: "10px" }}>
               담당자 선택:
             </label>

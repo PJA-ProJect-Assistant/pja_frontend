@@ -69,7 +69,7 @@ export const getTaskImbalance = async (
   try {
     console.log("불균형 그래프 가져오기 api");
     const response = await api.get(`/workspaces/${workspaceId}/task-imbalance`);
-    console.log("불균형 그래프 :", response);
+    console.log("불균형 그래프 :", response.data);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getTaskImbalance] 불균형 그래프 가져오기 실패:", error);

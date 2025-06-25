@@ -16,6 +16,8 @@ import ActionPostPage from "./pages/workspacepage/developmentpage/postpage/Actio
 import RootRedirect from "./components/common/RootRedirect";
 import AcceptInvitePage from "./pages/invitepage/AcceptInvitePage";
 import LeaveServicePage from "./pages/leaveservicepage/LeaveServicePage";
+import SearchProjectpage from "./pages/searchproject/SearchProjectpage";
+
 const Router = () => {
   return (
     <Routes>
@@ -53,6 +55,15 @@ const Router = () => {
         element={
           <PrivateRoute>
             <MainWSPage />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/ws/:wsid/search"
+        element={
+          <PrivateRoute>
+            <SearchProjectpage />
           </PrivateRoute>
         }
       />

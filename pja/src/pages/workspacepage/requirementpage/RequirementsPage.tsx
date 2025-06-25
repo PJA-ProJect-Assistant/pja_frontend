@@ -25,7 +25,7 @@ export default function RequirementsPage() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
-  const [requireDone, setRequireDone] = useState<boolean>(false);
+  const [requireDone, setRequireDone] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
   const [nextPageloading, setNextPageLoading] = useState(false);
   const [requirements, setRequirements] = useState<getrequire[]>([]);
@@ -46,6 +46,7 @@ export default function RequirementsPage() {
 
   useEffect(() => {
     getRequire();
+    if (selectedWS?.progressStep === "1") setRequireDone(false);
   }, [selectedWS]);
 
   useEffect(() => {
@@ -262,7 +263,7 @@ export default function RequirementsPage() {
                 )}
               </li>
 
-              <svg
+              {!requireDone && <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="20px"
                 viewBox="0 -960 960 960"
@@ -274,7 +275,7 @@ export default function RequirementsPage() {
                 }}
               >
                 <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-              </svg>
+              </svg>}
             </div>
           ))}
       </ul>
@@ -389,7 +390,7 @@ export default function RequirementsPage() {
         </div>
         <div className="require-btn">
           {requireDone ? (
-            <p>수정하기</p>
+            <p onClick={() => setRequireDone(false)}>수정하기</p>
           ) : (
             <p onClick={handleCompleteReq}>저장하기</p>
           )}

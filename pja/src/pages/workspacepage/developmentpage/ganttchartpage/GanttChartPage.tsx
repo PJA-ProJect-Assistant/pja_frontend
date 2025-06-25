@@ -13,7 +13,7 @@ function dateDiffInDays(a: Date, b: Date) {
   return Math.floor(
     (Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) -
       Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) /
-      _MS_PER_DAY
+    _MS_PER_DAY
   );
 }
 
@@ -39,9 +39,16 @@ export default function GanttChartPage() {
   const startDates = actionList.map((t) => new Date(t.startDate ?? new Date()));
   const endDates = actionList.map((t) => new Date(t.endDate ?? new Date()));
   const chartStart = new Date(Math.min(...startDates.map((d) => d.getTime())));
-  const chartEnd = new Date(Math.max(...endDates.map((d) => d.getTime())));
-  const totalDays = dateDiffInDays(chartStart, chartEnd);
+  let chartEnd = new Date(Math.max(...endDates.map((d) => d.getTime())));
   const today = formatDate(new Date());
+
+  // 최소 20일 보장
+  let totalDays = dateDiffInDays(chartStart, chartEnd);
+  if (totalDays < 19) {
+    chartEnd = new Date(chartStart);
+    chartEnd.setDate(chartEnd.getDate() + 19); // 16일 더해서 총 17일
+    totalDays = 19;
+  }
 
   const dates: string[] = [];
   for (let i = 0; i <= totalDays; i++) {
@@ -123,10 +130,15 @@ export default function GanttChartPage() {
       </div>
     );
   }
+  const validActionList = actionList.filter(
+    (t) => t.startDate && t.endDate
+  );
+
   const minRows = 14; // 최소 14줄 확보
   const rowCount = Math.max(
     minRows,
-    Math.ceil((actionList.length * 40 + 60) / 40)
+    validActionList.length
+    // Math.ceil((actionList.length * 40 + 60) / 40)
   );
 
   return (
@@ -190,7 +202,7 @@ export default function GanttChartPage() {
               </div>
 
               {/* 태스크 바들 */}
-              {actionList.map((task, i) => {
+              {validActionList.map((task, i) => {
                 if (!task.endDate || !task.startDate) return;
                 const left =
                   dateDiffInDays(chartStart, new Date(task.startDate)) *

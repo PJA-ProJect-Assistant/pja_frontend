@@ -12,7 +12,10 @@ import {
   changeName,
 } from "../../services/userApi";
 
+
 import { LeaveHeader } from "../../components/header/LeaveHeader";
+
+
 
 const AccountSettingPage: React.FC = () => {
   const [initialName, setInitialName] = useState<string>("");

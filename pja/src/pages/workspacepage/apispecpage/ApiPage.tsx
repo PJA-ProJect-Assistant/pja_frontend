@@ -23,6 +23,7 @@ import {
   getApisByWorkspace,
 } from "../../../services/apiApi";
 import { progressworkspace } from "../../../services/workspaceApi";
+import { postAiList } from "../../../services/listapi/listApi";
 
 // --- (타입 정의 및 변환 함수들은 기존과 동일) ---
 type ApiSpecification = {
@@ -76,6 +77,7 @@ const ApiPage = () => {
 
   const [rows, setRows] = useState<ApiSpecification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const selectedWS = useSelector(
@@ -431,24 +433,34 @@ const ApiPage = () => {
   const handleApiComplete = async () => {
     if (selectedWS?.progressStep === "4") {
       try {
-        await progressworkspace(selectedWS.workspaceId, "5");
-        console.log("리스트페이지로 이동");
-        dispatch(
-          setSelectedWS({
-            ...selectedWS,
-            progressStep: "5",
-          })
-        );
-        navigate(
-          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("5")}`
-        );
-      } catch (err) {
-        console.log("진행도 업데이트", err);
+        setIsAiLoading(true);
+        const response = await postAiList(selectedWS.workspaceId);
+        console.log("프로젝트 진행 ai추천 성공", response.data);
+
+        try {
+          await progressworkspace(selectedWS.workspaceId, "5");
+          console.log("리스트페이지로 이동");
+          dispatch(
+            setSelectedWS({
+              ...selectedWS,
+              progressStep: "5",
+            })
+          );
+          navigate(
+            `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("5")}`
+          );
+        } catch (err) {
+          console.log("진행도 업데이트", err);
+        }
+      } catch {
+        console.log("프로젝트 진행 ai 가져오기 실패");
+      } finally {
+        setIsAiLoading(false);
       }
     }
   };
 
-  return (
+  return !isAiLoading ? (
     <div>
       <WSHeader title="API 명세서" />
       <div className="api-main">
@@ -981,6 +993,9 @@ const ApiPage = () => {
         </div>
       </div>
     </div>
+  ) : (
+    // 나중에 여기에 로딩페이지 추가하면 됨
+    <div>로딩중...</div>
   );
 };
 

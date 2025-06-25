@@ -22,7 +22,6 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
 }
 
 .logout-confirmation-header-bar {
@@ -32,8 +31,6 @@
   height: 35px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-
-
 }
 
 /*메세지 텍스트*/
@@ -65,12 +62,12 @@
   transform: scale(0.98);
 }
 
-
 .logout-confirmation-button.confirm {
   background-color: #00205b; /* 짙은 남색 */
   color: white;
 }
 .logout-confirmation-button.confirm:hover {
+}
 
 .logout-modal-button.confirm {
   background-color: #00205b;
@@ -79,17 +76,12 @@
 }
 
 .logout-modal-button.confirm:hover {
-
-  
   background-color: #0a2145; /*배경색*/
 }
 
 .logout-confirmation-button.cancel {
   background-color: #d9d9d6;
 }
-
-
-
 
 .logout-modal-button.cancel:hover {
   background-color: #d1d1d1;
