@@ -142,7 +142,9 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   );
   const [editingFeatureId, setEditingFeatureId] = useState<number | null>(null);
   const [editingActionId, setEditingActionId] = useState<number | null>(null);
-  const [categoryCompletableMap, setCategoryCompletableMap] = useState<{ [key: number]: boolean }>({});
+  const [categoryCompletableMap, setCategoryCompletableMap] = useState<{
+    [key: number]: boolean;
+  }>({});
   const [workspaceId, setWorkspaceId] = useState<number>();
   const [participantList, setParticipantList] = useState<workspace_member[]>(
     []
@@ -214,11 +216,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId ? updater(feature) : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId ? updater(feature) : feature
+            ),
+          }
         : category
     );
   };
@@ -233,11 +235,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.filter(
-            (feature) => feature.featureId !== featureId
-          ),
-        }
+            ...category,
+            features: category.features.filter(
+              (feature) => feature.featureId !== featureId
+            ),
+          }
         : category
     );
   };
@@ -253,18 +255,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.map((action) =>
-                  action.actionId === actionId ? updater(action) : action
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.map((action) =>
+                      action.actionId === actionId ? updater(action) : action
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -279,18 +281,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.filter(
-                  (action) => action.actionId !== actionId
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.filter(
+                      (action) => action.actionId !== actionId
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -935,7 +937,9 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
               if (feature.featureId !== featureId) return feature;
 
               const updatedActions = feature.actions.map((action) =>
-                action.actionId === actionId ? { ...action, state: newStatus } : action
+                action.actionId === actionId
+                  ? { ...action, state: newStatus }
+                  : action
               );
 
               const allDone = updatedActions.every(
@@ -963,7 +967,9 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
           // 🔄 여기서 카테고리 완료 여부 계산
           const newMap: { [key: number]: boolean } = {};
           for (const cg of updated) {
-            newMap[cg.featureCategoryId] = cg.features.every((ft) => ft.state === true);
+            newMap[cg.featureCategoryId] = cg.features.every(
+              (ft) => ft.state === true
+            );
           }
 
           setCategoryCompletableMap(newMap);
