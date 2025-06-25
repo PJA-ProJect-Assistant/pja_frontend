@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAuthInit } from "../../hooks/useAuthInit";
 import type { RootState } from "../../store/store";
+import LoadingSpinner from "../../pages/loadingpage/LoadingSpinner";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -14,8 +15,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const authInitialized = useAuthInit();
 
   if (!authInitialized) {
-    return <>로딩중....</>;
-    // 나중에 여기에 로딩 페이지 만들게....
+    return <LoadingSpinner />;
   }
 
   if (!token) {
