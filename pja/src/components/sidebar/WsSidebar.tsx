@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import type { IsClose } from "../../types/common";
 import "./WsSidebar.css";
@@ -12,7 +12,7 @@ import { leaveWorkspace, getGitInfo } from "../../services/sideApi";
 import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
-import type { Member, MemberRole } from "../../types/invite";
+import type { MemberRole } from "../../types/invite";
 
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
@@ -20,20 +20,10 @@ export default function WsSidebar({ onClose }: IsClose) {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false);
 
-  const [members, setMembers] = useState<Member[]>([]);
-  const [isLoadingMembers, setIsLoadingMembers] = useState(false);
-
   const navigate = useNavigate();
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
-
-  // ✅ 이 부분도 수정
-  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
-  let currentUserRole: MemberRole = "OWNER";
-  if (accessToken) {
-    //... 토큰 파싱해서 currentUserRole 설정 ...
-  }
 
   // 사이드바 전체 영역 ref
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -54,55 +44,12 @@ export default function WsSidebar({ onClose }: IsClose) {
     };
   }, []);
 
-  // ✅ 3. 멤버 탭이 열릴 때 Mock 데이터
-  useEffect(() => {
-    if (activeTab === "member") {
-      setIsLoadingMembers(true);
-      // TODO: 나중에 실제 API 호출 코드로 교체
-      const mockMembers: Member[] = [
-        {
-          memberId: "2",
-          name: "박관리 (Admin)",
-          email: "admin@example.com",
-          profile: null,
-          role: "OWNER",
-        },
-        {
-          memberId: "3",
-          name: "이멤버 (Member)",
-          email: "member@example.com",
-          profile: null,
-          role: "MEMBER",
-        },
-      ];
-      setTimeout(() => {
-        setMembers(mockMembers);
-        setIsLoadingMembers(false);
-      }, 500);
-    }
-  }, [activeTab]);
-
   //✅ 멤버 역할 변경 함수
   const handleRoleChange = (memberId: string, newRole: MemberRole) => {
     // TODO: 나중에 실제 API 호출로 멤버 역할을 변경하는 로직을 추가해야 합니다.
     alert(
       `(관리자 기능) ID: ${memberId} 멤버의 역할을 ${newRole}(으)로 변경합니다.`
     );
-
-    // 화면에 즉시 반영되도록 로컬 상태를 업데이트합니다.
-    setMembers((prevMembers) =>
-      prevMembers.map((member) =>
-        member.memberId === memberId ? { ...member, role: newRole } : member
-      )
-    );
-  };
-
-  //✅ 멤버 삭제
-  const handleDeleteMember = (memberId: string) => {
-    if (window.confirm("정말로 이 멤버를 삭제하시겠습니까?")) {
-      alert(`(관리자 기능) ID: ${memberId} 멤버 삭제`);
-      setMembers((prev) => prev.filter((m) => m.memberId !== memberId));
-    }
   };
 
   //팀 탈퇴 메뉴 클릭 시 모달을 여는 함수
@@ -263,25 +210,21 @@ export default function WsSidebar({ onClose }: IsClose) {
             <p>유사 프로젝트</p>
           </div>
 
-          {selectedWS && (
-            <Link
-              to={`/workspace/${selectedWS.workspaceId}/settings`}
-              className="wssidebar-link"
+          <div
+            className="wssidebar-list"
+            onClick={() => navigate(`/ws/${selectedWS?.workspaceId}/settings`)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="20px"
+              viewBox="0 -960 960 960"
+              width="20px"
+              fill="#000000"
             >
-              <div className="wssidebar-list">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="20px"
-                  viewBox="0 -960 960 960"
-                  width="20px"
-                  fill="#000000"
-                >
-                  <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
-                </svg>
-                <p>설정</p>
-              </div>
-            </Link>
-          )}
+              <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+            </svg>
+            <p>설정</p>
+          </div>
 
           <div className="wssidebar-list" onClick={handleOpenModal}>
             <svg
@@ -318,19 +261,11 @@ export default function WsSidebar({ onClose }: IsClose) {
               </div>
               <div className="line"></div>
               <div className="member-list-scroll-container">
-                {isLoadingMembers ? (
-                  <p>멤버 목록을 불러오는 중...</p>
-                ) : (
-                  // MemberTabComp를 한 번만 호출하고 필요한 모든 props 전달
-                  <MemberTabComp
-                    members={members} // 멤버 목록 전체 전달
-                    currentUserRole={currentUserRole}
-                    isInviteModalOpen={isInviteModalOpen} // 모달 상태 전달
-                    onCloseInviteModal={handleCloseInviteModal} // 모달 닫기 함수 전달
-                    onRoleChange={handleRoleChange}
-                    onDelete={handleDeleteMember}
-                  />
-                )}
+                <MemberTabComp
+                  isInviteModalOpen={isInviteModalOpen} // 모달 상태 전달
+                  onCloseInviteModal={handleCloseInviteModal} // 모달 닫기 함수 전달
+                  onRoleChange={handleRoleChange}
+                />
               </div>
             </div>
           )}

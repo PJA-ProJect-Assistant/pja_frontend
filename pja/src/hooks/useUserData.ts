@@ -8,7 +8,7 @@ import type { workspace } from "../types/workspace";
 export function useUserData() {
   // const dispatch = useDispatch();
   const [userData, setUserData] = useState<user>();
-  const [myWSData, setMyWSData] = useState<workspace>();
+  const [myWSData, setMyWSData] = useState<workspace[]>();
 
   const fetchUser = async () => {
     try {

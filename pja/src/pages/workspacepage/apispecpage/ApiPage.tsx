@@ -84,6 +84,9 @@ const ApiPage = () => {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
+
   const wsid = selectedWS?.workspaceId;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -448,7 +451,7 @@ const ApiPage = () => {
             })
           );
           navigate(
-            `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("5")}`
+            `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("5")}`
           );
         } catch (err) {
           console.log("진행도 업데이트", err);
@@ -987,15 +990,17 @@ const ApiPage = () => {
             </button>
           </div>
 
-          <div className="api-complete-button">
-            <button
-              className="api-complete-btn"
-              onClick={() => handleApiComplete()}
-              disabled={!selectedWS}
-            >
-              완료하기
-            </button>
-          </div>
+          {CanEdit && (
+            <div className="api-complete-button">
+              <button
+                className="api-complete-btn"
+                onClick={() => handleApiComplete()}
+                disabled={!selectedWS}
+              >
+                완료하기
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

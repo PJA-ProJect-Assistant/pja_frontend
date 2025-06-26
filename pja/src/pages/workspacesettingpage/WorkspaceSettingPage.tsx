@@ -20,7 +20,7 @@ const isValidGitHubUrl = (url: string): boolean => {
   return regex.test(url);
 };
 
-const WorkspaceSettingPage: React.FC = () => {
+export function WorkspaceSettingPage() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
@@ -233,6 +233,4 @@ const WorkspaceSettingPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default WorkspaceSettingPage;
+}

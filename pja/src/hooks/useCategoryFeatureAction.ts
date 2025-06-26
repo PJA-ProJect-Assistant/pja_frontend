@@ -40,6 +40,7 @@ import {
 import type { workspace_member } from "../types/workspace";
 
 interface UseCategoryFeatureCategoryReturn {
+  isLoading: boolean;
   categoryList: feature_category[];
   coreFeature: string[];
   clickCg: { [key: number]: boolean };
@@ -149,6 +150,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   const [participantList, setParticipantList] = useState<workspace_member[]>(
     []
   );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -196,15 +198,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   useEffect(() => {
     console.log("카테고리 리스트 변경");
   }, [categoryList]);
-
-  // const categoryCompletableMap = useMemo(() => {
-  //   const result: { [key: number]: boolean } = {};
-  //   for (const cg of categoryList) {
-  //     const children = cg.features || [];
-  //     result[cg.featureCategoryId] = children.every((ft) => ft.state === true);
-  //   }
-  //   return result;
-  // }, [categoryList]);
 
   //카테고리 리스트의 feature 수정
   const updateFeatureInCategoryList = (
@@ -567,7 +560,8 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
   const handleAddAIAction = async (featureId: number) => {
     try {
-      //여기에 aiaction추천받기 추가
+      //aiaction추천받기
+      setIsLoading(true);
       const response = await getActionAI(workspaceId ?? 0, featureId);
       if (response.data) {
         //ailist에 aiacion 추가
@@ -576,6 +570,8 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
       }
     } catch (err) {
       console.log("aiaction 추천 실패", err);
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleUpdateAIAction = async (
@@ -1101,6 +1097,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
   };
 
   return {
+    isLoading,
     categoryList,
     clickCg,
     clickFt,

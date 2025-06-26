@@ -18,7 +18,10 @@ export default function ProjectSummaryPage() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
-  const [summaryDone, setSummaryDone] = useState<boolean>();
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
+
+  const [summaryDone, setSummaryDone] = useState<boolean>(true);
   const [projectInfo, setProjectInfo] = useState<getproject>();
   const [title, setTitle] = useState<string>("");
   const [category, setCategory] = useState<string>("");
@@ -63,8 +66,8 @@ export default function ProjectSummaryPage() {
         console.log("프로젝트 가져오기 실패 : ", err);
       }
     };
-    if (Number(selectedWS?.progressStep) > 2) {
-      setSummaryDone(true);
+    if (selectedWS?.progressStep === "2") {
+      setSummaryDone(false);
     }
     getproject();
   }, [selectedWS]);
@@ -110,9 +113,7 @@ export default function ProjectSummaryPage() {
               );
               setSummaryDone(true);
               navigate(
-                `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(
-                  "3"
-                )}`
+                `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("3")}`
               );
             }
           } else {
@@ -475,13 +476,15 @@ export default function ProjectSummaryPage() {
               )}
             </div>
           </div>
-          <div className="projectsummary-btn">
-            {summaryDone ? (
-              <button onClick={() => setSummaryDone(false)}>수정하기</button>
-            ) : (
-              <button onClick={handleSummaryComplete}>완료하기</button>
-            )}
-          </div>
+          {CanEdit && (
+            <div className="projectsummary-btn">
+              {summaryDone ? (
+                <button onClick={() => setSummaryDone(false)}>수정하기</button>
+              ) : (
+                <button onClick={handleSummaryComplete}>완료하기</button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>

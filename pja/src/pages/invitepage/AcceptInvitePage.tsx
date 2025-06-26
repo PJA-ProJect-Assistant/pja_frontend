@@ -96,7 +96,7 @@ const AcceptInvitePage = () => {
 
         // 성공 메시지를 1.5초간 보여준 후 워크스페이스로 이동합니다.
         setTimeout(() => {
-          navigate(`/ws/${selectedWS?.workspaceId}/step/${stepId}`);
+          navigate(`/ws/${selectedWS?.workspaceId}/${stepId}`);
         }, 1500);
       } else {
         // 성공은 했으나 status가 다른 경우에 대한 예외 처리

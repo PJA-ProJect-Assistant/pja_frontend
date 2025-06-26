@@ -5,7 +5,7 @@ import type { setworkspace } from "../types/workspace";
 //워크스페이스 관련 api
 
 //내 워크스페이스 가져오기
-export const getmyworkspaces = async (): Promise<ApiResponse<workspace>> => {
+export const getmyworkspaces = async (): Promise<ApiResponse<workspace[]>> => {
   try {
     const response = await api.get("/workspaces");
     console.log("myworkspace", response.data);
@@ -27,7 +27,9 @@ export const getmyworkspaces = async (): Promise<ApiResponse<workspace>> => {
 };
 
 //워크스페이스 단일 조회
-export const getworkspace = async (workspaceId: number): Promise<ApiResponse<workspace>> => {
+export const getworkspace = async (
+  workspaceId: number
+): Promise<ApiResponse<workspace>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}`);
     console.log("Select workspace", response.data);
@@ -46,7 +48,7 @@ export const getworkspace = async (workspaceId: number): Promise<ApiResponse<wor
     }
     throw error;
   }
-}
+};
 
 //워크스페이스 생성하기
 export const addworkspace = async ({

@@ -15,10 +15,7 @@ import {
   deletefunc,
 } from "../../../services/ideaApi";
 import type { IdeaData } from "../../../types/idea";
-import {
-  StackDeleteModal,
-  FeatureDeleteModal,
-} from "../../../components/modal/WsmenuModal";
+import { BasicModal } from "../../../components/modal/BasicModal";
 import { progressworkspace } from "../../../services/workspaceApi";
 
 export default function ProhectForm() {
@@ -33,6 +30,8 @@ export default function ProhectForm() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
 
   const [features, setFeatures] = useState<{ id: number; content: string }[]>(
     []
@@ -208,9 +207,7 @@ export default function ProhectForm() {
         };
 
         dispatch(setSelectedWS(updatedWorkspace));
-        navigate(
-          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("1")}`
-        );
+        navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("1")}`);
       }
     } catch (err) {
       console.log("아이디어 수정 실패 : ", err);
@@ -230,7 +227,7 @@ export default function ProhectForm() {
         </label>
         <input
           type="text"
-          disabled={ideaDone}
+          disabled={ideaDone || !CanEdit}
           className="form-input-field"
           value={projectName}
           onChange={(e) => setProjectName(e.target.value)}
@@ -244,7 +241,7 @@ export default function ProhectForm() {
         </label>
         <input
           type="text"
-          disabled={ideaDone}
+          disabled={ideaDone || !CanEdit}
           className="form-input-field"
           value={projectTarget}
           onChange={(e) => setProjectTarget(e.target.value)}
@@ -260,13 +257,13 @@ export default function ProhectForm() {
           <div key={feature.id} className="form-input-row">
             <input
               type="text"
-              disabled={ideaDone}
+              disabled={ideaDone || !CanEdit}
               className="form-input-field"
               placeholder={`기능 ${index + 1}`}
               value={feature.content}
               onChange={(e) => updateFeature(feature.id, e.target.value)}
             />
-            {!ideaDone && (
+            {!ideaDone && CanEdit && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="form-remove-button"
@@ -281,7 +278,7 @@ export default function ProhectForm() {
             )}
           </div>
         ))}
-        {!ideaDone && (
+        {!ideaDone && CanEdit && (
           <button className="form-add-button" onClick={addFeature}>
             + 메인 기능 추가
           </button>
@@ -296,13 +293,13 @@ export default function ProhectForm() {
           <div key={stack.id} className="form-input-row">
             <input
               type="text"
-              disabled={ideaDone}
+              disabled={ideaDone || !CanEdit}
               className="form-input-field"
               placeholder={`스택 ${index + 1}`}
               value={stack.content}
               onChange={(e) => updateStack(stack.id, e.target.value)}
             />
-            {!ideaDone && (
+            {!ideaDone && CanEdit && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="form-remove-button"
@@ -317,7 +314,7 @@ export default function ProhectForm() {
             )}
           </div>
         ))}
-        {!ideaDone && (
+        {!ideaDone && CanEdit && (
           <button className="form-add-button" onClick={addStack}>
             + 기술 스택 추가
           </button>
@@ -327,45 +324,52 @@ export default function ProhectForm() {
       <div>
         <label className="form-label">
           <p>🗨️ 프로젝트 설명 (200자 이상)</p>
-          {projectDescription.length > 0 &&
-            <p className="textarea-length"> 현재 : {projectDescription.length}자</p>}
+          {projectDescription.length > 0 && (
+            <p className="textarea-length">
+              {" "}
+              현재 : {projectDescription.length}자
+            </p>
+          )}
         </label>
         <textarea
           className="form-input-field"
-          disabled={ideaDone}
+          disabled={ideaDone || !CanEdit}
           rows={10}
           value={projectDescription}
           onChange={(e) => setProjectDescription(e.target.value)}
           placeholder="ex. 사용자가 프로젝트에 대한 설명을 입력하면 요약 및 정리를 한다. 요약/정리 내용을 바탕으로 ERD와 API 명세서를 AI로 작성한다. ERD와 API 명세서 작성이 완료되면 프로젝트 관리를 위한 워크 스페이스를 생성한다. 워크 스페이스의 작업 단계는 AI 기반으로 초안을 생성해준다...."
         />
       </div>
-
       <div className="form-submit-wrapper">
-        {ideaDone ? (
-          <button className="form-submit-button" onClick={handlemodify}>
-            수정하기
-          </button>
-        ) : (
-          <button
-            disabled={isFormIncomplete}
-            className="form-submit-button"
-            onClick={handleSubmit}
-          >
-            저장하기
-          </button>
-        )}
+        {CanEdit &&
+          (ideaDone ? (
+            <button className="form-submit-button" onClick={handlemodify}>
+              수정하기
+            </button>
+          ) : (
+            <button
+              disabled={isFormIncomplete}
+              className="form-submit-button"
+              onClick={handleSubmit}
+            >
+              저장하기
+            </button>
+          ))}
       </div>
-
-      {
-        openFeatureModal && (
-          <FeatureDeleteModal onClose={() => setOpenFeatureModal(false)} />
-        )
-      }
-      {
-        openStackModal && (
-          <StackDeleteModal onClose={() => setOpenStackModal(false)} />
-        )
-      }
-    </div >
+      {openFeatureModal && (
+        <BasicModal
+          modalTitle="삭제가 불가능합니다"
+          modalDescription="메인 기능이 최소 2개는 필요합니다"
+          Close={() => setOpenFeatureModal(false)}
+        />
+      )}
+      {openStackModal && (
+        <BasicModal
+          modalTitle="삭제가 불가능합니다"
+          modalDescription="기술 스택이 최소 2개는 필요합니다"
+          Close={() => setOpenStackModal(false)}
+        />
+      )}
+    </div>
   );
 }

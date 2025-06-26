@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
-import { RequireCancleModal } from "../../../components/modal/WsmenuModal";
+import { BasicModal } from "../../../components/modal/BasicModal";
 import { progressworkspace } from "../../../services/workspaceApi";
 import type { workspace } from "../../../types/workspace";
 import { setSelectedWS } from "../../../store/workspaceSlice";
@@ -26,6 +26,9 @@ export default function RequirementsPage() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
+
   const [requireDone, setRequireDone] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
   const [nextPageloading, setNextPageLoading] = useState(false);
@@ -215,9 +218,7 @@ export default function RequirementsPage() {
         };
 
         dispatch(setSelectedWS(updatedWorkspace));
-        navigate(
-          `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("2")}`
-        );
+        navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("2")}`);
       }
       setRequireDone(true);
     } catch (err) {
@@ -244,7 +245,7 @@ export default function RequirementsPage() {
               key={req.requirementId}
               onClick={() => {
                 {
-                  !requireDone && handleEditClick(req);
+                  !requireDone && CanEdit && handleEditClick(req);
                 }
               }}
               style={{ cursor: "pointer" }}
@@ -264,7 +265,7 @@ export default function RequirementsPage() {
                 )}
               </li>
 
-              {!requireDone && (
+              {!requireDone && CanEdit && (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="20px"
@@ -298,13 +299,13 @@ export default function RequirementsPage() {
                   <span className="airequire-actions">
                     <button
                       className="airequire-accept-btn"
-                      onClick={() => handleAiAccept(ai)}
+                      onClick={() => CanEdit && handleAiAccept(ai)}
                     >
                       완료
                     </button>
                     <button
                       className="airequire-cancel-btn"
-                      onClick={() => handleAiCancel(ai)}
+                      onClick={() => CanEdit && handleAiCancel(ai)}
                     >
                       취소
                     </button>
@@ -316,11 +317,14 @@ export default function RequirementsPage() {
       </ul>
     );
   };
-  return (
+  return nextPageloading ? (
+    <div>로딩 중입니다...</div>
+  ) : (
     <>
       <WSHeader title="요구사항 명세서" />
       <div className="require-container">
         {selectedWS?.progressStep === "1" &&
+          CanEdit &&
           (loading ? (
             <div className="airequire-title wave-text">
               {"✨ AI 추천 중이에요".split("").map((char, idx) => (
@@ -345,7 +349,7 @@ export default function RequirementsPage() {
             <div className="require-lists">
               {renderList("FUNCTIONAL")}
               {airenderList("FUNCTIONAL")}
-              {!requireDone && (
+              {!requireDone && CanEdit && (
                 <button
                   className="require-add-button"
                   onClick={() => handleAddFunction("")}
@@ -371,7 +375,7 @@ export default function RequirementsPage() {
             <div className="require-lists">
               {renderList("PERFORMANCE")}
               {airenderList("PERFORMANCE")}
-              {!requireDone && (
+              {!requireDone && CanEdit && (
                 <button
                   className="require-add-button"
                   onClick={() => handleAddPerformance("")}
@@ -391,21 +395,33 @@ export default function RequirementsPage() {
             </div>
           </div>
         </div>
-        <div className="require-btn">
-          {requireDone ? (
-            <p onClick={() => setRequireDone(false)}>수정하기</p>
-          ) : (
-            <p onClick={handleCompleteReq}>저장하기</p>
-          )}
-          {selectedWS?.progressStep === "1" && (
-            <div className="require-info">?</div>
-          )}
-        </div>
-        {openAIModal && (
-          <RequireCancleModal onClose={() => setOpenAIModal(false)} />
+        {CanEdit && (
+          <div className="require-btn">
+            {requireDone ? (
+              <p onClick={() => setRequireDone(false)}>수정하기</p>
+            ) : (
+              <p onClick={handleCompleteReq}>저장하기</p>
+            )}
+
+            {selectedWS?.progressStep === "1" && (
+              <div className="require-info-container">
+                <div className="require-info">?</div>
+                <div className="require-tooltip">
+                  저장한 후에는 ai추천받기 기능이 비활성화됩니다
+                </div>
+              </div>
+            )}
+          </div>
         )}
         {nextPageloading && (
           <Loading /> // 여기에 나중에 가이드 페이지
+        )}
+        {openAIModal && (
+          <BasicModal
+            modalTitle="AI추천이 불가능합니다"
+            modalDescription="기능·성능 요구사항이 최소 3개는 필요합니다"
+            Close={() => setOpenAIModal(false)}
+          />
         )}
       </div>
     </>

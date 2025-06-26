@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import "./ProgressStep.css";
 import { useNavigate } from "react-router-dom";
-import { StepRestrictionModal } from "../modal/WsmenuModal";
+import { BasicModal } from "../modal/BasicModal";
 import { useState } from "react";
 import { getStepIdFromNumber } from "../../utils/projectSteps";
 import type { Status } from "../../types/list";
@@ -15,9 +15,7 @@ export default function ProgressStep() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const handleStepClick = (step: Status) => {
     if (Number(step) <= Number(selectedWS?.progressStep)) {
-      navigate(
-        `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber(step)}`
-      );
+      navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber(step)}`);
     } else setModalOpen(true);
   };
   console.log({ selectedWS });
@@ -64,7 +62,11 @@ export default function ProgressStep() {
         </div>
       </div>
       {modalOpen && (
-        <StepRestrictionModal onClose={() => setModalOpen(false)} />
+        <BasicModal
+          modalTitle="이동이 불가능합니다"
+          modalDescription="이전 단계를 모두 완료한 후 이동 가능합니다"
+          Close={() => setModalOpen(false)}
+        />
       )}
     </>
   );
