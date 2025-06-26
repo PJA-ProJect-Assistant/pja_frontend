@@ -45,7 +45,7 @@
   font-weight: bold;
   border: 1px solid #ccc;
   text-align: left;
-  padding: 5px 2px;
+  padding: 5px 6px;
 }
 
 .feature-table td {
@@ -223,6 +223,7 @@
   white-space: nowrap;
   cursor: pointer;
 }
+
 .ftlist-name {
   position: relative;
 }
@@ -234,6 +235,7 @@
   flex: 1;
   justify-content: flex-end;
 }
+
 .list-addbtn {
   display: flex;
   display: none;
@@ -461,6 +463,7 @@
 }
 
 @keyframes wave {
+
   0%,
   100% {
     transform: translateY(0);
