@@ -10,6 +10,7 @@ import type { getproject, setproject } from "../../../types/project";
 import { getProject, putProject } from "../../../services/projectApi";
 import { WSHeader } from "../../../components/header/WSHeader";
 import { postErd, postErdAI } from "../../../services/erdApi";
+import Loading from "../../loadingpage/Loading";
 
 export default function ProjectSummaryPage() {
   const navigate = useNavigate();
@@ -130,7 +131,7 @@ export default function ProjectSummaryPage() {
     }
   };
   return isLoading ? (
-    <p>로딩 중</p>
+    <Loading />
   ) : (
     <>
       <WSHeader title="프로젝트 정보" />

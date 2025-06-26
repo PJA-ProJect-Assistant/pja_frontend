@@ -18,6 +18,7 @@ import type { workspace } from "../../../types/workspace";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
 import { postProjectAI } from "../../../services/projectApi";
+import Loading from "../../loadingpage/Loading";
 
 export default function RequirementsPage() {
   const navigate = useNavigate();
@@ -263,19 +264,21 @@ export default function RequirementsPage() {
                 )}
               </li>
 
-              {!requireDone && <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="#EA3323"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleReqDelete(req.requirementId);
-                }}
-              >
-                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-              </svg>}
+              {!requireDone && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#EA3323"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReqDelete(req.requirementId);
+                  }}
+                >
+                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                </svg>
+              )}
             </div>
           ))}
       </ul>
@@ -402,7 +405,7 @@ export default function RequirementsPage() {
           <RequireCancleModal onClose={() => setOpenAIModal(false)} />
         )}
         {nextPageloading && (
-          <div>로딩 중입니다...</div> // 여기에 나중에 가이드 페이지
+          <Loading /> // 여기에 나중에 가이드 페이지
         )}
       </div>
     </>
