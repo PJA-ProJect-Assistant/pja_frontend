@@ -1,8 +1,7 @@
 import "./Myworkspace.css";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { WsmenuModal } from "../../components/modal/WsmenuModal";
-import { WsCompleteModal } from "../../components/modal/WsmenuModal";
+import { BasicModal } from "../../components/modal/BasicModal";
 import { useUserData } from "../../hooks/useUserData";
 import type { workspace } from "../../types/workspace";
 import { getStepIdFromNumber } from "../../utils/projectSteps";
@@ -19,11 +18,10 @@ export function Myworkspace() {
 
   const [processWorkspaces, setProcessWorkspaces] = useState<workspace[]>([]);
   const [completeWorkspaces, setCompleteWorkspaces] = useState<workspace[]>([]);
-  const [menuModalOpen, setMenuModalOpen] = useState<boolean>(false);
   const [completeModalOpen, setCompleteModalOpen] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
-
+  const [forbiddenModal, setForbiddenModal] = useState<boolean>(false);
   const [wsMenuOpenId, setWsMenuOpenId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -51,21 +49,53 @@ export function Myworkspace() {
   //완료 삭제 만드는거 일단 생성 다 끝내고 하기
   const handleComplete = async (id: number, step: string) => {
     if (step === "5") {
-      const response = await completeworkspace(id);
-      console.log("완료 결과 : ", response.data);
-      setProcessWorkspaces((prev) =>
-        prev.map((ws) =>
-          ws.workspaceId === id ? { ...ws, progressStep: "6" } : ws
-        )
-      );
+      try {
+        const response = await completeworkspace(id);
+        console.log("완료 결과 : ", response.data);
+
+        // progress에서 제거
+        setProcessWorkspaces((prev) =>
+          prev.filter((ws) => ws.workspaceId !== id)
+        );
+
+        // complete에 추가
+        const completedWS = myWSData?.find((ws) => ws.workspaceId === id);
+        if (completedWS) {
+          setCompleteWorkspaces((prev) => [
+            ...prev,
+            { ...completedWS, progressStep: "6" },
+          ]);
+        }
+      } catch (err: any) {
+        if (err.response?.status === 403) {
+          // 권한 없음 모달 열기
+          setForbiddenModal(true);
+        }
+      }
     } else if (step === "6") {
-      const response = await progressworkspace(id, "5");
-      console.log("완료 취소 : ", response.data);
-      setProcessWorkspaces((prev) =>
-        prev.map((ws) =>
-          ws.workspaceId === id ? { ...ws, progressStep: "5" } : ws
-        )
-      );
+      try {
+        const response = await progressworkspace(id, "5");
+        console.log("완료 취소 : ", response.data);
+
+        // complete에서 제거
+        setCompleteWorkspaces((prev) =>
+          prev.filter((ws) => ws.workspaceId !== id)
+        );
+
+        // process에 추가
+        const revertedWS = myWSData?.find((ws) => ws.workspaceId === id);
+        if (revertedWS) {
+          setProcessWorkspaces((prev) => [
+            ...prev,
+            { ...revertedWS, progressStep: "5" },
+          ]);
+        }
+      } catch (err: any) {
+        if (err.response?.status === 403) {
+          // 권한 없음 모달 열기
+          setForbiddenModal(true);
+        }
+      }
     } else {
       setCompleteModalOpen(true);
     }
@@ -85,8 +115,11 @@ export function Myworkspace() {
       setProcessWorkspaces((prev) =>
         prev.filter((ws) => ws.workspaceId !== deleteTargetId)
       );
-    } catch (error) {
-      console.error("삭제 실패:", error);
+    } catch (err: any) {
+      if (err.response?.status === 403) {
+        // 권한 없음 모달 열기
+        setForbiddenModal(true);
+      } else console.error("삭제 실패:", err);
     } finally {
       setDeleteModalOpen(false);
       setDeleteTargetId(null);
@@ -268,9 +301,19 @@ export function Myworkspace() {
           {renderCards(completeWorkspaces)}
         </div>
       </div>
-      {menuModalOpen && <WsmenuModal onClose={() => setMenuModalOpen(false)} />}
+      {forbiddenModal && (
+        <BasicModal
+          modalTitle="작업 수행 권한이 없습니다"
+          modalDescription="워크스페이스 관리는 관리자만 가능합니다"
+          Close={() => setForbiddenModal(false)}
+        />
+      )}
       {completeModalOpen && (
-        <WsCompleteModal onClose={() => setCompleteModalOpen(false)} />
+        <BasicModal
+          modalTitle="워크스페이스를 완료할 수 없습니다"
+          modalDescription="프로젝트를 모두 완료한 후 완료 가능합니다"
+          Close={() => setCompleteModalOpen(false)}
+        />
       )}
       {deleteModalOpen && (
         <WsDeleteModal
