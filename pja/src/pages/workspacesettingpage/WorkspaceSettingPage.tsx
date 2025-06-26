@@ -8,7 +8,7 @@ import {
 } from "../../services/workspaceSettingApi";
 import type { UpdateWorkspacePayload } from "../../types/workspace";
 import "./WorkspaceSettingPage.css";
-
+import { SettingHeader } from "../../components/header/SettingHeader";
 //  GitHub URL 유효성 검사 함수
 const isValidGitHubUrl = (url: string): boolean => {
   // URL이 비어있으면 유효한 것으로 간주 (필수 입력이 아닐 경우)
@@ -140,6 +140,9 @@ export function WorkspaceSettingPage() {
   return (
     <div>
       <div className="workspacesetting-wrapper">
+        <div className="workspacesetting-service-header">
+          <SettingHeader />
+        </div>
         <h1 className="workspacesetting-title">설정</h1>
         <div className="workspacesetting-underline" />
         <div className="workspacesetting-content">

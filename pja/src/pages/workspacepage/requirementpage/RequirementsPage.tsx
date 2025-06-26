@@ -18,6 +18,7 @@ import type { workspace } from "../../../types/workspace";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
 import { postProjectAI } from "../../../services/projectApi";
+import Loading from "../../loadingpage/Loading";
 
 export default function RequirementsPage() {
   const navigate = useNavigate();
@@ -411,6 +412,9 @@ export default function RequirementsPage() {
               </div>
             )}
           </div>
+        )}
+        {nextPageloading && (
+          <Loading /> // 여기에 나중에 가이드 페이지
         )}
         {openAIModal && (
           <BasicModal
