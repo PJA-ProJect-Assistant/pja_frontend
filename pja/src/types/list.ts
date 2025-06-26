@@ -98,7 +98,7 @@ export interface myProgress {
 
 export interface taskimbalance {
   graphData: imbalancegraphData[];
-  assigness: imbalanceassignees[];
+  assignees: imbalanceassignees[];
 }
 
 export interface imbalancegraphData {
