@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { statusLabels, statusColors } from "../../../../constants/statecolor";
-import type { Importance, Status, taskimbalance } from "../../../../types/list";
+import type { imbalanceassignees, imbalancegraphData, Importance, Status } from "../../../../types/list";
 import type { RootState } from "../../../../store/store";
 import { useEffect, useState } from "react";
 import {
@@ -22,37 +22,27 @@ export function TaskImbalance() {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
-  const [allUserData, setAllUserData] = useState<taskimbalance[]>([]);
+  const [allUserData, setAllUserData] = useState<imbalancegraphData[]>([]);
   const [selectedUser, setSelectedUser] = useState<number | null>(null);
   const [userList, setUserList] = useState<
-    { memberId: number; username: string }[]
+    imbalanceassignees[]
   >([]);
 
   const getimblance = async () => {
     try {
       const response = await getTaskImbalance(selectedWS?.workspaceId ?? 0);
-      const data = response.data ?? [];
+      const data = response.data;
       console.log("data :", data);
 
       // 전체 데이터 저장
-      if (data.length > 0) setAllUserData(data);
+      setAllUserData(data?.graphData ?? []);
 
-      // 사용자 목록 생성 (중복 제거)
-      const users = data.reduce((acc, item) => {
-        const existingUser = acc.find(
-          (user) => user.memberId === item.memberId
-        );
-        if (!existingUser) {
-          acc.push({ memberId: item.memberId, username: item.username });
-        }
-        return acc;
-      }, [] as { memberId: number; username: string }[]);
-
-      setUserList(users);
+      const userdata = data?.assigness ?? []
+      setUserList(userdata);
 
       // 첫 번째 사용자를 기본 선택
-      if (users.length > 0 && selectedUser === null) {
-        setSelectedUser(users[0].memberId);
+      if (userdata.length > 0 && selectedUser === null) {
+        setSelectedUser(userdata[0].userId);
       }
     } catch {
       console.log("일 분균형 그래프 가져오기 실패");
@@ -80,7 +70,7 @@ export function TaskImbalance() {
   // 현재 선택된 사용자의 차트 데이터
   const currentChartData = selectedUser ? generateChartData(selectedUser) : [];
   const selectedUsername =
-    userList.find((user) => user.memberId === selectedUser)?.username || "";
+    userList.find((user) => user.userId === selectedUser)?.username || "";
 
   useEffect(() => {
     getimblance();
@@ -106,7 +96,7 @@ export function TaskImbalance() {
             >
               <option value="">담당자를 선택하세요</option>
               {userList.map((user) => (
-                <option key={user.memberId} value={user.memberId}>
+                <option key={user.userId} value={user.userId}>
                   {user.username}
                 </option>
               ))}

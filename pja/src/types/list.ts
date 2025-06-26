@@ -97,11 +97,20 @@ export interface myProgress {
 }
 
 export interface taskimbalance {
+  graphData: imbalancegraphData[];
+  assigness: imbalanceassignees[];
+}
+
+export interface imbalancegraphData {
   memberId: number;
   username: string;
   state: Status;
   importance: Importance;
   taskCount: number;
+}
+export interface imbalanceassignees {
+  userId: number,
+  username: string,
 }
 
 export interface processtime {

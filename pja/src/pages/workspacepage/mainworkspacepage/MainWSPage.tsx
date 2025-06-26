@@ -17,12 +17,14 @@ import { getUserRole } from "../../../services/userApi";
 import { setUserRole } from "../../../store/userSlice";
 import SearchProjectpage from "../../searchproject/SearchProjectpage";
 import { WorkspaceSettingPage } from "../../workspacesettingpage/WorkspaceSettingPage";
+import LoadingSpinner from "../../loadingpage/LoadingSpinner";
 
 export default function MainWSPage() {
   const { wsid, stepId } = useParams<{
     wsid: string;
     stepId: string;
   }>();
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch(); //redux에 값 저장하는 함수 필요
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
@@ -50,8 +52,11 @@ export default function MainWSPage() {
       dispatch(setUserRole(response.data?.role ?? null));
       serUserRole(response.data?.role ?? null);
     };
-    getws();
-    getrole();
+    const fetchData = async () => {
+      await Promise.all([getws(), getrole()]);
+      setIsLoading(false); // 모든 로딩이 끝났을 때만 false
+    };
+    fetchData();
   }, [wsid]);
   const renderStepComponent = () => {
     switch (stepId) {
@@ -80,6 +85,10 @@ export default function MainWSPage() {
         return <div>잘못된 스텝입니다.</div>;
     }
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />; // 또는 스피너 컴포넌트
+  }
 
   return !wsPublic && userRole === null ? (
     <div className="NoEnty-mainws">
