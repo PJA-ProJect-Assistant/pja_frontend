@@ -74,6 +74,7 @@ const ApiPage = () => {
   //const [isEditMode, setIsEditMode] = useState(false);
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
   const [openRowId, setOpenRowId] = useState<number | null>(null);
+  const [apiDone, setApiDone] = useState<boolean>(true);
 
   const [rows, setRows] = useState<ApiSpecification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -244,7 +245,7 @@ const ApiPage = () => {
         setError("워크스페이스 정보를 찾을 수 없습니다.");
         return;
       }
-
+      if (selectedWS?.progressStep === "4") setApiDone(false);
       try {
         setIsLoading(true);
         setError(null);
@@ -295,7 +296,6 @@ const ApiPage = () => {
   // + 버튼 클릭 시 호출되는 함수
   const handleAddRow = async (workspaceId: number) => {
     if (!workspaceId) {
-      alert("워크스페이스 정보가 없습니다. 페이지를 새로고침 해주세요");
       return;
     }
 
@@ -461,6 +461,7 @@ const ApiPage = () => {
         setIsAiLoading(false);
       }
     }
+    setApiDone(true);
   };
 
   return !isAiLoading ? (
@@ -520,19 +521,22 @@ const ApiPage = () => {
                             </button>
                           </div>
                         ) : (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(row);
-                            }}
-                            className="edit-button"
-                          >
-                            <img
-                              src={pencilIcon}
-                              alt="수정"
-                              className="edit-image"
-                            />
-                          </button>
+                          !apiDone &&
+                          CanEdit && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(row);
+                              }}
+                              className="edit-button"
+                            >
+                              <img
+                                src={pencilIcon}
+                                alt="수정"
+                                className="edit-image"
+                              />
+                            </button>
+                          )
                         )}
                       </td>
 
@@ -989,7 +993,17 @@ const ApiPage = () => {
             </button>
           </div>
 
-          {CanEdit && (
+          {CanEdit && apiDone ? (
+            <div className="api-complete-button">
+              <button
+                className="api-complete-btn"
+                onClick={() => setApiDone(false)}
+                disabled={!selectedWS}
+              >
+                수정하기
+              </button>
+            </div>
+          ) : (
             <div className="api-complete-button">
               <button
                 className="api-complete-btn"
