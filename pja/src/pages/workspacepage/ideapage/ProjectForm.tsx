@@ -17,6 +17,8 @@ import {
 import type { IdeaData } from "../../../types/idea";
 import { BasicModal } from "../../../components/modal/BasicModal";
 import { progressworkspace } from "../../../services/workspaceApi";
+import { useEditLock } from "../../../hooks/useEditLock";
+import type { LockedUser } from "../../../types/edit";
 
 export default function ProhectForm() {
   const [ideaDone, setIdeaDone] = useState<boolean>(false);
@@ -40,6 +42,16 @@ export default function ProhectForm() {
   const [projectName, setProjectName] = useState("");
   const [projectTarget, setProjectTarget] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
+
+  const {
+    getUserEditingField,
+    startPolling,
+    stopPolling,
+    startEditing,
+    stopEditing,
+    setAlreadyEdit,
+    alreadyEdit,
+  } = useEditLock("idea-input");
 
   const addFeature = async () => {
     try {
@@ -218,6 +230,24 @@ export default function ProhectForm() {
     setIdeaDone(false);
   };
 
+  const renderEditor = (user: LockedUser | null) => {
+    if (!user) return null;
+
+    return user.userProfile ? (
+      <img
+        key={user.userId}
+        src={user.userProfile}
+        alt={user.userName}
+        title={user.userName}
+        className="profile-image"
+      />
+    ) : (
+      <div key={user.userId} className="profile" title={user.userName}>
+        {user.userName.charAt(0)}
+      </div>
+    );
+  };
+
   return (
     <div className="form-container">
       <p>✏️프로젝트 생성을 위한 정보를 입력해주세요</p>
@@ -225,12 +255,19 @@ export default function ProhectForm() {
         <label className="form-label">
           <p>💻 프로젝트명</p>
         </label>
+        <div className="editors-container">
+          {renderEditor(getUserEditingField("projectName", null))}
+        </div>
         <input
           type="text"
           disabled={ideaDone || !CanEdit}
           className="form-input-field"
           value={projectName}
           onChange={(e) => setProjectName(e.target.value)}
+          onFocus={() => {
+            startEditing("projectName", null);
+          }} // 편집 시작 호출
+          onBlur={() => stopEditing("projectName", null)}
           placeholder="ex. 프로젝트 워크 플로우 관리 웹서비스"
         />
       </div>
@@ -239,12 +276,19 @@ export default function ProhectForm() {
         <label className="form-label">
           <p>😊 프로젝트 대상</p>
         </label>
+        <div className="editors-container">
+          {renderEditor(getUserEditingField("projectTarget", null))}
+        </div>
         <input
           type="text"
           disabled={ideaDone || !CanEdit}
           className="form-input-field"
           value={projectTarget}
           onChange={(e) => setProjectTarget(e.target.value)}
+          onFocus={() => {
+            startEditing("projectTarget", null);
+          }}
+          onBlur={() => stopEditing("projectName", null)}
           placeholder="ex. 프로젝트 경험이 적은 1-3년차 초보 개발자"
         />
       </div>
@@ -253,31 +297,44 @@ export default function ProhectForm() {
         <label className="form-label">
           <p>💡 메인 기능</p>
         </label>
-        {features.map((feature, index) => (
-          <div key={feature.id} className="form-input-row">
-            <input
-              type="text"
-              disabled={ideaDone || !CanEdit}
-              className="form-input-field"
-              placeholder={`기능 ${index + 1}`}
-              value={feature.content}
-              onChange={(e) => updateFeature(feature.id, e.target.value)}
-            />
-            {!ideaDone && CanEdit && (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="form-remove-button"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="#EA3323"
-                onClick={() => removeFeature(feature.id)}
-              >
-                <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
-              </svg>
-            )}
-          </div>
-        ))}
+        {features.map((feature, index) => {
+          return (
+            <div key={feature.id} className="form-input-row">
+              <div className="editors-container">
+                {renderEditor(
+                  getUserEditingField("mainFunction", feature.id.toString())
+                )}
+              </div>
+              <input
+                type="text"
+                disabled={ideaDone || !CanEdit}
+                className="form-input-field"
+                placeholder={`기능 ${index + 1}`}
+                value={feature.content}
+                onChange={(e) => updateFeature(feature.id, e.target.value)}
+                onFocus={() =>
+                  startEditing("mainFunction", feature.id.toString())
+                }
+                onBlur={() =>
+                  stopEditing("mainFunction", feature.id.toString())
+                }
+              />
+              {!ideaDone && CanEdit && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="form-remove-button"
+                  height="20px"
+                  viewBox="0 -960 960 960"
+                  width="20px"
+                  fill="#EA3323"
+                  onClick={() => removeFeature(feature.id)}
+                >
+                  <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+                </svg>
+              )}
+            </div>
+          );
+        })}
         {!ideaDone && CanEdit && (
           <button className="form-add-button" onClick={addFeature}>
             + 메인 기능 추가
@@ -291,6 +348,11 @@ export default function ProhectForm() {
         </label>
         {stacks.map((stack, index) => (
           <div key={stack.id} className="form-input-row">
+            <div className="editors-container">
+              {renderEditor(
+                getUserEditingField("techStack", stack.id.toString())
+              )}
+            </div>
             <input
               type="text"
               disabled={ideaDone || !CanEdit}
@@ -298,6 +360,8 @@ export default function ProhectForm() {
               placeholder={`스택 ${index + 1}`}
               value={stack.content}
               onChange={(e) => updateStack(stack.id, e.target.value)}
+              onFocus={() => startEditing("techStack", stack.id.toString())}
+              onBlur={() => stopEditing("techStack", stack.id.toString())}
             />
             {!ideaDone && CanEdit && (
               <svg
@@ -331,26 +395,42 @@ export default function ProhectForm() {
             </p>
           )}
         </label>
+        <div className="editors-container">
+          {renderEditor(getUserEditingField("projectDescription", null))}
+        </div>
         <textarea
           className="form-input-field"
           disabled={ideaDone || !CanEdit}
           rows={10}
           value={projectDescription}
           onChange={(e) => setProjectDescription(e.target.value)}
+          onFocus={() => {
+            startEditing("projectDescription", null);
+          }}
+          onBlur={() => stopEditing("projectDescription", null)}
           placeholder="ex. 사용자가 프로젝트에 대한 설명을 입력하면 요약 및 정리를 한다. 요약/정리 내용을 바탕으로 ERD와 API 명세서를 AI로 작성한다. ERD와 API 명세서 작성이 완료되면 프로젝트 관리를 위한 워크 스페이스를 생성한다. 워크 스페이스의 작업 단계는 AI 기반으로 초안을 생성해준다...."
         />
       </div>
       <div className="form-submit-wrapper">
         {CanEdit &&
           (ideaDone ? (
-            <button className="form-submit-button" onClick={handlemodify}>
+            <button
+              className="form-submit-button"
+              onClick={() => {
+                handlemodify();
+                startPolling();
+              }}
+            >
               수정하기
             </button>
           ) : (
             <button
               disabled={isFormIncomplete}
               className="form-submit-button"
-              onClick={handleSubmit}
+              onClick={() => {
+                handleSubmit();
+                stopPolling();
+              }}
             >
               저장하기
             </button>
@@ -368,6 +448,13 @@ export default function ProhectForm() {
           modalTitle="삭제가 불가능합니다"
           modalDescription="기술 스택이 최소 2개는 필요합니다"
           Close={() => setOpenStackModal(false)}
+        />
+      )}
+      {alreadyEdit && (
+        <BasicModal
+          modalTitle="수정이 불가능합니다"
+          modalDescription="다른 사용자가 수정 중입니다"
+          Close={() => setAlreadyEdit(false)}
         />
       )}
     </div>
