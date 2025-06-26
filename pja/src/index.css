@@ -24,3 +24,27 @@ body {
   -ms-user-select: none;
   /* IE/Edge */
 }
+
+.profile,
+.profile-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #bbc9ec;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-size-xl);
+  line-height: 60px;
+  color: black;
+}
+
+.profile-image {
+  object-fit: cover;
+  display: block;
+}

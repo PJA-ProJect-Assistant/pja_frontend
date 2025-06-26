@@ -37,12 +37,16 @@ export function TaskImbalance() {
       // 전체 데이터 저장
       setAllUserData(data?.graphData ?? []);
 
-      const userdata = data?.assigness ?? []
+      const userdata = data?.assignees ?? []
+      console.log("userdata", userdata);
+
       setUserList(userdata);
 
       // 첫 번째 사용자를 기본 선택
       if (userdata.length > 0 && selectedUser === null) {
         setSelectedUser(userdata[0].userId);
+        console.log("첫번째 사용자", userdata[0]);
+
       }
     } catch {
       console.log("일 분균형 그래프 가져오기 실패");

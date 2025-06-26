@@ -22,25 +22,28 @@
   justify-content: space-between;
 }
 
-.profile {
+.mainprofile,
+.mainprofile-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #bbc9ec;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.mainprofile {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
   font-size: var(--font-size-xl);
-  background-color: #bbc9ec;
-  width: 60px;
-  height: 60px;
   line-height: 60px;
-  cursor: pointer;
+  color: black;
 }
 
-.profile-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+.mainprofile-image {
   object-fit: cover;
-  cursor: pointer;
+  display: block;
 }
 
 .div-left {
