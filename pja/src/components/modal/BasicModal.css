@@ -37,6 +37,8 @@
 .basic-modal-description {
   font-size: var(--font-size-sm);
   text-align: center;
+  white-space: pre-wrap;
+  word-break: keep-all;
 }
 
 .basic-modal-close {
