@@ -112,7 +112,7 @@ const LoginPage: React.FC = () => {
             <input
               type="text"
               placeholder="아이디"
-              className="id-input"
+              className="login-id-input"
               value={id}
               onChange={handleIdChange}
               onKeyPress={handleKeyPress} // Enter 키 감지를 위해 추가
