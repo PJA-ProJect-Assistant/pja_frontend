@@ -9,6 +9,8 @@ import {
 import type { UpdateWorkspacePayload } from "../../types/workspace";
 import "./WorkspaceSettingPage.css";
 import { SettingHeader } from "../../components/header/SettingHeader";
+import { BasicModal } from "../../components/modal/BasicModal";
+
 //  GitHub URL 유효성 검사 함수
 const isValidGitHubUrl = (url: string): boolean => {
   // URL이 비어있으면 유효한 것으로 간주 (필수 입력이 아닐 경우)
@@ -32,6 +34,10 @@ export function WorkspaceSettingPage() {
   const [githubUrl, setGithubUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [githubUrlError, setGithubUrlError] = useState<string>("");
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalDescription, setModalDescription] = useState("");
 
   useEffect(() => {
     if (!selectedWS) {
@@ -91,11 +97,15 @@ export function WorkspaceSettingPage() {
 
     try {
       const response = await updateWorkspace(selectedWS.workspaceId, payload);
-      alert(response.message || "성공적으로 변경되었습니다.");
+      setModalTitle("");
+      setModalDescription(response.message || "성공적으로 변경되었습니다.");
+      setModalOpen(true);
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || "변경 중 오류가 발생했습니다.";
-      alert(errorMessage);
+      setModalTitle("");
+      setModalDescription(
+        error.response?.data?.message || "변경 중 오류가 발생했습니다."
+      );
+      setModalOpen(true);
     } finally {
       setIsLoading(false);
     }
@@ -227,6 +237,13 @@ export function WorkspaceSettingPage() {
               >
                 {isLoading ? "변경 중" : "변경하기"}
               </button>
+              {modalOpen && (
+                <BasicModal
+                  modalTitle={modalTitle}
+                  modalDescription={modalDescription}
+                  Close={(open) => setModalOpen(open)}
+                />
+              )}
             </div>
           </div>
         </div>
