@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "./AcceptInvitePage.css";
 import logoImage from "../../assets/img/logo.png";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
 import {
   getInvitationInfo,
   acceptInvitation,
