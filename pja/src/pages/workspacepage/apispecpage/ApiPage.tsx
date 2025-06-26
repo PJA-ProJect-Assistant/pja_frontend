@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
+import Loading from "../../loadingpage/Loading";
 import "./ApiPage.css";
 import plusIcon from "../../../assets/img/plus.png";
 import minusIcon from "../../../assets/img/minus.png";
@@ -1000,7 +1001,7 @@ const ApiPage = () => {
     </div>
   ) : (
     // 나중에 여기에 로딩가이드페이지 추가하면 됨
-    <div>로딩중...</div>
+    <Loading />
   );
 };
 

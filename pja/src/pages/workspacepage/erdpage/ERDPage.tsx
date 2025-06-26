@@ -19,6 +19,7 @@ import "reactflow/dist/style.css";
 import { getAllErd, getErdId, generateApiSpec } from "../../../services/erdApi";
 import ERDEdit from "./ERDEdit";
 import { setErdID } from "../../../store/erdSlice";
+import Loading from "../../loadingpage/Loading";
 
 export default function ERDPage() {
   const dispatch = useDispatch();
@@ -119,6 +120,7 @@ export default function ERDPage() {
           })
         );
         setErdDone(true);
+        setIsGenerating(false);
         navigate(
           `/ws/${selectedWS?.workspaceId}/step/${getStepIdFromNumber("4")}`
         );
@@ -128,6 +130,10 @@ export default function ERDPage() {
       }
     }
   };
+
+  if (isGenerating) {
+    return <Loading />;
+  }
 
   return (
     <>
