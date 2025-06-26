@@ -1,0 +1,15 @@
+.settingheader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.setting-div-left {
+  width: 60px;
+  cursor: pointer;
+}
+
+.setting-div-right {
+  width: 60px;
+}
