@@ -13,7 +13,7 @@ import type {
   Status,
 } from "../../../../types/list";
 import FilterTable from "./FilterTable";
-import { NoCgAddModal } from "../../../../components/modal/WsmenuModal";
+import { BasicModal } from "../../../../components/modal/BasicModal";
 import type { workspace_member } from "../../../../types/workspace";
 import { statusLabels } from "../../../../constants/statecolor";
 import { useSelector } from "react-redux";
@@ -24,6 +24,7 @@ export default function ListTable({
   clickCg,
   clickFt,
   name,
+  isLoading,
   workspaceId,
   participantList,
   editingCategoryId,
@@ -98,10 +99,15 @@ export default function ListTable({
   }, []);
 
   const actionMenuRef = useRef<HTMLDivElement>(null);
-
   return (
     <div className="listtable-container">
-      {isModalOpen && <NoCgAddModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <BasicModal
+          modalTitle="카테고리 추가가 불가능합니다"
+          modalDescription="필터를 끄고 카테고리를 추가 해주세요"
+          Close={() => setIsModalOpen(false)}
+        />
+      )}
       <div className="listtable-btn-container">
         <button
           onClick={() => {
@@ -141,6 +147,15 @@ export default function ListTable({
             <path d="M456.18-192Q446-192 439-198.9t-7-17.1v-227L197-729q-9-12-2.74-25.5Q200.51-768 216-768h528q15.49 0 21.74 13.5Q772-741 763-729L528-443v227q0 10.2-6.88 17.1-6.89 6.9-17.06 6.9h-47.88ZM480-498l162-198H317l163 198Zm0 0Z" />
           </svg>
         </button>
+        {isLoading && (
+          <div className="aiaction-wave-text">
+            {"✨ AI 추천 중이에요".split("").map((char, idx) => (
+              <span key={idx} style={{ animationDelay: `${idx * 0.05}s` }}>
+                {char}
+              </span>
+            ))}
+          </div>
+        )}
         {isFilter && (
           <div className="filter-dropdown">
             {/* 카테고리 */}

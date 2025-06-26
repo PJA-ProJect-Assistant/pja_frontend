@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
-import { RequireCancleModal } from "../../../components/modal/WsmenuModal";
+import { BasicModal } from "../../../components/modal/BasicModal";
 import { progressworkspace } from "../../../services/workspaceApi";
 import type { workspace } from "../../../types/workspace";
 import { setSelectedWS } from "../../../store/workspaceSlice";
@@ -413,7 +413,11 @@ export default function RequirementsPage() {
           </div>
         )}
         {openAIModal && (
-          <RequireCancleModal onClose={() => setOpenAIModal(false)} />
+          <BasicModal
+            modalTitle="AI추천이 불가능합니다"
+            modalDescription="기능·성능 요구사항이 최소 3개는 필요합니다"
+            Close={() => setOpenAIModal(false)}
+          />
         )}
       </div>
     </>

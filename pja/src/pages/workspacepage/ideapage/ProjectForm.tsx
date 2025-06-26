@@ -15,10 +15,7 @@ import {
   deletefunc,
 } from "../../../services/ideaApi";
 import type { IdeaData } from "../../../types/idea";
-import {
-  StackDeleteModal,
-  FeatureDeleteModal,
-} from "../../../components/modal/WsmenuModal";
+import { BasicModal } from "../../../components/modal/BasicModal";
 import { progressworkspace } from "../../../services/workspaceApi";
 
 export default function ProhectForm() {
@@ -359,12 +356,19 @@ export default function ProhectForm() {
             </button>
           ))}
       </div>
-
       {openFeatureModal && (
-        <FeatureDeleteModal onClose={() => setOpenFeatureModal(false)} />
+        <BasicModal
+          modalTitle="삭제가 불가능합니다"
+          modalDescription="메인 기능이 최소 2개는 필요합니다"
+          Close={() => setOpenFeatureModal(false)}
+        />
       )}
       {openStackModal && (
-        <StackDeleteModal onClose={() => setOpenStackModal(false)} />
+        <BasicModal
+          modalTitle="삭제가 불가능합니다"
+          modalDescription="기술 스택이 최소 2개는 필요합니다"
+          Close={() => setOpenStackModal(false)}
+        />
       )}
     </div>
   );

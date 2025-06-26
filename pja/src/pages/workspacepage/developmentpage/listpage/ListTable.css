@@ -450,3 +450,23 @@
   border: none;
   margin-right: 3px;
 }
+
+.aiaction-wave-text {
+  font-size: var(--font-size-2xl);
+}
+
+.aiaction-wave-text span {
+  display: inline-block;
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
