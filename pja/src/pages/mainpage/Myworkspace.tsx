@@ -8,7 +8,6 @@ import { getStepIdFromNumber } from "../../utils/projectSteps";
 import { WsDeleteModal } from "../../components/modal/DeleteModal";
 import {
   completeworkspace,
-  progressworkspace,
   deleteworkspace,
 } from "../../services/workspaceApi";
 
