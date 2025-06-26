@@ -64,7 +64,6 @@ export function Myworkspace() {
     setWsMenuOpenId((prevId) => (prevId === workspaceId ? null : workspaceId));
   };
 
-  //완료 삭제 만드는거 일단 생성 다 끝내고 하기
   const handleComplete = async (id: number, step: string) => {
     if (step === "5") {
       try {
@@ -92,7 +91,7 @@ export function Myworkspace() {
       }
     } else if (step === "6") {
       try {
-        const response = await progressworkspace(id, "5");
+        const response = await completeworkspace(id);
         console.log("완료 취소 : ", response.data);
 
         // complete에서 제거
