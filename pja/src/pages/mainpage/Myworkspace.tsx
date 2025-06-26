@@ -36,6 +36,24 @@ export function Myworkspace() {
   // 각각의 스크롤 영역에 대해 따로 참조 만들기
   const activeRef = useRef<HTMLDivElement>(null);
   const completeRef = useRef<HTMLDivElement>(null);
+  //메뉴 영역
+  const wsMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wsMenuRef.current &&
+        !wsMenuRef.current.contains(event.target as Node)
+      ) {
+        setWsMenuOpenId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleClickWS = (ws: workspace) => {
     const stepId = getStepIdFromNumber(ws.progressStep);
@@ -188,7 +206,7 @@ export function Myworkspace() {
             </svg>
           </div>
           {wsMenuOpenId === ws.workspaceId && Number(ws.progressStep) < 6 && (
-            <div className="workspace-menu">
+            <div ref={wsMenuRef} className="workspace-menu">
               <div
                 onClick={() => {
                   handleComplete(ws.workspaceId, ws.progressStep);
@@ -225,7 +243,7 @@ export function Myworkspace() {
             </div>
           )}
           {wsMenuOpenId === ws.workspaceId && ws.progressStep === "6" && (
-            <div className="workspace-menu">
+            <div ref={wsMenuRef} className="workspace-menu">
               <div
                 onClick={() => {
                   handleComplete(ws.workspaceId, ws.progressStep);
