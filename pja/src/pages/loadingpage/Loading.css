@@ -1,0 +1,442 @@
+.tutorial-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.tutorial-content {
+  position: relative; /* image-wrapper가 이 안에서 중앙에 떠요 */
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.image-wrapper {
+  width: 700px;
+  height: 500px;
+  position: relative;
+}
+
+/* 중앙 이미지 */
+.tutorial-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ─ ERD 확대/축소 툴팁 ─ */
+.icon-question {
+  position: absolute;
+  left: 70px;
+  bottom: 30px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.speech-bubble {
+  position: absolute;
+  left: 100px;
+  bottom: 10px;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  transform: translateY(-50%);
+  border: 8px solid transparent;
+  border-right-color: #fff;
+}
+
+/* ─ 수정하기 버튼 옆 툴팁 ─ */
+.btn-wrapper {
+  position: absolute;
+  top: 21%;
+  right: 22%;
+  display: flex;
+  align-items: center;
+}
+
+.btn-icon-question {
+  width: 20px;
+  height: 20px;
+  margin-left: -0.8vw;
+
+  margin-top: -19vh;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-bubble {
+  margin-left: 10px;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 42px;
+  right: 8px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #fff;
+}
+
+.modify-wrapper {
+  position: absolute;
+  top: 70%;
+  right: 3%;
+  display: flex;
+  align-items: center;
+}
+
+.modify-btn-bubble {
+  margin-left: 10px;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.modify-icon-question {
+  width: 20px;
+  height: 20px;
+  position: relative; /* 절대영역에서 빠져나와서 */
+  right: 270px;
+  bottom: -40px;
+  margin-top: -19vh;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ─ 좌우 네비게이션 화살표 ─ */
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  padding: 2px 6px;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: none;
+}
+.nav-arrow.left {
+  left: -100px;
+}
+.nav-arrow.right {
+  right: -100px;
+}
+
+/*다음 장*/
+.ai-icon-wrapper {
+  position: absolute;
+  top: 10%;
+  right: 8%;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.ai-icon-question {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ai-speech-bubble {
+  position: absolute;
+  margin-top: -40px;
+  right: -18px;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.ai-speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  right: -1px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #fff;
+}
+
+.click-icon-wrapper {
+  position: absolute;
+
+  top: 60%;
+  right: 240px;
+}
+
+.click-icon-question {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.click-speech-bubble {
+  position: absolute;
+  bottom: 100%;
+  left: calc(100% + 8px);
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/*api 명세서 */
+
+/* 질문 아이콘 */
+.api-icon-question {
+  position: absolute;
+  top: 4%;
+  right: 41%;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* 말풍선 */
+.api-speech-bubble {
+  position: absolute;
+  top: 8%;
+  left: 61%;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
+.api-speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 40px;
+  right: 228px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #fff;
+}
+
+.api-complete-question {
+  position: absolute;
+  bottom: 12%;
+  right: 45%;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.api-complete-speech-bubble {
+  position: absolute;
+  bottom: 80px;
+  left: 56%;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
+
+.api-complete-speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: 89%;
+  right: 240px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #fff;
+}
+
+/*리스트 테이블*/
+.list-icon-question {
+  position: absolute;
+  top: 4%;
+  right: 62%;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.list-speech-bubble {
+  position: absolute;
+  top: 5%;
+  left: 40%;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
+
+.list-speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: -4%;
+  right: 330px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #fff;
+}
+
+.filter-icon-question {
+  position: absolute;
+  top: 45%;
+  right: 80%;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.filter-speech-bubble {
+  position: absolute;
+  top: 48%;
+  left: 21%;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
+
+.filter-speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: 270px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #fff;
+}
+
+/*리스트 ai*/
+.list-ai-icon-question {
+  position: absolute;
+  top: 30%;
+  right: 64%;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.list-ai-speech-bubble {
+  position: absolute;
+  top: 8%;
+  left: 37%;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
