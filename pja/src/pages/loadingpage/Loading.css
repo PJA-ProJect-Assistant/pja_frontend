@@ -7,6 +7,27 @@
   justify-content: center;
   z-index: 100;
 }
+.loading-modal {
+  position: absolute;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* 뒤의 버튼·툴팁 클릭 막지 않도록 */
+  z-index: 150; /* tutorial-content(100)보다 위에 뜨게 */
+}
+.loading-text {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 8px 16px;
+  color: #fff;
+  font-size: 1.2rem;
+  border-radius: 4px;
+  z-index: 200; /* tutorial-content 보다 위에 떠 있도록 */
+}
 
 .tutorial-content {
   position: relative; /* image-wrapper가 이 안에서 중앙에 떠요 */
