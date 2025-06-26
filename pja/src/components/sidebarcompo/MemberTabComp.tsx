@@ -41,30 +41,30 @@ const MemberListItem = ({
         </div>
       </div>
       <div className="member-action-container">
-        { canManage && (
-        <div className="member-action-container">
-          <div className="role-select-wrapper">
-            <select
-              className="role-select"
-              value={member.workspaceRole}
-              onChange={(e) =>
-                onRoleChange(member.memberId, e.target.value as MemberRole)
-              }
-            >
-              <option value="OWNER">OWNER</option>
-              <option value="MEMBER">MEMBER</option>
-              <option value="GUEST">GUEST</option>
-            </select>
-          </div>
+        {canManage && (
+          <div className="member-action-container">
+            <div className="role-select-wrapper">
+              <select
+                className="role-select"
+                value={member.workspaceRole}
+                onChange={(e) =>
+                  onRoleChange(member.memberId, e.target.value as MemberRole)
+                }
+              >
+                <option value="OWNER">OWNER</option>
+                <option value="MEMBER">MEMBER</option>
+                <option value="GUEST">GUEST</option>
+              </select>
+            </div>
 
-          <button
-            className="member-delete-btn"
-            onClick={() => onDelete(member.memberId)}
-          >
-            삭제
-          </button>
-        </div>
-      ) }
+            <button
+              className="member-delete-btn"
+              onClick={() => onDelete(member.memberId)}
+            >
+              삭제
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -73,7 +73,6 @@ const MemberListItem = ({
 const MemberTabComp = ({
   isInviteModalOpen,
   onCloseInviteModal,
-  onRoleChange,
 }: MemberTabCompProps) => {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -94,7 +93,7 @@ const MemberTabComp = ({
     }
   };
 
-    const fetchRole = async () => {
+  const fetchRole = async () => {
     if (!workspaceId) return;
     try {
       const res = await getMemberRole(workspaceId);
@@ -111,28 +110,28 @@ const MemberTabComp = ({
     fetchRole();
   }, [workspaceId]);
 
-    const handleDelete = async (memberId: string) => {
+  const handleDelete = async (memberId: string) => {
     if (!workspaceId) return;
     try {
       await deleteMember(workspaceId, Number(memberId));
       await fetchMembers(); // 삭제 후 다시 불러오기
     } catch (err) {
       console.error("멤버 삭제 실패", err);
-    } 
+    }
   };
 
-      const handleRoleChange = async (memberId: string, newRole: MemberRole) => {
-      if (!workspaceId) return;
-      try {
-        await updateMemberRole(workspaceId, {
-          userId: Number(memberId),
-          workspaceRole: newRole,
-        });
-        await fetchMembers(); // 역할 변경 후 갱신
-      } catch (err) {
-        console.error("멤버 역할 변경 실패", err);
-      }
-    };
+  const handleRoleChange = async (memberId: string, newRole: MemberRole) => {
+    if (!workspaceId) return;
+    try {
+      await updateMemberRole(workspaceId, {
+        userId: Number(memberId),
+        workspaceRole: newRole,
+      });
+      await fetchMembers(); // 역할 변경 후 갱신
+    } catch (err) {
+      console.error("멤버 역할 변경 실패", err);
+    }
+  };
 
 
   return (
