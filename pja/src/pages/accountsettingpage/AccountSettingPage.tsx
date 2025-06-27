@@ -14,6 +14,7 @@ import {
 
 import { LeaveHeader } from "../../components/header/LeaveHeader";
 
+
 const AccountSettingPage: React.FC = () => {
   const [initialName, setInitialName] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -41,6 +42,10 @@ const AccountSettingPage: React.FC = () => {
     message: string;
   }>({ isValid: true, message: "" });
 
+          useEffect(() => {
+  console.log("최종 렌더링되는 프로필 이미지:", profileImage);
+}, [profileImage]);
+
   useEffect(() => {
     // API 호출을 위한 별도의 함수를 정의하고 즉시 실행
     const loadUserInfo = async () => {
@@ -48,6 +53,7 @@ const AccountSettingPage: React.FC = () => {
         setIsLoading(true);
 
         const userData = await getuser();
+
 
         // API 응답에 맞춰 상태를 업데이트합니다. (username -> name)
         if (userData.data) {
@@ -258,13 +264,27 @@ const AccountSettingPage: React.FC = () => {
         <div className="profile-title">프로필 변경</div>
 
         <div className="profile-image-container">
-          <div
+          {/* <div
             className="profile-image"
             style={{
               backgroundImage: profileImage ? `url(${profileImage})` : "none",
               backgroundColor: profileImage ? "transparent" : "#f0f0f0",
             }}
-          ></div>
+          ></div> */}
+          {profileImage ? (
+  <img
+    src={profileImage}
+    alt="프로필 이미지"
+    style={{
+      width: "100px",
+      height: "100px",
+      borderRadius: "50%",
+      objectFit: "cover"
+    }}
+  />
+) : (
+  <div className="profile-image-placeholder" />
+)}
           <label htmlFor="imageUpload" className="image-upload-button">
             <img src={profileIcon} alt="프로필 이미지" />
           </label>

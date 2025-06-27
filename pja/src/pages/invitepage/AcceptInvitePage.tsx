@@ -29,6 +29,7 @@ const AcceptInvitePage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+
   useEffect(() => {
     const fetchInviteInfo = async () => {
       console.log("초대 정보를 불러오는 중...");
