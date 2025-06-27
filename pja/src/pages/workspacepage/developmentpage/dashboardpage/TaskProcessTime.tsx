@@ -90,7 +90,7 @@ export function TaskProcessTime() {
                 label={{
                   value: "중요도",
                   position: "insideBottom",
-                  offset: -5,
+                  offset: -15,
                 }}
               />
               <YAxis
@@ -98,6 +98,7 @@ export function TaskProcessTime() {
                   value: "시간 (h)",
                   angle: -90,
                   position: "insideLeft",
+                  offset: -10,
                 }}
               />
               <Tooltip

@@ -37,12 +37,16 @@ export function TaskImbalance() {
       // 전체 데이터 저장
       setAllUserData(data?.graphData ?? []);
 
-      const userdata = data?.assigness ?? []
+      const userdata = data?.assignees ?? []
+      console.log("userdata", userdata);
+
       setUserList(userdata);
 
       // 첫 번째 사용자를 기본 선택
       if (userdata.length > 0 && selectedUser === null) {
         setSelectedUser(userdata[0].userId);
+        console.log("첫번째 사용자", userdata[0]);
+
       }
     } catch {
       console.log("일 분균형 그래프 가져오기 실패");
@@ -107,13 +111,13 @@ export function TaskImbalance() {
             <>
               <p>{selectedUsername}님의 작업 불균형 분석 그래프</p>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={currentChartData} barCategoryGap="20%">
+                <BarChart data={currentChartData} barCategoryGap="20%" margin={{ left: 8, bottom: 15 }}>
                   <XAxis
                     dataKey="importance"
                     label={{
                       value: "중요도",
-                      position: "insideBottom",
-                      offset: -5,
+                      position: "bottom",
+                      offset: 0,
                     }}
                   />
                   <YAxis

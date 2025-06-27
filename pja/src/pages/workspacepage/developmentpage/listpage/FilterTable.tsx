@@ -453,7 +453,7 @@ export default function FilterTable({
                                           title={ac.name}
                                           onClick={() =>
                                             navigate(
-                                              `/ws/${workspaceId}/post/action/${ac.actionPostId}`
+                                              `/ws/${workspaceId}/post/action/${ac.actionId}/${ac.actionPostId}`
                                             )
                                           }
                                         >

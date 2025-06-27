@@ -6,6 +6,7 @@
   justify-content: space-between;
   padding: 0 30px;
 }
+
 .signupheader-container {
   display: flex;
   justify-content: center;
@@ -14,33 +15,44 @@
   justify-content: space-between;
   padding: 30px 50px 0 50px;
 }
+
 .mainwsheader-container {
   display: flex;
   justify-content: center;
-  align-items: center;
   flex-direction: row;
+  height: 50px;
+  min-height: 50px;
   justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 15px;
 }
 
-.profile {
+.mainwsheader-container h1 {
+  margin: 0;
+}
+
+.mainprofile,
+.mainprofile-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #bbc9ec;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.mainprofile {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
   font-size: var(--font-size-xl);
-  background-color: #bbc9ec;
-  width: 60px;
-  height: 60px;
   line-height: 60px;
-  cursor: pointer;
+  color: black;
 }
 
-.profile-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+.mainprofile-image {
   object-fit: cover;
-  cursor: pointer;
+  display: block;
 }
 
 .div-left {

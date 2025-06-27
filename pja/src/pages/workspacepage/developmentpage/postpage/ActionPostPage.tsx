@@ -89,7 +89,7 @@ export default function ActionPostPage() {
 
         // 받아온 데이터로 상태 업데이트
         setActionName(postData.actionName);
-        setTextContent(postData.content);
+        setTextContent(postData.content ?? ""); // 내용이 없는 경우 ""(빈 문자열) 넣기
         setFileList(postData.fileList || []);
 
         // 백엔드 댓글(commentList)을 프론트엔드 댓글(comments) 타입으로 변환
@@ -196,7 +196,7 @@ export default function ActionPostPage() {
 
       try {
         const updatedData = await updatePostDetails(wsid, acId, acpostId, {
-          content: textContent,
+          content: textContent ?? "",
           files: selectedImages,
           // removedFilePaths: removedImagePaths, // API 명세에 따라 필요 시 추가
         });
@@ -208,7 +208,7 @@ export default function ActionPostPage() {
         setSelectedImages([]);
         setRemovedImagePaths([]);
 
-        alert("게시글이 성공적으로 수정되었습니다.");
+        // alert("게시글이 성공적으로 수정되었습니다.");
       } catch (err: any) {
         console.error("게시글 수정 실패:", err);
         alert(
@@ -429,7 +429,7 @@ export default function ActionPostPage() {
               onChange={(e) => setTextContent(e.target.value)}
             />
           ) : (
-            <div className="actionpost-display">{textContent}</div>
+            <div className="actionpost-display">{textContent || ""}</div>
           )}
 
           {fileList.length > 0 && (
