@@ -8,9 +8,9 @@ import {
 } from "../../services/workspaceSettingApi";
 import type { UpdateWorkspacePayload } from "../../types/workspace";
 import "./WorkspaceSettingPage.css";
-import { SettingHeader } from "../../components/header/SettingHeader";
 import { BasicModal } from "../../components/modal/BasicModal";
 import { setSelectedWS } from "../../store/workspaceSlice";
+import { WSHeader } from "../../components/header/WSHeader";
 
 //  GitHub URL 유효성 검사 함수
 const isValidGitHubUrl = (url: string): boolean => {
@@ -155,10 +155,8 @@ export function WorkspaceSettingPage() {
 
   return (
     <div>
+      <WSHeader title="" />
       <div className="workspacesetting-wrapper">
-        <div className="workspacesetting-service-header">
-          <SettingHeader />
-        </div>
         <h1 className="workspacesetting-title">설정</h1>
         <div className="workspacesetting-underline" />
         <div className="workspacesetting-content">

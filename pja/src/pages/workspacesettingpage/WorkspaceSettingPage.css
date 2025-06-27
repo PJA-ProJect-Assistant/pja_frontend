@@ -168,8 +168,3 @@
   outline: none;
   transition: color 0.2s;
 }
-
-.workspacesetting-service-header {
-  transform: translateY(35px);
-  margin-left: -20px;
-}
