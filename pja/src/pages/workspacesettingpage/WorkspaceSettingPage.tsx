@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import {
   getworkspace,
@@ -10,6 +10,7 @@ import type { UpdateWorkspacePayload } from "../../types/workspace";
 import "./WorkspaceSettingPage.css";
 import { SettingHeader } from "../../components/header/SettingHeader";
 import { BasicModal } from "../../components/modal/BasicModal";
+import { setSelectedWS } from "../../store/workspaceSlice";
 
 //  GitHub URL 유효성 검사 함수
 const isValidGitHubUrl = (url: string): boolean => {
@@ -38,6 +39,8 @@ export function WorkspaceSettingPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!selectedWS) {
@@ -97,6 +100,9 @@ export function WorkspaceSettingPage() {
 
     try {
       const response = await updateWorkspace(selectedWS.workspaceId, payload);
+      if (response.data) {
+        dispatch(setSelectedWS(response.data));
+      }
       setModalTitle("");
       setModalDescription(response.message || "성공적으로 변경되었습니다.");
       setModalOpen(true);
