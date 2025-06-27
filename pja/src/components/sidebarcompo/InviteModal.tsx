@@ -130,7 +130,7 @@ const InviteModal = ({ onClose }: InviteModalProps) => {
 
           <select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="멤버">멤버</option>
-            <option value="관리자">관리자</option>
+            <option value="게스트">게스트</option>
           </select>
         </div>
       </div>

@@ -20,15 +20,14 @@
 }
 
 .Mem-profile-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background-color: lightgray;
-  margin-right: 5px;
-
-  background-size: cover;
-  background-position: center; /*중앙 기준으로 채움*/
-  background-repeat: no-repeat;
+  font-size: var(--font-size-xl);
+  background-color: #bbc9ec;
 }
 
 .Mem-user-info {

@@ -26,6 +26,9 @@ export default function Loading() {
 
   return (
     <div className="tutorial-overlay">
+      <div className="loading-modal">
+        <p className="loading-text">AI 생성중입니다... 잠시만 기다려주세요</p>
+      </div>
       <div className="tutorial-content">
         <div className="image-wrapper">
           {/* 이전 화살표 */}

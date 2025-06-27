@@ -8,6 +8,7 @@ import imageUpIcon from "../../../../assets/img/imageUp.png";
 import sendIcon from "../../../../assets/img/send.png";
 import codelIcon from "../../../../assets/img/codel.png";
 import { formatDistanceToNow, parseISO } from "date-fns";
+import { BasicModal } from "../../../../components/modal/BasicModal";
 import { ko } from "date-fns/locale";
 import {
   getPostDetails,
@@ -43,6 +44,7 @@ export default function ActionPostPage() {
 
   const [originalTextContent, setOriginalTextContent] = useState<string>("");
   const [fileList, setFileList] = useState<FileInfo[]>([]);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   const [currentComment, setCurrentComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
@@ -53,6 +55,16 @@ export default function ActionPostPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 모달 상태
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalDescription, setModalDescription] = useState("");
+  const showModal = (title: string, description: string) => {
+    setModalTitle(title);
+    setModalDescription(description);
+    setModalOpen(true);
+  };
+
   // 삭제될 기존 이미지의 경로를 저장할 상태
   const [removedImagePaths, setRemovedImagePaths] = useState<string[]>([]);
 
@@ -61,6 +73,9 @@ export default function ActionPostPage() {
     acId: string;
     acpostId: string;
   }>();
+
+  const openLightbox = (src: string) => setLightboxSrc(src);
+  const closeLightbox = () => setLightboxSrc(null);
 
   //액션 게시물 조회 api
   useEffect(() => {
@@ -199,7 +214,7 @@ export default function ActionPostPage() {
         setSelectedImages([]);
         setRemovedImagePaths([]);
 
-        alert("게시글이 성공적으로 수정되었습니다.");
+        showModal("저장 완료", "게시글이 성공적으로 수정되었습니다.");
       } catch (err: any) {
         console.error("게시글 수정 실패:", err);
         alert(
@@ -220,8 +235,7 @@ export default function ActionPostPage() {
     }
 
     if (!wsid || !acId || !acpostId) {
-      alert("댓글을 작성하기 위한 정보가 부족합니다.");
-      return;
+      return showModal("", "댓글을 작성하기 위한 정보가 부족합니다.");
     }
 
     // API 호출 전에 현재 댓글 내용 저장하고 입력창 비우기
@@ -273,8 +287,7 @@ export default function ActionPostPage() {
 
   const handleSaveComment = async (commentId: number) => {
     if (editingCommentText.trim() === "") {
-      alert("댓글을 입력해주세요.");
-      return;
+      return showModal("", "댓글을 입력해주세요.");
     }
 
     // API 호출에 필요한 ID들이 있는지 확인
@@ -334,10 +347,11 @@ export default function ActionPostPage() {
         prevComments.filter((comment) => comment.id !== commentIdToDelete)
       );
 
-      alert("댓글이 삭제되었습니다.");
+      showModal("", "댓글이 삭제되었습니다.");
     } catch (err: any) {
       console.error("댓글 삭제 실패:", err);
-      alert(
+      showModal(
+        "댓글 삭제 실패",
         err.response?.data?.message ||
           err.message ||
           "댓글 삭제 중 오류가 발생했습니다."
@@ -374,11 +388,8 @@ export default function ActionPostPage() {
 
   return (
     <div className="post-container">
-      <AnimatePresence
-        onExitComplete={() => {
-          setShowIcon(true);
-        }}
-      >
+      {/* 사이드바 토글 애니메이션 */}
+      <AnimatePresence onExitComplete={() => setShowIcon(true)}>
         {sidebarOpen && (
           <WsSidebar
             onClose={() => {
@@ -394,6 +405,7 @@ export default function ActionPostPage() {
             className="post-sidebar-icon"
             onClick={() => setSidebarOpen(true)}
           >
+            {/* 아이콘 SVG */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -406,12 +418,16 @@ export default function ActionPostPage() {
           </div>
         </div>
       )}
+
+      {/* 본문 영역 */}
       <div className="actionpost-container">
         <PostHeader />
 
         <h2>{actionName}</h2>
 
+        {/* ① 텍스트와 이미지가 Flexbox로 한 줄에 배치되는 부분 */}
         <div className="actionpost-wrapper">
+          {/* 글 내용 */}
           {isEditing ? (
             <textarea
               placeholder="내용을 입력해주세요"
@@ -422,18 +438,19 @@ export default function ActionPostPage() {
           ) : (
             <div className="actionpost-display">{textContent}</div>
           )}
-        </div>
-        {/*사진 업로드 창*/}
-        <div className="image-section-container">
-          {/* 평상시 & 수정 모드에서 기존 이미지 표시 */}
+
+          {/* 기존 첨부 이미지 (파일리스트가 있을 때만) */}
           {fileList.length > 0 && (
-            <div className="existing-images-container">
+            <div className="image-section-container">
               <p className="image-section-title">첨부된 이미지</p>
               <div className="image-grid">
                 {fileList.map((file, index) => (
                   <div key={index} className="image-item">
-                    <img src={file.filePath} alt={`첨부 이미지 ${index + 1}`} />
-                    {/* 수정 모드일 때만 삭제 버튼 표시 */}
+                    <img
+                      src={file.filePath}
+                      alt={`첨부 이미지 ${index + 1}`}
+                      onClick={() => openLightbox(file.filePath)}
+                    />
                     {isEditing && (
                       <button
                         className="remove-existing-image-btn"
@@ -448,10 +465,9 @@ export default function ActionPostPage() {
             </div>
           )}
 
-          {/* 수정 모드일 때만 새 이미지 업로드 UI 표시 */}
+          {/* 새 이미지 업로드 UI (수정 모드일 때만) */}
           {isEditing && (
             <div className="image-upload-container">
-              {/* 파일 숨김 */}
               <input
                 type="file"
                 accept="image/*"
@@ -460,8 +476,6 @@ export default function ActionPostPage() {
                 ref={fileInputRef}
                 style={{ display: "none" }}
               />
-
-              {/* 이미지 업로드 클릭 & 드래그앤드롭 영역 */}
               <div
                 className={`image-upload-area ${
                   dragActive ? "drag-active" : ""
@@ -472,8 +486,7 @@ export default function ActionPostPage() {
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
               >
-                {/* 새로 선택된 이미지가 없을 때 */}
-                {selectedImages.length === 0 && (
+                {selectedImages.length === 0 ? (
                   <>
                     <span className="upload-placeholder">
                       여기에 이미지를 드래그하거나 클릭하여 업로드하세요
@@ -484,19 +497,16 @@ export default function ActionPostPage() {
                       alt="업로드 아이콘"
                     />
                   </>
-                )}
-
-                {/* 새로 선택된 이미지 목록 표시 */}
-                {selectedImages.length > 0 && (
+                ) : (
                   <div className="uploaded-files">
-                    {selectedImages.map((image, index) => (
-                      <div key={index} className="uploaded-file-name">
+                    {selectedImages.map((image, idx) => (
+                      <div key={idx} className="uploaded-file-name">
                         <span>{image.name}</span>
                         <button
                           className="remove-btn"
                           onClick={(e) => {
-                            e.stopPropagation(); // 부모 div의 클릭 이벤트 방지
-                            removeImage(index);
+                            e.stopPropagation();
+                            removeImage(idx);
                           }}
                         >
                           X
@@ -588,7 +598,21 @@ export default function ActionPostPage() {
             ))}
           </div>
         </div>
+        {lightboxSrc && (
+          <div className="lightbox-overlay" onClick={closeLightbox}>
+            <div className="lightbox-content">
+              <img src={lightboxSrc} alt="확대 이미지" />
+            </div>
+          </div>
+        )}
       </div>
+      {modalOpen && (
+        <BasicModal
+          modalTitle={modalTitle}
+          modalDescription={modalDescription}
+          Close={(open) => setModalOpen(open)}
+        />
+      )}
     </div>
   );
 }

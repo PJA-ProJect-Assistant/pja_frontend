@@ -60,7 +60,9 @@ export default function KanbanPage() {
                   <div className="kanban-action-title">
                     <span
                       onClick={() =>
-                        navigate(`/ws/${workspaceId}/action/${ac.actionPostId}`)
+                        navigate(
+                          `/ws/${workspaceId}/post/action/${ac.actionId}/${ac.actionPostId}`
+                        )
                       }
                     >
                       {ac.name}

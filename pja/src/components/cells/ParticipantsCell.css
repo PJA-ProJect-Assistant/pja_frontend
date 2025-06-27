@@ -24,6 +24,12 @@
   margin: 0 5px;
 }
 
+.partiprofile-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .partiprofile-img {
   width: 18px;
   height: 18px;

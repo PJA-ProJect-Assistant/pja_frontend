@@ -8,7 +8,6 @@ import { getStepIdFromNumber } from "../../utils/projectSteps";
 import { WsDeleteModal } from "../../components/modal/DeleteModal";
 import {
   completeworkspace,
-  progressworkspace,
   deleteworkspace,
 } from "../../services/workspaceApi";
 
@@ -36,6 +35,24 @@ export function Myworkspace() {
   // 각각의 스크롤 영역에 대해 따로 참조 만들기
   const activeRef = useRef<HTMLDivElement>(null);
   const completeRef = useRef<HTMLDivElement>(null);
+  //메뉴 영역
+  const wsMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wsMenuRef.current &&
+        !wsMenuRef.current.contains(event.target as Node)
+      ) {
+        setWsMenuOpenId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleClickWS = (ws: workspace) => {
     const stepId = getStepIdFromNumber(ws.progressStep);
@@ -46,7 +63,6 @@ export function Myworkspace() {
     setWsMenuOpenId((prevId) => (prevId === workspaceId ? null : workspaceId));
   };
 
-  //완료 삭제 만드는거 일단 생성 다 끝내고 하기
   const handleComplete = async (id: number, step: string) => {
     if (step === "5") {
       try {
@@ -74,7 +90,7 @@ export function Myworkspace() {
       }
     } else if (step === "6") {
       try {
-        const response = await progressworkspace(id, "5");
+        const response = await completeworkspace(id);
         console.log("완료 취소 : ", response.data);
 
         // complete에서 제거
@@ -188,7 +204,7 @@ export function Myworkspace() {
             </svg>
           </div>
           {wsMenuOpenId === ws.workspaceId && Number(ws.progressStep) < 6 && (
-            <div className="workspace-menu">
+            <div ref={wsMenuRef} className="workspace-menu">
               <div
                 onClick={() => {
                   handleComplete(ws.workspaceId, ws.progressStep);
@@ -225,7 +241,7 @@ export function Myworkspace() {
             </div>
           )}
           {wsMenuOpenId === ws.workspaceId && ws.progressStep === "6" && (
-            <div className="workspace-menu">
+            <div ref={wsMenuRef} className="workspace-menu">
               <div
                 onClick={() => {
                   handleComplete(ws.workspaceId, ws.progressStep);

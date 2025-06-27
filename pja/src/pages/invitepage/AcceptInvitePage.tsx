@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "./AcceptInvitePage.css";
 import logoImage from "../../assets/img/logo.png";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
 import {
   getInvitationInfo,
   acceptInvitation,
@@ -30,9 +28,7 @@ const AcceptInvitePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const selectedWS = useSelector(
-    (state: RootState) => state.workspace.selectedWS
-  );
+
 
   useEffect(() => {
     const fetchInviteInfo = async () => {
@@ -92,11 +88,11 @@ const AcceptInvitePage = () => {
       if (response.status === "success") {
         setSuccessMessage(response.message); // "초대를 성공적으로 수락하였습니다."
 
-        const stepId = getStepIdFromNumber(selectedWS?.progressStep ?? "0");
+        const stepId = getStepIdFromNumber("0");
 
         // 성공 메시지를 1.5초간 보여준 후 워크스페이스로 이동합니다.
         setTimeout(() => {
-          navigate(`/ws/${selectedWS?.workspaceId}/${stepId}`);
+          navigate(`/ws/${inviteInfo?.workspaceId}/${stepId}`);
         }, 1500);
       } else {
         // 성공은 했으나 status가 다른 경우에 대한 예외 처리

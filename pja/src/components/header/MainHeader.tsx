@@ -11,11 +11,11 @@ export function MainHeader({ onMenuToggle }: IsOpen) {
           <img
             src={userData.profileImage}
             alt="프로필 이미지"
-            className="profile-image" // 이미지일 때 CSS
+            className="mainprofile-image" // 이미지일 때 CSS
             onClick={onMenuToggle}
           />
         ) : (
-          <div className="profile" onClick={onMenuToggle}>
+          <div className="mainprofile" onClick={onMenuToggle}>
             {userData?.username.charAt(0)}
           </div>
         )}

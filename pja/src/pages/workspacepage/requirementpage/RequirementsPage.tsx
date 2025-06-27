@@ -19,6 +19,8 @@ import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
 import { postProjectAI } from "../../../services/projectApi";
 import Loading from "../../loadingpage/Loading";
+import { useEditLock } from "../../../hooks/useEditLock";
+import type { LockedUser } from "../../../types/edit";
 
 export default function RequirementsPage() {
   const navigate = useNavigate();
@@ -28,6 +30,18 @@ export default function RequirementsPage() {
   );
   const Role = useSelector((state: RootState) => state.user.userRole);
   const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
+
+  const {
+    getUserEditingField,
+    startPolling,
+    stopPolling,
+    startEditing,
+    stopEditing,
+    setAlreadyEdit,
+    alreadyEdit,
+  } = useEditLock("requirements");
+
+  const [isFailed, setIsFailed] = useState<boolean>(false);
 
   const [requireDone, setRequireDone] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
@@ -40,17 +54,25 @@ export default function RequirementsPage() {
   const [editText, setEditText] = useState<string>("");
   const getRequire = async () => {
     if (selectedWS?.workspaceId) {
-      const response = await getrequirement(selectedWS?.workspaceId);
-      console.log("요구사항 조회 결과 :", response);
-      if (response.data) {
-        setRequirements(response.data); // undefined가 아닐 때만 설정
+      try {
+        const response = await getrequirement(selectedWS?.workspaceId);
+        console.log("요구사항 조회 결과 :", response);
+        if (response.data) {
+          setRequirements(response.data); // undefined가 아닐 때만 설정
+        }
+      } catch (error) {
+        console.error("요구사항 조회 실패:", error);
+        setIsFailed(true);
       }
     }
   };
 
   useEffect(() => {
     getRequire();
-    if (selectedWS?.progressStep === "1") setRequireDone(false);
+    if (selectedWS?.progressStep === "1") {
+      setRequireDone(false);
+      startPolling();
+    }
   }, [selectedWS]);
 
   useEffect(() => {
@@ -187,6 +209,7 @@ export default function RequirementsPage() {
   };
 
   const handleCompleteReq = async () => {
+    stopPolling();
     if (!selectedWS) return;
     setNextPageLoading(true);
     try {
@@ -203,11 +226,6 @@ export default function RequirementsPage() {
           setrequirements
         );
         console.log("프로젝트 정보 : ", projectdata);
-        // if (!projectdata || !projectdata.data)
-        //   throw new Error("프로젝트 정보 생성 실패");
-        // else {
-        //   console.log("프로젝트 정보 : ", projectdata);
-        // }
 
         await progressworkspace(selectedWS.workspaceId, "2");
         console.log("다음페이지로 넘어가기");
@@ -234,6 +252,24 @@ export default function RequirementsPage() {
     }
   };
 
+  const renderEditor = (user: LockedUser | null) => {
+    if (!user) return;
+
+    return user.userProfile ? (
+      <img
+        key={user.userId}
+        src={user.userProfile}
+        alt={user.userName}
+        title={user.userName}
+        className="profile-image"
+      />
+    ) : (
+      <div key={user.userId} className="profile" title={user.userName}>
+        {user.userName.charAt(0)}
+      </div>
+    );
+  };
+
   const renderList = (type: "FUNCTIONAL" | "PERFORMANCE") => {
     return (
       <ul>
@@ -250,36 +286,48 @@ export default function RequirementsPage() {
               }}
               style={{ cursor: "pointer" }}
             >
-              <li>
-                {editingId === req.requirementId ? (
-                  <input
-                    type="text"
-                    value={editText}
-                    autoFocus
-                    onChange={(e) => setEditText(e.target.value)}
-                    onBlur={handleEditSubmit}
-                    onKeyDown={handleKeyDown}
-                  />
-                ) : (
-                  req.content
+              <div className="editors-container">
+                <div className="editors">
+                  {renderEditor(
+                    getUserEditingField(type, req.requirementId.toString())
+                  )}
+                </div>
+                <li>
+                  {editingId === req.requirementId ? (
+                    <input
+                      type="text"
+                      value={editText}
+                      autoFocus
+                      onChange={(e) => setEditText(e.target.value)}
+                      onFocus={() => {
+                        startEditing(type, req.requirementId.toString());
+                      }}
+                      onBlur={() => {
+                        handleEditSubmit();
+                        stopEditing(type, req.requirementId.toString());
+                      }}
+                      onKeyDown={handleKeyDown}
+                    />
+                  ) : (
+                    req.content
+                  )}
+                </li>
+                {!requireDone && CanEdit && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20px"
+                    viewBox="0 -960 960 960"
+                    width="20px"
+                    fill="#EA3323"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleReqDelete(req.requirementId);
+                    }}
+                  >
+                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                  </svg>
                 )}
-              </li>
-
-              {!requireDone && CanEdit && (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="20px"
-                  viewBox="0 -960 960 960"
-                  width="20px"
-                  fill="#EA3323"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReqDelete(req.requirementId);
-                  }}
-                >
-                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                </svg>
-              )}
+              </div>
             </div>
           ))}
       </ul>
@@ -318,7 +366,7 @@ export default function RequirementsPage() {
     );
   };
   return nextPageloading ? (
-    <div>로딩 중입니다...</div>
+    <Loading />
   ) : (
     <>
       <WSHeader title="요구사항 명세서" />
@@ -398,7 +446,14 @@ export default function RequirementsPage() {
         {CanEdit && (
           <div className="require-btn">
             {requireDone ? (
-              <p onClick={() => setRequireDone(false)}>수정하기</p>
+              <p
+                onClick={() => {
+                  setRequireDone(false);
+                  startPolling();
+                }}
+              >
+                수정하기
+              </p>
             ) : (
               <p onClick={handleCompleteReq}>저장하기</p>
             )}
@@ -413,9 +468,6 @@ export default function RequirementsPage() {
             )}
           </div>
         )}
-        {nextPageloading && (
-          <Loading /> // 여기에 나중에 가이드 페이지
-        )}
         {openAIModal && (
           <BasicModal
             modalTitle="AI추천이 불가능합니다"
@@ -424,6 +476,20 @@ export default function RequirementsPage() {
           />
         )}
       </div>
+      {alreadyEdit && (
+        <BasicModal
+          modalTitle="수정이 불가능합니다"
+          modalDescription="다른 사용자가 수정 중입니다"
+          Close={() => setAlreadyEdit(false)}
+        />
+      )}
+      {isFailed && (
+        <BasicModal
+          modalTitle="데이터를 불러오지 못했습니다"
+          modalDescription="일시적인 오류가 발생했습니다. 새로고침 후 다시 시도해주세요."
+          Close={() => setIsFailed(false)}
+        />
+      )}
     </>
   );
 }

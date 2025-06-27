@@ -111,6 +111,7 @@ form-group {
 
 /* 초대하기 버튼 */
 .invite-submit-btn {
+  margin-top: 10px;
   width: 100%;
   background-color: #00205b;
   color: white;

@@ -13,7 +13,7 @@ function dateDiffInDays(a: Date, b: Date) {
   return Math.floor(
     (Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) -
       Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) /
-    _MS_PER_DAY
+      _MS_PER_DAY
   );
 }
 
@@ -130,14 +130,12 @@ export default function GanttChartPage() {
       </div>
     );
   }
-  const validActionList = actionList.filter(
-    (t) => t.startDate && t.endDate
-  );
+  const validActionList = actionList.filter((t) => t.startDate && t.endDate);
 
-  const minRows = 14; // 최소 14줄 확보
+  const minRows = 13; // 최소 13줄 확보
   const rowCount = Math.max(
     minRows,
-    validActionList.length
+    validActionList.length + 1
     // Math.ceil((actionList.length * 40 + 60) / 40)
   );
 
@@ -231,7 +229,7 @@ export default function GanttChartPage() {
                       title={`${task.actionName}`}
                       onClick={() =>
                         navigate(
-                          `/ws/${selectedWS?.workspaceId}/action/${task.actionPostId}`
+                          `/ws/${selectedWS?.workspaceId}/post/action/${task.actionId}/${task.actionPostId}`
                         )
                       }
                     >

@@ -33,6 +33,9 @@ import {
   type Node,
 } from "reactflow";
 import "./ERDPage.css";
+import { useEditLock } from "../../../hooks/useEditLock";
+
+import { BasicModal } from "../../../components/modal/BasicModal";
 
 export default function ERDEdit({ onClose }: IsClose) {
   const [tables, setTables] = useState<ERDTable[]>([]);
@@ -44,6 +47,10 @@ export default function ERDEdit({ onClose }: IsClose) {
     x: number;
     y: number;
   } | null>(null);
+  const [isFailed, setIsFailed] = useState<boolean>(false);
+
+  const { startPolling, stopPolling, setAlreadyEdit, alreadyEdit } =
+    useEditLock("erd");
 
   const labelMap: Record<string, string> = {
     "1:1": "ONE_TO_ONE",
@@ -70,11 +77,13 @@ export default function ERDEdit({ onClose }: IsClose) {
         }
       } catch (err) {
         console.log("getallerd 실패", err);
+        setIsFailed(true);
       }
     }
   };
 
   useEffect(() => {
+    startPolling();
     geterd();
   }, [selectedWS]);
 
@@ -362,7 +371,13 @@ export default function ERDEdit({ onClose }: IsClose) {
       <div className="erd-page-header">
         <p className="erd-title">✨ERD를 직접 편집해보세요</p>
         <div className="erd-btn-group">
-          <div className="erd-btn" onClick={() => onClose()}>
+          <div
+            className="erd-btn"
+            onClick={() => {
+              stopPolling();
+              onClose();
+            }}
+          >
             완료하기
           </div>
           <div className="erd-btn" onClick={handleAddTable}>
@@ -451,6 +466,20 @@ export default function ERDEdit({ onClose }: IsClose) {
               ❌ 관계선 삭제
             </div>
           </div>
+        )}
+        {isFailed && (
+          <BasicModal
+            modalTitle="데이터를 불러오지 못했습니다"
+            modalDescription="일시적인 오류가 발생했습니다. 새로고침 후 다시 시도해주세요."
+            Close={() => setIsFailed(false)}
+          />
+        )}
+        {alreadyEdit && (
+          <BasicModal
+            modalTitle="수정이 불가능합니다"
+            modalDescription="다른 사용자가 수정 중입니다"
+            Close={() => setAlreadyEdit(false)}
+          />
         )}
       </div>
     </>

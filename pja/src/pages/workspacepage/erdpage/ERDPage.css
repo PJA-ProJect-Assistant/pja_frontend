@@ -64,15 +64,22 @@
 }
 
 .table-node-header {
-  position: relative;
   background: #00205b;
-  color: white;
-  font-weight: 700;
-  font-size: var(--font-size-2xl);
-  text-align: center;
-  padding: 8px 0;
+  padding: 8px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+}
+.table-node-header p {
+  color: white;
+  text-align: center;
+  font-weight: 700;
+  font-size: var(--font-size-2xl);
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .table-node-body {
@@ -156,6 +163,18 @@
   z-index: 100;
 }
 
+.edittable-node-header {
+  position: relative;
+  background: #00205b;
+  color: white;
+  font-weight: 700;
+  font-size: var(--font-size-2xl);
+  text-align: center;
+  padding: 8px 0;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
 .editable-table-node {
   width: 540px;
   background-color: white;
@@ -173,7 +192,7 @@
   font-size: var(--font-size-2xl);
   border: none;
   padding: 10px;
-  width: 100%;
+  width: 80%;
   font-weight: bold;
   text-align: center;
 }
@@ -261,4 +280,10 @@
   background-color: transparent;
   border: none;
   cursor: pointer;
+}
+.table-editors {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 10px;
 }

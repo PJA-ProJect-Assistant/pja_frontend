@@ -37,6 +37,8 @@
   background-color: #ddd;
   display: block; /*이미지가 텍스트처럼 보이는 것을 방지*/
   background-size: cover;
+  background-position: center;
+background-repeat: no-repeat
 }
 .image-upload-button {
   position: absolute;

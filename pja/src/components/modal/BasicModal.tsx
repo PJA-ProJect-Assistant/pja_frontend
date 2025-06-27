@@ -1,4 +1,3 @@
-import type { IsClose } from "../../types/common";
 import * as Dialog from "@radix-ui/react-dialog";
 import "./BasicModal.css";
 

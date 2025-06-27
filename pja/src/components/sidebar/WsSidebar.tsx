@@ -13,12 +13,16 @@ import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
 import type { MemberRole } from "../../types/invite";
+import { BasicModal } from "../modal/BasicModal";
 
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false);
+
+  const [isGitModalOpen, setIsGitModalOpen] = useState<boolean>(false);
+  const [gitModalMessage, setGitModalMessage] = useState<string>("");
 
   const navigate = useNavigate();
   const selectedWS = useSelector(
@@ -60,6 +64,11 @@ export default function WsSidebar({ onClose }: IsClose) {
   //모달을 닫는 함수
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  // Git 모달을 닫는 함수
+  const handleCloseGitModal = (open: boolean) => {
+    setIsGitModalOpen(open);
   };
 
   //팀원 초대 모달을 여는 함수
@@ -111,12 +120,15 @@ export default function WsSidebar({ onClose }: IsClose) {
         window.open(gitUrl, "_blank", "noopener,noreferrer");
       } else {
         // Git 주소가 없으면 사용자에게 알림
-        alert("연동된 Git 저장소 주소가 없습니다. 설정에서 추가해주세요.");
+        setGitModalMessage(
+          "연동된 Git 저장소 주소가 없습니다.\n 설정에서 추가해주세요."
+        );
+        setIsGitModalOpen(true);
       }
     } catch (error: any) {
       // API 호출 실패 시 에러 메시지 표시
       let userMessage =
-        "연동된 Git 저장소 주소가 없습니다 설정에서 추가해주세요.";
+        "연동된 Git 저장소 주소가 없습니다.\n 설정에서 추가해주세요.";
 
       if (error.response) {
         console.error("응답 상태코드:", error.response.status);
@@ -133,7 +145,8 @@ export default function WsSidebar({ onClose }: IsClose) {
         userMessage = "요청을 보내는 중 문제가 발생했습니다.";
       }
 
-      alert(userMessage);
+      setGitModalMessage(userMessage);
+      setIsGitModalOpen(true);
     }
   };
 
@@ -309,6 +322,13 @@ export default function WsSidebar({ onClose }: IsClose) {
           />
         )}
       </AnimatePresence>
+      {isGitModalOpen && (
+        <BasicModal
+          modalTitle="알림"
+          modalDescription={gitModalMessage}
+          Close={handleCloseGitModal}
+        />
+      )}
     </>
   );
 }
