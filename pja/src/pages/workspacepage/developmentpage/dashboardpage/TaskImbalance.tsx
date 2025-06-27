@@ -111,13 +111,13 @@ export function TaskImbalance() {
             <>
               <p>{selectedUsername}님의 작업 불균형 분석 그래프</p>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={currentChartData} barCategoryGap="20%">
+                <BarChart data={currentChartData} barCategoryGap="20%" margin={{ left: 8, bottom: 15 }}>
                   <XAxis
                     dataKey="importance"
                     label={{
                       value: "중요도",
-                      position: "insideBottom",
-                      offset: -5,
+                      position: "bottom",
+                      offset: 0,
                     }}
                   />
                   <YAxis
