@@ -19,11 +19,16 @@
 .mainwsheader-container {
   display: flex;
   justify-content: center;
-  align-items: center;
   flex-direction: row;
-  height: 80px;
-  min-height: 80px;
+  height: 50px;
+  min-height: 50px;
   justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 15px;
+}
+
+.mainwsheader-container h1 {
+  margin: 0;
 }
 
 .mainprofile,
