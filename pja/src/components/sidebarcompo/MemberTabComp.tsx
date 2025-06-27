@@ -31,10 +31,16 @@ const MemberListItem = ({
   return (
     <div className="member-tab-box">
       <div className="member-info-container">
-        <div
-          className="Mem-profile-img"
-          style={{ backgroundImage: `url(${member.profile})` }}
-        ></div>
+        {member.profile ? (
+          <img className="Mem-profile-img"
+            src={member.profile}
+            alt="프로필 이미지"
+          />
+        ) : (
+        <div className="Mem-profile-img">
+            {member.name.charAt(0)}
+          </div>
+        )}
         <div className="Mem-user-info">
           <div className="Mem-user-name">{member.name}</div>
           <div className="Mem-user-email">{member.email}</div>
