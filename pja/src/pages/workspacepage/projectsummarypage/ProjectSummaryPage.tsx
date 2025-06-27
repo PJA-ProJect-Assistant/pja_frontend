@@ -11,6 +11,9 @@ import { getProject, putProject } from "../../../services/projectApi";
 import { WSHeader } from "../../../components/header/WSHeader";
 import { postErd, postErdAI } from "../../../services/erdApi";
 import Loading from "../../loadingpage/Loading";
+import { useEditLock } from "../../../hooks/useEditLock";
+import type { LockedUser } from "../../../types/edit";
+import { BasicModal } from "../../../components/modal/BasicModal";
 
 export default function ProjectSummaryPage() {
   const navigate = useNavigate();
@@ -33,6 +36,16 @@ export default function ProjectSummaryPage() {
   const [expectedBenefits, setExpectedBenefits] = useState<string[]>([]);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFailed, setIsFailed] = useState<boolean>(false);
+  const {
+    getUserEditingField,
+    startPolling,
+    stopPolling,
+    startEditing,
+    stopEditing,
+    setAlreadyEdit,
+    alreadyEdit,
+  } = useEditLock("project-info");
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
@@ -44,6 +57,7 @@ export default function ProjectSummaryPage() {
   };
 
   useEffect(() => {
+    startPolling();
     const getproject = async () => {
       try {
         if (selectedWS?.workspaceId) {
@@ -64,14 +78,22 @@ export default function ProjectSummaryPage() {
         }
       } catch (err) {
         console.log("프로젝트 가져오기 실패 : ", err);
+        setIsFailed(true);
       }
     };
     if (selectedWS?.progressStep === "2") {
       setSummaryDone(false);
+      startEditing(null, "1");
     }
     getproject();
+
+    // 페이지를 벗어나면 stopPolling 호출
+    return () => {
+      stopPolling();
+    };
   }, [selectedWS]);
   const handleSummaryComplete = async () => {
+    stopEditing(null, "1");
     if (selectedWS?.workspaceId && projectInfo?.projectInfoId) {
       try {
         setIsLoading(true);
@@ -121,9 +143,11 @@ export default function ProjectSummaryPage() {
           }
         } catch (err) {
           console.log("ERD ai생성 실패 ", err);
+          setIsFailed(true);
         }
       } catch (err) {
         console.log("프로젝트 수정 실패 ", err);
+        setIsFailed(true);
       } finally {
         setIsLoading(false);
       }
@@ -131,6 +155,25 @@ export default function ProjectSummaryPage() {
       console.log("아이디 없음");
     }
   };
+  const renderEditor = (user: LockedUser | null) => {
+    //확인 용
+    if (!user) return;
+
+    return user.userProfile ? (
+      <img
+        key={user.userId}
+        src={user.userProfile}
+        alt={user.userName}
+        title={user.userName}
+        className="profile-image"
+      />
+    ) : (
+      <div key={user.userId} className="profile" title={user.userName}>
+        {user.userName.charAt(0)}
+      </div>
+    );
+  };
+
   return isLoading ? (
     <Loading />
   ) : (
@@ -140,6 +183,9 @@ export default function ProjectSummaryPage() {
         {selectedWS?.progressStep === "2" && (
           <h2>✨입력하신 프로젝트를 정리하였어요</h2>
         )}
+        <div className="summary-editors">
+          {renderEditor(getUserEditingField("null", "1"))}
+        </div>
         <div className="projectsummary-box">
           <div className="projectsummary-content">
             <div>
@@ -479,13 +525,34 @@ export default function ProjectSummaryPage() {
           {CanEdit && (
             <div className="projectsummary-btn">
               {summaryDone ? (
-                <button onClick={() => setSummaryDone(false)}>수정하기</button>
+                <button
+                  onClick={() => {
+                    setSummaryDone(false);
+                    startEditing(null, "1");
+                  }}
+                >
+                  수정하기
+                </button>
               ) : (
                 <button onClick={handleSummaryComplete}>완료하기</button>
               )}
             </div>
           )}
         </div>
+        {isFailed && (
+          <BasicModal
+            modalTitle="데이터를 불러오지 못했습니다"
+            modalDescription="일시적인 오류가 발생했습니다. 새로고침 후 다시 시도해주세요."
+            Close={() => setIsFailed(false)}
+          />
+        )}
+        {alreadyEdit && (
+          <BasicModal
+            modalTitle="수정이 불가능합니다"
+            modalDescription="다른 사용자가 수정 중입니다"
+            Close={() => setAlreadyEdit(false)}
+          />
+        )}
       </div>
     </>
   );
