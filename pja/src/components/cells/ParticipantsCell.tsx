@@ -109,7 +109,7 @@ export const ParticipantsCell = ({ value = [], onChange, disable }: Props) => {
           {value.map((id) => {
             const user = participantList.find((m) => m.memberId === id);
             return (
-              <div key={id}>
+              <div key={id} className="partiprofile-container">
                 {user?.profileImage ? (
                   <img
                     src={user.profileImage}

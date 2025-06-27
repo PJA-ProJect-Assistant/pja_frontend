@@ -27,8 +27,8 @@ body {
 
 .profile,
 .profile-image {
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background-color: #bbc9ec;
   cursor: pointer;
@@ -40,7 +40,7 @@ body {
   justify-content: center;
   align-items: center;
   font-size: var(--font-size-xl);
-  line-height: 60px;
+  line-height: 30px;
   color: black;
 }
 
