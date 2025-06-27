@@ -5,7 +5,6 @@ import axios from "axios";
 import "./LoginPage.css";
 import { login } from "../../services/authApi";
 import logoImage from "../../assets/img/logo.png";
-import GoogleImage from "../../assets/img/Google.png";
 import CustomModal from "../signuppage/CustomModal";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 // import { useUserData } from "../../hooks/useUserData";
