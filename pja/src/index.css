@@ -9,6 +9,14 @@
   --font-size-3xl: 30px;
 }
 
+@font-face {
+  font-family: "MinSans-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/MinSans-Regular.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body {
   margin: 0;
@@ -23,4 +31,5 @@ body {
   /* Firefox */
   -ms-user-select: none;
   /* IE/Edge */
+  font-family: "MinSans-Regular", sans-serif;
 }
