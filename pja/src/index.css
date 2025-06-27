@@ -39,7 +39,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-base);
   line-height: 30px;
   color: black;
 }
@@ -47,4 +47,13 @@ body {
 .profile-image {
   object-fit: cover;
   display: block;
+}
+.editors-container {
+  position: relative;
+  width: 100%;
+}
+.editors {
+  position: absolute;
+  top: 0;
+  right: 101%;
 }
