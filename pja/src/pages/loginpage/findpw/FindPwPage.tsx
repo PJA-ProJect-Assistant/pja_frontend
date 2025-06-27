@@ -7,6 +7,7 @@ import findPwIcon from "../../../assets/img/findPw.png";
 import findEmailIcon from "../../../assets/img/findEmail.png";
 import authIcon from "../../../assets/img/auth.png";
 import alertIcon from "../../../assets/img/alert.png";
+import { SignupHeader } from "../../../components/header/SignupHeader";
 import {
   requestPasswordCode,
   verifyPasswordCode,
@@ -121,181 +122,183 @@ const FindPwPage: React.FC = () => {
   };
 
   return (
-    <div className="findpw-container">
-      <img src={logoImage} alt="PJA Logo" className="logo" />
-      <h2 className="title">비밀번호 찾기</h2>
+    <div className="findpw-header-container">
+      <SignupHeader />
+      <div className="findpw-container">
+        <img src={logoImage} alt="PJA Logo" className="logo" />
+        <h2 className="title">비밀번호 찾기</h2>
 
-      <div className="pw-form-group">
-        <label htmlFor="id">아이디</label>
-        <div className="pw-input-wrapper">
-          <img src={findPwIcon} alt="아이디 아이콘" className="icon" />
-          <input
-            type="text"
-            id="id"
-            placeholder="아이디"
-            value={id}
-            onChange={handleIdChange}
-            className="find-pw-input"
-            autoComplete="off"
-            readOnly={isVerified}
-          />
-          {id && (
-            <button
-              type="button"
-              onClick={handleClearId}
-              className="findpw-clear-id-icon"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+        <div className="pw-form-group">
+          <label htmlFor="id">아이디</label>
+          <div className="pw-input-wrapper">
+            <img src={findPwIcon} alt="아이디 아이콘" className="icon" />
+            <input
+              type="text"
+              id="id"
+              placeholder="아이디"
+              value={id}
+              onChange={handleIdChange}
+              className="find-pw-input"
+              autoComplete="off"
+              readOnly={isVerified}
+            />
+            {id && (
+              <button
+                type="button"
+                onClick={handleClearId}
+                className="findpw-clear-id-icon"
               >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M15 9l-6 6" />
-                <path d="M9 9l6 6" />
-              </svg>
-            </button>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M15 9l-6 6" />
+                  <path d="M9 9l6 6" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="pw-form-group">
+          <label htmlFor="email">이메일</label>
+          <div className="pw-input-wrapper">
+            <img src={findEmailIcon} alt="이메일 아이콘" className="icon" />
+            <input
+              type="email"
+              id="email"
+              placeholder="이메일"
+              value={email}
+              onChange={handleEmailChange}
+              className="find-pw-input"
+              autoComplete="off"
+              readOnly={isVerified}
+            />
+            {email && (
+              <button
+                type="button"
+                onClick={handleClearEmail}
+                className="findpw-clear-email-icon"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M15 9l-6 6" />
+                  <path d="M9 9l6 6" />
+                </svg>
+              </button>
+            )}
+
+            <div className="button-group">
+              <button
+                className="btn small"
+                onClick={handleRequestCode}
+                disabled={loading}
+              >
+                {loading
+                  ? "전송 중"
+                  : isCodeSent
+                  ? "인증번호 다시 보내기"
+                  : "인증번호 받기"}
+              </button>
+            </div>
+          </div>
+          {/*성공 or 에러 메세지 표시*/}
+          {successMessage && <p className="success">{successMessage}</p>}
+          {error && <p className="error">{error}</p>}
+        </div>
+
+        <div className="pw-form-group">
+          <label htmlFor="code">인증번호</label>
+          <div className="pw-input-wrapper">
+            <img src={authIcon} alt="이메일 아이콘" className="icon" />
+            <input
+              type="text"
+              id="code"
+              placeholder="인증번호를 입력하세요."
+              value={authcode}
+              onChange={handleAuthcodeChange}
+              readOnly={isVerified} //인증완료 시 수정 불가
+              autoComplete="off"
+              className="find-pw-input"
+            />
+
+            {authcode && !isVerified && (
+              <button
+                type="button"
+                onClick={handleClearAuthcode}
+                className="findpw-clear-email-icon"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M15 9l-6 6" />
+                  <path d="M9 9l6 6" />
+                </svg>
+              </button>
+            )}
+
+            <div className="button-group">
+              <button
+                className="pw-btn confirm"
+                onClick={handleVerifyCode}
+                disabled={loading || isVerified}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+          {/*인증 성공 시 메세지*/}
+          {isVerified && successMessage && (
+            <p className="success">{successMessage}</p>
           )}
         </div>
-      </div>
 
-      <div className="pw-form-group">
-        <label htmlFor="email">이메일</label>
-        <div className="pw-input-wrapper">
-          <img src={findEmailIcon} alt="이메일 아이콘" className="icon" />
-          <input
-            type="email"
-            id="email"
-            placeholder="이메일"
-            value={email}
-            onChange={handleEmailChange}
-            className="find-pw-input"
-            autoComplete="off"
-            readOnly={isVerified}
-          />
-          {email && (
+        <div className="bottom-check">
+          <div className="tooltip-wrapper">
+            <img src={alertIcon} alt="알림아이콘" className="alert-icon" />
+            <span>인증메일을 받지 못 하셨나요?</span>
+            <span className="tooltip-text">
+              <p>
+                전송한 메일함을 확인하시고, 이름과 이메일을 정확히 입력했는지
+                확인해 주세요.{" "}
+              </p>
+              <p>메일 수신까지 다소 시간이 걸릴 수 있습니다.</p>
+            </span>
+          </div>
+          <div className="btn-container">
             <button
-              type="button"
-              onClick={handleClearEmail}
-              className="findpw-clear-email-icon"
+              className="btn reset"
+              disabled={!isVerified}
+              onClick={handleResetPassword}
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M15 9l-6 6" />
-                <path d="M9 9l6 6" />
-              </svg>
-            </button>
-          )}
-
-          <div className="button-group">
-            <button
-              className="btn small"
-              onClick={handleRequestCode}
-              disabled={loading}
-            >
-              {loading
-                ? "전송 중"
-                : isCodeSent
-                ? "인증번호 다시 보내기"
-                : "인증번호 받기"}
+              비밀번호 재설정
             </button>
           </div>
         </div>
-        {/*성공 or 에러 메세지 표시*/}
-        {successMessage && <p className="success">{successMessage}</p>}
-        {error && <p className="error">{error}</p>}
-      </div>
-
-      <div className="pw-form-group">
-        <label htmlFor="code">인증번호</label>
-        <div className="pw-input-wrapper">
-          <img src={authIcon} alt="이메일 아이콘" className="icon" />
-          <input
-            type="text"
-            id="code"
-            placeholder="인증번호를 입력하세요."
-            value={authcode}
-            onChange={handleAuthcodeChange}
-            readOnly={isVerified} //인증완료 시 수정 불가
-            autoComplete="off"
-            className="find-pw-input"
-          />
-
-          {authcode && !isVerified && (
-            <button
-              type="button"
-              onClick={handleClearAuthcode}
-              className="findpw-clear-email-icon"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M15 9l-6 6" />
-                <path d="M9 9l6 6" />
-              </svg>
-            </button>
-          )}
-
-          <div className="button-group">
-            <button
-              className="pw-btn confirm"
-              onClick={handleVerifyCode}
-              disabled={loading || isVerified}
-            >
-              확인
-            </button>
-          </div>
-        </div>
-        {/*인증 성공 시 메세지*/}
-        {isVerified && successMessage && (
-          <p className="success">{successMessage}</p>
-        )}
-      </div>
-
-      <div className="bottom-check">
-        <div className="tooltip-wrapper">
-          <img src={alertIcon} alt="알림아이콘" className="alert-icon" />
-          <span>인증메일을 받지 못 하셨나요?</span>
-          <span className="tooltip-text">
-            <p>
-              전송한 메일함을 확인하시고, 이름과 이메일을 정확히 입력했는지
-              확인해 주세요.{" "}
-            </p>
-            <p>메일 수신까지 다소 시간이 걸릴 수 있습니다.</p>
-          </span>
-        </div>
-      </div>
-
-      <div className="btn-container">
-        <button
-          className="btn reset"
-          disabled={!isVerified}
-          onClick={handleResetPassword}
-        >
-          비밀번호 재설정
-        </button>
       </div>
     </div>
   );

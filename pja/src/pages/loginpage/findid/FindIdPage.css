@@ -1,13 +1,24 @@
+.findid-Header-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .findid-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  flex: 1;
+  min-height: 0;
 }
 
 .findid-box {
   width: 100%;
   max-width: 450px;
+  margin-bottom: 160px;
   display: flex;
   flex-direction: column;
   align-items: center;

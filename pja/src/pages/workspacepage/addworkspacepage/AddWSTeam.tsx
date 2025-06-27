@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import axios from "axios";
 import api from "../../../lib/axios";
+import { BasicModal } from "../../../components/modal/BasicModal";
 
 // API 응답 데이터의 타입을 명확하게 정의합니다.
 interface InviteResponse {
@@ -33,6 +34,15 @@ export default function AddWSTeam() {
   const [emails, setEmails] = useState<string[]>([]);
   const [workspaceRole, setWorkspaceRole] = useState("ROLE_USER");
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalDescription, setModalDescription] = useState("");
+  const showModal = (title: string, description: string) => {
+    setModalTitle(title);
+    setModalDescription(description);
+    setModalOpen(true);
+  };
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -50,7 +60,10 @@ export default function AddWSTeam() {
 
   const handleInvite = async () => {
     if (!selectedWS || !selectedWS.workspaceId || emails.length === 0) {
-      alert("워크스페이스를 선택하고, 초대할 이메일을 1개 이상 입력해주세요.");
+      showModal(
+        "",
+        "워크스페이스를 선택하고, 초대할 이메일을 1개 이상 입력해주세요."
+      );
 
       console.error(
         "초대 요청 실패: 워크스페이스 ID가 없거나 초대할 이메일이 없습니다.",
@@ -89,9 +102,11 @@ export default function AddWSTeam() {
       );
 
       if (response.status === 200 && response.data.status === "success") {
-        alert(response.data.message);
+        showModal("초대 성공", response.data.message);
         // 성공 후 페이지 이동 시에도 안전하게 selectedWS.workspaceId를 사용합니다.
-        navigate(`/ws/${selectedWS.workspaceId}/${stepId}`);
+        setTimeout(() => {
+          navigate(`/ws/${selectedWS.workspaceId}/${stepId}`);
+        }, 2000);
       } else {
         alert(
           response.data.message ||
@@ -122,88 +137,98 @@ export default function AddWSTeam() {
         // axios 외 다른 에러
         console.error("알 수 없는 에러 발생:", error.message);
         console.log("✅ 백엔드 메시지:", error.response.data.message);
-        alert("알 수 없는 오류가 발생했습니다.");
+        showModal("", "알 수 없는 오류가 발생했습니다.");
       }
     }
   };
 
   return (
-    <div className="addws-container">
-      <div className="addws-box">
-        <div className="addws-title">
-          <p>팀원 초대</p>
-          <div></div>
-        </div>
-        <div className="addws-content">
-          <div>
-            <p>이메일</p>
-            <div className="addws-email">
-              <div className="invited-members">
-                {emails.map((email, index) => (
-                  <div key={index} className="invited-member-email">
-                    <p>{email}</p>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="15px"
-                      viewBox="0 -960 960 960"
-                      width="15px"
-                      fill="#FFFFFF"
-                      className="delete-email-btn"
-                      onClick={() => {
-                        setEmails(emails.filter((_, i) => i !== index));
-                      }}
-                    >
-                      <path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z" />
-                    </svg>
-                  </div>
-                ))}
+    <>
+      <div className="addws-container">
+        <div className="addws-box">
+          <div className="addws-title">
+            <p>팀원 초대</p>
+            <div></div>
+          </div>
+          <div className="addws-content">
+            <div>
+              <p>이메일</p>
+              <div className="addws-email">
+                <div className="invited-members">
+                  {emails.map((email, index) => (
+                    <div key={index} className="invited-member-email">
+                      <p>{email}</p>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="15px"
+                        viewBox="0 -960 960 960"
+                        width="15px"
+                        fill="#FFFFFF"
+                        className="delete-email-btn"
+                        onClick={() => {
+                          setEmails(emails.filter((_, i) => i !== index));
+                        }}
+                      >
+                        <path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z" />
+                      </svg>
+                    </div>
+                  ))}
+                </div>
+                <input
+                  type="email"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="초대할 팀원의 이메일"
+                />
               </div>
-              <input
-                type="email"
-                value={emailInput}
-                onChange={(e) => setEmailInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="초대할 팀원의 이메일"
-              />
+            </div>
+            <div>
+              <p>역할</p>
+              <select
+                className="addws-content-select"
+                value={workspaceRole}
+                onChange={(e) => setWorkspaceRole(e.target.value)}
+              >
+                <option value="ROLE_USER">멤버</option>
+                <option value="ROLE_GUEST">게스트</option>
+              </select>
             </div>
           </div>
-          <div>
-            <p>역할</p>
-            <select
-              className="addws-content-select"
-              value={workspaceRole}
-              onChange={(e) => setWorkspaceRole(e.target.value)}
+          <div className="addws-btn-container">
+            <button
+              onClick={handleInvite}
+              // 5. disabled 조건도 selectedWS로 통일하여 일관성을 유지합니다.
+              disabled={emails.length === 0 || !selectedWS}
+              className={
+                emails.length > 0 && selectedWS ? "addws-btn1" : "addws-btn2"
+              }
             >
-              <option value="ROLE_USER">멤버</option>
-              <option value="ROLE_GUEST">게스트</option>
-            </select>
+              초대하기
+            </button>
+            <button
+              onClick={() => {
+                // 6. '넘어가기' 버튼도 동일한 selectedWS 변수와 안정성 검사를 사용합니다.
+                if (selectedWS && selectedWS.workspaceId) {
+                  navigate(`/ws/${selectedWS.workspaceId}/${stepId}`);
+                }
+              }}
+              disabled={!selectedWS}
+              className="addws-btn2"
+            >
+              넘어가기
+            </button>
           </div>
         </div>
-        <div className="addws-btn-container">
-          <button
-            onClick={handleInvite}
-            // 5. disabled 조건도 selectedWS로 통일하여 일관성을 유지합니다.
-            disabled={emails.length === 0 || !selectedWS}
-            className={
-              emails.length > 0 && selectedWS ? "addws-btn1" : "addws-btn2"
-            }
-          >
-            초대하기
-          </button>
-          <button
-            onClick={() => {
-              // 6. '넘어가기' 버튼도 동일한 selectedWS 변수와 안정성 검사를 사용합니다.
-              if (selectedWS && selectedWS.workspaceId) {
-                navigate(`/ws/${selectedWS.workspaceId}/${stepId}`);
-              }
-            }}
-            disabled={!selectedWS}
-            className="addws-btn2"
-          >
-            넘어가기
-          </button>
-        </div>
       </div>
-    </div>
+
+      {modalOpen && (
+        <BasicModal
+          modalTitle={modalTitle}
+          modalDescription={modalDescription}
+          Close={(open) => setModalOpen(open)}
+        />
+      )}
+    </>
   );
 }
