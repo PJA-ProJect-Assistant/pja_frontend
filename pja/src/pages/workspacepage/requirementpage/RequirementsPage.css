@@ -214,6 +214,10 @@
 }
 
 .require-list svg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 91%;
   display: none;
   /*기본은 숨김*/
   cursor: pointer;
