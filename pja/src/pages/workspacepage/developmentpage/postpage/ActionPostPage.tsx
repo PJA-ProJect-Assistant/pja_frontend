@@ -43,6 +43,7 @@ export default function ActionPostPage() {
 
   const [originalTextContent, setOriginalTextContent] = useState<string>("");
   const [fileList, setFileList] = useState<FileInfo[]>([]);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   const [currentComment, setCurrentComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
@@ -61,6 +62,14 @@ export default function ActionPostPage() {
     acId: string;
     acpostId: string;
   }>();
+
+  const handleThumbClick = (src: string) => {
+    setLightboxSrc(src);
+  };
+
+  const closeLightbox = () => {
+    setLightboxSrc(null);
+  };
 
   //액션 게시물 조회 api
   useEffect(() => {
@@ -374,11 +383,8 @@ export default function ActionPostPage() {
 
   return (
     <div className="post-container">
-      <AnimatePresence
-        onExitComplete={() => {
-          setShowIcon(true);
-        }}
-      >
+      {/* 사이드바 토글 애니메이션 */}
+      <AnimatePresence onExitComplete={() => setShowIcon(true)}>
         {sidebarOpen && (
           <WsSidebar
             onClose={() => {
@@ -394,6 +400,7 @@ export default function ActionPostPage() {
             className="post-sidebar-icon"
             onClick={() => setSidebarOpen(true)}
           >
+            {/* 아이콘 SVG */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -406,38 +413,42 @@ export default function ActionPostPage() {
           </div>
         </div>
       )}
+
+      {/* 본문 영역 */}
       <div className="actionpost-container">
         <PostHeader />
-
         <h2>{actionName}</h2>
 
+        {/* 1) 글 내용 + 기존 이미지 */}
         <div className="actionpost-wrapper">
           {isEditing ? (
             <textarea
-              placeholder="내용을 입력해주세요"
               className="actionpost-input"
+              placeholder="내용을 입력해주세요"
               value={textContent}
               onChange={(e) => setTextContent(e.target.value)}
             />
           ) : (
             <div className="actionpost-display">{textContent}</div>
           )}
-        </div>
-        {/*사진 업로드 창*/}
-        <div className="image-section-container">
-          {/* 평상시 & 수정 모드에서 기존 이미지 표시 */}
+
           {fileList.length > 0 && (
-            <div className="existing-images-container">
+            <div className="image-section-container">
               <p className="image-section-title">첨부된 이미지</p>
               <div className="image-grid">
-                {fileList.map((file, index) => (
-                  <div key={index} className="image-item">
-                    <img src={file.filePath} alt={`첨부 이미지 ${index + 1}`} />
-                    {/* 수정 모드일 때만 삭제 버튼 표시 */}
+                {fileList.map((file, idx) => (
+                  <div
+                    key={idx}
+                    className="image-item"
+                    onClick={() => handleThumbClick(file.filePath)}
+                  >
+                    <img src={file.filePath} alt={`첨부 이미지 ${idx + 1}`} />
                     {isEditing && (
                       <button
                         className="remove-existing-image-btn"
-                        onClick={() => handleRemoveExistingImage(index)}
+                        onClick={(e) => {
+                          e.stopPropagation(); /* 삭제 핸들러 */
+                        }}
                       >
                         X
                       </button>
@@ -447,68 +458,32 @@ export default function ActionPostPage() {
               </div>
             </div>
           )}
-
-          {/* 수정 모드일 때만 새 이미지 업로드 UI 표시 */}
-          {isEditing && (
-            <div className="image-upload-container">
-              {/* 파일 숨김 */}
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleFileInputChange}
-                ref={fileInputRef}
-                style={{ display: "none" }}
-              />
-
-              {/* 이미지 업로드 클릭 & 드래그앤드롭 영역 */}
-              <div
-                className={`image-upload-area ${
-                  dragActive ? "drag-active" : ""
-                }`}
-                onClick={handleUploadAreaClick}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-              >
-                {/* 새로 선택된 이미지가 없을 때 */}
-                {selectedImages.length === 0 && (
-                  <>
-                    <span className="upload-placeholder">
-                      여기에 이미지를 드래그하거나 클릭하여 업로드하세요
-                    </span>
-                    <img
-                      src={imageUpIcon}
-                      className="image-upload-icon"
-                      alt="업로드 아이콘"
-                    />
-                  </>
-                )}
-
-                {/* 새로 선택된 이미지 목록 표시 */}
-                {selectedImages.length > 0 && (
-                  <div className="uploaded-files">
-                    {selectedImages.map((image, index) => (
-                      <div key={index} className="uploaded-file-name">
-                        <span>{image.name}</span>
-                        <button
-                          className="remove-btn"
-                          onClick={(e) => {
-                            e.stopPropagation(); // 부모 div의 클릭 이벤트 방지
-                            removeImage(index);
-                          }}
-                        >
-                          X
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* 2) Lightbox 모달 (actionpost-wrapper 바깥) */}
+        {lightboxSrc && (
+          <div className="lightbox-overlay" onClick={closeLightbox}>
+            <div className="lightbox-content">
+              <img src={lightboxSrc} alt="확대 이미지" />
+            </div>
+          </div>
+        )}
+
+        {/* 3) 새 이미지 업로드 UI */}
+        {isEditing && (
+          <div className="image-upload-container">
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              ref={fileInputRef}
+              style={{ display: "none" }}
+            />
+            <div
+              className={`image-upload-area ${dragActive ? "drag-active" : ""}`}
+            ></div>
+          </div>
+        )}
 
         <div className="actionpost-button-container">
           <button
