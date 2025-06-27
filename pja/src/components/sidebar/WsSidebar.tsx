@@ -121,14 +121,14 @@ export default function WsSidebar({ onClose }: IsClose) {
       } else {
         // Git 주소가 없으면 사용자에게 알림
         setGitModalMessage(
-          "연동된 Git 저장소 주소가 없습니다. 설정에서 추가해주세요."
+          "연동된 Git 저장소 주소가 없습니다.\n 설정에서 추가해주세요."
         );
         setIsGitModalOpen(true);
       }
     } catch (error: any) {
       // API 호출 실패 시 에러 메시지 표시
       let userMessage =
-        "연동된 Git 저장소 주소가 없습니다  설정에서 추가해주세요";
+        "연동된 Git 저장소 주소가 없습니다.\n 설정에서 추가해주세요.";
 
       if (error.response) {
         console.error("응답 상태코드:", error.response.status);
