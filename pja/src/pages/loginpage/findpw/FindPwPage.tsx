@@ -126,7 +126,7 @@ const FindPwPage: React.FC = () => {
       <SignupHeader />
       <div className="findpw-container">
         <img src={logoImage} alt="PJA Logo" className="logo" />
-        <h2 className="title">비밀번호 찾기</h2>
+        <h1 className="title">비밀번호 찾기</h1>
 
         <div className="pw-form-group">
           <label htmlFor="id">아이디</label>
@@ -210,11 +210,7 @@ const FindPwPage: React.FC = () => {
                 onClick={handleRequestCode}
                 disabled={loading}
               >
-                {loading
-                  ? "전송 중"
-                  : isCodeSent
-                  ? "인증번호 다시 보내기"
-                  : "인증번호 받기"}
+                {loading ? "전송 중" : isCodeSent ? "인증 재요청" : "인증 요청"}
               </button>
             </div>
           </div>
@@ -279,12 +275,14 @@ const FindPwPage: React.FC = () => {
 
         <div className="bottom-check">
           <div className="tooltip-wrapper">
-            <img src={alertIcon} alt="알림아이콘" className="alert-icon" />
-            <span>인증메일을 받지 못 하셨나요?</span>
+            <div className="tooltip-wrapper-div">
+              <img src={alertIcon} alt="알림아이콘" className="alert-icon" />
+              <span>인증메일을 받지 못 하셨나요?</span>
+            </div>
             <span className="tooltip-text">
               <p>
                 전송한 메일함을 확인하시고, 이름과 이메일을 정확히 입력했는지
-                확인해 주세요.{" "}
+                확인해 주세요.
               </p>
               <p>메일 수신까지 다소 시간이 걸릴 수 있습니다.</p>
             </span>
