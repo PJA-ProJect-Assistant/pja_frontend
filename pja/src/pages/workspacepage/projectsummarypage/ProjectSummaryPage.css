@@ -106,16 +106,32 @@
   border-radius: 4px;
 }
 
-.summary-remove-button {
-  margin-left: 5px;
+.summary-contentlist {
+  position: relative;
+  width: 100%;
+  align-items: center;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+.summary-contentlist li {
+  width: 90%;
+  word-break: break-word;
+  font-weight: 500;
+}
+
+.summary-contentlist svg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 91%;
   display: none;
   cursor: pointer;
 }
 
-.summary-contentlist:hover .summary-remove-button {
-  display: flex;
+.summary-contentlist:hover svg {
   display: inline;
-  justify-content: center;
+  /* hover 시 보임 */
 }
 
 .summary-editors {

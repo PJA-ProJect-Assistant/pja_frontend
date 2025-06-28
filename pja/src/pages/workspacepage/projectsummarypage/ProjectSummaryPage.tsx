@@ -95,7 +95,6 @@ export default function ProjectSummaryPage() {
     stopEditing(null, "1");
     if (selectedWS?.workspaceId && projectInfo?.projectInfoId) {
       try {
-        setIsLoading(true);
         const setpj: setproject = {
           title,
           category,
@@ -114,8 +113,9 @@ export default function ProjectSummaryPage() {
           projectInfo?.projectInfoId,
           setpj
         );
-        try {
-          if (selectedWS?.progressStep === "2") {
+        if (selectedWS?.progressStep === "2") {
+          try {
+            setIsLoading(true);
             const response = await postErd(selectedWS?.workspaceId);
             const erdId = response.data?.erdId;
             console.log("erd 생성 성공 erdId : ", erdId);
@@ -134,21 +134,19 @@ export default function ProjectSummaryPage() {
                 `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("3")}`
               );
             }
-          } else {
-            setSummaryDone(true);
+          } catch (err) {
+            console.log("ERD ai생성 실패 ", err);
+            setIsFailed(true);
+          } finally {
+            setIsLoading(false);
           }
-        } catch (err) {
-          console.log("ERD ai생성 실패 ", err);
-          setIsFailed(true);
+        } else {
+          setSummaryDone(true);
         }
       } catch (err) {
         console.log("프로젝트 수정 실패 ", err);
         setIsFailed(true);
-      } finally {
-        setIsLoading(false);
       }
-    } else {
-      console.log("아이디 없음");
     }
   };
   const renderEditor = (user: LockedUser | null) => {
@@ -254,33 +252,34 @@ export default function ProjectSummaryPage() {
                       />
                     </li>
                   ) : (
-                    <li
-                      key={index}
-                      className="summary-contentlist"
-                      onClick={() => {
-                        !summaryDone && setEditingField(`target-${index}`);
-                      }}
-                    >
-                      {target}
-                      {!summaryDone && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="summary-remove-button"
-                          height="20px"
-                          viewBox="0 -960 960 960"
-                          width="20px"
-                          fill="#EA3323"
-                          onClick={() => {
-                            const updated = [...targetUsers];
-                            updated.splice(index, 1);
-                            setTargetUsers(updated);
-                            setEditingField(null); // 삭제 후 편집 모드 해제
-                          }}
-                        >
-                          <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
-                        </svg>
-                      )}
-                    </li>
+                    <div className="summary-contentlist">
+                      <li
+                        key={index}
+                        onClick={() => {
+                          !summaryDone && setEditingField(`target-${index}`);
+                        }}
+                      >
+                        {target}
+                        {!summaryDone && (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="summary-remove-button"
+                            height="20px"
+                            viewBox="0 -960 960 960"
+                            width="20px"
+                            fill="#EA3323"
+                            onClick={() => {
+                              const updated = [...targetUsers];
+                              updated.splice(index, 1);
+                              setTargetUsers(updated);
+                              setEditingField(null); // 삭제 후 편집 모드 해제
+                            }}
+                          >
+                            <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+                          </svg>
+                        )}
+                      </li>
+                    </div>
                   )
                 )}
               </ul>
@@ -315,33 +314,34 @@ export default function ProjectSummaryPage() {
                       />
                     </li>
                   ) : (
-                    <li
-                      key={index}
-                      className="summary-contentlist"
-                      onClick={() => {
-                        !summaryDone && setEditingField(`tech-${index}`);
-                      }}
-                    >
-                      {tech}
-                      {!summaryDone && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="summary-remove-button"
-                          height="20px"
-                          viewBox="0 -960 960 960"
-                          width="20px"
-                          fill="#EA3323"
-                          onClick={() => {
-                            const updated = [...technologyStack];
-                            updated.splice(index, 1);
-                            setTechnologyStack(updated);
-                            setEditingField(null); // 삭제 후 편집 모드 해제
-                          }}
-                        >
-                          <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
-                        </svg>
-                      )}
-                    </li>
+                    <div className="summary-contentlist">
+                      <li
+                        key={index}
+                        onClick={() => {
+                          !summaryDone && setEditingField(`tech-${index}`);
+                        }}
+                      >
+                        {tech}
+                        {!summaryDone && (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="summary-remove-button"
+                            height="20px"
+                            viewBox="0 -960 960 960"
+                            width="20px"
+                            fill="#EA3323"
+                            onClick={() => {
+                              const updated = [...technologyStack];
+                              updated.splice(index, 1);
+                              setTechnologyStack(updated);
+                              setEditingField(null); // 삭제 후 편집 모드 해제
+                            }}
+                          >
+                            <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+                          </svg>
+                        )}
+                      </li>
+                    </div>
                   )
                 )}
               </ul>
@@ -376,33 +376,34 @@ export default function ProjectSummaryPage() {
                       />
                     </li>
                   ) : (
-                    <li
-                      key={index}
-                      className="summary-contentlist"
-                      onClick={() => {
-                        !summaryDone && setEditingField(`feature-${index}`);
-                      }}
-                    >
-                      {feature}
-                      {!summaryDone && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="summary-remove-button"
-                          height="20px"
-                          viewBox="0 -960 960 960"
-                          width="20px"
-                          fill="#EA3323"
-                          onClick={() => {
-                            const updated = [...coreFeatures];
-                            updated.splice(index, 1);
-                            setCoreFeatures(updated);
-                            setEditingField(null); // 삭제 후 편집 모드 해제
-                          }}
-                        >
-                          <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
-                        </svg>
-                      )}
-                    </li>
+                    <div className="summary-contentlist">
+                      <li
+                        key={index}
+                        onClick={() => {
+                          !summaryDone && setEditingField(`feature-${index}`);
+                        }}
+                      >
+                        {feature}
+                        {!summaryDone && (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="summary-remove-button"
+                            height="20px"
+                            viewBox="0 -960 960 960"
+                            width="20px"
+                            fill="#EA3323"
+                            onClick={() => {
+                              const updated = [...coreFeatures];
+                              updated.splice(index, 1);
+                              setCoreFeatures(updated);
+                              setEditingField(null); // 삭제 후 편집 모드 해제
+                            }}
+                          >
+                            <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+                          </svg>
+                        )}
+                      </li>
+                    </div>
                   )
                 )}
               </ul>
@@ -478,33 +479,34 @@ export default function ProjectSummaryPage() {
                       />
                     </li>
                   ) : (
-                    <li
-                      key={index}
-                      className="summary-contentlist"
-                      onClick={() => {
-                        !summaryDone && setEditingField(`benefit-${index}`);
-                      }}
-                    >
-                      {benefit}
-                      {!summaryDone && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="summary-remove-button"
-                          height="20px"
-                          viewBox="0 -960 960 960"
-                          width="20px"
-                          fill="#EA3323"
-                          onClick={() => {
-                            const updated = [...expectedBenefits];
-                            updated.splice(index, 1);
-                            setExpectedBenefits(updated);
-                            setEditingField(null); // 삭제 후 편집 모드 해제
-                          }}
-                        >
-                          <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
-                        </svg>
-                      )}
-                    </li>
+                    <div className="summary-contentlist">
+                      <li
+                        key={index}
+                        onClick={() => {
+                          !summaryDone && setEditingField(`benefit-${index}`);
+                        }}
+                      >
+                        {benefit}
+                        {!summaryDone && (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="summary-remove-button"
+                            height="20px"
+                            viewBox="0 -960 960 960"
+                            width="20px"
+                            fill="#EA3323"
+                            onClick={() => {
+                              const updated = [...expectedBenefits];
+                              updated.splice(index, 1);
+                              setExpectedBenefits(updated);
+                              setEditingField(null); // 삭제 후 편집 모드 해제
+                            }}
+                          >
+                            <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z" />
+                          </svg>
+                        )}
+                      </li>
+                    </div>
                   )
                 )}
               </ul>
