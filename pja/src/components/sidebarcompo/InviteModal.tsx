@@ -4,6 +4,8 @@ import { inviteMembersToWorkspace } from "../../services/inviteApi";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import type { InviteRequest } from "../../types/invite";
+import { BasicModal } from "../modal/BasicModal";
+
 interface InviteModalProps {
   onClose: () => void;
 }
@@ -15,9 +17,20 @@ const InviteModal = ({ onClose }: InviteModalProps) => {
   const [role, setRole] = useState("멤버");
   const [isLoading, setIsLoading] = useState(false);
 
+  // 모달용 state
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalDescription, setModalDescription] = useState("");
+
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
+
+  const showModal = (title: string, description: string) => {
+    setModalTitle(title);
+    setModalDescription(description);
+    setModalOpen(true);
+  };
 
   //  키보드 입력(Enter)을 감지하여 이메일을 추가하는 함수
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -30,7 +43,7 @@ const InviteModal = ({ onClose }: InviteModalProps) => {
         setInputValue("");
       } else {
         // 유효하지 않은 형식일 경우 사용자에게 알림
-        alert("유효한 이메일 형식을 입력해주세요.");
+        showModal("이메일 형식 오류", "유효한 이메일 형식을 입력해주세요.");
       }
     }
   };
@@ -41,12 +54,16 @@ const InviteModal = ({ onClose }: InviteModalProps) => {
 
   const handleInviteClick = async () => {
     if (!selectedWS || !selectedWS.workspaceId) {
-      alert("워크스페이스 정보가 없습니다. 다시 시도해 주세요.");
-      return;
+      return showModal(
+        "워크스페이스 정보 없음",
+        "워크스페이스 정보가 없습니다. 다시 시도해 주세요."
+      );
     }
     if (emails.length === 0) {
-      alert("초대할 이메일을 하나 이상 추가해주세요.");
-      return;
+      return showModal(
+        "초대 대상 없음",
+        "초대할 이메일을 하나 이상 추가해주세요."
+      );
     }
     if (isLoading) return;
 
@@ -66,14 +83,15 @@ const InviteModal = ({ onClose }: InviteModalProps) => {
       );
 
       // inviteMembersToWorkspace 함수는 성공 시 response.data를 반환하도록 설계되었습니다.
-      alert(response.message);
-      onClose();
+      console.log("✅ 초대 성공, 모달 띄우기:", response.message);
+      showModal("초대 완료", response.message);
     } catch (error: any) {
       // inviteApi.ts에서 던진(throw) 에러를 여기서 잡습니다.
       if (error && error.message) {
-        alert(error.message);
-      } else {
-        alert("알 수 없는 오류가 발생했습니다.");
+        showModal(
+          "초대 실패",
+          error?.message ?? "알 수 없는 오류가 발생했습니다."
+        );
       }
       console.error("API Error:", error);
     } finally {
@@ -144,6 +162,19 @@ const InviteModal = ({ onClose }: InviteModalProps) => {
           초대하기
         </button>
       </div>
+      {modalOpen && (
+        <BasicModal
+          modalTitle={modalTitle}
+          modalDescription={modalDescription}
+          Close={(open) => {
+            setModalOpen(open);
+            // 초대 성공 시 모달 닫으면 InviteModal도 닫기
+            if (!open && modalTitle === "초대 완료") {
+              onClose();
+            }
+          }}
+        />
+      )}
     </div>
   );
 };
