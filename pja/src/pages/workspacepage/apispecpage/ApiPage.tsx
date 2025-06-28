@@ -862,11 +862,14 @@ const ApiPage = () => {
                                         </button>
                                       </div>
                                       <div
+                                        className="response-grid"
                                         style={{
                                           display: "grid",
-                                          gridTemplateColumns: "1fr 2fr",
+                                          gridTemplateColumns: "1fr 1fr",
                                           gap: "10px",
                                           marginBottom: "10px",
+                                          width: "100%",
+                                          boxSizing: "border-box",
                                         }}
                                       >
                                         <div>
@@ -892,10 +895,12 @@ const ApiPage = () => {
                                             }
                                             style={{
                                               width: "100%",
-                                              padding: "4px",
+                                              padding: "4.5px",
+                                              margin: "0px",
                                               fontSize: "20px",
                                               border: "1px solid #ccc",
                                               borderRadius: "3px",
+                                              boxSizing: "border-box",
                                             }}
                                           />
                                         </div>
@@ -922,10 +927,12 @@ const ApiPage = () => {
                                             }
                                             style={{
                                               width: "100%",
-                                              padding: "4px",
+                                              padding: "5px",
+                                              margin: "0px",
                                               fontSize: "20px",
                                               border: "1px solid #ccc",
                                               borderRadius: "3px",
+                                              boxSizing: "border-box",
                                             }}
                                           />
                                         </div>
