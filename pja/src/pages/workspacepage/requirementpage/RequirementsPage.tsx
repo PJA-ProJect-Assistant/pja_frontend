@@ -51,16 +51,15 @@ export default function RequirementsPage() {
   const [aiRequirements, setAiRequirements] = useState<setrequire[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>("");
+  const [noRequire, setNoRequire] = useState<boolean>(false);
   const getRequire = async () => {
     if (selectedWS?.workspaceId) {
       try {
         const response = await getrequirement(selectedWS?.workspaceId);
-        console.log("요구사항 조회 결과 :", response);
         if (response.data) {
           setRequirements(response.data); // undefined가 아닐 때만 설정
         }
       } catch (error) {
-        console.error("요구사항 조회 실패:", error);
         setIsFailed(true);
       }
     }
@@ -92,31 +91,29 @@ export default function RequirementsPage() {
   const handleAddFunction = async (content: string) => {
     try {
       if (selectedWS?.workspaceId) {
-        const response = await inputrequirement(
+        await inputrequirement(
           selectedWS?.workspaceId,
           "FUNCTIONAL",
           content
         );
-        console.log("function 생성 결과 :", response);
         getRequire();
       }
     } catch (err) {
-      console.log("function 생성 실패", err);
+      setIsFailed(true);
     }
   };
   const handleAddPerformance = async (content: string) => {
     try {
       if (selectedWS?.workspaceId) {
-        const response = await inputrequirement(
+        await inputrequirement(
           selectedWS?.workspaceId,
           "PERFORMANCE",
           content
         );
-        console.log("performance 생성 결과 :", response);
         getRequire();
       }
     } catch (err) {
-      console.log("performance 생성 실패", err);
+      setIsFailed(true);
     }
   };
 
@@ -136,11 +133,10 @@ export default function RequirementsPage() {
             selectedWS.workspaceId,
             setrequirements
           );
-          console.log("요구사항 저장 성공:", response);
           setAiRequirements(response.data ?? []);
         }
       } catch (err) {
-        console.error("요구사항 저장 실패", err);
+        setIsFailed(true);
       } finally {
         setLoading(false);
       }
@@ -160,7 +156,7 @@ export default function RequirementsPage() {
         }
         setAiRequirements((prev) => prev.filter((item) => item !== ai));
       } catch (err) {
-        console.error("AI 요구사항 저장 실패", err);
+        setIsFailed(true);
       }
     }
   };
@@ -208,6 +204,11 @@ export default function RequirementsPage() {
   };
 
   const handleCompleteReq = async () => {
+    if (requirements.filter((rq) => rq.requirementType === "FUNCTIONAL").length === 0 ||
+      requirements.filter((rq) => rq.requirementType === "PERFORMANCE").length === 0) {
+      setNoRequire(true);
+      return;
+    }
     stopPolling();
     if (!selectedWS) return;
     setNextPageLoading(true);
@@ -220,11 +221,10 @@ export default function RequirementsPage() {
             content,
           })
         );
-        const projectdata = await postProjectAI(
+        await postProjectAI(
           selectedWS.workspaceId,
           setrequirements
         );
-        console.log("프로젝트 정보 : ", projectdata);
 
         const updatedWorkspace: workspace = {
           ...selectedWS, // 기존 값 유지
@@ -236,7 +236,7 @@ export default function RequirementsPage() {
       }
       setRequireDone(true);
     } catch (err) {
-      console.log("요구사항 저장 실패 : ", err);
+      setIsFailed(true);
     } finally {
       setNextPageLoading(false);
     }
@@ -481,8 +481,15 @@ export default function RequirementsPage() {
       )}
       {isFailed && (
         <BasicModal
-          modalTitle="데이터를 불러오지 못했습니다"
-          modalDescription="일시적인 오류가 발생했습니다. 새로고침 후 다시 시도해주세요."
+          modalTitle="요청을 처리할 수 없습니다"
+          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
+          Close={() => setIsFailed(false)}
+        />
+      )}
+      {noRequire && (
+        <BasicModal
+          modalTitle="저장할 수 없습니다"
+          modalDescription="기능·성능 요구사항이 최소 1개 이상 있어야 합니다"
           Close={() => setIsFailed(false)}
         />
       )}

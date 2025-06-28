@@ -169,7 +169,7 @@ export default function ERDEdit({ onClose }: IsClose) {
           return newTables;
         });
       } catch {
-        console.log("필드 수정 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -203,7 +203,7 @@ export default function ERDEdit({ onClose }: IsClose) {
           });
         });
       } catch {
-        console.log("필드 추가 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -228,7 +228,7 @@ export default function ERDEdit({ onClose }: IsClose) {
           });
         });
       } catch {
-        console.log("필드 삭제 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -250,7 +250,7 @@ export default function ERDEdit({ onClose }: IsClose) {
           });
         });
       } catch {
-        console.log("테이블명 수정 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -271,7 +271,7 @@ export default function ERDEdit({ onClose }: IsClose) {
 
         setTables((prev) => [...prev, newTable]);
       } catch {
-        console.log("새 테이블 생성 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -290,7 +290,7 @@ export default function ERDEdit({ onClose }: IsClose) {
         });
         geterd();
       } catch {
-        console.log("테이블 삭제 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -324,7 +324,7 @@ export default function ERDEdit({ onClose }: IsClose) {
           setEdges((prev) => [...prev, Relation]);
         }
       } catch {
-        console.log("erd생성 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -348,7 +348,7 @@ export default function ERDEdit({ onClose }: IsClose) {
         );
         // geterd();
       } catch {
-        console.log("관계선 라벨 변경 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -361,7 +361,7 @@ export default function ERDEdit({ onClose }: IsClose) {
         await deleteErdRelation(selectedWS.workspaceId, erdId, edgeId);
         setEdges((prev) => prev.filter((edge) => edge.id !== edgeId));
       } catch {
-        console.log("관계 삭제 실패");
+        setIsFailed(true);
       }
     }
   };
@@ -469,8 +469,8 @@ export default function ERDEdit({ onClose }: IsClose) {
         )}
         {isFailed && (
           <BasicModal
-            modalTitle="데이터를 불러오지 못했습니다"
-            modalDescription="일시적인 오류가 발생했습니다. 새로고침 후 다시 시도해주세요."
+            modalTitle="요청을 처리할 수 없습니다"
+            modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
             Close={() => setIsFailed(false)}
           />
         )}

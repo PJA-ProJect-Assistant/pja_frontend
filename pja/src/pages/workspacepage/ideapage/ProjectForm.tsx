@@ -71,6 +71,7 @@ export default function ProhectForm() {
       }
     } catch (error) {
       console.error("기능 추가 실패:", error);
+      setIsFailed(true);
     }
   };
 
@@ -91,6 +92,7 @@ export default function ProhectForm() {
       }
     } catch (error) {
       console.error("기술 스택 추가 실패:", error);
+      setIsFailed(true);
     }
   };
 
@@ -105,6 +107,7 @@ export default function ProhectForm() {
         setFeatures((prev) => prev.filter((f) => f.id !== id));
       } catch (err) {
         console.log("기능 삭제 실패", err);
+        setIsFailed(true);
       }
     }
   };
@@ -120,6 +123,7 @@ export default function ProhectForm() {
         setStacks((prev) => prev.filter((s) => s.id !== id));
       } catch (err) {
         console.log("기술 삭제 실패", err);
+        setIsFailed(true);
       }
     }
   };
@@ -226,6 +230,7 @@ export default function ProhectForm() {
       }
     } catch (err) {
       console.log("아이디어 수정 실패 : ", err);
+      setIsFailed(true);
     }
   };
 
@@ -472,8 +477,8 @@ export default function ProhectForm() {
       )}
       {isFailed && (
         <BasicModal
-          modalTitle="데이터를 불러오지 못했습니다"
-          modalDescription="일시적인 오류가 발생했습니다. 새로고침 후 다시 시도해주세요."
+          modalTitle="요청을 처리할 수 없습니다"
+          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
           Close={() => setIsFailed(false)}
         />
       )}

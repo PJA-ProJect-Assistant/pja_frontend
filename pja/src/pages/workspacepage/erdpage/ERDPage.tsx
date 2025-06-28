@@ -34,6 +34,7 @@ export default function ERDPage() {
   const [erdDone, setErdDone] = useState<boolean>(true);
   const [modifyMode, setModifyMode] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [isFailed, setIsFailed] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const geterd = async () => {
@@ -63,12 +64,12 @@ export default function ERDPage() {
               setEdges(generatedEdges);
             }
           } catch (err) {
-            console.log("getallerd 실패", err);
+            setIsFailed(true);
           }
         }
       }
     } catch (err) {
-      console.log("erdId 조회 실패");
+      setIsFailed(true);
     }
   };
 
@@ -122,6 +123,7 @@ export default function ERDPage() {
       } catch (err) {
         console.log("api명세서 ai생성 실패", err);
         setIsGenerating(false);
+        setIsFailed(true);
       }
     }
   };
@@ -175,6 +177,13 @@ export default function ERDPage() {
           </>
         )}
       </div>
+      {isFailed && (
+        <BasicModal
+          modalTitle="요청을 처리할 수 없습니다"
+          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
+          Close={() => setIsFailed(false)}
+        />
+      )}
     </>
   );
 }
