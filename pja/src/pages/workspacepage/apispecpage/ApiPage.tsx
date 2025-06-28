@@ -359,16 +359,6 @@ const ApiPage = () => {
   const handleDeleteRow = async (workspaceId: number, apiId: number) => {
     // 워크스페이스 ID 확인
     if (!workspaceId) {
-      alert("워크스페이스 정보가 없습니다. 페이지를 새로고침 해주세요.");
-      return;
-    }
-
-    // 사용자에게 삭제 확인 받기 (실수 방지)
-    if (
-      !window.confirm(
-        "정말로 이 API를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
-      )
-    ) {
       return;
     }
 
