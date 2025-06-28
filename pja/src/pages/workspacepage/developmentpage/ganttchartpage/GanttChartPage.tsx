@@ -229,7 +229,7 @@ export default function GanttChartPage() {
                       title={`${task.actionName}`}
                       onClick={() =>
                         navigate(
-                          `/ws/${selectedWS?.workspaceId}/action/${task.actionId}/${task.actionPostId}`
+                          `/ws/${selectedWS?.workspaceId}/post/action/${task.actionId}/${task.actionPostId}`
                         )
                       }
                     >

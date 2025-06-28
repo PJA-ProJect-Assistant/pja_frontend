@@ -4,10 +4,14 @@ import type { ERDField, ERDTable } from "../../../types/erd";
 import "./ERDPage.css";
 import "reactflow/dist/style.css";
 import { useState } from "react";
+import { useEditLock } from "../../../hooks/useEditLock";
+import type { LockedUser } from "../../../types/edit";
 
 const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
   <div className="table-node">
-    <div className="table-node-header">{data.tableName}</div>
+    <div className="table-node-header">
+      <p>{data.tableName}</p>
+    </div>
     <div className="table-node-body">
       {data.fields.map((field) => (
         <div key={field.name} className="table-node-row">
@@ -63,6 +67,8 @@ const EditableTableNode: React.FC<
     }
   >
 > = ({ data }) => {
+  const { getUserEditingField, startEditing, stopEditing } = useEditLock("erd");
+
   const {
     onFieldChange,
     onAddField,
@@ -71,12 +77,38 @@ const EditableTableNode: React.FC<
     onDeleteTable,
     ...tableData
   } = data;
+  console.log(
+    "editing user:",
+    getUserEditingField(tableData.tableName, tableData.id)
+  );
   const [tempName, setTempName] = useState<string>("");
   const [editId, setEditId] = useState<string>("");
 
+  const renderEditor = (user: LockedUser | null) => {
+    //확인 용
+    if (!user) return;
+
+    return user.userProfile ? (
+      <img
+        key={user.userId}
+        src={user.userProfile}
+        alt={user.userName}
+        title={user.userName}
+        className="profile-image"
+      />
+    ) : (
+      <div key={user.userId} className="profile" title={user.userName}>
+        {user.userName.charAt(0)}
+      </div>
+    );
+  };
+
   return (
     <div className="table-node editable-table-node">
-      <div className="table-node-header">
+      <div className="edittable-node-header">
+        <div className="table-editors">
+          {renderEditor(getUserEditingField(tableData.tableName, tableData.id))}
+        </div>
         <input
           className="table-name-input"
           value={editId === "tablename" ? tempName : tableData.tableName}
@@ -85,8 +117,12 @@ const EditableTableNode: React.FC<
             setEditId("tablename");
           }}
           onChange={(e) => setTempName(e.target.value)}
+          onFocus={() => {
+            startEditing(tableData.tableName, tableData.id);
+          }}
           onBlur={() => {
             onTableNameChange(tableData.id, tempName);
+            stopEditing(tableData.tableName, tableData.id);
             setEditId("");
             setTempName("");
           }} // 포커스 아웃 시 반영
@@ -161,8 +197,12 @@ const EditableTableNode: React.FC<
                   setEditId(`${field.id}-fieldname`);
                 }}
                 onChange={(e) => setTempName(e.target.value)}
+                onFocus={() => {
+                  startEditing(tableData.tableName, tableData.id);
+                }}
                 onBlur={() => {
                   onFieldChange(tableData.id, field.id, "name", tempName);
+                  stopEditing(tableData.tableName, tableData.id);
                   setEditId("");
                   setTempName("");
                 }}
@@ -182,8 +222,12 @@ const EditableTableNode: React.FC<
                   setEditId(`${field.id}-fieldtype`);
                 }}
                 onChange={(e) => setTempName(e.target.value)}
+                onFocus={() => {
+                  startEditing(tableData.tableName, tableData.id);
+                }}
                 onBlur={() => {
                   onFieldChange(tableData.id, field.id, "type", tempName);
+                  stopEditing(tableData.tableName, tableData.id);
                   setEditId("");
                   setTempName("");
                 }}

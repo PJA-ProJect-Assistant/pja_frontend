@@ -9,6 +9,14 @@
   --font-size-3xl: 30px;
 }
 
+@font-face {
+  font-family: "MinSans-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/MinSans-Regular.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body {
   margin: 0;
@@ -23,6 +31,7 @@ body {
   /* Firefox */
   -ms-user-select: none;
   /* IE/Edge */
+  font-family: "MinSans-Regular", sans-serif;
 }
 
 .profile,
@@ -39,12 +48,22 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-base);
   line-height: 30px;
   color: black;
+  font-weight: 400;
 }
 
 .profile-image {
   object-fit: cover;
   display: block;
+}
+.editors-container {
+  position: relative;
+  width: 100%;
+}
+.editors {
+  position: absolute;
+  top: 0;
+  right: 101%;
 }

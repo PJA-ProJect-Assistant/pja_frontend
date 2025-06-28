@@ -33,7 +33,6 @@
   width: 100%;
   padding: 8px;
   height: 45px;
-  margin-bottom: 8px;
   border: 1px solid #aaaaaa;
   border-radius: 4px;
   font-size: var(--font-size-base);
@@ -65,7 +64,7 @@ textarea.form-input-field {
   background-color: #d9d9d6;
   border: none;
   padding: 8px 12px;
-  margin-bottom: 16px;
+  margin: 16px 0;
   cursor: pointer;
   color: #333;
   border-radius: 4px;
@@ -75,14 +74,18 @@ textarea.form-input-field {
   background-color: #ddd;
 }
 
-.form-input-row {
+.form-input {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
 }
 
 .form-remove-button {
+  position: absolute;
   background: transparent;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 101%;
   border: none;
   cursor: pointer;
 }

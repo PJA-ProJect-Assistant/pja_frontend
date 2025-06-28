@@ -1,5 +1,6 @@
 .projectsummary-container {
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   width: 100%;
@@ -115,4 +116,10 @@
   display: flex;
   display: inline;
   justify-content: center;
+}
+
+.summary-editors {
+  position: absolute;
+  top: 10px;
+  left: 10%;
 }
