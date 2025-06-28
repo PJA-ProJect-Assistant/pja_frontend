@@ -18,6 +18,7 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
           <Handle
             type="target"
             position={Position.Left}
+            isConnectable={false}
             id={`${field.id}`}
             className="handle-left"
           />
@@ -25,9 +26,8 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
             {field.primary && <span>🔑</span>}
             {field.foreign && <span>🔗</span>}
             <p
-              className={`field-name ${field.primary ? "font-bold" : ""} ${
-                field.foreign ? "text-foreign" : ""
-              }`}
+              className={`field-name ${field.primary ? "font-bold" : ""} ${field.foreign ? "text-foreign" : ""
+                }`}
             >
               {field.name}
             </p>
@@ -39,6 +39,7 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
           <Handle
             type="source"
             position={Position.Right}
+            isConnectable={false}
             id={`${field.id}`}
             className="handle-right"
           />
