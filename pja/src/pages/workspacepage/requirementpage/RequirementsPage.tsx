@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import { BasicModal } from "../../../components/modal/BasicModal";
-import { progressworkspace } from "../../../services/workspaceApi";
 import type { workspace } from "../../../types/workspace";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
@@ -226,9 +225,6 @@ export default function RequirementsPage() {
           setrequirements
         );
         console.log("프로젝트 정보 : ", projectdata);
-
-        await progressworkspace(selectedWS.workspaceId, "2");
-        console.log("다음페이지로 넘어가기");
 
         const updatedWorkspace: workspace = {
           ...selectedWS, // 기존 값 유지

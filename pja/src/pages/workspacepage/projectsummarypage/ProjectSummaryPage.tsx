@@ -5,7 +5,6 @@ import { setSelectedWS } from "../../../store/workspaceSlice";
 import { useNavigate } from "react-router-dom";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
 import { useEffect, useState } from "react";
-import { progressworkspace } from "../../../services/workspaceApi";
 import type { getproject, setproject } from "../../../types/project";
 import { getProject, putProject } from "../../../services/projectApi";
 import { WSHeader } from "../../../components/header/WSHeader";
@@ -125,15 +124,12 @@ export default function ProjectSummaryPage() {
               //ERDAI 생성 api 호출
               await postErdAI(selectedWS?.workspaceId);
 
-              await progressworkspace(selectedWS.workspaceId, "3");
-              console.log("ERD페이지로 이동");
               dispatch(
                 setSelectedWS({
                   ...selectedWS,
                   progressStep: "3",
                 })
               );
-              setSummaryDone(true);
               navigate(
                 `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("3")}`
               );
