@@ -18,6 +18,7 @@ import { getAllErd, getErdId, generateApiSpec } from "../../../services/erdApi";
 import ERDEdit from "./ERDEdit";
 import { setErdID } from "../../../store/erdSlice";
 import Loading from "../../loadingpage/Loading";
+import { BasicModal } from "../../../components/modal/BasicModal";
 
 export default function ERDPage() {
   const dispatch = useDispatch();
