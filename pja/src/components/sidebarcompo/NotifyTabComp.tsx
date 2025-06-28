@@ -30,7 +30,7 @@ const NotifyTabComp = () => {
     fetchNotifications();
 
     const accessToken = localStorage.getItem("accessToken");
-    console.log("accessToken: ", accessToken);
+    console.log("[sse 연결]accessToken: ", accessToken);
 
     // SSE 연결
     const eventSource = new EventSource(
@@ -62,7 +62,7 @@ const NotifyTabComp = () => {
       const headers = {
         Authorization: `Bearer ${accessToken}`,
       };
-      const response = await api.get(`/workspaces/${workspaceId}/members`, {
+      const response = await api.get(`/workspaces/${workspaceId}/noti`, {
         headers,
       });
       setNotifications(response.data.data);
