@@ -24,6 +24,10 @@ export default function WsSidebar({ onClose }: IsClose) {
   const [isGitModalOpen, setIsGitModalOpen] = useState<boolean>(false);
   const [gitModalMessage, setGitModalMessage] = useState<string>("");
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalDescription, setModalDescription] = useState("");
+
   const navigate = useNavigate();
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
@@ -94,9 +98,13 @@ export default function WsSidebar({ onClose }: IsClose) {
       await leaveWorkspace(selectedWS.workspaceId);
 
       // 성공 처리
-      alert("팀에서 성공적으로 탈퇴했습니다.");
+      setModalTitle("팀탈퇴 완료");
+      setModalDescription("팀에서 성공적으로 탈퇴했습니다.");
+      setModalOpen(true);
       handleCloseModal();
-      navigate("/");
+      if (!open) {
+        navigate("/");
+      }
     } catch (error: any) {
       // 실패 처리
       const errorMessage =
@@ -327,6 +335,14 @@ export default function WsSidebar({ onClose }: IsClose) {
           modalTitle="알림"
           modalDescription={gitModalMessage}
           Close={handleCloseGitModal}
+        />
+      )}
+
+      {modalOpen && (
+        <BasicModal
+          modalTitle={modalTitle}
+          modalDescription={modalDescription}
+          Close={(open) => setModalOpen(open)}
         />
       )}
     </>

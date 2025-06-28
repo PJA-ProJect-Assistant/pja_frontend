@@ -4,9 +4,6 @@ import "./ActionPostPage.css";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PostHeader } from "../../../../components/header/PostHeader";
-import imageUpIcon from "../../../../assets/img/imageUp.png";
-import sendIcon from "../../../../assets/img/send.png";
-import codelIcon from "../../../../assets/img/codel.png";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { BasicModal } from "../../../../components/modal/BasicModal";
 import { ko } from "date-fns/locale";
@@ -273,7 +270,7 @@ export default function ActionPostPage() {
   };
 
   //Enter 키를 누를 때 댓글을 추가하는 함수
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleAddComment();
@@ -491,11 +488,7 @@ export default function ActionPostPage() {
                     <span className="upload-placeholder">
                       여기에 이미지를 드래그하거나 클릭하여 업로드하세요
                     </span>
-                    <img
-                      src={imageUpIcon}
-                      className="image-upload-icon"
-                      alt="업로드 아이콘"
-                    />
+                    <svg style={{paddingRight:"10px", cursor: "pointer"}} xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z"/></svg>
                   </>
                 ) : (
                   <div className="uploaded-files">
@@ -533,19 +526,17 @@ export default function ActionPostPage() {
         <div className="comment-section-container">
           <p className="comment-title">댓글</p>
           <div className="comment-wrapper">
-            <input
-              type="text"
+            <textarea
               className="comment-input"
               value={currentComment}
               onChange={(e) => setCurrentComment(e.target.value)}
-              onKeyDown={handleKeyDown}
             />
-            <img
-              src={sendIcon}
-              className="send-icon-inside"
-              alt="저장 아이콘"
-              onClick={handleAddComment}
-            />
+            <svg xmlns="http://www.w3.org/2000/svg" 
+            onClick={handleAddComment}
+              className="send-icon-inside" 
+              height="21px" viewBox="0 -960 960 960" width="21px" fill="#212121">
+                <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
+            </svg>
           </div>
           {/* 등록된 댓글 목록 */}
           <div className="comment-list">
@@ -583,12 +574,14 @@ export default function ActionPostPage() {
                         </button>
                       </div>
 
-                      <img
+
+                      <svg  style={{cursor:"pointer"}} onClick={() => handleDeleteComment(comment.id)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#212121"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                      {/* <img
                         src={codelIcon}
                         className="comment-delete-icon"
                         onClick={() => handleDeleteComment(comment.id)}
                         alt="삭제"
-                      />
+                      /> */}
                     </div>
 
                     <p className="comment-text">{comment.content}</p>

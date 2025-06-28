@@ -49,6 +49,17 @@
   width: 700px; /* textarea랑 같은 너비 */
   box-sizing: border-box;
 }
+
+.upload-placeholder {
+  padding-left: 13px;
+  font-size: var(--font-size-sm);
+}
+
+.image-upload-icon {
+  padding-right: 13px;
+
+}
+
 /*내용 입력 폼*/
 .actionpost-input,
 .actionpost-display {
@@ -61,6 +72,7 @@
   box-sizing: border-box;
   resize: none;
   border: 1px solid #ccc;
+  white-space: pre-line;
 }
 
 .actionpost-input::placeholder {
@@ -112,6 +124,7 @@
   color: white;
   font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .divider {
@@ -136,16 +149,23 @@
 }
 .comment-input {
   width: 100%;
-  height: 80px;
   border-radius: 5px;
+  padding: 15px;
+  padding-right: 45px;
+
+  resize: none;                /* 크기 조절 핸들 제거 */
+  overflow: hidden;            /* 스크롤바 제거 */
+  font-size: 14px;
+  /* white-space: pre-line; */
 }
 
 .send-icon-inside {
-  width: 30px;
-  height: 30px;
-  right: 10px;
+  width: 27px;
+  height: 27px;
+  right: 13px;
   position: absolute;
   top: 30%;
+  cursor: pointer;
 }
 
 .comment-list {
@@ -186,6 +206,7 @@
   margin: 0;
   padding-left: 2px;
   word-break: break-all;
+  white-space: pre-line;
 }
 
 /* 수정 버튼 스타일 */

@@ -7,38 +7,39 @@
 
 .findpw-container {
   width: 500px;
-
   margin: 0 auto;
-
   text-align: center;
   padding: 20px 20px;
   box-sizing: border-box;
-  font-family: "Noto Sans KR", sans-serif;
 }
 
 .logo {
   width: 233px;
   height: 132px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  margin-top: -20px;
 }
 
 .title {
   font-size: 28px;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .pw-form-group {
   margin-bottom: 10px;
   text-align: left;
   padding: 0;
+  width: 100%;
 }
 
 .pw-form-group label {
   display: block;
   font-weight: bold;
   margin-bottom: 8px;
+  margin-left: 10px;
 }
+
 .email-wrapper {
   display: flex;
   flex-direction: row;
@@ -65,12 +66,17 @@
 /*전체 input 창*/
 .find-pw-input {
   width: 100%;
-  height: 40px;
+  height: 45px;
   padding: 12px 0px 12px 50px;
-  border: 1px solid #aaaaaa;
+  border: 1px solid #d1d5db;
   border-radius: 5px;
   box-sizing: border-box;
   background-color: white;
+}
+
+.find-pw-input:focus {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  outline: none !important;
 }
 
 input-wrapper input:focus {
@@ -85,52 +91,48 @@ input-wrapper input:focus {
 
 .button-group {
   position: absolute;
-  display: flex;
-  right: -40%;
-  top: 0;
+  right: -90px;
 }
 
 .btn {
-  padding: 10px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   background-color: #001e60;
   color: white;
-  font-weight: bold;
   cursor: pointer;
+  width: 80px;
+  height: 45px;
 }
 
 .btn-container {
-  position: relative;
-  top: -60px;
+  width: 100%;
 }
 
 .btn.small {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 /*확인 버튼*/
 .pw-btn {
-  padding: 10px 20px;
   border: none;
   border-radius: 6px;
   background-color: #001e60;
   color: white;
-  font-weight: bold;
   cursor: pointer;
+  width: 80px;
+  height: 45px;
 }
 
 .pw-btn.confirm {
-  margin-left: -10px;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .btn.reset {
-  margin-top: 10px;
-  width: 220px;
+  width: 100%;
   height: 50px;
   font-size: 16px;
   background-color: #001e60;
+  margin-bottom: 30px;
 }
 
 .bottom-check {
@@ -141,8 +143,8 @@ input-wrapper input:focus {
 
 .alert-icon {
   width: 20px;
-  height: 15px;
-  cursor: pointer;
+  height: 20px;
+  vertical-align: middle;
 }
 
 input.find-pw-input:read-only {
@@ -153,40 +155,64 @@ input.find-pw-input:read-only {
 .tooltip-wrapper {
   position: relative;
   display: inline-block;
-
-  /* margin-left: 150px; */
+  margin-bottom: 30px;
+  margin-top: 5px;
+  width: 100%;
 }
+
+.tooltip-wrapper-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
 .tooltip-text {
-  visibility: hidden;
-  text-align: center;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-top: 10px;
+  transform: translate(-50%, -10px); /* 위로 숨김 */
+  padding: 5px 18px;
   border-radius: 6px;
-  padding: 6px 10px;
-  transform: translateX(-50%);
+  font-size: 13px;
+  white-space: nowrap;
   opacity: 0;
+  pointer-events: none; /* 마우스 이벤트 안 먹게 */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 10;
+  background-color: #f1f7ff;
+  border: 1px solid #d6e4ff;
+  color: #5f94f3;
 }
 
 .tooltip-wrapper:hover .tooltip-text {
-  visibility: visible;
   opacity: 1;
+  transform: translate(-50%, 0); /* 자연스럽게 아래로 내려오게 */
+  pointer-events: auto;
 }
 
 .findpw-clear-id-icon {
   position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
+  right: 12px;
   height: 100%; /* 입력창 높이에 맞춤 */
   padding: 0;
   background: transparent;
   border: none;
   cursor: pointer;
   color: #9ca3af;
+  display: flex;
+  align-items: center;
+}
+
+.findpw-clear-id-icon:hover {
+  color: #6b7280;
 }
 
 .findpw-clear-email-icon {
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 12px;
   transform: translateY(-50%);
   height: 100%; /* 입력창 높이에 맞춤 */
   padding: 0;
@@ -194,9 +220,16 @@ input.find-pw-input:read-only {
   border: none;
   cursor: pointer;
   color: #9ca3af;
+  display: flex;
+  align-items: center;
+}
+
+.findpw-clear-email-icon:hover {
+  color: #6b7280;
 }
 
 .success {
-  color: blue;
+  color: #007bff;
   margin-top: 8px;
+  font-size: 14px;
 }
