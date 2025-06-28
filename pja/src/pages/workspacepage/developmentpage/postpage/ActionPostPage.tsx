@@ -7,6 +7,8 @@ import { PostHeader } from "../../../../components/header/PostHeader";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { BasicModal } from "../../../../components/modal/BasicModal";
 import { ko } from "date-fns/locale";
+import { useEditLock } from "../../../../hooks/useEditLock";
+import type { LockedUser } from "../../../../types/edit";
 import {
   getPostDetails,
   updatePostDetails,
@@ -51,6 +53,7 @@ export default function ActionPostPage() {
   //UI/ 편집 관련 상태
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFailed, setIsFailed] = useState<boolean>(false);
 
   // 모달 상태
   const [modalOpen, setModalOpen] = useState(false);
@@ -73,6 +76,16 @@ export default function ActionPostPage() {
 
   const openLightbox = (src: string) => setLightboxSrc(src);
   const closeLightbox = () => setLightboxSrc(null);
+
+  const {
+    getUserEditingField,
+    startPolling,
+    stopPolling,
+    startEditing,
+    stopEditing,
+    setAlreadyEdit,
+    alreadyEdit,
+  } = useEditLock("action");
 
   //액션 게시물 조회 api
   useEffect(() => {
@@ -107,9 +120,10 @@ export default function ActionPostPage() {
         console.error(err);
         setError(
           err.response?.data?.message ||
-            err.message ||
-            "알 수 없는 오류가 발생했습니다."
+          err.message ||
+          "알 수 없는 오류가 발생했습니다."
         );
+        setIsFailed(true);
       } finally {
         setIsLoading(false);
       }
@@ -117,6 +131,13 @@ export default function ActionPostPage() {
 
     fetchAndSetData();
   }, [wsid, acId, acpostId]);
+
+  useEffect(() => {
+    startPolling();
+    return () => {
+      stopPolling();
+    };
+  }, [wsid]);
 
   // 기존 이미지 삭제 처리
   const handleRemoveExistingImage = (indexToRemove: number) => {
@@ -176,12 +197,14 @@ export default function ActionPostPage() {
     if (!isEditing) {
       // 수정 모드 시작
       setIsEditing(true);
-
+      startEditing(null, acpostId ?? null);
       setOriginalTextContent(textContent);
       // 수정 시작 시, 새로 추가되거나 삭제된 이미지 목록을 초기화
       setSelectedImages([]);
       setRemovedImagePaths([]);
     } else {
+      stopEditing(null, acpostId ?? null);
+
       const isContentUnchanged = originalTextContent === textContent;
       const noNewImages = selectedImages.length === 0;
       const noRemovedImages = removedImagePaths.length === 0;
@@ -214,11 +237,7 @@ export default function ActionPostPage() {
         showModal("저장 완료", "게시글이 성공적으로 수정되었습니다.");
       } catch (err: any) {
         console.error("게시글 수정 실패:", err);
-        alert(
-          err.response?.data?.message ||
-            err.message ||
-            "수정 중 오류가 발생했습니다."
-        );
+        setIsFailed(true);
       } finally {
         setIsEditing(false);
       }
@@ -259,21 +278,9 @@ export default function ActionPostPage() {
       setComments((prevComments) => [...prevComments, newCommentFromServer]);
     } catch (err: any) {
       console.error("댓글 생성 실패:", err);
-      alert(
-        err.response?.data?.message ||
-          err.message ||
-          "댓글 작성 중 오류가 발생했습니다."
-      );
+      setIsFailed(true);
       // 실패 시, 입력창에 다시 내용 복원
       setCurrentComment(commentToPost);
-    }
-  };
-
-  //Enter 키를 누를 때 댓글을 추가하는 함수
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddComment();
     }
   };
 
@@ -289,7 +296,6 @@ export default function ActionPostPage() {
 
     // API 호출에 필요한 ID들이 있는지 확인
     if (!wsid || !acId) {
-      alert("댓글을 수정하기 위한 정보가 부족합니다.");
       return;
     }
 
@@ -322,18 +328,13 @@ export default function ActionPostPage() {
       setEditingCommentText("");
     } catch (err: any) {
       console.error("댓글 수정 실패:", err);
-      alert(
-        err.response?.data?.message ||
-          err.message ||
-          "댓글 수정 중 오류가 발생했습니다."
-      );
+      setIsFailed(true);
     }
   };
 
   const handleDeleteComment = async (commentIdToDelete: number) => {
     // API 호출에 필요한 ID들이 있는지 확인
     if (!wsid || !acId) {
-      alert("댓글을 삭제하기 위한 정보가 부족합니다.");
       return;
     }
 
@@ -347,12 +348,7 @@ export default function ActionPostPage() {
       showModal("", "댓글이 삭제되었습니다.");
     } catch (err: any) {
       console.error("댓글 삭제 실패:", err);
-      showModal(
-        "댓글 삭제 실패",
-        err.response?.data?.message ||
-          err.message ||
-          "댓글 삭제 중 오류가 발생했습니다."
-      );
+      setIsFailed(true);
     }
   };
 
@@ -382,6 +378,24 @@ export default function ActionPostPage() {
   if (error) {
     return <div>오류: {error}</div>;
   }
+
+  const renderEditor = (user: LockedUser | null) => {
+    if (!user) return;
+
+    return user.userProfile ? (
+      <img
+        key={user.userId}
+        src={user.userProfile}
+        alt={user.userName}
+        title={user.userName}
+        className="profile-image"
+      />
+    ) : (
+      <div key={user.userId} className="profile" title={user.userName}>
+        {user.userName.charAt(0)}
+      </div>
+    );
+  };
 
   return (
     <div className="post-container">
@@ -419,9 +433,7 @@ export default function ActionPostPage() {
       {/* 본문 영역 */}
       <div className="actionpost-container">
         <PostHeader />
-
         <h2>{actionName}</h2>
-
         {/* ① 텍스트와 이미지가 Flexbox로 한 줄에 배치되는 부분 */}
         <div className="actionpost-wrapper">
           {/* 글 내용 */}
@@ -433,7 +445,12 @@ export default function ActionPostPage() {
               onChange={(e) => setTextContent(e.target.value)}
             />
           ) : (
-            <div className="actionpost-display">{textContent}</div>
+            <div className="editors-container">
+              <div className="editors">
+                {renderEditor(getUserEditingField("projectName", null))}
+              </div>
+              <div className="actionpost-display">{textContent}</div>
+            </div>
           )}
 
           {/* 기존 첨부 이미지 (파일리스트가 있을 때만) */}
@@ -474,9 +491,8 @@ export default function ActionPostPage() {
                 style={{ display: "none" }}
               />
               <div
-                className={`image-upload-area ${
-                  dragActive ? "drag-active" : ""
-                }`}
+                className={`image-upload-area ${dragActive ? "drag-active" : ""
+                  }`}
                 onClick={handleUploadAreaClick}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -488,7 +504,7 @@ export default function ActionPostPage() {
                     <span className="upload-placeholder">
                       여기에 이미지를 드래그하거나 클릭하여 업로드하세요
                     </span>
-                    <svg style={{paddingRight:"10px", cursor: "pointer"}} xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z"/></svg>
+                    <svg style={{ paddingRight: "10px", cursor: "pointer" }} xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z" /></svg>
                   </>
                 ) : (
                   <div className="uploaded-files">
@@ -531,11 +547,11 @@ export default function ActionPostPage() {
               value={currentComment}
               onChange={(e) => setCurrentComment(e.target.value)}
             />
-            <svg xmlns="http://www.w3.org/2000/svg" 
-            onClick={handleAddComment}
-              className="send-icon-inside" 
+            <svg xmlns="http://www.w3.org/2000/svg"
+              onClick={handleAddComment}
+              className="send-icon-inside"
               height="21px" viewBox="0 -960 960 960" width="21px" fill="#212121">
-                <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
+              <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
             </svg>
           </div>
           {/* 등록된 댓글 목록 */}
@@ -575,7 +591,7 @@ export default function ActionPostPage() {
                       </div>
 
 
-                      <svg  style={{cursor:"pointer"}} onClick={() => handleDeleteComment(comment.id)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#212121"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                      <svg style={{ cursor: "pointer" }} onClick={() => handleDeleteComment(comment.id)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#212121"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
                       {/* <img
                         src={codelIcon}
                         className="comment-delete-icon"
@@ -604,6 +620,20 @@ export default function ActionPostPage() {
           modalTitle={modalTitle}
           modalDescription={modalDescription}
           Close={(open) => setModalOpen(open)}
+        />
+      )}
+      {alreadyEdit && (
+        <BasicModal
+          modalTitle="수정이 불가능합니다"
+          modalDescription="다른 사용자가 수정 중입니다"
+          Close={() => setAlreadyEdit(false)}
+        />
+      )}
+      {isFailed && (
+        <BasicModal
+          modalTitle="요청을 처리할 수 없습니다"
+          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
+          Close={() => setIsFailed(false)}
         />
       )}
     </div>
