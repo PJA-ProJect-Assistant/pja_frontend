@@ -5,10 +5,12 @@ import completedImage from "../../assets/img/completed.png";
 import apiImage from "../../assets/img/api.png";
 import projectaiImage from "../../assets/img/projectai.png";
 import listaiImage from "../../assets/img/listai.png";
+import ErdmdImage from "../../assets/img/Erdmd.png";
 export default function Loading() {
   //이미지 배열
   const images = [
     ErdImage,
+    ErdmdImage,
     completedImage,
     apiImage,
     projectaiImage,
@@ -62,7 +64,18 @@ export default function Loading() {
             </div>
           </div>
         )}
+
         {current === 1 && (
+          <div className="overlay-tooltips">
+            <div className="erd-modify-wrapper">
+              <div className="erd-modify-btn-bubble">
+                FK 또는 PK 변경, 필드 추가 , 테이블명 수정 및 삭제 가능
+              </div>
+              <div className="erd-modify-icon-question">?</div>
+            </div>
+          </div>
+        )}
+        {current === 2 && (
           <div className="overlay-tooltips">
             <div className="ai-icon-wrapper">
               <div className="ai-speech-bubble">
@@ -77,7 +90,7 @@ export default function Loading() {
           </div>
         )}
 
-        {current === 2 && (
+        {current === 3 && (
           <div className="overlay-tooltips">
             <div className="api-icon-question">?</div>
             <div className="api-speech-bubble">
@@ -92,7 +105,7 @@ export default function Loading() {
           </div>
         )}
 
-        {current === 3 && (
+        {current === 4 && (
           <div className="overlay-tooltips">
             <div className="list-icon-question">?</div>
             <div className="list-speech-bubble">
@@ -108,7 +121,7 @@ export default function Loading() {
           </div>
         )}
 
-        {current === 4 && (
+        {current === 5 && (
           <div className="overlay-tooltips">
             <div className="list-ai-icon-question">?</div>
             <div className="list-ai-speech-bubble">
