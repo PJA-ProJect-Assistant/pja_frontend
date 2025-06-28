@@ -23,7 +23,6 @@ import {
   deleteApi,
   getApisByWorkspace,
 } from "../../../services/apiApi";
-import { progressworkspace } from "../../../services/workspaceApi";
 import { postAiList } from "../../../services/listapi/listApi";
 
 // --- (타입 정의 및 변환 함수들은 기존과 동일) ---
@@ -114,11 +113,11 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-              ...row,
-              request: row.request.map((req, i) =>
-                i === index ? { ...req, [field]: value } : req
-              ),
-            }
+            ...row,
+            request: row.request.map((req, i) =>
+              i === index ? { ...req, [field]: value } : req
+            ),
+          }
           : row
       )
     );
@@ -135,11 +134,11 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-              ...row,
-              response: row.response.map((res, i) =>
-                i === index ? { ...res, [field]: value } : res
-              ),
-            }
+            ...row,
+            response: row.response.map((res, i) =>
+              i === index ? { ...res, [field]: value } : res
+            ),
+          }
           : row
       )
     );
@@ -182,9 +181,9 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-              ...row,
-              request: row.request.filter((_, i) => i !== index),
-            }
+            ...row,
+            request: row.request.filter((_, i) => i !== index),
+          }
           : row
       )
     );
@@ -196,12 +195,12 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-              ...row,
-              response: [
-                ...row.response,
-                { status_code: "200", message: "", data: [] },
-              ],
-            }
+            ...row,
+            response: [
+              ...row.response,
+              { status_code: "200", message: "", data: [] },
+            ],
+          }
           : row
       )
     );
@@ -213,9 +212,9 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-              ...row,
-              response: row.response.filter((_, i) => i !== index),
-            }
+            ...row,
+            response: row.response.filter((_, i) => i !== index),
+          }
           : row
       )
     );
@@ -441,21 +440,14 @@ const ApiPage = () => {
         const response = await postAiList(selectedWS.workspaceId);
         console.log("프로젝트 진행 ai추천 성공", response.data);
 
-        try {
-          await progressworkspace(selectedWS.workspaceId, "5");
-          console.log("리스트페이지로 이동");
-          dispatch(
-            setSelectedWS({
-              ...selectedWS,
-              progressStep: "5",
-            })
-          );
-          navigate(
-            `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("5")}`
-          );
-        } catch (err) {
-          console.log("진행도 업데이트", err);
-        }
+        dispatch(
+          setSelectedWS({
+            ...selectedWS,
+            progressStep: "5",
+          })
+        );
+        navigate(
+          `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("5")}`)
       } catch {
         console.log("프로젝트 진행 ai 가져오기 실패");
       } finally {
@@ -544,9 +536,8 @@ const ApiPage = () => {
                       {(["title", "tag", "http_method", "path"] as const).map(
                         (field) => (
                           <td
-                            className={`api-table-content ${
-                              field === "path" ? "api-path-cell" : ""
-                            }`}
+                            className={`api-table-content ${field === "path" ? "api-path-cell" : ""
+                              }`}
                             key={field}
                           >
                             {/* --- isEditMode를 isEditing으로 변경 --- */}
@@ -953,10 +944,10 @@ const ApiPage = () => {
                                             typeof res.data === "string"
                                               ? res.data
                                               : JSON.stringify(
-                                                  res.data,
-                                                  null,
-                                                  2
-                                                )
+                                                res.data,
+                                                null,
+                                                2
+                                              )
                                           }
                                           onChange={(e) =>
                                             handleDataChange(

@@ -8,12 +8,10 @@ import {
   generateNodesFromData,
 } from "../../../utils/erdUtils";
 import { nodeTypes } from "./TableNode";
-import { progressworkspace } from "../../../services/workspaceApi";
 import { useNavigate } from "react-router-dom";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
 import { useEffect, useState } from "react";
-// import ERDEdit from "./ERDEdit";
 import "./ERDPage.css";
 import "reactflow/dist/style.css";
 import { getAllErd, getErdId, generateApiSpec } from "../../../services/erdApi";
@@ -33,7 +31,7 @@ export default function ERDPage() {
   const [edges, setEdges] = useState<Edge[]>([]);
 
   // const nodes = generateNodesFromData(tableData);
-  const [erdDone, setErdDone] = useState<boolean>(false);
+  const [erdDone, setErdDone] = useState<boolean>(true);
   const [modifyMode, setModifyMode] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -76,8 +74,8 @@ export default function ERDPage() {
 
   useEffect(() => {
     geterd();
-    if (Number(selectedWS?.progressStep) > 3) {
-      setErdDone(true);
+    if (Number(selectedWS?.progressStep) === 3) {
+      setErdDone(false);
     }
   }, [selectedWS, modifyMode === false]);
 
@@ -111,17 +109,14 @@ export default function ERDPage() {
     if (selectedWS?.progressStep === "3") {
       setIsGenerating(true);
       try {
-        //여기에 API명세서 호출 api 선언하면 됨
+        //여기에 API명세서 호출 api
         await generateApiSpec(selectedWS.workspaceId);
-        await progressworkspace(selectedWS.workspaceId, "4");
-        console.log("API페이지로 이동");
         dispatch(
           setSelectedWS({
             ...selectedWS,
             progressStep: "4",
           })
         );
-        setErdDone(true);
         setIsGenerating(false);
         navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("4")}`);
       } catch (err) {
@@ -154,9 +149,8 @@ export default function ERDPage() {
                   </div>
                   {!erdDone && (
                     <div
-                      className={`erd-complete-btn ${
-                        isGenerating ? "disabled" : ""
-                      }`}
+                      className={`erd-complete-btn ${isGenerating ? "disabled" : ""
+                        }`}
                       onClick={handleErdComplete}
                     >
                       저장하기
