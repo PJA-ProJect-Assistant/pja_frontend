@@ -69,7 +69,7 @@ export default function Loading() {
           <div className="overlay-tooltips">
             <div className="erd-modify-wrapper">
               <div className="erd-modify-btn-bubble">
-                FK 또는 PK 변경, 필드 추가 , 테이블명 수정 및 삭제 가능
+                PK 또는 FK 변경, • 에서 드래그하면 관계선 연결 가능
               </div>
               <div className="erd-modify-icon-question">?</div>
             </div>
