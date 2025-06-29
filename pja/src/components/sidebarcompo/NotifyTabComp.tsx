@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "./NotifyTabComp.css";
 import signbellIcon from "../../assets/img/signbell.png";
 import NotifyItem from "./NotifyItem";
-import api from "../../lib/axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { subscribeNotificationSSE } from "../../services/sseApi";
