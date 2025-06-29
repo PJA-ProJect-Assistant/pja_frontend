@@ -47,18 +47,7 @@ const MemberListItem = ({
         )}
         <div className="Mem-user-info">
           <div className="Mem-user-name">{member.name}</div>
-          <div className="Mem-user-email">
-            {member.email.split(/([@.])/g).map((chunk, i) =>
-              chunk === "@" || chunk === "." ? (
-                <span key={i}>
-                  {chunk}
-                  <wbr />
-                </span>
-              ) : (
-                <span key={i}>{chunk}</span>
-              )
-            )}
-          </div>
+          <div className="Mem-user-email">{member.email}</div>
         </div>
       </div>
       <div className="member-action-container">

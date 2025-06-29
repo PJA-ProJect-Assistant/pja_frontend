@@ -25,17 +25,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-right: 8px;
   width: 46px;
   height: 46px;
   border-radius: 50%;
   font-size: var(--font-size-xl);
   background-color: #bbc9ec;
+  flex-shrink: 0;
 }
 
 .Mem-user-info {
   display: flex;
   flex-direction: column;
   white-space: normal;
+  min-width: 0;
 }
 
 .Mem-user-name {
@@ -46,7 +49,10 @@
 
 .Mem-user-email {
   font-size: 14px;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 .member-action-container {
@@ -54,6 +60,7 @@
   gap: 8px;
   /* 버튼이 하나만 있어도 너비를 유지하도록 합니다. */
   justify-content: flex-end;
+  margin-left: 2px;
 }
 
 .member-action-container button {
