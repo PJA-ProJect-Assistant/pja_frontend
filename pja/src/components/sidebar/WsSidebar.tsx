@@ -15,7 +15,7 @@ import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
 import type { MemberRole } from "../../types/invite";
 import { BasicModal } from "../modal/BasicModal";
 import { readAllNotifications, deleteAllNotifications, getNotifications } from "../../services/notiApi";
-import type { Notification } from "../../services/notiApi";
+import { notreadNotification, type Notification } from "../../services/notiApi";
 
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
@@ -29,7 +29,8 @@ export default function WsSidebar({ onClose }: IsClose) {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
-  
+  const [isNoti, setIsNoti] = useState<boolean>(false);
+
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const navigate = useNavigate();
@@ -69,7 +70,19 @@ export default function WsSidebar({ onClose }: IsClose) {
       }
     };
 
+    const notreadnoti = async () => {
+      try {
+        const response = await notreadNotification(selectedWS.workspaceId);
+        console.log("알림 읽음 여부 : ", response.data);
+
+        setIsNoti(response.data ?? false)
+      } catch (error) {
+        console.error("알림 읽음 여부 조회 실패:", error);
+      }
+    }
+
     fetchNotifications();
+    notreadnoti();
   }, [selectedWS?.workspaceId]);
 
   //✅ 멤버 역할 변경 함수
@@ -180,40 +193,45 @@ export default function WsSidebar({ onClose }: IsClose) {
 
   // 알림 전체 읽음 처리
   const handleReadAllNotifications = async () => {
-  if (!selectedWS?.workspaceId) {
-    alert("워크스페이스 정보를 찾을 수 없습니다.");
-    return;
-  }
-  try {
-    await readAllNotifications(selectedWS.workspaceId);
-  } catch (error: any) {
-    console.error(error);
-    alert(
-      error.response?.data?.message ||
+    if (!selectedWS?.workspaceId) {
+      alert("워크스페이스 정보를 찾을 수 없습니다.");
+      return;
+    }
+    try {
+      await readAllNotifications(selectedWS.workspaceId);
+      setNotifications((prev) =>
+        prev.map((n) => ({ ...n, read: true }))
+      );
+      setIsNoti(false);
+    } catch (error: any) {
+      console.error(error);
+      alert(
+        error.response?.data?.message ||
         error.message ||
         "알림 읽음 처리 중 오류가 발생했습니다."
-    );
-  }
-};
+      );
+    }
+  };
 
-// 알림 전체 삭제 처리
-const handleDeleteAllNotifications = async() => {
-  if (!selectedWS?.workspaceId) {
-    alert("워크스페이스 정보를 찾을 수 없습니다.");
-    return;
-  }
-  try {
-    await deleteAllNotifications(selectedWS.workspaceId);
-    setNotifications([]);
-  } catch (error: any) {
-    console.error(error);
-    alert(
-      error.response?.data?.message ||
+  // 알림 전체 삭제 처리
+  const handleDeleteAllNotifications = async () => {
+    if (!selectedWS?.workspaceId) {
+      alert("워크스페이스 정보를 찾을 수 없습니다.");
+      return;
+    }
+    try {
+      await deleteAllNotifications(selectedWS.workspaceId);
+      setNotifications([]);
+      setIsNoti(false);
+    } catch (error: any) {
+      console.error(error);
+      alert(
+        error.response?.data?.message ||
         error.message ||
         "알림 삭제 중 오류가 발생했습니다."
-    );
+      );
+    }
   }
-}
 
 
   return (
@@ -230,9 +248,8 @@ const handleDeleteAllNotifications = async() => {
         <WSSidebarHeader onClose={onClose} />
         <div className="wssidebar-list-container">
           <div
-            className={`wssidebar-list ${
-              activeTab === "member" ? "active" : ""
-            }`}
+            className={`wssidebar-list ${activeTab === "member" ? "active" : ""
+              }`}
             onClick={() => {
               setActiveTab(activeTab === "member" ? null : "member");
             }}
@@ -249,22 +266,24 @@ const handleDeleteAllNotifications = async() => {
             <p>멤버</p>
           </div>
           <div
-            className={`wssidebar-list ${
-              activeTab === "notify" ? "active" : ""
-            }`}
+            className={`wssidebar-list ${activeTab === "notify" ? "active" : ""
+              }`}
             onClick={() => {
               setActiveTab(activeTab === "notify" ? null : "notify");
             }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="20px"
-              viewBox="0 -960 960 960"
-              width="20px"
-              fill="#000000"
-            >
-              <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
-            </svg>
+            <div className="noti-svg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="20px"
+                viewBox="0 -960 960 960"
+                width="20px"
+                fill="#000000"
+              >
+                <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+              </svg>
+              {isNoti && <div className="noti-circle"></div>}
+            </div>
             <p>알림</p>
           </div>
           <div className="wssidebar-list" onClick={handleGitLinkClick}>
@@ -355,7 +374,7 @@ const handleDeleteAllNotifications = async() => {
                 <div className="notifytab-icons">
                   <svg
                     onClick={handleReadAllNotifications}
-                    style={{cursor: "pointer"}}
+                    style={{ cursor: "pointer" }}
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
                     viewBox="0 -960 960 960"
@@ -366,7 +385,7 @@ const handleDeleteAllNotifications = async() => {
                   </svg>
                   <svg
                     onClick={handleDeleteAllNotifications}
-                    style={{cursor: "pointer"}}
+                    style={{ cursor: "pointer" }}
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
                     viewBox="0 -960 960 960"
@@ -378,9 +397,10 @@ const handleDeleteAllNotifications = async() => {
                 </div>
               </div>
               <div className="line"></div>
-              <NotifyTabComp 
+              <NotifyTabComp
                 notifications={notifications}
                 setNotifications={setNotifications}
+                setIsNoti={setIsNoti}
               />
             </div>
           )}

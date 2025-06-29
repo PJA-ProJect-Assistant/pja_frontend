@@ -35,6 +35,14 @@ export default function DateSelectCell({
 
   let parsedDate: Date | null = null;
 
+  //날짜가 하루 전으로 변환되는 문제 해결
+  function toLocalDateNoShift(date: Date | null): Date | null {
+    if (!date) return null;
+    const fixed = new Date(date);
+    fixed.setHours(12, 0, 0, 0); // 정오로 고정 (00:00이면 UTC 변환 시 하루 전날로 바뀜)
+    return fixed;
+  }
+
   if (value instanceof Date) {
     parsedDate = value;
   } else if (typeof value === "string" || typeof value === "number") {
@@ -85,7 +93,8 @@ export default function DateSelectCell({
           <DatePicker
             selected={value}
             onChange={(date) => {
-              onChange(date);
+              const fixedDate = toLocalDateNoShift(date);
+              onChange(fixedDate);
               setIsOpen(false);
             }}
             locale={ko}

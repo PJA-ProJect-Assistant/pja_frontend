@@ -10,9 +10,10 @@ import type { Notification } from "../../services/notiApi";
 interface NotifyTabCompProps {
   notifications: Notification[];
   setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  setIsNoti: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NotifyTabComp = ({ notifications, setNotifications }: NotifyTabCompProps) => {
+const NotifyTabComp = ({ notifications, setNotifications, setIsNoti }: NotifyTabCompProps) => {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
@@ -59,11 +60,19 @@ const NotifyTabComp = ({ notifications, setNotifications }: NotifyTabCompProps) 
     if (!workspaceId) return;
     try {
       await readNotification(workspaceId, notiId);
-      setNotifications((prev) =>
-        prev.map((n) =>
+      setNotifications((prev) => {
+        const updated = prev.map((n) =>
           n.notificationId === notiId ? { ...n, read: true } : n
-        )
-      );
+        );
+
+        // 모든 알림이 읽혔는지 확인
+        const allRead = updated.every((n) => n.read);
+        if (allRead) {
+          setIsNoti(false); // 모든 알림이 읽혔다면 알림 표시 끄기
+        }
+
+        return updated;
+      });
     } catch (error) {
       console.error("개별 알림 읽음 처리 실패", error);
     }
@@ -73,9 +82,17 @@ const NotifyTabComp = ({ notifications, setNotifications }: NotifyTabCompProps) 
     if (!workspaceId) return;
     try {
       await deleteNotification(workspaceId, notiId);
-      setNotifications((prev) =>
-        prev.filter((n) => n.notificationId !== notiId)
-      );
+      setNotifications((prev) => {
+        const updated = prev.filter((n) => n.notificationId !== notiId)
+
+        // 모든 알림이 읽혔는지 확인
+        const allRead = updated.every((n) => n.read);
+        if (allRead) {
+          setIsNoti(false); // 모든 알림이 읽혔다면 알림 표시 끄기
+        }
+
+        return updated;
+      });
     } catch (error) {
       console.error("개별 알림 삭제 실패", error);
     }

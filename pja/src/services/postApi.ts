@@ -45,6 +45,7 @@ export const updatePostDetails = async (
   updateData: {
     content: string;
     files: File[];
+    removedFilePaths: string[];
   }
 ): Promise<PostData> => {
   // 1. multipart/form-data를 위한 FormData 객체 생성
@@ -56,6 +57,8 @@ export const updatePostDetails = async (
   updateData.files.forEach((file) => {
     formData.append("files", file);
   });
+
+  formData.append("removedFilePaths", JSON.stringify(updateData.removedFilePaths));
 
   try {
     const response = await api.patch<UpdateApiResponse>(
