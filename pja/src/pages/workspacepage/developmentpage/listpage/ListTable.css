@@ -453,6 +453,10 @@
   margin-right: 3px;
 }
 
+.table-hidden {
+  display: none;
+}
+
 .aiaction-wave-text {
   font-size: var(--font-size-2xl);
 }
