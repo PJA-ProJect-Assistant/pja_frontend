@@ -9,7 +9,7 @@
 .notify-tab-box {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   background-color: white;
   padding: 10px 16px;
   border-radius: 12px;
@@ -31,5 +31,7 @@
 /* 텍스트를 감싸는 span */
 .text-content {
   flex-grow: 1; /* 아이콘을 제외한 모든 공간을 차지 */
-  white-space: nowrap;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
