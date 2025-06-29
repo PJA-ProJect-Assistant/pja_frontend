@@ -1,5 +1,4 @@
 import "./NotifyTabComp.css";
-import trashIcon from "../../assets/img/trash.png";
 import type { Notification } from "../../services/notiApi";
 
 interface NotifyItemProps {
@@ -15,7 +14,7 @@ const NotifyItem = ({ message, noti, onRead, onDelete }: NotifyItemProps) => {
       <span className="text-content">{message}</span>
       {/* 개별 읽음 버튼 */}
       <svg
-        style={{cursor: "pointer"}}
+        style={{ cursor: "pointer" }}
         className="notify-trash-icon"
         onClick={() => onRead(noti.notificationId)}
         xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +28,7 @@ const NotifyItem = ({ message, noti, onRead, onDelete }: NotifyItemProps) => {
 
       {/* 개별 삭제 버튼 */}
       <svg
-        style={{cursor: "pointer"}}
+        style={{ cursor: "pointer" }}
         className="notify-trash-icon"
         onClick={() => onDelete(noti.notificationId)}
         xmlns="http://www.w3.org/2000/svg"
