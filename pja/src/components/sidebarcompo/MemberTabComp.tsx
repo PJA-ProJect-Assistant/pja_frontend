@@ -3,7 +3,12 @@ import InviteModal from "./InviteModal";
 import type { Member, MemberRole } from "../../types/invite";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getMemberList, deleteMember, getMemberRole, updateMemberRole } from "../../services/workspaceMemberApi";
+import {
+  getMemberList,
+  deleteMember,
+  getMemberRole,
+  updateMemberRole,
+} from "../../services/workspaceMemberApi";
 import type { RootState } from "../../store/store";
 
 interface MemberTabCompProps {
@@ -32,18 +37,28 @@ const MemberListItem = ({
     <div className="member-tab-box">
       <div className="member-info-container">
         {member.profile ? (
-          <img className="Mem-profile-img"
+          <img
+            className="Mem-profile-img"
             src={member.profile}
             alt="프로필 이미지"
           />
         ) : (
-        <div className="Mem-profile-img">
-            {member.name.charAt(0)}
-          </div>
+          <div className="Mem-profile-img">{member.name.charAt(0)}</div>
         )}
         <div className="Mem-user-info">
           <div className="Mem-user-name">{member.name}</div>
-          <div className="Mem-user-email">{member.email}</div>
+          <div className="Mem-user-email">
+            {member.email.split(/([@.])/g).map((chunk, i) =>
+              chunk === "@" || chunk === "." ? (
+                <span key={i}>
+                  {chunk}
+                  <wbr />
+                </span>
+              ) : (
+                <span key={i}>{chunk}</span>
+              )
+            )}
+          </div>
         </div>
       </div>
       <div className="member-action-container">
@@ -138,7 +153,6 @@ const MemberTabComp = ({
       console.error("멤버 역할 변경 실패", err);
     }
   };
-
 
   return (
     <>

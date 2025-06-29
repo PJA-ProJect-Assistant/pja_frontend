@@ -17,6 +17,8 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  flex: 1;
+  min-width: 0;
 }
 
 .Mem-profile-img {
@@ -33,6 +35,7 @@
 .Mem-user-info {
   display: flex;
   flex-direction: column;
+  white-space: normal;
 }
 
 .Mem-user-name {
@@ -43,6 +46,7 @@
 
 .Mem-user-email {
   font-size: 14px;
+  overflow-wrap: anywhere;
 }
 
 .member-action-container {
