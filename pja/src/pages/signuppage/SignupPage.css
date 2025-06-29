@@ -174,12 +174,31 @@
 
   outline: none;
 }
-.visibility-toggle-icon svg {
+.visibility-toggle-icon svg,
+.visibility-toggle-confirm-icon svg {
   width: 24px;
   height: 24px;
   display: block;
 }
-.visibility-toggle-icon :hover {
+
+.visibility-toggle-icon,
+.visibility-toggle-confirm-icon {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px; /* 아이콘 주변 클릭 영역 확보 */
+  right: 38px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  color: #9ca3af; /* 아이콘 색상 */
+
+  outline: none;
+}
+
+.visibility-toggle-icon :hover,
+.visibility-toggle-confirm-icon:hover {
   color: #6b7280;
 }
 
