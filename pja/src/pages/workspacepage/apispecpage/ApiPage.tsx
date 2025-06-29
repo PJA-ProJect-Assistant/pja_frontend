@@ -129,11 +129,11 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-            ...row,
-            request: row.request.map((req, i) =>
-              i === index ? { ...req, [field]: value } : req
-            ),
-          }
+              ...row,
+              request: row.request.map((req, i) =>
+                i === index ? { ...req, [field]: value } : req
+              ),
+            }
           : row
       )
     );
@@ -150,11 +150,11 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-            ...row,
-            response: row.response.map((res, i) =>
-              i === index ? { ...res, [field]: value } : res
-            ),
-          }
+              ...row,
+              response: row.response.map((res, i) =>
+                i === index ? { ...res, [field]: value } : res
+              ),
+            }
           : row
       )
     );
@@ -197,9 +197,9 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-            ...row,
-            request: row.request.filter((_, i) => i !== index),
-          }
+              ...row,
+              request: row.request.filter((_, i) => i !== index),
+            }
           : row
       )
     );
@@ -211,12 +211,12 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-            ...row,
-            response: [
-              ...row.response,
-              { status_code: "200", message: "", data: [] },
-            ],
-          }
+              ...row,
+              response: [
+                ...row.response,
+                { status_code: "200", message: "", data: [] },
+              ],
+            }
           : row
       )
     );
@@ -228,9 +228,9 @@ const ApiPage = () => {
       prevRows.map((row) =>
         row.id === id
           ? {
-            ...row,
-            response: row.response.filter((_, i) => i !== index),
-          }
+              ...row,
+              response: row.response.filter((_, i) => i !== index),
+            }
           : row
       )
     );
@@ -440,8 +440,7 @@ const ApiPage = () => {
             progressStep: "5",
           })
         );
-        navigate(
-          `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("5")}`)
+        navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("5")}`);
       } catch {
         setIsFailed(true);
       } finally {
@@ -528,7 +527,9 @@ const ApiPage = () => {
                           CanEdit && (
                             <>
                               <div className="api-editors">
-                                {renderEditor(getUserEditingField("projectName", null))}
+                                {renderEditor(
+                                  getUserEditingField("projectName", null)
+                                )}
                               </div>
                               <button
                                 onClick={(e) => {
@@ -552,8 +553,9 @@ const ApiPage = () => {
                       {(["title", "tag", "http_method", "path"] as const).map(
                         (field) => (
                           <td
-                            className={`api-table-content ${field === "path" ? "api-path-cell" : ""
-                              }`}
+                            className={`api-table-content ${
+                              field === "path" ? "api-path-cell" : ""
+                            }`}
                             key={field}
                           >
                             {/* --- isEditMode를 isEditing으로 변경 --- */}
@@ -600,401 +602,395 @@ const ApiPage = () => {
                       </td>
                     </tr>
                     {/* --- 아코디언 내용 표시 --- */}
-                    {
-                      openRowId === row.id && (
-                        <tr className="accordion-content">
+                    {openRowId === row.id && (
+                      <tr className="accordion-content">
+                        <td className="api-table-content no-border"></td>
+                        <td colSpan={4} className="api-accordion-cell">
                           <td className="api-table-content no-border"></td>
-                          <td colSpan={4} className="api-accordion-cell">
-                            <td className="api-table-content no-border"></td>
-                            <div className="accordion-box-wrapper">
-                              {/* Request 섹션 */}
-                              <div className="accordion-box">
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    marginBottom: "10px",
-                                  }}
-                                >
-                                  <strong>Request</strong>
-                                  {isEditing && (
-                                    <button
-                                      onClick={() => addRequestField(row.id)}
-                                      className="add-field-button"
-                                      style={{
-                                        background: "#4CAF50",
-                                        color: "white",
-                                        border: "none",
-                                        padding: "5px 10px",
-                                        borderRadius: "3px",
-                                        cursor: "pointer",
-                                        fontSize: "12px",
-                                      }}
-                                    >
-                                      + 필드 추가
-                                    </button>
-                                  )}
-                                </div>
-
-                                {isEditing ? (
-                                  <div>
-                                    {row.request.map((req, index) => (
-                                      <div
-                                        key={index}
-                                        style={{
-                                          marginBottom: "10px",
-                                          padding: "10px",
-                                          border: "none", //테두리 제거
-                                          borderRadius: "4px",
-                                        }}
-                                      >
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            marginBottom: "5px",
-                                          }}
-                                        >
-                                          <span
-                                            style={{
-                                              fontWeight: "bold",
-                                              fontSize: "14px",
-                                            }}
-                                          ></span>
-                                          <button
-                                            onClick={() =>
-                                              removeRequestField(row.id, index)
-                                            }
-                                            style={{
-                                              background: "#f44336",
-                                              color: "white",
-                                              border: "none",
-                                              padding: "2px 6px",
-                                              borderRadius: "3px",
-                                              cursor: "pointer",
-                                              fontSize: "12px",
-                                            }}
-                                          >
-                                            삭제
-                                          </button>
-                                        </div>
-                                        <div
-                                          style={{
-                                            display: "grid",
-                                            gridTemplateColumns: "1fr 1fr 2fr",
-                                            gap: "10px",
-                                          }}
-                                        >
-                                          <div>
-                                            <label
-                                              style={{
-                                                display: "block",
-                                                fontSize: "12px",
-                                                marginBottom: "3px",
-                                              }}
-                                            >
-                                              field:
-                                            </label>
-                                            <input
-                                              type="text"
-                                              value={req.field || ""}
-                                              onChange={(e) =>
-                                                handleRequestChange(
-                                                  row.id,
-                                                  index,
-                                                  "field",
-                                                  e.target.value
-                                                )
-                                              }
-                                              style={{
-                                                width: "100%",
-                                                padding: "4px",
-                                                fontSize: "15px",
-                                                border: "1px solid #ccc",
-                                                borderRadius: "3px",
-                                              }}
-                                            />
-                                          </div>
-                                          <div>
-                                            <label
-                                              style={{
-                                                display: "block",
-                                                fontSize: "12px",
-                                                marginBottom: "3px",
-                                              }}
-                                            >
-                                              type:
-                                            </label>
-                                            <input
-                                              type="text"
-                                              value={req.type || ""}
-                                              onChange={(e) =>
-                                                handleRequestChange(
-                                                  row.id,
-                                                  index,
-                                                  "type",
-                                                  e.target.value
-                                                )
-                                              }
-                                              style={{
-                                                width: "100%",
-                                                padding: "4px",
-                                                fontSize: "15px",
-                                                border: "1px solid #ccc",
-                                                borderRadius: "3px",
-                                              }}
-                                            />
-                                          </div>
-                                          <div>
-                                            <label
-                                              style={{
-                                                display: "block",
-                                                fontSize: "12px",
-                                                marginBottom: "3px",
-                                              }}
-                                            >
-                                              example:
-                                            </label>
-                                            <input
-                                              type="text"
-                                              value={req.example || ""}
-                                              onChange={(e) =>
-                                                handleRequestChange(
-                                                  row.id,
-                                                  index,
-                                                  "example",
-                                                  e.target.value
-                                                )
-                                              }
-                                              style={{
-                                                width: "100%",
-                                                padding: "4px",
-                                                fontSize: "15px",
-                                                border: "1px solid #ccc",
-                                                borderRadius: "3px",
-                                              }}
-                                            />
-                                          </div>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <pre
+                          <div className="accordion-box-wrapper">
+                            {/* Request 섹션 */}
+                            <div className="accordion-box">
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                <strong>Request</strong>
+                                {isEditing && (
+                                  <button
+                                    onClick={() => addRequestField(row.id)}
+                                    className="add-field-button"
                                     style={{
-                                      whiteSpace: "pre-wrap",
-                                      fontSize: "13px",
-                                      maxHeight: "200px",
-                                      overflow: "auto",
-                                      minWidth: "100px",
+                                      background: "#4CAF50",
+                                      color: "white",
+                                      border: "none",
+                                      padding: "5px 10px",
+                                      borderRadius: "3px",
+                                      cursor: "pointer",
+                                      fontSize: "12px",
                                     }}
                                   >
-                                    {JSON.stringify(row.request, null)}
-                                  </pre>
+                                    + 필드 추가
+                                  </button>
                                 )}
                               </div>
 
-                              {/* Response 섹션 */}
-                              <div className="accordion-box accordion-two-box">
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    marginBottom: "10px",
-                                  }}
-                                >
-                                  <strong>Response</strong>
-                                  {isEditing && (
-                                    <button
-                                      onClick={() => addResponseField(row.id)}
-                                      className="add-field-button"
+                              {isEditing ? (
+                                <div>
+                                  {row.request.map((req, index) => (
+                                    <div
+                                      key={index}
                                       style={{
-                                        background: "#4CAF50",
-                                        color: "white",
-                                        border: "none",
-                                        padding: "5px 10px",
-                                        borderRadius: "3px",
-                                        cursor: "pointer",
-                                        fontSize: "12px",
+                                        marginBottom: "10px",
+                                        padding: "10px",
+                                        border: "none", //테두리 제거
+                                        borderRadius: "4px",
                                       }}
                                     >
-                                      + 필드 추가
-                                    </button>
-                                  )}
-                                </div>
-
-                                {isEditing ? (
-                                  <div>
-                                    {row.response.map((res, index) => (
                                       <div
-                                        key={index}
                                         style={{
-                                          marginBottom: "10px",
-                                          padding: "10px",
-                                          border: "none",
-                                          borderRadius: "4px",
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          marginBottom: "5px",
                                         }}
                                       >
-                                        <div
+                                        <span
                                           style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            marginBottom: "5px",
+                                            fontWeight: "bold",
+                                            fontSize: "14px",
+                                          }}
+                                        ></span>
+                                        <button
+                                          onClick={() =>
+                                            removeRequestField(row.id, index)
+                                          }
+                                          style={{
+                                            background: "#f44336",
+                                            color: "white",
+                                            border: "none",
+                                            padding: "2px 6px",
+                                            borderRadius: "3px",
+                                            cursor: "pointer",
+                                            fontSize: "12px",
                                           }}
                                         >
-                                          <span
+                                          삭제
+                                        </button>
+                                      </div>
+                                      <div
+                                        style={{
+                                          display: "grid",
+                                          gridTemplateColumns: "1fr 1fr 2fr",
+                                          gap: "10px",
+                                        }}
+                                      >
+                                        <div>
+                                          <label
                                             style={{
-                                              fontWeight: "bold",
-                                              fontSize: "14px",
-                                            }}
-                                          ></span>
-                                          <button
-                                            onClick={() =>
-                                              removeResponseField(row.id, index)
-                                            }
-                                            style={{
-                                              background: "#f44336",
-                                              color: "white",
-                                              border: "none",
-                                              padding: "2px 6px",
-                                              borderRadius: "3px",
-                                              cursor: "pointer",
+                                              display: "block",
                                               fontSize: "12px",
+                                              marginBottom: "3px",
                                             }}
                                           >
-                                            삭제
-                                          </button>
-                                        </div>
-                                        <div
-                                          className="response-grid"
-                                          style={{
-                                            display: "grid",
-                                            gridTemplateColumns: "1fr 1fr",
-                                            gap: "10px",
-                                            marginBottom: "10px",
-                                            width: "100%",
-                                            boxSizing: "border-box",
-                                          }}
-                                        >
-                                          <div>
-                                            <label
-                                              style={{
-                                                display: "block",
-                                                fontSize: "15px",
-                                                marginBottom: "5px",
-                                              }}
-                                            >
-                                              Status Code:
-                                            </label>
-                                            <input
-                                              type="text"
-                                              value={res.status_code || ""}
-                                              onChange={(e) =>
-                                                handleResponseChange(
-                                                  row.id,
-                                                  index,
-                                                  "status_code",
-                                                  e.target.value
-                                                )
-                                              }
-                                              style={{
-                                                width: "100%",
-                                                padding: "4.5px",
-                                                margin: "0px",
-                                                fontSize: "20px",
-                                                border: "1px solid #ccc",
-                                                borderRadius: "3px",
-                                                boxSizing: "border-box",
-                                              }}
-                                            />
-                                          </div>
-                                          <div>
-                                            <label
-                                              style={{
-                                                display: "block",
-                                                fontSize: "15px",
-                                                marginBottom: "5px",
-                                              }}
-                                            >
-                                              Message:
-                                            </label>
-                                            <input
-                                              type="text"
-                                              value={res.message || ""}
-                                              onChange={(e) =>
-                                                handleResponseChange(
-                                                  row.id,
-                                                  index,
-                                                  "message",
-                                                  e.target.value
-                                                )
-                                              }
-                                              style={{
-                                                width: "100%",
-                                                padding: "5px",
-                                                margin: "0px",
-                                                fontSize: "20px",
-                                                border: "1px solid #ccc",
-                                                borderRadius: "3px",
-                                                boxSizing: "border-box",
-                                              }}
-                                            />
-                                          </div>
+                                            field:
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={req.field || ""}
+                                            onChange={(e) =>
+                                              handleRequestChange(
+                                                row.id,
+                                                index,
+                                                "field",
+                                                e.target.value
+                                              )
+                                            }
+                                            style={{
+                                              width: "100%",
+                                              padding: "4px",
+                                              fontSize: "15px",
+                                              border: "1px solid #ccc",
+                                              borderRadius: "3px",
+                                            }}
+                                          />
                                         </div>
                                         <div>
                                           <label
                                             style={{
                                               display: "block",
-                                              fontSize: "20px",
+                                              fontSize: "12px",
                                               marginBottom: "3px",
                                             }}
                                           >
-                                            Data (JSON):
+                                            type:
                                           </label>
-                                          <textarea
-                                            className="api-json-input"
-                                            value={
-                                              typeof res.data === "string"
-                                                ? res.data
-                                                : JSON.stringify(
+                                          <input
+                                            type="text"
+                                            value={req.type || ""}
+                                            onChange={(e) =>
+                                              handleRequestChange(
+                                                row.id,
+                                                index,
+                                                "type",
+                                                e.target.value
+                                              )
+                                            }
+                                            style={{
+                                              width: "100%",
+                                              padding: "4px",
+                                              fontSize: "15px",
+                                              border: "1px solid #ccc",
+                                              borderRadius: "3px",
+                                            }}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label
+                                            style={{
+                                              display: "block",
+                                              fontSize: "12px",
+                                              marginBottom: "3px",
+                                            }}
+                                          >
+                                            example:
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={req.example || ""}
+                                            onChange={(e) =>
+                                              handleRequestChange(
+                                                row.id,
+                                                index,
+                                                "example",
+                                                e.target.value
+                                              )
+                                            }
+                                            style={{
+                                              width: "100%",
+                                              padding: "4px",
+                                              fontSize: "15px",
+                                              border: "1px solid #ccc",
+                                              borderRadius: "3px",
+                                            }}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <pre
+                                  style={{
+                                    whiteSpace: "pre-wrap",
+                                    wordBreak: "break-all",
+                                    fontSize: "18px",
+                                    maxHeight: "200px",
+                                    overflow: "auto",
+                                    minWidth: "100px",
+                                  }}
+                                >
+                                  {JSON.stringify(row.request, null)}
+                                </pre>
+                              )}
+                            </div>
+
+                            {/* Response 섹션 */}
+                            <div className="accordion-box accordion-two-box">
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  marginBottom: "10px",
+                                }}
+                              >
+                                <strong>Response</strong>
+                                {isEditing && (
+                                  <button
+                                    onClick={() => addResponseField(row.id)}
+                                    className="add-field-button"
+                                    style={{
+                                      background: "#4CAF50",
+                                      color: "white",
+                                      border: "none",
+                                      padding: "5px 10px",
+                                      borderRadius: "3px",
+                                      cursor: "pointer",
+                                      fontSize: "12px",
+                                    }}
+                                  >
+                                    + 필드 추가
+                                  </button>
+                                )}
+                              </div>
+
+                              {isEditing ? (
+                                <div>
+                                  {row.response.map((res, index) => (
+                                    <div
+                                      key={index}
+                                      style={{
+                                        marginBottom: "10px",
+                                        padding: "10px",
+                                        border: "none",
+                                        borderRadius: "4px",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          marginBottom: "5px",
+                                        }}
+                                      >
+                                        <span
+                                          style={{
+                                            fontWeight: "bold",
+                                            fontSize: "14px",
+                                          }}
+                                        ></span>
+                                        <button
+                                          onClick={() =>
+                                            removeResponseField(row.id, index)
+                                          }
+                                          style={{
+                                            background: "#f44336",
+                                            color: "white",
+                                            border: "none",
+                                            padding: "2px 6px",
+                                            borderRadius: "3px",
+                                            cursor: "pointer",
+                                            fontSize: "12px",
+                                          }}
+                                        >
+                                          삭제
+                                        </button>
+                                      </div>
+                                      <div
+                                        className="response-grid"
+                                        style={{
+                                          display: "grid",
+                                          gridTemplateColumns: "1fr 1fr",
+                                          gap: "10px",
+                                          marginBottom: "10px",
+                                          width: "100%",
+                                          boxSizing: "border-box",
+                                        }}
+                                      >
+                                        <div>
+                                          <label
+                                            style={{
+                                              display: "block",
+                                              fontSize: "12px",
+                                              marginBottom: "5px",
+                                            }}
+                                          >
+                                            Status Code:
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={res.status_code || ""}
+                                            onChange={(e) =>
+                                              handleResponseChange(
+                                                row.id,
+                                                index,
+                                                "status_code",
+                                                e.target.value
+                                              )
+                                            }
+                                            style={{
+                                              width: "100%",
+                                              padding: "4.5px",
+                                              margin: "0px",
+                                              fontSize: "15px",
+                                              border: "1px solid #ccc",
+                                              borderRadius: "3px",
+                                              boxSizing: "border-box",
+                                            }}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label
+                                            style={{
+                                              display: "block",
+                                              fontSize: "12px",
+                                              marginBottom: "5px",
+                                            }}
+                                          >
+                                            Message:
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={res.message || ""}
+                                            onChange={(e) =>
+                                              handleResponseChange(
+                                                row.id,
+                                                index,
+                                                "message",
+                                                e.target.value
+                                              )
+                                            }
+                                            style={{
+                                              width: "100%",
+                                              padding: "5px",
+                                              margin: "0px",
+                                              fontSize: "15px",
+                                              border: "1px solid #ccc",
+                                              borderRadius: "3px",
+                                              boxSizing: "border-box",
+                                            }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label
+                                          style={{
+                                            display: "block",
+                                            fontSize: "12px",
+                                            marginBottom: "3px",
+                                          }}
+                                        >
+                                          Data (JSON):
+                                        </label>
+                                        <textarea
+                                          className="api-json-input"
+                                          value={
+                                            typeof res.data === "string"
+                                              ? res.data
+                                              : JSON.stringify(
                                                   res.data,
                                                   null,
                                                   2
                                                 )
-                                            }
-                                            onChange={(e) =>
-                                              handleDataChange(
-                                                row.id,
-                                                index,
-                                                e.target.value
-                                              )
-                                            }
-                                            placeholder="JSON 형식으로 입력하세요"
-                                          />
-                                        </div>
+                                          }
+                                          onChange={(e) =>
+                                            handleDataChange(
+                                              row.id,
+                                              index,
+                                              e.target.value
+                                            )
+                                          }
+                                          placeholder="JSON 형식으로 입력하세요"
+                                        />
                                       </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <pre
-                                    style={{
-                                      fontSize: "12px",
-                                      maxHeight: "200px",
-                                    }}
-                                  >
-                                    {JSON.stringify(row.response, null)}
-                                  </pre>
-                                )}
-                              </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <pre className="api-response-pre">
+                                  {JSON.stringify(row.response, null)}
+                                </pre>
+                              )}
                             </div>
-                          </td>
-                        </tr>
-                      )
-                    }
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                   </React.Fragment>
                 );
               })}
@@ -1017,8 +1013,7 @@ const ApiPage = () => {
                 onClick={() => {
                   setApiDone(false);
                   startPolling();
-                }
-                }
+                }}
                 disabled={!selectedWS}
               >
                 수정하기
@@ -1051,7 +1046,7 @@ const ApiPage = () => {
           Close={() => setIsFailed(false)}
         />
       )}
-    </div >
+    </div>
   ) : (
     // 나중에 여기에 로딩가이드페이지 추가하면 됨
     <Loading />
