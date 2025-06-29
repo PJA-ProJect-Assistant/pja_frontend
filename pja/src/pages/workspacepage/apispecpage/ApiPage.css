@@ -279,7 +279,6 @@
   overflow-x: hidden !important;
   overflow-y: auto !important;
   white-space: pre-wrap !important;
-  word-break: break-all !important;
 }
 
 .api-accordion-cell .api-json-input {
@@ -307,4 +306,13 @@
 .api-accordion-cell input,
 .api-accordion-cell textarea {
   box-sizing: border-box;
+}
+
+.api-response-pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-size: 18px;
+  max-height: 200px;
 }

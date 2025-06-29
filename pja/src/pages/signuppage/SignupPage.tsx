@@ -43,6 +43,8 @@ const SignupPage: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] =
+    useState<boolean>(false);
 
   //모달창
   const [showModal, setShowModal] = useState<React.ReactNode>(false);
@@ -299,6 +301,10 @@ const SignupPage: React.FC = () => {
 
   const togglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
+  };
+
+  const togglePasswordConfirmVisibility = (): void => {
+    setShowPasswordConfirm(!showPasswordConfirm);
   };
 
   const handleSignup = async (): Promise<void> => {
@@ -777,7 +783,9 @@ const SignupPage: React.FC = () => {
             <div className="input-wrapper">
               <img src={lockIcon} alt="lock" className="lock-icon-inside" />
               <input
-                type={showPassword ? "text" : "password"} /*type 동적 변경*/
+                type={
+                  showPasswordConfirm ? "text" : "password"
+                } /*type 동적 변경*/
                 placeholder="비밀번호"
                 className={`pw-input ${
                   // 불일치 시 에러 클래스
@@ -798,13 +806,13 @@ const SignupPage: React.FC = () => {
               {passwordConfirm && (
                 <button
                   type="button"
-                  onClick={togglePasswordVisibility}
-                  className="visibility-toggle-icon" /* 새 CSS 클래스 */
+                  onClick={togglePasswordConfirmVisibility}
+                  className="visibility-toggle-confirm-icon" /* 새 CSS 클래스 */
                   aria-label={
-                    showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
+                    showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"
                   }
                 >
-                  {showPassword ? (
+                  {showPasswordConfirm ? (
                     // 비밀번호가 보일 때 (숨기기 아이콘 - 예: 사선 그어진 눈)
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
