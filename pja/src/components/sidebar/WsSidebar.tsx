@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
 import type { MemberRole } from "../../types/invite";
 import { BasicModal } from "../modal/BasicModal";
+import { readAllNotifications, deleteAllNotifications } from "../../services/notiApi";
 
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
@@ -158,6 +159,43 @@ export default function WsSidebar({ onClose }: IsClose) {
     }
   };
 
+  // 알림 전체 읽음 처리
+  const handleReadAllNotifications = async () => {
+  if (!selectedWS?.workspaceId) {
+    alert("워크스페이스 정보를 찾을 수 없습니다.");
+    return;
+  }
+  try {
+    await readAllNotifications(selectedWS.workspaceId);
+  } catch (error: any) {
+    console.error(error);
+    alert(
+      error.response?.data?.message ||
+        error.message ||
+        "알림 읽음 처리 중 오류가 발생했습니다."
+    );
+  }
+};
+
+// 알림 전체 삭제 처리
+const handleDeleteAllNotifications = async() => {
+  if (!selectedWS?.workspaceId) {
+    alert("워크스페이스 정보를 찾을 수 없습니다.");
+    return;
+  }
+  try {
+    await deleteAllNotifications(selectedWS.workspaceId);
+  } catch (error: any) {
+    console.error(error);
+    alert(
+      error.response?.data?.message ||
+        error.message ||
+        "알림 삭제 중 오류가 발생했습니다."
+    );
+  }
+}
+
+
   return (
     <>
       <motion.div
@@ -296,6 +334,8 @@ export default function WsSidebar({ onClose }: IsClose) {
                 <p>알림</p>
                 <div className="notifytab-icons">
                   <svg
+                    onClick={handleReadAllNotifications}
+                    style={{cursor: "pointer"}}
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
                     viewBox="0 -960 960 960"
@@ -305,6 +345,8 @@ export default function WsSidebar({ onClose }: IsClose) {
                     <path d="M638-80 468-250l56-56 114 114 226-226 56 56L638-80ZM480-520l320-200H160l320 200Zm0 80L160-640v400h206l80 80H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v174l-80 80v-174L480-440Zm0 0Zm0-80Zm0 80Z" />
                   </svg>
                   <svg
+                    onClick={handleDeleteAllNotifications}
+                    style={{cursor: "pointer"}}
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
                     viewBox="0 -960 960 960"
