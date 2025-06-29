@@ -63,7 +63,6 @@ export default function MainMenuSidebar({ onClose }: IsClose) {
             <p onClick={goToAccountSettings} style={{ cursor: "pointer" }}>
               계정설정
             </p>
-            <p>공지</p>
             <p
               onClick={() => setShowLogoutModal(true)}
               style={{ cursor: "pointer" }}

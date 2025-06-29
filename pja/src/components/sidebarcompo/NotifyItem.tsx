@@ -11,6 +11,7 @@ interface NotifyItemProps {
 const NotifyItem = ({ message, noti, onRead, onDelete }: NotifyItemProps) => {
   return (
     <div className="notify-tab-box">
+      {noti.read === false && <div className="notify-notread"></div>}
       <span className="text-content">{message}</span>
       {/* 개별 읽음 버튼 */}
       <svg
