@@ -61,18 +61,25 @@
   border-radius: 4px;
   font-size: 13px;
 }
+
 .kanban-action-title {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 5px;
 }
+
 .kanban-action-title span {
   font-weight: 700;
   cursor: pointer;
 }
+
 .kanban-action-title p {
+  display: flex;
+  justify-content: flex-end;
   margin: 0;
+  margin-left: 3px;
+  white-space: nowrap;
 }
 
 .kanban-action-card-content {
