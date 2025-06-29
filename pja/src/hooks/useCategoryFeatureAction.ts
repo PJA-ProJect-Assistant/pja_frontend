@@ -55,6 +55,7 @@ interface UseCategoryFeatureCategoryReturn {
   editingFeatureId: number | null;
   editingActionId: number | null;
   participantList: workspace_member[];
+  allToggleOpen: (isOpen: boolean) => void;
   toggleTestCheckCg: (categoryId: number) => void;
   toggleTestCheckFt: (categoryId: number, featureId: number) => void;
   toggleTestCheckAc: (
@@ -172,15 +173,23 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     if (selectedWS?.workspaceId) {
       setWorkspaceId(selectedWS.workspaceId);
       try {
-        const response = await getlist(selectedWS?.workspaceId);
+        const response = await getlist(selectedWS.workspaceId);
         const data = response.data;
         if (data) {
           setParticipantList(data.participants);
-          setCategoryList(
-            [...data.featureCategories].sort(
-              (a, b) => Number(a.state) - Number(b.state)
-            )
+
+          const sortedCategories = [...data.featureCategories].sort(
+            (a, b) => Number(a.state) - Number(b.state)
           );
+
+          // 현재 상태와 비교 (간단히 문자열 비교, 필요시 더 정교하게)
+          const prevCategoriesStr = JSON.stringify(categoryList);
+          const nextCategoriesStr = JSON.stringify(sortedCategories);
+
+          if (prevCategoriesStr !== nextCategoriesStr) {
+            setCategoryList(sortedCategories);
+          }
+
           setCoreFeature(data.coreFeatures);
         }
       } catch (err) {
@@ -191,13 +200,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
   useEffect(() => {
     getAllList();
-    setClickCg({});
-    setClickFt({});
-  }, [selectedWS]);
-
-  useEffect(() => {
-    console.log("카테고리 리스트 변경");
-  }, [categoryList]);
+  }, [selectedWS?.workspaceId]);
 
   //카테고리 리스트의 feature 수정
   const updateFeatureInCategoryList = (
@@ -209,11 +212,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-            ...category,
-            features: category.features.map((feature) =>
-              feature.featureId === featureId ? updater(feature) : feature
-            ),
-          }
+          ...category,
+          features: category.features.map((feature) =>
+            feature.featureId === featureId ? updater(feature) : feature
+          ),
+        }
         : category
     );
   };
@@ -228,11 +231,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-            ...category,
-            features: category.features.filter(
-              (feature) => feature.featureId !== featureId
-            ),
-          }
+          ...category,
+          features: category.features.filter(
+            (feature) => feature.featureId !== featureId
+          ),
+        }
         : category
     );
   };
@@ -248,18 +251,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-            ...category,
-            features: category.features.map((feature) =>
-              feature.featureId === featureId
-                ? {
-                    ...feature,
-                    actions: feature.actions.map((action) =>
-                      action.actionId === actionId ? updater(action) : action
-                    ),
-                  }
-                : feature
-            ),
-          }
+          ...category,
+          features: category.features.map((feature) =>
+            feature.featureId === featureId
+              ? {
+                ...feature,
+                actions: feature.actions.map((action) =>
+                  action.actionId === actionId ? updater(action) : action
+                ),
+              }
+              : feature
+          ),
+        }
         : category
     );
   };
@@ -274,18 +277,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-            ...category,
-            features: category.features.map((feature) =>
-              feature.featureId === featureId
-                ? {
-                    ...feature,
-                    actions: feature.actions.filter(
-                      (action) => action.actionId !== actionId
-                    ),
-                  }
-                : feature
-            ),
-          }
+          ...category,
+          features: category.features.map((feature) =>
+            feature.featureId === featureId
+              ? {
+                ...feature,
+                actions: feature.actions.filter(
+                  (action) => action.actionId !== actionId
+                ),
+              }
+              : feature
+          ),
+        }
         : category
     );
   };
@@ -364,6 +367,33 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     console.log("카테고리 생성 완료 : ", categoryList);
   };
 
+  //전체토글 열고 닫기
+  const allToggleOpen = (isOpen: boolean) => {
+    console.log("🔥 allToggleOpen 호출됨! 호출 위치:");
+    console.trace();
+    const newCg: { [key: number]: boolean } = {};
+    const newFt: { [key: number]: boolean } = {};
+
+    categoryList.forEach((cg) => {
+      newCg[cg.featureCategoryId] = isOpen;
+      cg.features.forEach((ft) => {
+        newFt[ft.featureId] = isOpen;
+      });
+    });
+
+    setClickCg((prev) => {
+      const prevStr = JSON.stringify(prev);
+      const nextStr = JSON.stringify(newCg);
+      return prevStr === nextStr ? prev : newCg;
+    });
+
+    setClickFt((prev) => {
+      const prevStr = JSON.stringify(prev);
+      const nextStr = JSON.stringify(newFt);
+      return prevStr === nextStr ? prev : newFt;
+    });
+  }
+
   const updateCategoryName = async (isNew?: boolean) => {
     console.log("업데이트카테고리네임 돌입");
 
@@ -429,7 +459,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
 
   const handleAddFeature = (categoryId: number) => {
     console.log("기능 생성 버튼 클릭", categoryId);
-    clickFt;
     setCategoryList((prev) =>
       prev.map((category) => {
         if (category.featureCategoryId === categoryId) {
@@ -1114,6 +1143,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     completePg,
     aiList,
 
+    allToggleOpen,
     toggleTestCheckCg,
     toggleTestCheckFt,
     toggleTestCheckAc,

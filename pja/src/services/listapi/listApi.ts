@@ -35,11 +35,9 @@ export const getlist = async (
   workspaceId: number
 ): Promise<ApiResponse<listresponse>> => {
   try {
-    console.log("프로젝트 진행 전체 정보 api");
     const response = await api.get(
       `/workspaces/${workspaceId}/project/progress`
     );
-    console.log("프로젝트 진행 전체 정보 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getlist] 프로젝트 진행 전체 정보 가져오기 실패:", error);
