@@ -9,7 +9,28 @@ const NotifyItem = ({ message }: NotifyItemProps) => {
   return (
     <div className="notify-tab-box">
       <span className="text-content">{message}</span>
-      <img src={trashIcon} alt="알람 삭제" className="notify-trash-icon" />
+      <svg
+        style={{cursor: "pointer"}}
+        className="notify-trash-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        fill="#000000"
+      >
+        <path d="M638-80 468-250l56-56 114 114 226-226 56 56L638-80ZM480-520l320-200H160l320 200Zm0 80L160-640v400h206l80 80H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v174l-80 80v-174L480-440Zm0 0Zm0-80Zm0 80Z" />
+      </svg>
+      <svg
+        style={{cursor: "pointer"}}
+        className="notify-trash-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        fill="#000000"
+      >
+        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+      </svg>
     </div>
   );
 };

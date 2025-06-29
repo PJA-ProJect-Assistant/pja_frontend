@@ -14,6 +14,8 @@ import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
 import type { MemberRole } from "../../types/invite";
 import { BasicModal } from "../modal/BasicModal";
+import { readAllNotifications, deleteAllNotifications, getNotifications } from "../../services/notiApi";
+import type { Notification } from "../../services/notiApi";
 
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
@@ -27,6 +29,8 @@ export default function WsSidebar({ onClose }: IsClose) {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
+  
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const navigate = useNavigate();
   const selectedWS = useSelector(
@@ -51,6 +55,22 @@ export default function WsSidebar({ onClose }: IsClose) {
       window.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  // 알림 초기 로드
+  useEffect(() => {
+    if (!selectedWS?.workspaceId) return;
+
+    const fetchNotifications = async () => {
+      try {
+        const data = await getNotifications(selectedWS.workspaceId);
+        setNotifications(data);
+      } catch (error) {
+        console.error("알림 불러오기 실패:", error);
+      }
+    };
+
+    fetchNotifications();
+  }, [selectedWS?.workspaceId]);
 
   //✅ 멤버 역할 변경 함수
   const handleRoleChange = (memberId: string, newRole: MemberRole) => {
@@ -157,6 +177,44 @@ export default function WsSidebar({ onClose }: IsClose) {
       setIsGitModalOpen(true);
     }
   };
+
+  // 알림 전체 읽음 처리
+  const handleReadAllNotifications = async () => {
+  if (!selectedWS?.workspaceId) {
+    alert("워크스페이스 정보를 찾을 수 없습니다.");
+    return;
+  }
+  try {
+    await readAllNotifications(selectedWS.workspaceId);
+  } catch (error: any) {
+    console.error(error);
+    alert(
+      error.response?.data?.message ||
+        error.message ||
+        "알림 읽음 처리 중 오류가 발생했습니다."
+    );
+  }
+};
+
+// 알림 전체 삭제 처리
+const handleDeleteAllNotifications = async() => {
+  if (!selectedWS?.workspaceId) {
+    alert("워크스페이스 정보를 찾을 수 없습니다.");
+    return;
+  }
+  try {
+    await deleteAllNotifications(selectedWS.workspaceId);
+    setNotifications([]);
+  } catch (error: any) {
+    console.error(error);
+    alert(
+      error.response?.data?.message ||
+        error.message ||
+        "알림 삭제 중 오류가 발생했습니다."
+    );
+  }
+}
+
 
   return (
     <>
@@ -296,6 +354,8 @@ export default function WsSidebar({ onClose }: IsClose) {
                 <p>알림</p>
                 <div className="notifytab-icons">
                   <svg
+                    onClick={handleReadAllNotifications}
+                    style={{cursor: "pointer"}}
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
                     viewBox="0 -960 960 960"
@@ -305,6 +365,8 @@ export default function WsSidebar({ onClose }: IsClose) {
                     <path d="M638-80 468-250l56-56 114 114 226-226 56 56L638-80ZM480-520l320-200H160l320 200Zm0 80L160-640v400h206l80 80H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v174l-80 80v-174L480-440Zm0 0Zm0-80Zm0 80Z" />
                   </svg>
                   <svg
+                    onClick={handleDeleteAllNotifications}
+                    style={{cursor: "pointer"}}
                     xmlns="http://www.w3.org/2000/svg"
                     height="24px"
                     viewBox="0 -960 960 960"
@@ -316,7 +378,10 @@ export default function WsSidebar({ onClose }: IsClose) {
                 </div>
               </div>
               <div className="line"></div>
-              <NotifyTabComp />
+              <NotifyTabComp 
+                notifications={notifications}
+                setNotifications={setNotifications}
+              />
             </div>
           )}
         </div>

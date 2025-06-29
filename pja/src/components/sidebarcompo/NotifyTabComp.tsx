@@ -2,79 +2,73 @@ import { useEffect, useState } from "react";
 import "./NotifyTabComp.css";
 import signbellIcon from "../../assets/img/signbell.png";
 import NotifyItem from "./NotifyItem";
-import api from "../../lib/axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import { subscribeNotificationSSE } from "../../services/sseApi";
+import { getNotifications } from "../../services/notiApi";
+import type { Notification } from "../../services/notiApi";
 
-interface Notification {
-  notificationId: number;
-  message: string;
-  createdAt: string;
-  actionPostId: number;
-  read: boolean;
+interface NotifyTabCompProps {
+  notifications: Notification[];
+  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
 }
 
-const NotifyTabComp = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
+const NotifyTabComp = ({ notifications, setNotifications }: NotifyTabCompProps) => {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
   const workspaceId = selectedWS?.workspaceId;
   console.log("workspaceId 는 ", workspaceId);
-
+  
   useEffect(() => {
-    // 워크스페이스 아이디 없을 경우
     if (!workspaceId) return;
 
-    fetchNotifications();
-
-    const accessToken = localStorage.getItem("accessToken");
-    console.log("[sse 연결]accessToken: ", accessToken);
-
-    // SSE 연결
-    const eventSource = new EventSource(
-      `https://api.pja.kr/api/workspaces/${workspaceId}/noti/subscribe?token=${accessToken}`
-    );
-
-    eventSource.addEventListener("connect", (e) => {
-      console.log("SSE 연결 성공:", e);
+    const eventSource = subscribeNotificationSSE(workspaceId, (newNoti) => {
+      setNotifications((prev) => [newNoti, ...prev]);
     });
 
-    eventSource.addEventListener("notification", (e) => {
-      const data: Notification = JSON.parse(e.data);
-      setNotifications((prev) => [data, ...prev]);
-    });
+    return () => eventSource.close();
+  }, [workspaceId, setNotifications]);
 
-    eventSource.onerror = (err) => {
-      console.error("SSE 오류 발생:", err);
-      eventSource.close();
+  useEffect(() => {
+    if (!workspaceId) return;
+
+    const fetchData = async () => {
+      try {
+        const notiList = await getNotifications(workspaceId);
+        setNotifications(notiList);
+      } catch (error) {
+        console.error("알림 목록 불러오기 실패", error);
+      }
     };
+
+    fetchData();
+
+    const eventSource = subscribeNotificationSSE(
+      workspaceId,
+      (newNoti) => {
+        setNotifications((prev) => [newNoti, ...prev]);
+      }
+    );
 
     return () => {
       eventSource.close();
     };
-  }, []);
-
-  const fetchNotifications = async () => {
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      const headers = {
-        Authorization: `Bearer ${accessToken}`,
-      };
-      const response = await api.get(`/workspaces/${workspaceId}/noti`, {
-        headers,
-      });
-      setNotifications(response.data.data);
-    } catch (err) {
-      console.error("알림 조회 실패:", err);
-    }
-  };
+  }, [workspaceId]);
 
   return (
     <>
       <div className="notify-list-container">
-        <img src={signbellIcon} alt="알람" className="notify-bell-icon" />
+        <svg
+        className="notify-bell-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            height="43px"
+            viewBox="0 -960 960 960"
+            width="43px"
+            fill="#000000"
+          >
+            <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
+        </svg>
         {notifications.map((noti) => (
           <NotifyItem key={noti.notificationId} message={noti.message} />
         ))}
