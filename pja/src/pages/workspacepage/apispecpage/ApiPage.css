@@ -6,11 +6,13 @@
   flex-direction: column;
   box-sizing: border-box;
 }
+
 .api-content {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
+
 .api-header {
   display: flex;
   width: 100%;
@@ -18,25 +20,30 @@
   justify-content: space-between;
   gap: 5px;
 }
+
 .api-alert {
   display: flex;
   color: #909090;
   font-size: 24px;
 }
+
 .api-table {
   width: 100%;
   margin-top: 10px;
-  border-collapse: collapse; /*셀 경계 중첩 제거*/
+  border-collapse: collapse;
+  /*셀 경계 중첩 제거*/
   /* 추가: 테이블 오버플로우 방지 */
   table-layout: fixed;
   max-width: 100%;
 }
+
 .api-table th,
 .api-table td {
   border: 1px solid #00205b;
   text-align: center;
   padding: 13px 5px;
 }
+
 .api-table-title {
   font-weight: bold;
   font-size: var(--font-size-base);
@@ -48,6 +55,7 @@
   /* 버튼의 회색 배경을 없앰 */
   background-color: white !important;
 }
+
 .api-add-button {
   display: block;
   margin: 20px auto;
@@ -76,6 +84,7 @@
   justify-content: flex-end;
   margin-right: 55px;
 }
+
 .api-edit-button {
   background-color: #00205b;
   color: white;
@@ -106,7 +115,8 @@
 
 /* 2) .finish-button 기본 마진 제거 */
 .api-table-row .finish-button {
-  margin: 0; /* 기존 margin-left: 10px; 제거 */
+  margin: 0;
+  /* 기존 margin-left: 10px; 제거 */
 }
 
 .accordion-content {
@@ -116,10 +126,12 @@
 
 .api-table-row .edit-controls {
   position: absolute;
-  left: -50px; /* 밖으로 얼마나 뺄지 조절 */
+  left: -50px;
+  /* 밖으로 얼마나 뺄지 조절 */
   top: 50%;
   transform: translateY(-50%);
 }
+
 /* 아코디언 셀 스타일 */
 .api-accordion-cell {
   background-color: #f9fafb;
@@ -135,7 +147,8 @@
 .accordion-box {
   font-size: 20px;
   color: #333;
-  white-space: pre-wrap; /* 줄바꿈 표시 */
+  white-space: pre-wrap;
+  /* 줄바꿈 표시 */
   background-color: #ffffff;
   border: 1px solid #dcdcdc;
   border-radius: 8px;
@@ -151,13 +164,15 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 100%; /* 부모(td)의 너비를 꽉 채우도록 명시 */
+  width: 100%;
+  /* 부모(td)의 너비를 꽉 채우도록 명시 */
   box-sizing: border-box;
   padding: 16px;
 
   max-width: 100%;
   overflow: hidden;
 }
+
 .accordion-two-box {
   flex: 1;
   border: 1px solid #dcdcdc;
@@ -198,7 +213,8 @@
   padding: 8px;
   font-family: inherit;
   font-size: inherit;
-  box-sizing: border-box; /* padding을 포함하여 전체 너비 계산 */
+  box-sizing: border-box;
+  /* padding을 포함하여 전체 너비 계산 */
 }
 
 .finish-button {
@@ -212,14 +228,25 @@
 /*연필 버튼*/
 .edit-button {
   position: absolute;
-  left: -30px; /* 셀 바깥으로 얼마나 꺼낼지 */
-  top: 50%; /* 세로 중앙 정렬 */
+  left: -20px;
+  /* 셀 바깥으로 얼마나 꺼낼지 */
+  top: 50%;
+  /* 세로 중앙 정렬 */
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
 }
+
+.api-editors {
+  position: absolute;
+  top: 50%;
+  /* 세로 중앙 정렬 */
+  transform: translateY(-50%);
+  left: -50px;
+}
+
 .edit-image {
   width: 20px;
   height: 20px;
@@ -259,17 +286,22 @@
   overflow-y: hidden;
   resize: vertical;
 }
+
 .api-json-input {
   width: 100%;
-  min-height: 120px; /* 최소 높이 지정 */
-  height: auto; /* 내용에 따라 늘어나게 */
+  min-height: 120px;
+  /* 최소 높이 지정 */
+  height: auto;
+  /* 내용에 따라 늘어나게 */
   padding: 4px;
   font-size: 12px;
   border: 1px solid #ccc;
   border-radius: 3px;
   box-sizing: border-box;
-  overflow-y: hidden !important; /* 세로 스크롤 숨김 */
-  resize: vertical; /* 세로 크기 조절만 가능 */
+  overflow-y: hidden !important;
+  /* 세로 스크롤 숨김 */
+  resize: vertical;
+  /* 세로 크기 조절만 가능 */
 }
 
 .api-accordion-cell input,

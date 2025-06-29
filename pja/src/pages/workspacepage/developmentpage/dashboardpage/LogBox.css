@@ -59,7 +59,7 @@
   box-sizing: border-box;
   align-items: center;
   gap: 5px;
-  padding: 3px 0;
+  padding: 3px 0 10px 0;
 }
 
 .log-list-info p {

@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import { BasicModal } from "../../../components/modal/BasicModal";
-import { progressworkspace } from "../../../services/workspaceApi";
 import type { workspace } from "../../../types/workspace";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { getStepIdFromNumber } from "../../../utils/projectSteps";
@@ -52,16 +51,15 @@ export default function RequirementsPage() {
   const [aiRequirements, setAiRequirements] = useState<setrequire[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>("");
+  const [noRequire, setNoRequire] = useState<boolean>(false);
   const getRequire = async () => {
     if (selectedWS?.workspaceId) {
       try {
         const response = await getrequirement(selectedWS?.workspaceId);
-        console.log("요구사항 조회 결과 :", response);
         if (response.data) {
           setRequirements(response.data); // undefined가 아닐 때만 설정
         }
       } catch (error) {
-        console.error("요구사항 조회 실패:", error);
         setIsFailed(true);
       }
     }
@@ -93,31 +91,29 @@ export default function RequirementsPage() {
   const handleAddFunction = async (content: string) => {
     try {
       if (selectedWS?.workspaceId) {
-        const response = await inputrequirement(
+        await inputrequirement(
           selectedWS?.workspaceId,
           "FUNCTIONAL",
           content
         );
-        console.log("function 생성 결과 :", response);
         getRequire();
       }
     } catch (err) {
-      console.log("function 생성 실패", err);
+      setIsFailed(true);
     }
   };
   const handleAddPerformance = async (content: string) => {
     try {
       if (selectedWS?.workspaceId) {
-        const response = await inputrequirement(
+        await inputrequirement(
           selectedWS?.workspaceId,
           "PERFORMANCE",
           content
         );
-        console.log("performance 생성 결과 :", response);
         getRequire();
       }
     } catch (err) {
-      console.log("performance 생성 실패", err);
+      setIsFailed(true);
     }
   };
 
@@ -137,11 +133,10 @@ export default function RequirementsPage() {
             selectedWS.workspaceId,
             setrequirements
           );
-          console.log("요구사항 저장 성공:", response);
           setAiRequirements(response.data ?? []);
         }
       } catch (err) {
-        console.error("요구사항 저장 실패", err);
+        setIsFailed(true);
       } finally {
         setLoading(false);
       }
@@ -161,7 +156,7 @@ export default function RequirementsPage() {
         }
         setAiRequirements((prev) => prev.filter((item) => item !== ai));
       } catch (err) {
-        console.error("AI 요구사항 저장 실패", err);
+        setIsFailed(true);
       }
     }
   };
@@ -209,11 +204,17 @@ export default function RequirementsPage() {
   };
 
   const handleCompleteReq = async () => {
+    if (requirements.filter((rq) => rq.requirementType === "FUNCTIONAL").length === 0 ||
+      requirements.filter((rq) => rq.requirementType === "PERFORMANCE").length === 0) {
+      setNoRequire(true);
+      return;
+    }
     stopPolling();
     if (!selectedWS) return;
-    setNextPageLoading(true);
-    try {
-      if (selectedWS.progressStep === "1") {
+
+    if (selectedWS.progressStep === "1") {
+      setNextPageLoading(true);
+      try {
         //프로젝트 정보 생성해주는 api
         const setrequirements: setrequire[] = requirements.map(
           ({ requirementType, content }) => ({
@@ -221,14 +222,10 @@ export default function RequirementsPage() {
             content,
           })
         );
-        const projectdata = await postProjectAI(
+        await postProjectAI(
           selectedWS.workspaceId,
           setrequirements
         );
-        console.log("프로젝트 정보 : ", projectdata);
-
-        await progressworkspace(selectedWS.workspaceId, "2");
-        console.log("다음페이지로 넘어가기");
 
         const updatedWorkspace: workspace = {
           ...selectedWS, // 기존 값 유지
@@ -237,13 +234,14 @@ export default function RequirementsPage() {
 
         dispatch(setSelectedWS(updatedWorkspace));
         navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("2")}`);
+
+      } catch (err) {
+        setIsFailed(true);
+      } finally {
+        setNextPageLoading(false);
       }
-      setRequireDone(true);
-    } catch (err) {
-      console.log("요구사항 저장 실패 : ", err);
-    } finally {
-      setNextPageLoading(false);
     }
+    setRequireDone(true);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -309,24 +307,26 @@ export default function RequirementsPage() {
                       onKeyDown={handleKeyDown}
                     />
                   ) : (
-                    req.content
+                    <>
+                      <span>{req.content}</span>
+                      {!requireDone && CanEdit && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="20px"
+                          viewBox="0 -960 960 960"
+                          width="20px"
+                          fill="#EA3323"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleReqDelete(req.requirementId);
+                          }}
+                        >
+                          <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                        </svg>
+                      )}
+                    </>
                   )}
                 </li>
-                {!requireDone && CanEdit && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="20px"
-                    viewBox="0 -960 960 960"
-                    width="20px"
-                    fill="#EA3323"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleReqDelete(req.requirementId);
-                    }}
-                  >
-                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                  </svg>
-                )}
               </div>
             </div>
           ))}
@@ -485,8 +485,15 @@ export default function RequirementsPage() {
       )}
       {isFailed && (
         <BasicModal
-          modalTitle="데이터를 불러오지 못했습니다"
-          modalDescription="일시적인 오류가 발생했습니다. 새로고침 후 다시 시도해주세요."
+          modalTitle="요청을 처리할 수 없습니다"
+          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
+          Close={() => setIsFailed(false)}
+        />
+      )}
+      {noRequire && (
+        <BasicModal
+          modalTitle="저장할 수 없습니다"
+          modalDescription="기능·성능 요구사항이 최소 1개 이상 있어야 합니다"
           Close={() => setIsFailed(false)}
         />
       )}
