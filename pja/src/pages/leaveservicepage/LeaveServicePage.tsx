@@ -6,6 +6,8 @@ import { checkPassword, deleteUser } from "../../services/authApi";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { clearAccessToken } from "../../store/authSlice";
+import { BasicModal } from "../../components/modal/BasicModal";
+
 const LeaveServicePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -16,6 +18,10 @@ const LeaveServicePage = () => {
   const [passwordError, setPasswordError] = useState("");
   // 3. 본인인증 완료 상태를 저장할 state
   const [isPasswordConfirmed, setIsPasswordConfirmed] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalDescription, setModalDescription] = useState("");
 
   // '확인' 버튼 클릭 시 실행될 함수
   const handlePasswordCheck = async () => {
@@ -30,7 +36,9 @@ const LeaveServicePage = () => {
 
       setPasswordError("");
       setIsPasswordConfirmed(true);
-      alert("본인인증이 완료되었습니다.");
+      setModalTitle("본인인증 완료");
+      setModalDescription("본인인증이 완료되었습니다.");
+      setIsModalOpen(true);
     } catch (error) {
       setIsPasswordConfirmed(false);
 
@@ -55,13 +63,12 @@ const LeaveServicePage = () => {
     try {
       await deleteUser();
 
-      alert("회원 탈퇴가 성공적으로 처리되었습니다. 이용해주셔서 감사합니다.");
+      setModalTitle("회원 탈퇴 완료");
+      setModalDescription(
+        "회원 탈퇴가 성공적으로 처리되었습니다. 이용해주셔서 감사합니다."
+      );
+      setIsModalOpen(true);
       //  Redux 스토어의 인증 상태를 초기화
-      dispatch(clearAccessToken());
-      localStorage.removeItem("accessToken");
-
-      // 메인 페이지로 이동
-      navigate("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
@@ -161,6 +168,21 @@ const LeaveServicePage = () => {
       >
         탈퇴하기
       </button>
+      {isModalOpen && (
+        <BasicModal
+          modalTitle={modalTitle}
+          modalDescription={modalDescription}
+          Close={(open) => {
+            setIsModalOpen(open);
+            // 만약 탈퇴 성공 모달을 닫을 때 리다이렉트가 필요하다면:
+            if (!open && modalTitle === "회원 탈퇴 완료") {
+              dispatch(clearAccessToken());
+              localStorage.removeItem("accessToken");
+              navigate("/");
+            }
+          }}
+        />
+      )}
     </div>
   );
 };
