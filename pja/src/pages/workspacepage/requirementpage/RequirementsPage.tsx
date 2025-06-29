@@ -57,7 +57,8 @@ export default function RequirementsPage() {
       try {
         const response = await getrequirement(selectedWS?.workspaceId);
         if (response.data) {
-          setRequirements(response.data); // undefined가 아닐 때만 설정
+          const sortedData = [...response.data].sort((a, b) => a.requirementId - b.requirementId);
+          setRequirements(sortedData);
         }
       } catch (error) {
         setIsFailed(true);
