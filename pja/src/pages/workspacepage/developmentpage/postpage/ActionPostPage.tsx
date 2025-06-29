@@ -224,7 +224,7 @@ export default function ActionPostPage() {
         const updatedData = await updatePostDetails(wsid, acId, acpostId, {
           content: textContent,
           files: selectedImages,
-          // removedFilePaths: removedImagePaths, // API 명세에 따라 필요 시 추가
+          removedFilePaths: removedImagePaths, // API 명세에 따라 필요 시 추가
         });
 
         //   성공 시, 반환된 최신 데이터로 화면 상태 업데이트
