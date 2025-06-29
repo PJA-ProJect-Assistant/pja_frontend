@@ -179,7 +179,7 @@
 
 .erd-modify-btn-bubble {
   position: relative;
-  top: -10px;
+  top: -17px;
   margin-left: 12px;
   padding: 4px 8px;
   background: #fff;
@@ -194,8 +194,8 @@
   width: 20px;
   height: 20px;
   position: relative; /* 절대영역에서 빠져나와서 */
-  right: 305px;
-  bottom: -25px;
+  right: 326px;
+  bottom: 1px;
   margin-top: -19vh;
   background: #fff;
   border-radius: 50%;
