@@ -14,7 +14,8 @@ import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
 import type { MemberRole } from "../../types/invite";
 import { BasicModal } from "../modal/BasicModal";
-import { readAllNotifications, deleteAllNotifications } from "../../services/notiApi";
+import { readAllNotifications, deleteAllNotifications, getNotifications } from "../../services/notiApi";
+import type { Notification } from "../../services/notiApi";
 
 export default function WsSidebar({ onClose }: IsClose) {
   //모달 열림/닫힘 상태를 관리하는 useState
@@ -28,6 +29,8 @@ export default function WsSidebar({ onClose }: IsClose) {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
+  
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const navigate = useNavigate();
   const selectedWS = useSelector(
@@ -52,6 +55,22 @@ export default function WsSidebar({ onClose }: IsClose) {
       window.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  // 알림 초기 로드
+  useEffect(() => {
+    if (!selectedWS?.workspaceId) return;
+
+    const fetchNotifications = async () => {
+      try {
+        const data = await getNotifications(selectedWS.workspaceId);
+        setNotifications(data);
+      } catch (error) {
+        console.error("알림 불러오기 실패:", error);
+      }
+    };
+
+    fetchNotifications();
+  }, [selectedWS?.workspaceId]);
 
   //✅ 멤버 역할 변경 함수
   const handleRoleChange = (memberId: string, newRole: MemberRole) => {
@@ -185,6 +204,7 @@ const handleDeleteAllNotifications = async() => {
   }
   try {
     await deleteAllNotifications(selectedWS.workspaceId);
+    setNotifications([]);
   } catch (error: any) {
     console.error(error);
     alert(
@@ -358,7 +378,10 @@ const handleDeleteAllNotifications = async() => {
                 </div>
               </div>
               <div className="line"></div>
-              <NotifyTabComp />
+              <NotifyTabComp 
+                notifications={notifications}
+                setNotifications={setNotifications}
+              />
             </div>
           )}
         </div>

@@ -8,14 +8,27 @@ import { subscribeNotificationSSE } from "../../services/sseApi";
 import { getNotifications } from "../../services/notiApi";
 import type { Notification } from "../../services/notiApi";
 
-const NotifyTabComp = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+interface NotifyTabCompProps {
+  notifications: Notification[];
+  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+}
 
+const NotifyTabComp = ({ notifications, setNotifications }: NotifyTabCompProps) => {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
   const workspaceId = selectedWS?.workspaceId;
   console.log("workspaceId 는 ", workspaceId);
+  
+  useEffect(() => {
+    if (!workspaceId) return;
+
+    const eventSource = subscribeNotificationSSE(workspaceId, (newNoti) => {
+      setNotifications((prev) => [newNoti, ...prev]);
+    });
+
+    return () => eventSource.close();
+  }, [workspaceId, setNotifications]);
 
   useEffect(() => {
     if (!workspaceId) return;
