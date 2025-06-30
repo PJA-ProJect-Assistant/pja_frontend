@@ -116,23 +116,18 @@ export default function ProjectSummaryPage() {
         if (selectedWS?.progressStep === "2") {
           try {
             setIsLoading(true);
-            const response = await postErd(selectedWS?.workspaceId);
-            const erdId = response.data?.erdId;
+            //ERDAI 생성 api 호출
+            await postErdAI(selectedWS?.workspaceId);
 
-            if (erdId) {
-              //ERDAI 생성 api 호출
-              await postErdAI(selectedWS?.workspaceId);
-
-              dispatch(
-                setSelectedWS({
-                  ...selectedWS,
-                  progressStep: "3",
-                })
-              );
-              navigate(
-                `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("3")}`
-              );
-            }
+            dispatch(
+              setSelectedWS({
+                ...selectedWS,
+                progressStep: "3",
+              })
+            );
+            navigate(
+              `/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("3")}`
+            );
           } catch (err) {
             console.log("ERD ai생성 실패 ", err);
             setIsFailed(true);
