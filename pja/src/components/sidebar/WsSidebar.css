@@ -4,6 +4,7 @@
   position: relative;
   justify-content: space-between;
   width: 250px;
+  min-width: 200px;
   height: 100%;
   min-height: 700px;
   box-sizing: border-box;
