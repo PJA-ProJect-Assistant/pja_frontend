@@ -58,9 +58,7 @@ const AccountSettingPage: React.FC = () => {
     message: string;
   }>({ isValid: true, message: "" });
 
-  useEffect(() => {
-    console.log("최종 렌더링되는 프로필 이미지:", profileImage);
-  }, [profileImage]);
+  useEffect(() => {}, [profileImage]);
 
   useEffect(() => {
     // API 호출을 위한 별도의 함수를 정의하고 즉시 실행

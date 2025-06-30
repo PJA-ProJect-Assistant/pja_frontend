@@ -61,7 +61,7 @@ export default function ProjectSummaryPage() {
       try {
         if (selectedWS?.workspaceId) {
           const project = await getProject(selectedWS?.workspaceId);
-          console.log("프로젝트 조회 결과 : ", project);
+
           const data = project.data;
           if (data) {
             setProjectInfo(data);
