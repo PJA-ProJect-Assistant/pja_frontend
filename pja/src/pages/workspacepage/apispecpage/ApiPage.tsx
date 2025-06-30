@@ -301,17 +301,6 @@ const ApiPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div>
-        <WSHeader title="API 명세서" />
-        <div className="api-main">
-          <p style={{ color: "red" }}>{error}</p>
-        </div>
-      </div>
-    );
-  }
-
   // + 버튼 클릭 시 호출되는 함수
   const handleAddRow = async (workspaceId: number) => {
     if (!workspaceId) {
@@ -1045,6 +1034,15 @@ const ApiPage = () => {
           modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
           Close={() => setIsFailed(false)}
         />
+      )}
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
       )}
     </div>
   ) : (
