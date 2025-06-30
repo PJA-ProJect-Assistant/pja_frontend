@@ -110,7 +110,6 @@ export default function ActionPostPage() {
     const getws = async () => {
       try {
         const response = await getworkspace(Number(wsid));
-        console.log("getworkspace 결과 : ", response);
         //redux저장
         if (response.data) {
           dispatch(setSelectedWS(response.data));
