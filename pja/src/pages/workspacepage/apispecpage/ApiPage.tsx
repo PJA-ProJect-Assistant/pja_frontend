@@ -176,9 +176,6 @@ const ApiPage = () => {
             example: "",
           };
 
-          console.log("기존 request:", row.request); // 디버깅용
-          console.log("새로운 request:", [...row.request, newRequest]); // 디버깅용
-
           return {
             ...row,
             request: [...row.request, newRequest],
@@ -187,7 +184,6 @@ const ApiPage = () => {
         return row;
       });
 
-      console.log("업데이트된 rows:", updatedRows); // 디버깅용
       return updatedRows;
     });
   };

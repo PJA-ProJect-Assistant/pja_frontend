@@ -26,8 +26,6 @@ export default function AddWSTeam() {
     (state: RootState) => state.workspace.selectedWS
   );
 
-  console.log("팀원 초대 컴포넌트가 사용하는 워크스페이스:", selectedWS);
-
   const stepId = getStepIdFromNumber(selectedWS?.progressStep ?? "0");
 
   const [emailInput, setEmailInput] = useState("");
@@ -106,16 +104,17 @@ export default function AddWSTeam() {
         }, 2000);
       }
     } catch (error: any) {
+      console.error(" [inputtech] 팀원 초대 API 호출 실패:", error);
       if (axios.isAxiosError(error) && error.response) {
         // 서버에서 내려준 응답이 있을 때
         console.error("응답 상태코드:", error.response.status);
         console.error("서버 응답 데이터:", error.response.data);
-        console.log("✅ 백엔드 메시지:", error.response.data.message);
-
         if (error.response.status === 401) {
           navigate("/login");
         }
       } else {
+        // axios 외 다른 에러
+        console.error("알 수 없는 에러 발생:", error.message);
         setError("멤버 초대에 실패했습니다");
       }
     }
