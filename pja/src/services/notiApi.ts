@@ -6,6 +6,7 @@ export interface Notification {
   message: string;
   createdAt: string;
   actionPostId: number;
+  actionId: number;
   read: boolean;
 }
 

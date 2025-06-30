@@ -1,5 +1,8 @@
 import "./NotifyTabComp.css";
 import type { Notification } from "../../services/notiApi";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
 
 interface NotifyItemProps {
   message: string;
@@ -9,10 +12,22 @@ interface NotifyItemProps {
 }
 //message를 props로 받아서 동적으로 표시
 const NotifyItem = ({ message, noti, onRead, onDelete }: NotifyItemProps) => {
+
+  const selectedWS = useSelector(
+    (state: RootState) => state.workspace.selectedWS
+  );
+
+  const navigate = useNavigate();
   return (
     <div className="notify-tab-box">
       {noti.read === false && <div className="notify-notread"></div>}
-      <span className="text-content">{message}</span>
+      <span 
+        className="text-content"
+        onClick={()=>navigate(`/ws/${selectedWS?.workspaceId}/post/action/${noti.actionId}/${noti.actionPostId}`)}
+        style={{cursor:"pointer"}}
+      >
+        {message}
+      </span>
       {/* 개별 읽음 버튼 */}
       <svg
         style={{ cursor: "pointer" }}

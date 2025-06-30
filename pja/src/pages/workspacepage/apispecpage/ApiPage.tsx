@@ -275,7 +275,7 @@ const ApiPage = () => {
         setRows(frontendData);
       } catch (err) {
         setIsFailed(true);
-        setError("API 목록을 불러오는 데 실패했습니다");
+        setError("페이지를 불러오는 데 실패했습니다");
         // 실패 시 빈 배열로 설정하여 테이블이 비도록 함
         setRows([]);
       } finally {

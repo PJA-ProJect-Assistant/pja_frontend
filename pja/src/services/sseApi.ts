@@ -26,6 +26,11 @@ export const subscribeNotificationSSE = (
     if (onError) {
       onError(err);
     }
+
+    // 5초 후 재연결
+    setTimeout(() => {
+      subscribeNotificationSSE(workspaceId, onMessage, onError);
+    }, 5000);
   };
 
   return eventSource;

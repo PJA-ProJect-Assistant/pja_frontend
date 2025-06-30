@@ -10,9 +10,13 @@ import {
   getidea,
   inputtech,
   inputfunc,
-  putidea,
   deletetech,
   deletefunc,
+  putideaFunction,
+  putideaName,
+  putideaTarget,
+  putideaTech,
+  putideaDescription,
 } from "../../../services/ideaApi";
 import type { IdeaData } from "../../../types/idea";
 import { BasicModal } from "../../../components/modal/BasicModal";
@@ -26,7 +30,7 @@ export default function ProhectForm() {
   const [wsId, setWsId] = useState<number>();
   const [openStackModal, setOpenStackModal] = useState<boolean>(false);
   const [openFeatureModal, setOpenFeatureModal] = useState<boolean>(false);
-  const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -71,7 +75,7 @@ export default function ProhectForm() {
       }
     } catch (error) {
       console.error("기능 추가 실패:", error);
-      setIsFailed(true);
+      setError("요청을 처리할 수 없습니다");
     }
   };
 
@@ -92,7 +96,7 @@ export default function ProhectForm() {
       }
     } catch (error) {
       console.error("기술 스택 추가 실패:", error);
-      setIsFailed(true);
+      setError("요청을 처리할 수 없습니다");
     }
   };
 
@@ -107,7 +111,7 @@ export default function ProhectForm() {
         setFeatures((prev) => prev.filter((f) => f.id !== id));
       } catch (err) {
         console.log("기능 삭제 실패", err);
-        setIsFailed(true);
+        setError("요청을 처리할 수 없습니다");
       }
     }
   };
@@ -123,7 +127,7 @@ export default function ProhectForm() {
         setStacks((prev) => prev.filter((s) => s.id !== id));
       } catch (err) {
         console.log("기술 삭제 실패", err);
-        setIsFailed(true);
+        setError("요청을 처리할 수 없습니다");
       }
     }
   };
@@ -163,22 +167,63 @@ export default function ProhectForm() {
             }));
             setStacks(techStacks.length ? techStacks : []);
           }
-        } else {
-          console.log("워크스페이스 아이디 없음");
         }
       } catch (error) {
         console.error("아이디어 조회 실패:", error);
-        setIsFailed(true);
+        setError("페이지를 불러오는 데 실패했습니다");
       }
     };
     GetIdea();
   }, [selectedWS]);
 
-  const updateFeature = (id: number, value: string) => {
+  //프로젝트명 수정
+  const updateProjectName = async () => {
+    if (selectedWS?.workspaceId && ideaId) {
+      try {
+        //프로젝트명 수정
+        await putideaName(selectedWS?.workspaceId, ideaId, projectName);
+      } catch {
+        setError("요청을 처리할 수 없습니다");
+      } finally {
+        stopEditing("projectName", null);
+      }
+    }
+  };
+
+  //프로젝트 타켓 수정
+  const updateProjectTarget = async () => {
+    if (selectedWS?.workspaceId && ideaId) {
+      try {
+        //프로젝트타켓 수정
+        await putideaTarget(selectedWS?.workspaceId, ideaId, projectTarget);
+      } catch {
+        setError("요청을 처리할 수 없습니다");
+      } finally {
+        stopEditing("projectTarget", null);
+      }
+    }
+  };
+
+  const updateFeature = async (id: number, value: string) => {
     const updated = features.map((f) =>
       f.id === id ? { ...f, content: value } : f
     );
     setFeatures(updated);
+  };
+
+  //프로젝트 기능 수정
+  const updateFeatureApi = async (id: number) => {
+    const content = features.find((f) => f.id === id)?.content;
+    if (selectedWS?.workspaceId && ideaId && content) {
+      try {
+        //프로젝트 기능 수정
+        await putideaFunction(selectedWS?.workspaceId, ideaId, id, content);
+      } catch {
+        setError("요청을 처리할 수 없습니다");
+      } finally {
+        stopEditing("mainFunction", id.toString());
+      }
+    }
   };
 
   const updateStack = (id: number, value: string) => {
@@ -186,6 +231,39 @@ export default function ProhectForm() {
       s.id === id ? { ...s, content: value } : s
     );
     setStacks(updated);
+  };
+
+  //프로젝트 기술 수정
+  const updateTechApi = async (id: number) => {
+    const content = stacks.find((f) => f.id === id)?.content;
+    if (selectedWS?.workspaceId && ideaId && content) {
+      try {
+        //프로젝트 기술 수정
+        await putideaTech(selectedWS?.workspaceId, ideaId, id, content);
+      } catch {
+        setError("요청을 처리할 수 없습니다");
+      } finally {
+        stopEditing("techStack", id.toString());
+      }
+    }
+  };
+
+  //프로젝트 기술 수정
+  const updateDescriptionApi = async () => {
+    if (selectedWS?.workspaceId && ideaId) {
+      try {
+        //프로젝트 기능 수정
+        await putideaDescription(
+          selectedWS?.workspaceId,
+          ideaId,
+          projectDescription
+        );
+      } catch {
+        setError("요청을 처리할 수 없습니다");
+      } finally {
+        stopEditing("projectDescription", null);
+      }
+    }
   };
 
   const isFormIncomplete =
@@ -196,46 +274,27 @@ export default function ProhectForm() {
     features.some((f) => !f.content.trim());
 
   const handleSubmit = async () => {
+    stopPolling();
     if (!selectedWS || typeof ideaId != "number") return;
-    try {
-      const ideaData: IdeaData = {
-        ideaInputId: ideaId,
-        projectName,
-        projectTarget,
-        mainFunction: features.map((f) => ({
-          mainFunctionId: f.id,
-          content: f.content,
-        })),
-        techStack: stacks.map((s) => ({
-          techStackId: s.id,
-          content: s.content,
-        })),
-        projectDescription,
+    setIdeaDone(true);
+
+    if (selectedWS.progressStep === "0") {
+      const response = await progressworkspace(selectedWS.workspaceId, "1");
+      console.log("next step : ", response.data);
+
+      const updatedWorkspace: workspace = {
+        ...selectedWS, // 기존 값 유지
+        progressStep: "1",
       };
 
-      await putidea(selectedWS.workspaceId, ideaData);
-      setIdeaDone(true);
-
-      if (selectedWS.progressStep === "0") {
-        const response = await progressworkspace(selectedWS.workspaceId, "1");
-        console.log("next step : ", response.data);
-
-        const updatedWorkspace: workspace = {
-          ...selectedWS, // 기존 값 유지
-          progressStep: "1",
-        };
-
-        dispatch(setSelectedWS(updatedWorkspace));
-        navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("1")}`);
-      }
-    } catch (err) {
-      console.log("아이디어 수정 실패 : ", err);
-      setIsFailed(true);
+      dispatch(setSelectedWS(updatedWorkspace));
+      navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("1")}`);
     }
   };
 
   const handlemodify = () => {
     setIdeaDone(false);
+    startPolling();
   };
 
   const renderEditor = (user: LockedUser | null) => {
@@ -276,7 +335,12 @@ export default function ProhectForm() {
             onFocus={() => {
               startEditing("projectName", null);
             }} // 편집 시작 호출
-            onBlur={() => stopEditing("projectName", null)}
+            onBlur={() => updateProjectName()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.currentTarget.blur(); // blur 이벤트를 강제로 발생시켜 onBlur 실행
+              }
+            }}
             placeholder="ex. 프로젝트 워크 플로우 관리 웹서비스"
           />
         </div>
@@ -299,7 +363,12 @@ export default function ProhectForm() {
             onFocus={() => {
               startEditing("projectTarget", null);
             }}
-            onBlur={() => stopEditing("projectName", null)}
+            onBlur={() => updateProjectTarget()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.currentTarget.blur();
+              }
+            }}
             placeholder="ex. 프로젝트 경험이 적은 1-3년차 초보 개발자"
           />
         </div>
@@ -328,9 +397,12 @@ export default function ProhectForm() {
                   onFocus={() =>
                     startEditing("mainFunction", feature.id.toString())
                   }
-                  onBlur={() =>
-                    stopEditing("mainFunction", feature.id.toString())
-                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.currentTarget.blur();
+                    }
+                  }}
+                  onBlur={() => updateFeatureApi(feature.id)}
                 />
                 {!ideaDone && CanEdit && (
                   <svg
@@ -376,7 +448,12 @@ export default function ProhectForm() {
                 value={stack.content}
                 onChange={(e) => updateStack(stack.id, e.target.value)}
                 onFocus={() => startEditing("techStack", stack.id.toString())}
-                onBlur={() => stopEditing("techStack", stack.id.toString())}
+                onBlur={() => updateTechApi(stack.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
               />
               {!ideaDone && CanEdit && (
                 <svg
@@ -424,7 +501,7 @@ export default function ProhectForm() {
             onFocus={() => {
               startEditing("projectDescription", null);
             }}
-            onBlur={() => stopEditing("projectDescription", null)}
+            onBlur={() => updateDescriptionApi()}
             placeholder="ex. 사용자가 프로젝트에 대한 설명을 입력하면 요약 및 정리를 한다. 요약/정리 내용을 바탕으로 ERD와 API 명세서를 AI로 작성한다. ERD와 API 명세서 작성이 완료되면 프로젝트 관리를 위한 워크 스페이스를 생성한다. 워크 스페이스의 작업 단계는 AI 기반으로 초안을 생성해준다...."
           />
         </div>
@@ -436,7 +513,6 @@ export default function ProhectForm() {
               className="form-submit-button"
               onClick={() => {
                 handlemodify();
-                startPolling();
               }}
             >
               수정하기
@@ -447,7 +523,6 @@ export default function ProhectForm() {
               className="form-submit-button"
               onClick={() => {
                 handleSubmit();
-                stopPolling();
               }}
             >
               저장하기
@@ -475,11 +550,11 @@ export default function ProhectForm() {
           Close={() => setAlreadyEdit(false)}
         />
       )}
-      {isFailed && (
+      {error && (
         <BasicModal
-          modalTitle="요청을 처리할 수 없습니다"
-          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
-          Close={() => setIsFailed(false)}
+          modalTitle={error}
+          modalDescription="일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          Close={() => setError("")}
         />
       )}
     </div>
