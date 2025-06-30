@@ -1,7 +1,7 @@
 import { AnimatePresence } from "framer-motion";
 import WsSidebar from "../../../../components/sidebar/WsSidebar";
 import "./ActionPostPage.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PostHeader } from "../../../../components/header/PostHeader";
 import { formatDistanceToNow, parseISO } from "date-fns";
@@ -20,12 +20,15 @@ import { ErrorPage } from "../../../../error/ErrorPage";
 import { getworkspace } from "../../../../services/workspaceApi";
 import { setSelectedWS } from "../../../../store/workspaceSlice";
 import { useDispatch } from "react-redux";
+import { getUserRole } from "../../../../services/userApi";
+import type { Role } from "../../../../types/workspace";
 
 interface Comment {
   id: number;
   content: string;
   username: string;
   createdAt: string;
+  author: boolean;
 }
 
 interface FileInfo {
@@ -77,6 +80,11 @@ export default function ActionPostPage() {
     acpostId: string;
   }>();
 
+  const [role, setRole] = useState<Role | null>(null);
+  const CanEdit = useMemo(() => {
+    return role === "OWNER" || role === "MEMBER";
+  }, [role]);
+
   const openLightbox = (src: string) => setLightboxSrc(src);
   const closeLightbox = () => setLightboxSrc(null);
   const dispatch = useDispatch();
@@ -127,6 +135,7 @@ export default function ActionPostPage() {
           content: c.content,
           username: c.authorName,
           createdAt: c.updatedAt,
+          author: c.author,
         }));
         setComments(formattedComments);
       } catch (err: any) {
@@ -148,7 +157,23 @@ export default function ActionPostPage() {
   }, [wsid, acId, acpostId]);
 
   useEffect(() => {
+    const getrole = async () => {
+      try {
+        const response = await getUserRole(Number(wsid));
+        const roleFromApi = response.data?.role;
+        if (
+          roleFromApi === "OWNER" ||
+          roleFromApi === "MEMBER" ||
+          roleFromApi === "GUEST"
+        ) {
+          setRole(roleFromApi);
+        }
+      } catch (error) {
+        console.log("getrole 실패");
+      }
+    };
     startPolling();
+    getrole();
     return () => {
       stopPolling();
     };
@@ -287,6 +312,7 @@ export default function ActionPostPage() {
         content: createdCommentData.content,
         username: createdCommentData.username,
         createdAt: createdCommentData.createdAt,
+        author: true,
       };
 
       //댓글 상태 업데이트
@@ -332,6 +358,7 @@ export default function ActionPostPage() {
             content: updatedCommentData.content,
             username: updatedCommentData.username,
             createdAt: updatedCommentData.createdAt,
+            author: true,
           };
         }
         return comment;
@@ -551,14 +578,16 @@ export default function ActionPostPage() {
           )}
         </div>
 
-        <div className="actionpost-button-container">
-          <button
-            className={isEditing ? "save-button" : "modify-button"}
-            onClick={handleToggleEdit}
-          >
-            {isEditing ? "저장하기" : "수정하기"}
-          </button>
-        </div>
+        {CanEdit && (
+          <div className="actionpost-button-container">
+            <button
+              className={isEditing ? "save-button" : "modify-button"}
+              onClick={handleToggleEdit}
+            >
+              {isEditing ? "저장하기" : "수정하기"}
+            </button>
+          </div>
+        )}
         <hr className="divider" />
 
         <div className="comment-section-container">
@@ -566,6 +595,7 @@ export default function ActionPostPage() {
           <div className="comment-wrapper">
             <textarea
               className="comment-input"
+              disabled={!CanEdit}
               value={currentComment}
               onChange={(e) => setCurrentComment(e.target.value)}
             />
@@ -609,31 +639,28 @@ export default function ActionPostPage() {
                         <span className="comment-createdAt">
                           {formatRelativeTime(comment.createdAt)}
                         </span>
-                        <button
-                          className="comment-edit-button"
-                          onClick={() => handleStartEditing(comment)}
-                        >
-                          수정
-                        </button>
+                        {comment.author && (
+                          <button
+                            className="comment-edit-button"
+                            onClick={() => handleStartEditing(comment)}
+                          >
+                            수정
+                          </button>
+                        )}
                       </div>
-
-                      <svg
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleDeleteComment(comment.id)}
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        fill="#212121"
-                      >
-                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                      </svg>
-                      {/* <img
-                        src={codelIcon}
-                        className="comment-delete-icon"
-                        onClick={() => handleDeleteComment(comment.id)}
-                        alt="삭제"
-                      /> */}
+                      {comment.author && (
+                        <svg
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleDeleteComment(comment.id)}
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="24px"
+                          viewBox="0 -960 960 960"
+                          width="24px"
+                          fill="#212121"
+                        >
+                          <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                        </svg>
+                      )}
                     </div>
 
                     <p className="comment-text">{comment.content}</p>

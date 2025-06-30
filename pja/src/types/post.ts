@@ -2,7 +2,9 @@ export interface CommentData {
   commentId: number;
   content: string;
   authorName: string;
+  authorId: number;
   updatedAt: string;
+  author: boolean;
 }
 
 export interface FileData {
