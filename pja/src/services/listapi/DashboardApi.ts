@@ -41,7 +41,6 @@ export const getMyAction = async (
     const response = await api.get(
       `/workspaces/${workspaceId}/project/my-actions`
     );
-    console.log("내 액션리스트 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getMyAction] 내 액션리스트 가져오기 실패:", error);
@@ -65,7 +64,7 @@ export const getTaskImbalance = async (
 ): Promise<ApiResponse<taskimbalance>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}/task-imbalance`);
-    console.log("불균형 그래프 :", response.data);
+
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getTaskImbalance] 불균형 그래프 가져오기 실패:", error);

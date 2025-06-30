@@ -64,7 +64,6 @@ export function TaskProcessTime() {
           return;
         }
         const processT = response.data;
-        console.log("processT :", processT);
         if (processT.length > 0) setProcessTime(processT);
       } catch {
         console.log("작업 시간 그래프 조회 실패");
