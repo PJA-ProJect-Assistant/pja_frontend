@@ -3,7 +3,8 @@
   flex-direction: column;
   position: relative;
   justify-content: space-between;
-  width: 250px;
+  width: 200px;
+  max-width: 200px;
   min-width: 200px;
   height: 100%;
   min-height: 700px;
