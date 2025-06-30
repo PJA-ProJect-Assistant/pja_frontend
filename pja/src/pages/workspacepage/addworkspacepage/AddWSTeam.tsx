@@ -37,6 +37,8 @@ export default function AddWSTeam() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
   const showModal = (title: string, description: string) => {
     setModalTitle(title);
     setModalDescription(description);
@@ -59,25 +61,17 @@ export default function AddWSTeam() {
   };
 
   const handleInvite = async () => {
-    if (!selectedWS || !selectedWS.workspaceId || emails.length === 0) {
-      showModal(
-        "",
-        "워크스페이스를 선택하고, 초대할 이메일을 1개 이상 입력해주세요."
-      );
-
-      console.error(
-        "초대 요청 실패: 워크스페이스 ID가 없거나 초대할 이메일이 없습니다.",
-        {
-          selectedWS,
-          emails,
-        }
-      );
+    if (!selectedWS || !selectedWS.workspaceId) {
+      setError("404");
+      return;
+    }
+    if (emails.length === 0) {
+      showModal("멤버 초대 실패", "초대할 이메일을 1개 이상 입력해주세요.");
       return;
     }
 
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
-      alert("로그인이 필요합니다.");
       navigate("/login");
       return;
     }
@@ -102,42 +96,27 @@ export default function AddWSTeam() {
       );
 
       if (response.status === 200 && response.data.status === "success") {
-        showModal("초대 성공", response.data.message);
+        showModal(
+          "멤버 초대 완료",
+          "입력하신 이메일로 초대장을 성공적으로 전송했습니다."
+        );
         // 성공 후 페이지 이동 시에도 안전하게 selectedWS.workspaceId를 사용합니다.
         setTimeout(() => {
           navigate(`/ws/${selectedWS.workspaceId}/${stepId}`);
         }, 2000);
-      } else {
-        alert(
-          response.data.message ||
-            "초대에 성공했으나 예기치 않은 응답을 받았습니다."
-        );
       }
     } catch (error: any) {
-      console.error("🔴 [inputtech] 팀원 초대 API 호출 실패:", error);
-
       if (axios.isAxiosError(error) && error.response) {
         // 서버에서 내려준 응답이 있을 때
         console.error("응답 상태코드:", error.response.status);
         console.error("서버 응답 데이터:", error.response.data);
         console.log("✅ 백엔드 메시지:", error.response.data.message);
-        const errorData = error.response.data as InviteResponse;
-        const errorMessage =
-          errorData.message || "알 수 없는 서버 오류가 발생했습니다.";
-        alert(errorMessage);
 
         if (error.response.status === 401) {
           navigate("/login");
         }
-      } else if (axios.isAxiosError(error) && error.request) {
-        // 요청은 보냈지만 응답이 없을 때
-        console.error("요청은 보냈지만 응답 없음:", error.request);
-        alert("서버 응답이 없습니다. 네트워크 상태를 확인해주세요.");
       } else {
-        // axios 외 다른 에러
-        console.error("알 수 없는 에러 발생:", error.message);
-        console.log("✅ 백엔드 메시지:", error.response.data.message);
-        showModal("", "알 수 없는 오류가 발생했습니다.");
+        setError("멤버 초대에 실패했습니다");
       }
     }
   };
@@ -228,6 +207,15 @@ export default function AddWSTeam() {
           modalDescription={modalDescription}
           Close={(open) => setModalOpen(open)}
         />
+      )}
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
       )}
     </>
   );
