@@ -144,7 +144,7 @@ const MemberTabComp = ({
   };
 
   return (
-    <>
+    <div className="memberlist-container">
       {isInviteModalOpen && <InviteModal onClose={onCloseInviteModal} />}
       {members.map((member) => (
         <MemberListItem
@@ -155,7 +155,7 @@ const MemberTabComp = ({
           onDelete={handleDelete}
         />
       ))}
-    </>
+    </div>
   );
 };
 
