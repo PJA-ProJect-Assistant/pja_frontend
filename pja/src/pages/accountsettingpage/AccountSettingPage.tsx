@@ -19,10 +19,15 @@ import { LeaveHeader } from "../../components/header/LeaveHeader";
 const AccountSettingPage: React.FC = () => {
   const [initialName, setInitialName] = useState<string>("");
   const [name, setName] = useState<string>("");
+  const [isNameFocused, setIsNameFocused] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
 
   //프로필 변경
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -82,7 +87,7 @@ const AccountSettingPage: React.FC = () => {
       }
     };
     loadUserInfo();
-  }, []); // 빈 배열을 전달하여 컴포넌트가 처음 렌더링될 때 한 번만 실행되도록 합니다.
+  }, []);
 
   // 로딩 중일 때 보여줄 UI
   if (isLoading) {
@@ -164,7 +169,7 @@ const AccountSettingPage: React.FC = () => {
     try {
       await changeName({ newName: name });
       showModal("이름 변경", "이름이 성공적으로 변경되었습니다.");
-      // 성공 시, 초기 이름 상태도 업데이트하여 중복 요청을 방지합니다.
+      // 성공 시, 초기 이름 상태도 업데이트하여 중복 요청을 방지
       setInitialName(name);
     } catch (err: any) {
       showModal("이름 변경 실패", err.response?.data?.message || err.message);
@@ -214,6 +219,10 @@ const AccountSettingPage: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
+  const toggleNewPasswordVisibility = () => setShowNewPassword((prev) => !prev);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword((prev) => !prev);
+
   //비밀번호 변경 버튼
   const handlePasswordChangeSubmit = async () => {
     // 1. 프론트엔드 유효성 검사
@@ -261,13 +270,6 @@ const AccountSettingPage: React.FC = () => {
         <div className="profile-title">프로필 변경</div>
 
         <div className="profile-image-container">
-          {/* <div
-            className="profile-image"
-            style={{
-              backgroundImage: profileImage ? `url(${profileImage})` : "none",
-              backgroundColor: profileImage ? "transparent" : "#f0f0f0",
-            }}
-          ></div> */}
           {profileImage ? (
             <img
               src={profileImage}
@@ -309,8 +311,10 @@ const AccountSettingPage: React.FC = () => {
                 className="profile-id-input"
                 value={name}
                 onChange={handleNameChange}
+                onFocus={() => setIsNameFocused(true)}
+                onBlur={() => setIsNameFocused(false)}
               />
-              {name && (
+              {name && isNameFocused && (
                 <button
                   type="button"
                   onClick={handleClearName}
@@ -363,43 +367,45 @@ const AccountSettingPage: React.FC = () => {
                   onChange={handlePasswordChange}
                 />
                 {/* 비밀번호 보이기/숨기기 버튼 */}
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="visibility-toggle-icon"
-                  aria-label={
-                    showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
-                  }
-                >
-                  {showPassword ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                      <line x1="1" y1="1" x2="23" y2="23"></line>
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  )}
-                </button>
+                {password && (
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="visibility-toggle-icon"
+                    aria-label={
+                      showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
+                    }
+                  >
+                    {showPassword ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    )}
+                  </button>
+                )}
                 {password && (
                   <button
                     type="button"
@@ -435,49 +441,52 @@ const AccountSettingPage: React.FC = () => {
                   className="profile-pw-icon-inside"
                 />
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showNewPassword ? "text" : "password"}
                   placeholder="새 비밀번호"
                   className="profile-new-pw-input"
                   value={newPassword}
                   onChange={handleNewPasswordChange}
                 />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="visibility-toggle-icon"
-                  aria-label={
-                    showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
-                  }
-                >
-                  {showPassword ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                      <line x1="1" y1="1" x2="23" y2="23"></line>
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  )}
-                </button>
+
+                {newPassword && (
+                  <button
+                    type="button"
+                    onClick={toggleNewPasswordVisibility}
+                    className="visibility-toggle-icon"
+                    aria-label={
+                      showNewPassword ? "비밀번호 숨기기" : "비밀번호 보기"
+                    }
+                  >
+                    {showNewPassword ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    )}
+                  </button>
+                )}
                 {newPassword && (
                   <button
                     type="button"
@@ -519,49 +528,51 @@ const AccountSettingPage: React.FC = () => {
                   className="profile-pw-icon-inside"
                 />
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder="비밀번호 확인"
                   className="profile-new-pwcf-input"
                   value={confirmNewPassword}
                   onChange={handleConfirmNewPasswordChange}
                 />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="visibility-toggle-icon"
-                  aria-label={
-                    showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
-                  }
-                >
-                  {showPassword ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                      <line x1="1" y1="1" x2="23" y2="23"></line>
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  )}
-                </button>
+                {confirmNewPassword && (
+                  <button
+                    type="button"
+                    onClick={toggleConfirmPasswordVisibility}
+                    className="visibility-toggle-icon"
+                    aria-label={
+                      showConfirmPassword ? "비밀번호 숨기기" : "비밀번호 보기"
+                    }
+                  >
+                    {showConfirmPassword ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    )}
+                  </button>
+                )}
                 {confirmNewPassword && (
                   <button
                     type="button"
