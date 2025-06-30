@@ -43,16 +43,13 @@ export default function ERDPage() {
     try {
       if (selectedWS?.workspaceId) {
         const getid = await getErdId(selectedWS.workspaceId);
-        console.log("erdId 성공", getid.data);
         const ERDID = getid.data?.erdId;
-        console.log(ERDID);
 
         if (ERDID) {
           //redux에 저장
           dispatch(setErdID(ERDID));
           try {
             const getallerd = await getAllErd(selectedWS?.workspaceId, ERDID);
-            console.log("getallerd 결과", getallerd);
 
             const relations = getallerd.data?.relations;
             const tables = getallerd.data?.tables;
@@ -105,7 +102,6 @@ export default function ERDPage() {
   const handleErdComplete = async () => {
     //API 호출이 이미 진행 중이면 함수를 즉시 종료
     if (isGenerating) {
-      console.log("이미 API 명세서 생성 요청이 진행 중입니다.");
       return;
     }
     if (selectedWS?.progressStep === "3") {
@@ -152,8 +148,9 @@ export default function ERDPage() {
                   </div>
                   {!erdDone && (
                     <div
-                      className={`erd-complete-btn ${isGenerating ? "disabled" : ""
-                        }`}
+                      className={`erd-complete-btn ${
+                        isGenerating ? "disabled" : ""
+                      }`}
                       onClick={handleErdComplete}
                     >
                       저장하기

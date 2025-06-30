@@ -118,7 +118,6 @@ export default function ProjectSummaryPage() {
             setIsLoading(true);
             const response = await postErd(selectedWS?.workspaceId);
             const erdId = response.data?.erdId;
-            console.log("erd 생성 성공 erdId : ", erdId);
 
             if (erdId) {
               //ERDAI 생성 api 호출
