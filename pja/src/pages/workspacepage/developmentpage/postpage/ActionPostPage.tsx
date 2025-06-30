@@ -17,6 +17,9 @@ import {
   deleteComment,
 } from "../../../../services/postApi";
 import { ErrorPage } from "../../../../error/ErrorPage";
+import { getworkspace } from "../../../../services/workspaceApi";
+import { setSelectedWS } from "../../../../store/workspaceSlice";
+import { useDispatch } from "react-redux";
 
 interface Comment {
   id: number;
@@ -54,7 +57,6 @@ export default function ActionPostPage() {
   //UI/ 편집 관련 상태
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isFailed, setIsFailed] = useState<boolean>(false);
 
   // 모달 상태
   const [modalOpen, setModalOpen] = useState(false);
@@ -77,6 +79,7 @@ export default function ActionPostPage() {
 
   const openLightbox = (src: string) => setLightboxSrc(src);
   const closeLightbox = () => setLightboxSrc(null);
+  const dispatch = useDispatch();
 
   const {
     getUserEditingField,
@@ -96,12 +99,21 @@ export default function ActionPostPage() {
       setError("404");
       return;
     }
+    const getws = async () => {
+      try {
+        const response = await getworkspace(Number(wsid));
+        console.log("getworkspace 결과 : ", response);
+        //redux저장
+        if (response.data) {
+          dispatch(setSelectedWS(response.data));
+        }
+      } catch (err: any) {
+        console.log("getworkspace 실패");
+      }
+    };
 
     const fetchAndSetData = async () => {
       try {
-        setIsLoading(true); // 로딩 시작
-        setError(null);
-
         const postData = await getPostDetails(wsid, acId, acpostId);
 
         // 받아온 데이터로 상태 업데이트
@@ -119,14 +131,20 @@ export default function ActionPostPage() {
         setComments(formattedComments);
       } catch (err: any) {
         console.error(err);
-        setError("포스트 정보를 불러오는 데 실패했습니다");
-        setIsFailed(true);
+      }
+    };
+
+    const fetchData = async () => {
+      setIsLoading(true); // 로딩 시작
+      try {
+        await Promise.all([getws(), fetchAndSetData()]);
+      } catch {
+        setError("포스트를 불러오는 데 실패했습니다");
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchAndSetData();
+    fetchData();
   }, [wsid, acId, acpostId]);
 
   useEffect(() => {
@@ -213,7 +231,7 @@ export default function ActionPostPage() {
 
       // 저장 로직 실행
       if (!wsid || !acId || !acpostId) {
-        alert("필수 정보가 없어 저장할 수 없습니다.");
+        setError("404");
         return;
       }
 
@@ -233,8 +251,7 @@ export default function ActionPostPage() {
 
         showModal("저장 완료", "게시글이 성공적으로 수정되었습니다.");
       } catch (err: any) {
-        console.error("게시글 수정 실패:", err);
-        setIsFailed(true);
+        setError("게시글 수정이 실패했습니다");
       } finally {
         setIsEditing(false);
       }
@@ -248,7 +265,8 @@ export default function ActionPostPage() {
     }
 
     if (!wsid || !acId || !acpostId) {
-      return showModal("", "댓글을 작성하기 위한 정보가 부족합니다.");
+      setError("404");
+      return;
     }
 
     // API 호출 전에 현재 댓글 내용 저장하고 입력창 비우기
@@ -274,8 +292,7 @@ export default function ActionPostPage() {
       //댓글 상태 업데이트
       setComments((prevComments) => [...prevComments, newCommentFromServer]);
     } catch (err: any) {
-      console.error("댓글 생성 실패:", err);
-      setIsFailed(true);
+      setError("댓글 생성이 실패했습니다");
       // 실패 시, 입력창에 다시 내용 복원
       setCurrentComment(commentToPost);
     }
@@ -288,11 +305,12 @@ export default function ActionPostPage() {
 
   const handleSaveComment = async (commentId: number) => {
     if (editingCommentText.trim() === "") {
-      return showModal("", "댓글을 입력해주세요.");
+      return showModal("댓글을 저장할 수 없습니다", "댓글을 입력해주세요.");
     }
 
     // API 호출에 필요한 ID들이 있는지 확인
     if (!wsid || !acId) {
+      setError("404");
       return;
     }
 
@@ -324,14 +342,14 @@ export default function ActionPostPage() {
       setEditingCommentId(null);
       setEditingCommentText("");
     } catch (err: any) {
-      console.error("댓글 수정 실패:", err);
-      setIsFailed(true);
+      setError("댓글 수정에 실패했습니다");
     }
   };
 
   const handleDeleteComment = async (commentIdToDelete: number) => {
     // API 호출에 필요한 ID들이 있는지 확인
     if (!wsid || !acId) {
+      setError("404");
       return;
     }
 
@@ -341,11 +359,8 @@ export default function ActionPostPage() {
       setComments((prevComments) =>
         prevComments.filter((comment) => comment.id !== commentIdToDelete)
       );
-
-      showModal("", "댓글이 삭제되었습니다.");
     } catch (err: any) {
-      console.error("댓글 삭제 실패:", err);
-      setIsFailed(true);
+      setError("댓글을 삭제에 실패했습니다");
     }
   };
 
@@ -648,13 +663,6 @@ export default function ActionPostPage() {
           modalTitle="수정이 불가능합니다"
           modalDescription="다른 사용자가 수정 중입니다"
           Close={() => setAlreadyEdit(false)}
-        />
-      )}
-      {isFailed && (
-        <BasicModal
-          modalTitle="요청을 처리할 수 없습니다"
-          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
-          Close={() => setIsFailed(false)}
         />
       )}
       {error && (
