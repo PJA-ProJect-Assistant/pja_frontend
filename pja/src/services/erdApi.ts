@@ -67,7 +67,7 @@ export const getAllErd = async (
     const response = await api.get(
       `/workspaces/${workspaceId}/erd/${erdId}/flow`
     );
-    console.log("erd 전체 조회 :", response);
+
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getAllErd] Erd 조회 실패:", error);
@@ -91,7 +91,6 @@ export const getErdId = async (
 ): Promise<ApiResponse<{ erdId: number }>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}/erd`);
-    console.log("erd id 조회 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getErdId] Erd id 조회 실패:", error);

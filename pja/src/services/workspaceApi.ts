@@ -8,7 +8,6 @@ import type { setworkspace } from "../types/workspace";
 export const getmyworkspaces = async (): Promise<ApiResponse<workspace[]>> => {
   try {
     const response = await api.get("/workspaces");
-    console.log("myworkspace", response.data);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getmyworkspaces] 워크스페이스 정보 요청 실패:", error);
@@ -32,7 +31,6 @@ export const getworkspace = async (
 ): Promise<ApiResponse<workspace>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}`);
-    console.log("Select workspace", response.data);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getworkspace] 워크스페이스 단일 정보 요청 실패:", error);

@@ -22,7 +22,6 @@ function isTokenExpired(token: string): boolean {
   try {
     const base64Payload = token.split(".")[1];
     const jsonPayload = base64UrlDecode(base64Payload);
-    console.log("jsonPayload : ", jsonPayload);
     const payload = JSON.parse(jsonPayload);
     const exp = payload.exp;
     if (!exp) return true;
@@ -59,25 +58,20 @@ export function useAuthInit() {
   const [authInitialized, setAuthInitialized] = useState(false);
 
   useEffect(() => {
-    console.log("useEffect 호출됨");
     const initializeAuth = async () => {
       try {
         const token = localStorage.getItem("accessToken");
 
         if (!token || isTokenExpired(token)) {
-          console.log("토큰 갱신 시작");
           const response = await withTimeout(refreshAccessToken(), TIMEOUT_MS); //새 토큰 요청
           const accessToken = response.data?.accessToken;
-          console.log("data :", accessToken);
           if (!accessToken) {
             console.warn("accessToken이 없음 - 토큰 갱신 실패 처리");
             throw new Error("토큰 갱신 실패 - accessToken 없음");
           } else {
-            console.log("새 accessToken:", accessToken);
             dispatch(setAccessToken(accessToken));
           }
         } else {
-          console.log("유효한 토큰");
           dispatch(setAccessToken(token));
         }
       } catch (err: any) {

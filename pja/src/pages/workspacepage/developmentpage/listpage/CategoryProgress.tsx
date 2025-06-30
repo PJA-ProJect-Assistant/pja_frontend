@@ -8,11 +8,6 @@ export default function CategoryProgress({
   completeCg,
   completePg,
 }: any) {
-  console.log("categoryList", categoryList);
-  console.log("totalCg", totalCg);
-  console.log("completeCg", completeCg);
-  console.log("completePg", completePg);
-
   const data = [
     { name: "완료", value: completePg ?? 0 },
     { name: "미완료", value: 100 - (completePg ?? 0) },

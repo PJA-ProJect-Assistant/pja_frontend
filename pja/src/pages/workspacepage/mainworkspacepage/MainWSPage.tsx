@@ -37,7 +37,6 @@ export default function MainWSPage() {
     const getws = async () => {
       try {
         const response = await getworkspace(Number(wsid));
-        console.log("getworkspace 결과 : ", response);
         //redux저장
         if (response.data) {
           dispatch(setSelectedWS(response.data));
@@ -50,7 +49,6 @@ export default function MainWSPage() {
     const getrole = async () => {
       try {
         const response = await getUserRole(Number(wsid));
-        console.log("사용자 역할 : ", response.data?.role);
         dispatch(setUserRole(response.data?.role ?? null));
         serUserRole(response.data?.role ?? null);
       } catch (error) {

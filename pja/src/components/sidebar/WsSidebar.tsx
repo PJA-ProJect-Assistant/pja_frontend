@@ -14,7 +14,11 @@ import { useSelector } from "react-redux";
 import NotifyTabComp from "../sidebarcompo/NotifyTabComp";
 import type { MemberRole } from "../../types/invite";
 import { BasicModal } from "../modal/BasicModal";
-import { readAllNotifications, deleteAllNotifications, getNotifications } from "../../services/notiApi";
+import {
+  readAllNotifications,
+  deleteAllNotifications,
+  getNotifications,
+} from "../../services/notiApi";
 import { notreadNotification, type Notification } from "../../services/notiApi";
 
 export default function WsSidebar({ onClose }: IsClose) {
@@ -73,13 +77,12 @@ export default function WsSidebar({ onClose }: IsClose) {
     const notreadnoti = async () => {
       try {
         const response = await notreadNotification(selectedWS.workspaceId);
-        console.log("알림 읽음 여부 : ", response.data);
 
-        setIsNoti(response.data ?? false)
+        setIsNoti(response.data ?? false);
       } catch (error) {
         console.error("알림 읽음 여부 조회 실패:", error);
       }
-    }
+    };
 
     fetchNotifications();
     notreadnoti();
@@ -199,16 +202,14 @@ export default function WsSidebar({ onClose }: IsClose) {
     }
     try {
       await readAllNotifications(selectedWS.workspaceId);
-      setNotifications((prev) =>
-        prev.map((n) => ({ ...n, read: true }))
-      );
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setIsNoti(false);
     } catch (error: any) {
       console.error(error);
       alert(
         error.response?.data?.message ||
-        error.message ||
-        "알림 읽음 처리 중 오류가 발생했습니다."
+          error.message ||
+          "알림 읽음 처리 중 오류가 발생했습니다."
       );
     }
   };
@@ -227,12 +228,11 @@ export default function WsSidebar({ onClose }: IsClose) {
       console.error(error);
       alert(
         error.response?.data?.message ||
-        error.message ||
-        "알림 삭제 중 오류가 발생했습니다."
+          error.message ||
+          "알림 삭제 중 오류가 발생했습니다."
       );
     }
-  }
-
+  };
 
   return (
     <>
@@ -248,8 +248,9 @@ export default function WsSidebar({ onClose }: IsClose) {
         <WSSidebarHeader onClose={onClose} />
         <div className="wssidebar-list-container">
           <div
-            className={`wssidebar-list ${activeTab === "member" ? "active" : ""
-              }`}
+            className={`wssidebar-list ${
+              activeTab === "member" ? "active" : ""
+            }`}
             onClick={() => {
               setActiveTab(activeTab === "member" ? null : "member");
             }}
@@ -266,8 +267,9 @@ export default function WsSidebar({ onClose }: IsClose) {
             <p>멤버</p>
           </div>
           <div
-            className={`wssidebar-list ${activeTab === "notify" ? "active" : ""
-              }`}
+            className={`wssidebar-list ${
+              activeTab === "notify" ? "active" : ""
+            }`}
             onClick={() => {
               setActiveTab(activeTab === "notify" ? null : "notify");
             }}

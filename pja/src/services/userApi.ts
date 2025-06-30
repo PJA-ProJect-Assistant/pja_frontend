@@ -11,7 +11,6 @@ import type {
 export const getuser = async (): Promise<ApiResponse<user>> => {
   try {
     const response = await api.get("/user/read-info");
-    console.log("사용자 정보 조회 응답 : ", response.data);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getuser] 유저 정보 요청 실패:", error);
@@ -43,7 +42,6 @@ export const updateProfileImage = async (
   try {
     // axios가 formData를 전송할 때, Content-Type을 'multipart/form-data'로 자동 설정합니다.
     const response = await api.post("/user/profile-image", formData);
-    console.log("프로필 이미지 업데이트 응답 : ", response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -72,7 +70,6 @@ export const changePassword = async (
   try {
     // 🔽 변경점: api.post를 api.patch로 변경했습니다.
     const response = await api.patch("/user/change-pw", data);
-    console.log("비밀번호 변경 응답 : ", response.data);
     return response.data;
   } catch (error: any) {
     console.error(" [changePassword - PATCH] 비밀번호 변경 요청 실패:", error);
@@ -96,7 +93,6 @@ export const changeName = async (
 ): Promise<ApiResponse<null>> => {
   try {
     const response = await api.patch("/user/change-name", data);
-    console.log("이름 변경 응답:", response.data);
     return response.data;
   } catch (error: any) {
     console.error("[changeName - PATCH] 이름 변경 요청 실패:", error);
@@ -121,7 +117,7 @@ export const getUserRole = async (
 ): Promise<ApiResponse<{ role: string | null }>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}/role`);
-    console.log("사용자 역할 반환 응답:", response.data);
+
     return response.data;
   } catch (error: any) {
     console.error("[getUserRole] 사용자 역할 반환 실패:", error);
