@@ -16,6 +16,7 @@ import {
   updateComment,
   deleteComment,
 } from "../../../../services/postApi";
+import { ErrorPage } from "../../../../error/ErrorPage";
 
 interface Comment {
   id: number;
@@ -92,7 +93,7 @@ export default function ActionPostPage() {
     // acpostId가 없으면 아무것도 하지 않습니다.
     if (!wsid || !acId || !acpostId) {
       setIsLoading(false);
-      setError("페이지 정보를 불러올 수 없습니다.");
+      setError("404");
       return;
     }
 
@@ -118,11 +119,7 @@ export default function ActionPostPage() {
         setComments(formattedComments);
       } catch (err: any) {
         console.error(err);
-        setError(
-          err.response?.data?.message ||
-          err.message ||
-          "알 수 없는 오류가 발생했습니다."
-        );
+        setError("포스트 정보를 불러오는 데 실패했습니다");
         setIsFailed(true);
       } finally {
         setIsLoading(false);
@@ -375,8 +372,8 @@ export default function ActionPostPage() {
     return <div>로딩 중...</div>;
   }
 
-  if (error) {
-    return <div>오류: {error}</div>;
+  if (error === "404") {
+    return <ErrorPage code={404} message="페이지를 찾을 수 없습니다" />;
   }
 
   const renderEditor = (user: LockedUser | null) => {
@@ -491,8 +488,9 @@ export default function ActionPostPage() {
                 style={{ display: "none" }}
               />
               <div
-                className={`image-upload-area ${dragActive ? "drag-active" : ""
-                  }`}
+                className={`image-upload-area ${
+                  dragActive ? "drag-active" : ""
+                }`}
                 onClick={handleUploadAreaClick}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -504,7 +502,16 @@ export default function ActionPostPage() {
                     <span className="upload-placeholder">
                       여기에 이미지를 드래그하거나 클릭하여 업로드하세요
                     </span>
-                    <svg style={{ paddingRight: "10px", cursor: "pointer" }} xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z" /></svg>
+                    <svg
+                      style={{ paddingRight: "10px", cursor: "pointer" }}
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="22px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#e3e3e3"
+                    >
+                      <path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z" />
+                    </svg>
                   </>
                 ) : (
                   <div className="uploaded-files">
@@ -547,10 +554,15 @@ export default function ActionPostPage() {
               value={currentComment}
               onChange={(e) => setCurrentComment(e.target.value)}
             />
-            <svg xmlns="http://www.w3.org/2000/svg"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
               onClick={handleAddComment}
               className="send-icon-inside"
-              height="21px" viewBox="0 -960 960 960" width="21px" fill="#212121">
+              height="21px"
+              viewBox="0 -960 960 960"
+              width="21px"
+              fill="#212121"
+            >
               <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
             </svg>
           </div>
@@ -590,8 +602,17 @@ export default function ActionPostPage() {
                         </button>
                       </div>
 
-
-                      <svg style={{ cursor: "pointer" }} onClick={() => handleDeleteComment(comment.id)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#212121"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+                      <svg
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleDeleteComment(comment.id)}
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24px"
+                        viewBox="0 -960 960 960"
+                        width="24px"
+                        fill="#212121"
+                      >
+                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                      </svg>
                       {/* <img
                         src={codelIcon}
                         className="comment-delete-icon"
@@ -635,6 +656,15 @@ export default function ActionPostPage() {
           modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
           Close={() => setIsFailed(false)}
         />
+      )}
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
       )}
     </div>
   );
