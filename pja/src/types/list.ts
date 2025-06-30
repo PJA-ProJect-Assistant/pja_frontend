@@ -109,8 +109,8 @@ export interface imbalancegraphData {
   taskCount: number;
 }
 export interface imbalanceassignees {
-  userId: number,
-  username: string,
+  userId: number;
+  username: string;
 }
 
 export interface processtime {

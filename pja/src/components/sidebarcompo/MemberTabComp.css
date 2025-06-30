@@ -3,11 +3,9 @@
   align-items: center;
   background-color: white;
   padding: 10px 16px;
-
   border-radius: 12px;
   width: 340px;
   height: 50px;
-  margin-left: 18px;
   margin-top: 30px;
   justify-content: space-between;
 }

@@ -4,6 +4,7 @@
   position: relative;
   justify-content: space-between;
   width: 250px;
+  min-width: 200px;
   height: 100%;
   min-height: 700px;
   box-sizing: border-box;
@@ -133,10 +134,19 @@
 
 .noti-circle {
   position: absolute;
-  background-color: #FE5000;
+  background-color: #fe5000;
   top: 0;
   left: 0;
   border-radius: 50%;
   width: 8px;
   height: 8px;
+}
+
+.member-list-scroll-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 94%;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
