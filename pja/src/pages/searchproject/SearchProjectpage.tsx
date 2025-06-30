@@ -70,15 +70,7 @@ export default function SearchProjectpage() {
     <div className="searchpj-container">
       <WSHeader title={`${wsName}의 유사 프로젝트`} />
       <div className="searchpj-content">
-        {isLoading ? (
-          <div className="searchpj-wave-text">
-            {"✨ 유사프로젝트를 찾고 있어요".split("").map((char, idx) => (
-              <span key={idx} style={{ animationDelay: `${idx * 0.05}s` }}>
-                {char}
-              </span>
-            ))}
-          </div>
-        ) : similarProject.length > 0 ? (
+        {similarProject.length > 0 ? (
           <>{renderCards(similarProject)}</>
         ) : (
           <div>유사 프로젝트가 없습니다</div>
