@@ -28,6 +28,7 @@ import { postAiList } from "../../../services/listapi/listApi";
 import { useEditLock } from "../../../hooks/useEditLock";
 import type { LockedUser } from "../../../types/edit";
 import { BasicModal } from "../../../components/modal/BasicModal";
+import { ErrorPage } from "../../../error/ErrorPage";
 
 // --- (타입 정의 및 변환 함수들은 기존과 동일) ---
 type ApiSpecification = {
@@ -262,7 +263,7 @@ const ApiPage = () => {
       // workspaceId가 없으면 API를 호출하지 않음
       if (!workspaceId) {
         setIsLoading(false);
-        setError("워크스페이스 정보를 찾을 수 없습니다");
+        setError("404");
         return;
       }
       try {
@@ -299,6 +300,10 @@ const ApiPage = () => {
         </div>
       </div>
     );
+  }
+
+  if (error === "404") {
+    return <ErrorPage code={404} message="페이지를 찾을 수 없습니다" />;
   }
 
   // + 버튼 클릭 시 호출되는 함수
