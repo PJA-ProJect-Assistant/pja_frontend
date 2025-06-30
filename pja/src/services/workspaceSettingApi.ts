@@ -9,7 +9,6 @@ export const getworkspace = async (
 ): Promise<ApiResponse<workspace>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}`);
-    console.log("Select workspace", response.data);
     return response.data;
   } catch (error: any) {
     console.error("워크스페이스 단일 정보 요청 실패:", error);

@@ -38,7 +38,7 @@ export const getProject = async (
 ): Promise<ApiResponse<getproject>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}/project-info`);
-    console.log("프로젝트 조회 :", response);
+
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getProject] 프로젝트 조회 실패:", error);
@@ -91,7 +91,6 @@ export const getSimilarProject = async (
 ): Promise<ApiResponse<similarproject[]>> => {
   try {
     const response = await api.get(`/workspaces/${workspaceId}/similar`);
-    console.log("유사프로젝트 조회 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getSimilarProject] 유사프로젝트 조회 실패:", error);

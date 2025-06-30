@@ -4,7 +4,11 @@ import NotifyItem from "./NotifyItem";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import { subscribeNotificationSSE } from "../../services/sseApi";
-import { getNotifications, readNotification, deleteNotification } from "../../services/notiApi";
+import {
+  getNotifications,
+  readNotification,
+  deleteNotification,
+} from "../../services/notiApi";
 import type { Notification } from "../../services/notiApi";
 
 interface NotifyTabCompProps {
@@ -13,12 +17,15 @@ interface NotifyTabCompProps {
   setIsNoti: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NotifyTabComp = ({ notifications, setNotifications, setIsNoti }: NotifyTabCompProps) => {
+const NotifyTabComp = ({
+  notifications,
+  setNotifications,
+  setIsNoti,
+}: NotifyTabCompProps) => {
   const selectedWS = useSelector(
     (state: RootState) => state.workspace.selectedWS
   );
   const workspaceId = selectedWS?.workspaceId;
-  console.log("workspaceId 는 ", workspaceId);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -44,12 +51,9 @@ const NotifyTabComp = ({ notifications, setNotifications, setIsNoti }: NotifyTab
 
     fetchData();
 
-    const eventSource = subscribeNotificationSSE(
-      workspaceId,
-      (newNoti) => {
-        setNotifications((prev) => [newNoti, ...prev]);
-      }
-    );
+    const eventSource = subscribeNotificationSSE(workspaceId, (newNoti) => {
+      setNotifications((prev) => [newNoti, ...prev]);
+    });
 
     return () => {
       eventSource.close();
@@ -83,7 +87,7 @@ const NotifyTabComp = ({ notifications, setNotifications, setIsNoti }: NotifyTab
     try {
       await deleteNotification(workspaceId, notiId);
       setNotifications((prev) => {
-        const updated = prev.filter((n) => n.notificationId !== notiId)
+        const updated = prev.filter((n) => n.notificationId !== notiId);
 
         // 모든 알림이 읽혔는지 확인
         const allRead = updated.every((n) => n.read);

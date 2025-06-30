@@ -142,7 +142,7 @@ export default function ProhectForm() {
         if (typeof selectedWS?.workspaceId === "number") {
           setWsId(selectedWS.workspaceId);
           const response = await getidea(selectedWS?.workspaceId);
-          console.log("아이디어 조회 :", response);
+
           if (response.data) {
             const data: IdeaData = response.data;
 

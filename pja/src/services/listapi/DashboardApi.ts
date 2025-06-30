@@ -13,11 +13,9 @@ export const getMyPg = async (
   workspaceId: number
 ): Promise<ApiResponse<myProgress>> => {
   try {
-    console.log("내 진행률 가져오기 api");
     const response = await api.get(
       `/workspaces/${workspaceId}/project/my-progress`
     );
-    console.log("내 진행률 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getMyPg] 내 진행률 가져오기 실패:", error);
@@ -40,11 +38,9 @@ export const getMyAction = async (
   workspaceId: number
 ): Promise<ApiResponse<myActionList[]>> => {
   try {
-    console.log("내 액션리스트 가져오기 api");
     const response = await api.get(
       `/workspaces/${workspaceId}/project/my-actions`
     );
-    console.log("내 액션리스트 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getMyAction] 내 액션리스트 가져오기 실패:", error);
@@ -67,9 +63,8 @@ export const getTaskImbalance = async (
   workspaceId: number
 ): Promise<ApiResponse<taskimbalance>> => {
   try {
-    console.log("불균형 그래프 가져오기 api");
     const response = await api.get(`/workspaces/${workspaceId}/task-imbalance`);
-    console.log("불균형 그래프 :", response.data);
+
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getTaskImbalance] 불균형 그래프 가져오기 실패:", error);
@@ -92,11 +87,9 @@ export const getTaskProcessTime = async (
   workspaceId: number
 ): Promise<ApiResponse<processtime[]>> => {
   try {
-    console.log("작업처리시간 그래프 가져오기 api");
     const response = await api.get(
       `/workspaces/${workspaceId}/avg-processing-time`
     );
-    console.log("작업처리시간 그래프 :", response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -122,11 +115,9 @@ export const getWsActivity = async (
   workspaceId: number
 ): Promise<ApiResponse<wsActivity[]>> => {
   try {
-    console.log("최근활동 가져오기 api");
     const response = await api.get(
       `/workspaces/${workspaceId}/workspace-activity`
     );
-    console.log("최근활동 가져오기 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getWsActivity] 최근활동 가져오기 실패:", error);

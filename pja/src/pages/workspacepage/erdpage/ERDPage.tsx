@@ -89,7 +89,6 @@ export default function ERDPage() {
   }, [nodes, fitView]);
 
   useEffect(() => {
-    console.log("🔍 전체 노드 데이터:");
     nodes.forEach((node, index) => {
       console.log(`Node ${index}:`, {
         id: node.id,

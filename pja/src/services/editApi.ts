@@ -9,9 +9,8 @@ export const getedit = async (
   page: string
 ): Promise<ApiResponse<LockedUser[]>> => {
   try {
-    console.log("편집 조회 api");
     const response = await api.get(`/editing/${workspaceId}/${page}`);
-    console.log("편집 조회 :", response);
+
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getedit] 편집 조회 실패:", error);
@@ -37,13 +36,12 @@ export const startedit = async (
   fieldId: string | null
 ): Promise<ApiResponse<LockedUser>> => {
   try {
-    console.log("편집 시작 api");
     const response = await api.post(`/editing/${workspaceId}/start`, {
       page,
       field,
       fieldId,
     });
-    console.log("편집 시작 :", response);
+
     return response.data;
   } catch (error: any) {
     console.error("🔴 [startedit] 편집 시작 실패:", error);

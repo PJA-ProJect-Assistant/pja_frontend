@@ -139,9 +139,8 @@ export const getidea = async (
   workspaceId: number
 ): Promise<ApiResponse<IdeaData>> => {
   try {
-    console.log("아이디어 조회 api");
     const response = await api.get(`/workspaces/${workspaceId}/idea-input`);
-    console.log("아이디어 조회 완료 :", response);
+
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getidea] 아이디어 조회 실패:", error);

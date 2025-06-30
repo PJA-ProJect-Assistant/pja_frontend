@@ -26,7 +26,6 @@ export function Myworkspace() {
 
   useEffect(() => {
     if (!Array.isArray(myWSData)) return;
-    console.log("mywsdata :", myWSData);
     const processWS = myWSData?.filter((ws) => Number(ws.progressStep) < 6);
     setProcessWorkspaces(processWS);
     const completeWS = myWSData?.filter((ws) => Number(ws.progressStep) === 6);

@@ -16,7 +16,6 @@ const userSlice = createSlice({
     setUserRole(state, action: PayloadAction<string | null>) {
       state.userRole = action.payload;
       if (action.payload) {
-        console.log("action.payload : ", action.payload);
       }
     },
     clearUserRole(state) {

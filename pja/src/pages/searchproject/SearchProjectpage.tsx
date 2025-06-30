@@ -21,7 +21,7 @@ export default function SearchProjectpage() {
     const getws = async () => {
       try {
         const response = await getworkspace(Number(wsid));
-        console.log("getworkspace 결과 : ", response);
+
         setWsName(response.data?.projectName ?? "");
       } catch (err) {
         console.log("getworkspace 실패 : ", err);
