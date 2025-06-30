@@ -1,8 +1,12 @@
 .notify-list-container {
-  height: 95%;
+  height: 92%;
   overflow-y: auto;
-  padding-bottom: 15px;
   box-sizing: border-box;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE, Edge */
+}
+.notify-list-container ::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 
 /* 2. 알림 벨 아이콘 스타일 */
