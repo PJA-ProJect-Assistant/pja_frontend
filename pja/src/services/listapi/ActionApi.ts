@@ -306,7 +306,6 @@ export const getactionlist = async (
   workspaceId: number
 ): Promise<ApiResponse<getaction[]>> => {
   try {
-    console.log("액션리스트 조회 api");
     const response = await api.get(`/workspaces/${workspaceId}/action`);
     return response.data;
   } catch (error: any) {

@@ -38,9 +38,7 @@ export const getrequirement = async (
   workspaceId: number
 ): Promise<ApiResponse<getrequire[]>> => {
   try {
-    console.log("요구사항 조회 api");
     const response = await api.get(`/workspaces/${workspaceId}/requirements`);
-    console.log("요구사항 조회 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [getrequirement] 요구사항 조회 실패:", error);
@@ -72,7 +70,6 @@ export const putrequirement = async (
         content,
       }
     );
-    console.log("요구사항 수정 :", response);
     return response.data;
   } catch (error: any) {
     console.error("🔴 [putrequirement] 요구사항 수정 실패:", error);
