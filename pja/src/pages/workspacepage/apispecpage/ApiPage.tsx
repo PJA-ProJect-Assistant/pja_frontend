@@ -262,7 +262,7 @@ const ApiPage = () => {
       // workspaceId가 없으면 API를 호출하지 않음
       if (!workspaceId) {
         setIsLoading(false);
-        setError("워크스페이스 정보를 찾을 수 없습니다.");
+        setError("워크스페이스 정보를 찾을 수 없습니다");
         return;
       }
       try {
@@ -278,7 +278,7 @@ const ApiPage = () => {
         setRows(frontendData);
       } catch (err) {
         setIsFailed(true);
-        setError("API 목록을 불러오는 중 오류가 발생했습니다.");
+        setError("API 목록을 불러오는 데 실패했습니다");
         // 실패 시 빈 배열로 설정하여 테이블이 비도록 함
         setRows([]);
       } finally {
