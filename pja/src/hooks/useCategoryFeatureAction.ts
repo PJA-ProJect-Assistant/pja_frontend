@@ -55,7 +55,6 @@ interface UseCategoryFeatureCategoryReturn {
   editingFeatureId: number | null;
   editingActionId: number | null;
   participantList: workspace_member[];
-  allToggleOpen: (isOpen: boolean) => void;
   toggleTestCheckCg: (categoryId: number) => void;
   toggleTestCheckFt: (categoryId: number, featureId: number) => void;
   toggleTestCheckAc: (
@@ -212,11 +211,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId ? updater(feature) : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId ? updater(feature) : feature
+            ),
+          }
         : category
     );
   };
@@ -231,11 +230,11 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.filter(
-            (feature) => feature.featureId !== featureId
-          ),
-        }
+            ...category,
+            features: category.features.filter(
+              (feature) => feature.featureId !== featureId
+            ),
+          }
         : category
     );
   };
@@ -251,18 +250,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.map((action) =>
-                  action.actionId === actionId ? updater(action) : action
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.map((action) =>
+                      action.actionId === actionId ? updater(action) : action
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -277,18 +276,18 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     return list.map((category) =>
       category.featureCategoryId === categoryId
         ? {
-          ...category,
-          features: category.features.map((feature) =>
-            feature.featureId === featureId
-              ? {
-                ...feature,
-                actions: feature.actions.filter(
-                  (action) => action.actionId !== actionId
-                ),
-              }
-              : feature
-          ),
-        }
+            ...category,
+            features: category.features.map((feature) =>
+              feature.featureId === featureId
+                ? {
+                    ...feature,
+                    actions: feature.actions.filter(
+                      (action) => action.actionId !== actionId
+                    ),
+                  }
+                : feature
+            ),
+          }
         : category
     );
   };
@@ -366,33 +365,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     setCategoryList((prev) => [...prev, newCategory]);
     console.log("카테고리 생성 완료 : ", categoryList);
   };
-
-  //전체토글 열고 닫기
-  const allToggleOpen = (isOpen: boolean) => {
-    console.log("🔥 allToggleOpen 호출됨! 호출 위치:");
-    console.trace();
-    const newCg: { [key: number]: boolean } = {};
-    const newFt: { [key: number]: boolean } = {};
-
-    categoryList.forEach((cg) => {
-      newCg[cg.featureCategoryId] = isOpen;
-      cg.features.forEach((ft) => {
-        newFt[ft.featureId] = isOpen;
-      });
-    });
-
-    setClickCg((prev) => {
-      const prevStr = JSON.stringify(prev);
-      const nextStr = JSON.stringify(newCg);
-      return prevStr === nextStr ? prev : newCg;
-    });
-
-    setClickFt((prev) => {
-      const prevStr = JSON.stringify(prev);
-      const nextStr = JSON.stringify(newFt);
-      return prevStr === nextStr ? prev : newFt;
-    });
-  }
 
   const updateCategoryName = async (isNew?: boolean) => {
     console.log("업데이트카테고리네임 돌입");
@@ -1143,7 +1115,6 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     completePg,
     aiList,
 
-    allToggleOpen,
     toggleTestCheckCg,
     toggleTestCheckFt,
     toggleTestCheckAc,
