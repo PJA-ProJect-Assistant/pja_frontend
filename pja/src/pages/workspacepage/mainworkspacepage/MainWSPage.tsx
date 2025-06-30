@@ -18,6 +18,7 @@ import { setUserRole } from "../../../store/userSlice";
 import SearchProjectpage from "../../searchproject/SearchProjectpage";
 import { WorkspaceSettingPage } from "../../workspacesettingpage/WorkspaceSettingPage";
 import LoadingSpinner from "../../loadingpage/LoadingSpinner";
+import { BasicModal } from "../../../components/modal/BasicModal";
 
 export default function MainWSPage() {
   const { wsid, stepId } = useParams<{
@@ -30,6 +31,7 @@ export default function MainWSPage() {
   const [showIcon, setShowIcon] = useState(false);
   const [userRole, serUserRole] = useState<string | null>(null);
   const [wsPublic, setWsPublic] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getws = async () => {
@@ -42,15 +44,18 @@ export default function MainWSPage() {
           setWsPublic(response.data.isPublic);
         }
       } catch (err: any) {
-        console.log("워크스페이스 정보 가져오기 실패");
-        throw new Error("워크스페이스 정보 가져오기 실패");
+        setError("데이터를 불러오는 데 실패했습니다.");
       }
     };
     const getrole = async () => {
-      const response = await getUserRole(Number(wsid));
-      console.log("사용자 역할 : ", response.data?.role);
-      dispatch(setUserRole(response.data?.role ?? null));
-      serUserRole(response.data?.role ?? null);
+      try {
+        const response = await getUserRole(Number(wsid));
+        console.log("사용자 역할 : ", response.data?.role);
+        dispatch(setUserRole(response.data?.role ?? null));
+        serUserRole(response.data?.role ?? null);
+      } catch (error) {
+        setError("데이터를 불러오는 데 실패했습니다.");
+      }
     };
     const fetchData = async () => {
       await Promise.all([getws(), getrole()]);
@@ -127,6 +132,13 @@ export default function MainWSPage() {
         </div>
       )}
       <div className="wscontent-container">{renderStepComponent()}</div>
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={"새로고침 후 다시 시도해 주세요"}
+          Close={() => setError("")}
+        ></BasicModal>
+      )}
     </div>
   );
 }
