@@ -22,6 +22,7 @@ export function Myworkspace() {
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const [forbiddenModal, setForbiddenModal] = useState<boolean>(false);
   const [wsMenuOpenId, setWsMenuOpenId] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!Array.isArray(myWSData)) return;
@@ -86,12 +87,13 @@ export function Myworkspace() {
         if (err.response?.status === 403) {
           // 권한 없음 모달 열기
           setForbiddenModal(true);
+        } else {
+          setError("워크스페이스 완료에 실패했습니다");
         }
       }
     } else if (step === "6") {
       try {
-        const response = await completeworkspace(id);
-        console.log("완료 취소 : ", response.data);
+        await completeworkspace(id);
 
         // complete에서 제거
         setCompleteWorkspaces((prev) =>
@@ -110,6 +112,8 @@ export function Myworkspace() {
         if (err.response?.status === 403) {
           // 권한 없음 모달 열기
           setForbiddenModal(true);
+        } else {
+          setError("워크스페이스 완료취소에 실패했습니다");
         }
       }
     } else {
@@ -135,7 +139,7 @@ export function Myworkspace() {
       if (err.response?.status === 403) {
         // 권한 없음 모달 열기
         setForbiddenModal(true);
-      } else console.error("삭제 실패:", err);
+      } else setError("워크스페이스 삭제에 실패했습니다");
     } finally {
       setDeleteModalOpen(false);
       setDeleteTargetId(null);
@@ -338,6 +342,15 @@ export function Myworkspace() {
           }}
           onConfirm={() => handleConfirmDelete()}
         />
+      )}
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
       )}
     </div>
   );

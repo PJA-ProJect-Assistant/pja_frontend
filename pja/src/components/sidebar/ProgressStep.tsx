@@ -18,7 +18,6 @@ export default function ProgressStep() {
       navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber(step)}`);
     } else setModalOpen(true);
   };
-  console.log({ selectedWS });
   const steps = [
     "아이디어 작성",
     "요구사항 명세서 작성",

@@ -16,6 +16,10 @@ import {
   updateComment,
   deleteComment,
 } from "../../../../services/postApi";
+import { ErrorPage } from "../../../../error/ErrorPage";
+import { getworkspace } from "../../../../services/workspaceApi";
+import { setSelectedWS } from "../../../../store/workspaceSlice";
+import { useDispatch } from "react-redux";
 
 interface Comment {
   id: number;
@@ -53,7 +57,6 @@ export default function ActionPostPage() {
   //UI/ 편집 관련 상태
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isFailed, setIsFailed] = useState<boolean>(false);
 
   // 모달 상태
   const [modalOpen, setModalOpen] = useState(false);
@@ -76,6 +79,7 @@ export default function ActionPostPage() {
 
   const openLightbox = (src: string) => setLightboxSrc(src);
   const closeLightbox = () => setLightboxSrc(null);
+  const dispatch = useDispatch();
 
   const {
     getUserEditingField,
@@ -92,15 +96,24 @@ export default function ActionPostPage() {
     // acpostId가 없으면 아무것도 하지 않습니다.
     if (!wsid || !acId || !acpostId) {
       setIsLoading(false);
-      setError("페이지 정보를 불러올 수 없습니다.");
+      setError("404");
       return;
     }
+    const getws = async () => {
+      try {
+        const response = await getworkspace(Number(wsid));
+        console.log("getworkspace 결과 : ", response);
+        //redux저장
+        if (response.data) {
+          dispatch(setSelectedWS(response.data));
+        }
+      } catch (err: any) {
+        console.log("getworkspace 실패");
+      }
+    };
 
     const fetchAndSetData = async () => {
       try {
-        setIsLoading(true); // 로딩 시작
-        setError(null);
-
         const postData = await getPostDetails(wsid, acId, acpostId);
 
         // 받아온 데이터로 상태 업데이트
@@ -118,18 +131,20 @@ export default function ActionPostPage() {
         setComments(formattedComments);
       } catch (err: any) {
         console.error(err);
-        setError(
-          err.response?.data?.message ||
-          err.message ||
-          "알 수 없는 오류가 발생했습니다."
-        );
-        setIsFailed(true);
+      }
+    };
+
+    const fetchData = async () => {
+      setIsLoading(true); // 로딩 시작
+      try {
+        await Promise.all([getws(), fetchAndSetData()]);
+      } catch {
+        setError("포스트를 불러오는 데 실패했습니다");
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchAndSetData();
+    fetchData();
   }, [wsid, acId, acpostId]);
 
   useEffect(() => {
@@ -216,7 +231,7 @@ export default function ActionPostPage() {
 
       // 저장 로직 실행
       if (!wsid || !acId || !acpostId) {
-        alert("필수 정보가 없어 저장할 수 없습니다.");
+        setError("404");
         return;
       }
 
@@ -236,8 +251,7 @@ export default function ActionPostPage() {
 
         showModal("저장 완료", "게시글이 성공적으로 수정되었습니다.");
       } catch (err: any) {
-        console.error("게시글 수정 실패:", err);
-        setIsFailed(true);
+        setError("게시글 수정이 실패했습니다");
       } finally {
         setIsEditing(false);
       }
@@ -251,7 +265,8 @@ export default function ActionPostPage() {
     }
 
     if (!wsid || !acId || !acpostId) {
-      return showModal("", "댓글을 작성하기 위한 정보가 부족합니다.");
+      setError("404");
+      return;
     }
 
     // API 호출 전에 현재 댓글 내용 저장하고 입력창 비우기
@@ -277,8 +292,7 @@ export default function ActionPostPage() {
       //댓글 상태 업데이트
       setComments((prevComments) => [...prevComments, newCommentFromServer]);
     } catch (err: any) {
-      console.error("댓글 생성 실패:", err);
-      setIsFailed(true);
+      setError("댓글 생성이 실패했습니다");
       // 실패 시, 입력창에 다시 내용 복원
       setCurrentComment(commentToPost);
     }
@@ -291,11 +305,12 @@ export default function ActionPostPage() {
 
   const handleSaveComment = async (commentId: number) => {
     if (editingCommentText.trim() === "") {
-      return showModal("", "댓글을 입력해주세요.");
+      return showModal("댓글을 저장할 수 없습니다", "댓글을 입력해주세요.");
     }
 
     // API 호출에 필요한 ID들이 있는지 확인
     if (!wsid || !acId) {
+      setError("404");
       return;
     }
 
@@ -327,14 +342,14 @@ export default function ActionPostPage() {
       setEditingCommentId(null);
       setEditingCommentText("");
     } catch (err: any) {
-      console.error("댓글 수정 실패:", err);
-      setIsFailed(true);
+      setError("댓글 수정에 실패했습니다");
     }
   };
 
   const handleDeleteComment = async (commentIdToDelete: number) => {
     // API 호출에 필요한 ID들이 있는지 확인
     if (!wsid || !acId) {
+      setError("404");
       return;
     }
 
@@ -344,11 +359,8 @@ export default function ActionPostPage() {
       setComments((prevComments) =>
         prevComments.filter((comment) => comment.id !== commentIdToDelete)
       );
-
-      showModal("", "댓글이 삭제되었습니다.");
     } catch (err: any) {
-      console.error("댓글 삭제 실패:", err);
-      setIsFailed(true);
+      setError("댓글을 삭제에 실패했습니다");
     }
   };
 
@@ -375,8 +387,8 @@ export default function ActionPostPage() {
     return <div>로딩 중...</div>;
   }
 
-  if (error) {
-    return <div>오류: {error}</div>;
+  if (error === "404") {
+    return <ErrorPage code={404} message="페이지를 찾을 수 없습니다" />;
   }
 
   const renderEditor = (user: LockedUser | null) => {
@@ -491,8 +503,9 @@ export default function ActionPostPage() {
                 style={{ display: "none" }}
               />
               <div
-                className={`image-upload-area ${dragActive ? "drag-active" : ""
-                  }`}
+                className={`image-upload-area ${
+                  dragActive ? "drag-active" : ""
+                }`}
                 onClick={handleUploadAreaClick}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -504,7 +517,16 @@ export default function ActionPostPage() {
                     <span className="upload-placeholder">
                       여기에 이미지를 드래그하거나 클릭하여 업로드하세요
                     </span>
-                    <svg style={{ paddingRight: "10px", cursor: "pointer" }} xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z" /></svg>
+                    <svg
+                      style={{ paddingRight: "10px", cursor: "pointer" }}
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="22px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#e3e3e3"
+                    >
+                      <path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z" />
+                    </svg>
                   </>
                 ) : (
                   <div className="uploaded-files">
@@ -547,10 +569,15 @@ export default function ActionPostPage() {
               value={currentComment}
               onChange={(e) => setCurrentComment(e.target.value)}
             />
-            <svg xmlns="http://www.w3.org/2000/svg"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
               onClick={handleAddComment}
               className="send-icon-inside"
-              height="21px" viewBox="0 -960 960 960" width="21px" fill="#212121">
+              height="21px"
+              viewBox="0 -960 960 960"
+              width="21px"
+              fill="#212121"
+            >
               <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
             </svg>
           </div>
@@ -590,8 +617,17 @@ export default function ActionPostPage() {
                         </button>
                       </div>
 
-
-                      <svg style={{ cursor: "pointer" }} onClick={() => handleDeleteComment(comment.id)} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#212121"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" /></svg>
+                      <svg
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleDeleteComment(comment.id)}
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24px"
+                        viewBox="0 -960 960 960"
+                        width="24px"
+                        fill="#212121"
+                      >
+                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                      </svg>
                       {/* <img
                         src={codelIcon}
                         className="comment-delete-icon"
@@ -629,12 +665,14 @@ export default function ActionPostPage() {
           Close={() => setAlreadyEdit(false)}
         />
       )}
-      {isFailed && (
+      {error && (
         <BasicModal
-          modalTitle="요청을 처리할 수 없습니다"
-          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
-          Close={() => setIsFailed(false)}
-        />
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
       )}
     </div>
   );

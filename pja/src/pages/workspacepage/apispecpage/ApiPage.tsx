@@ -28,6 +28,7 @@ import { postAiList } from "../../../services/listapi/listApi";
 import { useEditLock } from "../../../hooks/useEditLock";
 import type { LockedUser } from "../../../types/edit";
 import { BasicModal } from "../../../components/modal/BasicModal";
+import { ErrorPage } from "../../../error/ErrorPage";
 
 // --- (타입 정의 및 변환 함수들은 기존과 동일) ---
 type ApiSpecification = {
@@ -258,7 +259,7 @@ const ApiPage = () => {
       // workspaceId가 없으면 API를 호출하지 않음
       if (!workspaceId) {
         setIsLoading(false);
-        setError("워크스페이스 정보를 찾을 수 없습니다.");
+        setError("404");
         return;
       }
       try {
@@ -274,7 +275,7 @@ const ApiPage = () => {
         setRows(frontendData);
       } catch (err) {
         setIsFailed(true);
-        setError("API 목록을 불러오는 중 오류가 발생했습니다.");
+        setError("API 목록을 불러오는 데 실패했습니다");
         // 실패 시 빈 배열로 설정하여 테이블이 비도록 함
         setRows([]);
       } finally {
@@ -297,15 +298,8 @@ const ApiPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div>
-        <WSHeader title="API 명세서" />
-        <div className="api-main">
-          <p style={{ color: "red" }}>{error}</p>
-        </div>
-      </div>
-    );
+  if (error === "404") {
+    return <ErrorPage code={404} message="페이지를 찾을 수 없습니다" />;
   }
 
   // + 버튼 클릭 시 호출되는 함수
@@ -1041,6 +1035,15 @@ const ApiPage = () => {
           modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
           Close={() => setIsFailed(false)}
         />
+      )}
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
       )}
     </div>
   ) : (

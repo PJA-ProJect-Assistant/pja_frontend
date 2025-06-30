@@ -6,6 +6,7 @@ import { getSimilarProject } from "../../services/projectApi";
 import type { similarproject } from "../../types/project";
 import { getStepIdFromNumber } from "../../utils/projectSteps";
 import "./SearchProjectpage.css";
+import { BasicModal } from "../../components/modal/BasicModal";
 
 export default function SearchProjectpage() {
   const { wsid } = useParams<{
@@ -14,7 +15,7 @@ export default function SearchProjectpage() {
   const navigate = useNavigate();
   const [wsName, setWsName] = useState<string>("");
   const [similarProject, setSimilarProject] = useState<similarproject[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getws = async () => {
@@ -28,17 +29,20 @@ export default function SearchProjectpage() {
     };
     const getsimilarpj = async () => {
       try {
-        setIsLoading(true);
         const response = await getSimilarProject(Number(wsid));
         setSimilarProject(response.data ?? []);
       } catch {
         console.log("유사 프로젝트 조회 실패");
-      } finally {
-        setIsLoading(false);
       }
     };
-    getws();
-    getsimilarpj();
+    const fetchData = async () => {
+      try {
+        await Promise.all([getws(), getsimilarpj()]);
+      } catch {
+        setError("유사 프로젝트를 불러오는 데 실패했습니다");
+      }
+    };
+    fetchData();
   }, [wsid]);
 
   const renderCards = (data: similarproject[]) =>
@@ -70,20 +74,21 @@ export default function SearchProjectpage() {
     <div className="searchpj-container">
       <WSHeader title={`${wsName}의 유사 프로젝트`} />
       <div className="searchpj-content">
-        {isLoading ? (
-          <div className="searchpj-wave-text">
-            {"✨ 유사프로젝트를 찾고 있어요".split("").map((char, idx) => (
-              <span key={idx} style={{ animationDelay: `${idx * 0.05}s` }}>
-                {char}
-              </span>
-            ))}
-          </div>
-        ) : similarProject.length > 0 ? (
+        {similarProject.length > 0 ? (
           <>{renderCards(similarProject)}</>
         ) : (
           <div>유사 프로젝트가 없습니다</div>
         )}
       </div>
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
+      )}
     </div>
   );
 }

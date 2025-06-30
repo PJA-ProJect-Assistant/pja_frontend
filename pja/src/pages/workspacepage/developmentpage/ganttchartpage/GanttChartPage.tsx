@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../../../store/store";
 import { getactionlist } from "../../../../services/listapi/ActionApi";
 import { useNavigate } from "react-router-dom";
+import { BasicModal } from "../../../../components/modal/BasicModal";
 
 function dateDiffInDays(a: Date, b: Date) {
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -41,6 +42,7 @@ export default function GanttChartPage() {
   const chartStart = new Date(Math.min(...startDates.map((d) => d.getTime())));
   let chartEnd = new Date(Math.max(...endDates.map((d) => d.getTime())));
   const today = formatDate(new Date());
+  const [error, setError] = useState<string | null>(null);
 
   // 최소 20일 보장
   let totalDays = dateDiffInDays(chartStart, chartEnd);
@@ -77,12 +79,11 @@ export default function GanttChartPage() {
     if (selectedWS?.workspaceId) {
       try {
         const aclist = await getactionlist(selectedWS.workspaceId);
-        console.log("getactionlist 결과", aclist.data);
         if (aclist.data) {
           setActionList([...aclist.data]);
         }
       } catch (err) {
-        console.log("액션리스트 불러오기 실패");
+        setError("간트차트를 불러오는 데 실패했습니다");
       }
     }
   };
@@ -133,11 +134,7 @@ export default function GanttChartPage() {
   const validActionList = actionList.filter((t) => t.startDate && t.endDate);
 
   const minRows = 13; // 최소 13줄 확보
-  const rowCount = Math.max(
-    minRows,
-    validActionList.length + 1
-    // Math.ceil((actionList.length * 40 + 60) / 40)
-  );
+  const rowCount = Math.max(minRows, validActionList.length + 1);
 
   return (
     <>
@@ -241,6 +238,15 @@ export default function GanttChartPage() {
             </div>
           </div>
         </div>
+        {error && (
+          <BasicModal
+            modalTitle={error}
+            modalDescription={
+              "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+            }
+            Close={() => setError("")}
+          ></BasicModal>
+        )}
       </div>
     </>
   );

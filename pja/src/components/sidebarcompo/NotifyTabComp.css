@@ -1,6 +1,8 @@
 .notify-list-container {
   height: 95%;
   overflow-y: auto;
+  padding-bottom: 15px;
+  box-sizing: border-box;
 }
 
 /* 2. 알림 벨 아이콘 스타일 */
