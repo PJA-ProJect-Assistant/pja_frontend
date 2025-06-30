@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { setSelectedWS } from "../../../store/workspaceSlice";
 import { useDispatch } from "react-redux";
 import { initinputidea } from "../../../services/ideaApi";
+import { BasicModal } from "../../../components/modal/BasicModal";
 
 export default function AddWSName({ onClose }: IsClose) {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ export default function AddWSName({ onClose }: IsClose) {
   const [teamName, setTeamName] = useState<string>("");
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [newWSId, setNewWSId] = useState<number>();
+  const [error, setError] = useState<string | null>(null);
 
   const isValid = projectName.trim() !== "" && teamName.trim() !== "";
 
@@ -38,16 +40,20 @@ export default function AddWSName({ onClose }: IsClose) {
     console.log("isPublic", isPublic);
     const addWs = async () => {
       try {
-        const response = await addworkspace({ projectName, teamName, isPublic });
+        const response = await addworkspace({
+          projectName,
+          teamName,
+          isPublic,
+        });
         console.log("워크스페이스 생성:", response.data);
         if (response.data) {
           dispatch(setSelectedWS(response.data));
           setNewWSId(response.data.workspaceId);
         }
       } catch (error) {
-        console.error("워크스페이스 생성 실패:", error);
+        setError("워크스페이스 생성하는 데 실패했습니다");
       }
-    }
+    };
     addWs();
   };
 
@@ -111,6 +117,15 @@ export default function AddWSName({ onClose }: IsClose) {
           </button>
         </div>
       </div>
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
+      )}
     </div>
   );
 }

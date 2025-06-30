@@ -44,7 +44,7 @@ export default function MainWSPage() {
           setWsPublic(response.data.isPublic);
         }
       } catch (err: any) {
-        setError("데이터를 불러오는 데 실패했습니다.");
+        console.log("getworkspace 실패");
       }
     };
     const getrole = async () => {
@@ -54,11 +54,15 @@ export default function MainWSPage() {
         dispatch(setUserRole(response.data?.role ?? null));
         serUserRole(response.data?.role ?? null);
       } catch (error) {
-        setError("데이터를 불러오는 데 실패했습니다.");
+        console.log("getrole 실패");
       }
     };
     const fetchData = async () => {
-      await Promise.all([getws(), getrole()]);
+      try {
+        await Promise.all([getws(), getrole()]);
+      } catch {
+        setError("데이터를 불러오는 데 실패했습니다.");
+      }
       setIsLoading(false); // 모든 로딩이 끝났을 때만 false
     };
     fetchData();
@@ -93,6 +97,16 @@ export default function MainWSPage() {
 
   if (isLoading) {
     return <LoadingSpinner />; // 또는 스피너 컴포넌트
+  }
+
+  if (error) {
+    return (
+      <BasicModal
+        modalTitle={error}
+        modalDescription="워크스페이스 정보를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요."
+        Close={() => setError(null)}
+      />
+    );
   }
 
   return !wsPublic && userRole === null ? (
@@ -132,13 +146,6 @@ export default function MainWSPage() {
         </div>
       )}
       <div className="wscontent-container">{renderStepComponent()}</div>
-      {error && (
-        <BasicModal
-          modalTitle={error}
-          modalDescription={"새로고침 후 다시 시도해 주세요"}
-          Close={() => setError("")}
-        ></BasicModal>
-      )}
     </div>
   );
 }

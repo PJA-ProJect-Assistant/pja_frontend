@@ -52,16 +52,19 @@ export default function RequirementsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>("");
   const [noRequire, setNoRequire] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const getRequire = async () => {
     if (selectedWS?.workspaceId) {
       try {
         const response = await getrequirement(selectedWS?.workspaceId);
         if (response.data) {
-          const sortedData = [...response.data].sort((a, b) => a.requirementId - b.requirementId);
+          const sortedData = [...response.data].sort(
+            (a, b) => a.requirementId - b.requirementId
+          );
           setRequirements(sortedData);
         }
       } catch (error) {
-        setIsFailed(true);
+        setError("페이지를 불러오는 데 실패했습니다");
       }
     }
   };
@@ -92,11 +95,7 @@ export default function RequirementsPage() {
   const handleAddFunction = async (content: string) => {
     try {
       if (selectedWS?.workspaceId) {
-        await inputrequirement(
-          selectedWS?.workspaceId,
-          "FUNCTIONAL",
-          content
-        );
+        await inputrequirement(selectedWS?.workspaceId, "FUNCTIONAL", content);
         getRequire();
       }
     } catch (err) {
@@ -106,11 +105,7 @@ export default function RequirementsPage() {
   const handleAddPerformance = async (content: string) => {
     try {
       if (selectedWS?.workspaceId) {
-        await inputrequirement(
-          selectedWS?.workspaceId,
-          "PERFORMANCE",
-          content
-        );
+        await inputrequirement(selectedWS?.workspaceId, "PERFORMANCE", content);
         getRequire();
       }
     } catch (err) {
@@ -205,8 +200,12 @@ export default function RequirementsPage() {
   };
 
   const handleCompleteReq = async () => {
-    if (requirements.filter((rq) => rq.requirementType === "FUNCTIONAL").length === 0 ||
-      requirements.filter((rq) => rq.requirementType === "PERFORMANCE").length === 0) {
+    if (
+      requirements.filter((rq) => rq.requirementType === "FUNCTIONAL")
+        .length === 0 ||
+      requirements.filter((rq) => rq.requirementType === "PERFORMANCE")
+        .length === 0
+    ) {
       setNoRequire(true);
       return;
     }
@@ -223,10 +222,7 @@ export default function RequirementsPage() {
             content,
           })
         );
-        await postProjectAI(
-          selectedWS.workspaceId,
-          setrequirements
-        );
+        await postProjectAI(selectedWS.workspaceId, setrequirements);
 
         const updatedWorkspace: workspace = {
           ...selectedWS, // 기존 값 유지
@@ -235,7 +231,6 @@ export default function RequirementsPage() {
 
         dispatch(setSelectedWS(updatedWorkspace));
         navigate(`/ws/${selectedWS?.workspaceId}/${getStepIdFromNumber("2")}`);
-
       } catch (err) {
         setIsFailed(true);
       } finally {
@@ -497,6 +492,15 @@ export default function RequirementsPage() {
           modalDescription="기능·성능 요구사항이 최소 1개 이상 있어야 합니다"
           Close={() => setIsFailed(false)}
         />
+      )}
+      {error && (
+        <BasicModal
+          modalTitle={error}
+          modalDescription={
+            "일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          }
+          Close={() => setError("")}
+        ></BasicModal>
       )}
     </>
   );

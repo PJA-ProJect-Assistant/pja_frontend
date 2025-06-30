@@ -1,6 +1,11 @@
 import { useSelector } from "react-redux";
 import { statusLabels, statusColors } from "../../../../constants/statecolor";
-import type { imbalanceassignees, imbalancegraphData, Importance, Status } from "../../../../types/list";
+import type {
+  imbalanceassignees,
+  imbalancegraphData,
+  Importance,
+  Status,
+} from "../../../../types/list";
 import type { RootState } from "../../../../store/store";
 import { useEffect, useState } from "react";
 import {
@@ -24,9 +29,7 @@ export function TaskImbalance() {
   );
   const [allUserData, setAllUserData] = useState<imbalancegraphData[]>([]);
   const [selectedUser, setSelectedUser] = useState<number | null>(null);
-  const [userList, setUserList] = useState<
-    imbalanceassignees[]
-  >([]);
+  const [userList, setUserList] = useState<imbalanceassignees[]>([]);
 
   const getimblance = async () => {
     try {
@@ -37,7 +40,7 @@ export function TaskImbalance() {
       // 전체 데이터 저장
       setAllUserData(data?.graphData ?? []);
 
-      const userdata = data?.assignees ?? []
+      const userdata = data?.assignees ?? [];
       console.log("userdata", userdata);
 
       setUserList(userdata);
@@ -46,7 +49,6 @@ export function TaskImbalance() {
       if (userdata.length > 0 && selectedUser === null) {
         setSelectedUser(userdata[0].userId);
         console.log("첫번째 사용자", userdata[0]);
-
       }
     } catch {
       console.log("일 분균형 그래프 가져오기 실패");
@@ -90,7 +92,11 @@ export function TaskImbalance() {
             <select
               id="user-select"
               value={selectedUser || ""}
-              onChange={(e) => setSelectedUser(Number(e.target.value))}
+              onChange={(e) =>
+                setSelectedUser(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
               style={{
                 padding: "8px",
                 borderRadius: "4px",
@@ -111,7 +117,11 @@ export function TaskImbalance() {
             <>
               <p>{selectedUsername}님의 작업 불균형 분석 그래프</p>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={currentChartData} barCategoryGap="20%" margin={{ left: 8, bottom: 15 }}>
+                <BarChart
+                  data={currentChartData}
+                  barCategoryGap="20%"
+                  margin={{ left: 8, bottom: 15 }}
+                >
                   <XAxis
                     dataKey="importance"
                     label={{
