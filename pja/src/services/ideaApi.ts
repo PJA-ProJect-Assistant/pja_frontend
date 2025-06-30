@@ -159,27 +159,154 @@ export const getidea = async (
   }
 };
 
-//아이디어 입력 수정
-export const putidea = async (
+//아이디어 이름 수정
+export const putideaName = async (
   workspaceId: number,
-  ideadata: IdeaData
-): Promise<ApiResponse<IdeaData>> => {
+  ideaId: number,
+  projectName: string
+) => {
   try {
-    console.log("아이디어 조회 api");
-    const response = await api.put(
-      `/workspaces/${workspaceId}/idea-input/${ideadata.ideaInputId}`,
+    console.log("아이디어 이름 api");
+    const response = await api.patch(
+      `/workspaces/${workspaceId}/idea-input/${ideaId}/project-name`,
       {
-        projectName: ideadata.projectName,
-        projectTarget: ideadata.projectTarget,
-        mainFunction: ideadata.mainFunction,
-        techStack: ideadata.techStack,
-        projectDescription: ideadata.projectDescription,
+        projectName,
       }
     );
-    console.log("아이디어 수정 완료 :", response);
+    console.log("아이디어 이름 수정 완료 :", response);
     return response.data;
   } catch (error: any) {
-    console.error("🔴 [putidea] 아이디어 수정 실패:", error);
+    console.error("🔴 [putideaName] 아이디어 이름 수정 실패:", error);
+
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
+  }
+};
+
+//아이디어 타켓 수정
+export const putideaTarget = async (
+  workspaceId: number,
+  ideaId: number,
+  projectTarget: string
+) => {
+  try {
+    console.log("아이디어 타켓 api");
+    const response = await api.patch(
+      `/workspaces/${workspaceId}/idea-input/${ideaId}/project-target`,
+      {
+        projectTarget,
+      }
+    );
+    console.log("아이디어 타켓 수정 완료 :", response);
+    return response.data;
+  } catch (error: any) {
+    console.error("🔴 [putideaTarget] 아이디어 타켓 수정 실패:", error);
+
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
+  }
+};
+
+//아이디어 기술 수정
+export const putideaTech = async (
+  workspaceId: number,
+  ideaId: number,
+  techStackId: number,
+  content: string
+) => {
+  try {
+    console.log("아이디어 기술 api");
+    const response = await api.patch(
+      `/workspaces/${workspaceId}/idea-input/${ideaId}/tech-stack/${techStackId}`,
+      {
+        content,
+      }
+    );
+    console.log("아이디어 기술 수정 완료 :", response);
+    return response.data;
+  } catch (error: any) {
+    console.error("🔴 [putideaTech] 아이디어 기술 수정 실패:", error);
+
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
+  }
+};
+
+//아이디어 기능 수정
+export const putideaFunction = async (
+  workspaceId: number,
+  ideaId: number,
+  mainFunctionId: number,
+  content: string
+) => {
+  try {
+    console.log("아이디어 기능 api");
+    const response = await api.patch(
+      `/workspaces/${workspaceId}/idea-input/${ideaId}/main-function/${mainFunctionId}`,
+      {
+        content,
+      }
+    );
+    console.log("아이디어 기능 수정 완료 :", response);
+    return response.data;
+  } catch (error: any) {
+    console.error("🔴 [putideaFunction] 아이디어 기능 수정 실패:", error);
+
+    if (error.response) {
+      console.error("응답 상태코드:", error.response.status);
+      console.error("서버 status:", error.response.data?.status);
+      console.error("서버 message:", error.response.data?.message);
+    } else if (error.request) {
+      console.error("요청은 보냈지만 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 중 에러 발생:", error.message);
+    }
+    throw error;
+  }
+};
+
+//아이디어 설명 수정
+export const putideaDescription = async (
+  workspaceId: number,
+  ideaId: number,
+  projectDescription: string
+) => {
+  try {
+    console.log("아이디어 설명 수정 api");
+    const response = await api.patch(
+      `/workspaces/${workspaceId}/idea-input/${ideaId}/project-description`,
+      {
+        projectDescription,
+      }
+    );
+    console.log("아이디어 설명 수정 완료 :", response);
+    return response.data;
+  } catch (error: any) {
+    console.error("🔴 [putideaDescription] 아이디어 설명 수정 실패:", error);
 
     if (error.response) {
       console.error("응답 상태코드:", error.response.status);
