@@ -26,7 +26,7 @@ export default function ProhectForm() {
   const [wsId, setWsId] = useState<number>();
   const [openStackModal, setOpenStackModal] = useState<boolean>(false);
   const [openFeatureModal, setOpenFeatureModal] = useState<boolean>(false);
-  const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -71,7 +71,7 @@ export default function ProhectForm() {
       }
     } catch (error) {
       console.error("기능 추가 실패:", error);
-      setIsFailed(true);
+      setError("요청을 처리할 수 없습니다");
     }
   };
 
@@ -92,7 +92,7 @@ export default function ProhectForm() {
       }
     } catch (error) {
       console.error("기술 스택 추가 실패:", error);
-      setIsFailed(true);
+      setError("요청을 처리할 수 없습니다");
     }
   };
 
@@ -107,7 +107,7 @@ export default function ProhectForm() {
         setFeatures((prev) => prev.filter((f) => f.id !== id));
       } catch (err) {
         console.log("기능 삭제 실패", err);
-        setIsFailed(true);
+        setError("요청을 처리할 수 없습니다");
       }
     }
   };
@@ -123,7 +123,7 @@ export default function ProhectForm() {
         setStacks((prev) => prev.filter((s) => s.id !== id));
       } catch (err) {
         console.log("기술 삭제 실패", err);
-        setIsFailed(true);
+        setError("요청을 처리할 수 없습니다");
       }
     }
   };
@@ -163,12 +163,10 @@ export default function ProhectForm() {
             }));
             setStacks(techStacks.length ? techStacks : []);
           }
-        } else {
-          console.log("워크스페이스 아이디 없음");
         }
       } catch (error) {
         console.error("아이디어 조회 실패:", error);
-        setIsFailed(true);
+        setError("페이지를 불러오는 데 실패했습니다");
       }
     };
     GetIdea();
@@ -230,7 +228,7 @@ export default function ProhectForm() {
       }
     } catch (err) {
       console.log("아이디어 수정 실패 : ", err);
-      setIsFailed(true);
+      setError("요청을 처리할 수 없습니다");
     }
   };
 
@@ -475,11 +473,11 @@ export default function ProhectForm() {
           Close={() => setAlreadyEdit(false)}
         />
       )}
-      {isFailed && (
+      {error && (
         <BasicModal
-          modalTitle="요청을 처리할 수 없습니다"
-          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
-          Close={() => setIsFailed(false)}
+          modalTitle={error}
+          modalDescription="일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
+          Close={() => setError("")}
         />
       )}
     </div>
