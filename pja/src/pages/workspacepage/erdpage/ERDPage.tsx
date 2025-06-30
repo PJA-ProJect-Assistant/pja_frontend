@@ -177,8 +177,8 @@ export default function ERDPage() {
       </div>
       {isFailed && (
         <BasicModal
-          modalTitle="요청을 처리할 수 없습니다"
-          modalDescription="요청 중 오류가 발생했습니다 새로고침 후 다시 시도해주세요"
+          modalTitle="페이지를 불러오는 데 실패하였습니다"
+          modalDescription="일시적인 오류가 발생했습니다 페이지를 새로고침하거나 잠시 후 다시 시도해 주세요"
           Close={() => setIsFailed(false)}
         />
       )}
