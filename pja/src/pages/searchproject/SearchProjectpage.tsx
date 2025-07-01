@@ -9,6 +9,7 @@ import "./SearchProjectpage.css";
 import { BasicModal } from "../../components/modal/BasicModal";
 import { setSelectedWS } from "../../store/workspaceSlice";
 import type { workspace } from "../../types/workspace";
+import { useDispatch } from "react-redux";
 
 export default function SearchProjectpage() {
   const { wsid } = useParams<{
@@ -18,6 +19,7 @@ export default function SearchProjectpage() {
   const [wsName, setWsName] = useState<string>("");
   const [similarProject, setSimilarProject] = useState<similarproject[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const getws = async () => {
@@ -55,7 +57,7 @@ export default function SearchProjectpage() {
           className="similarworkspace-card"
           onClick={() => {
             const stepId = getStepIdFromNumber(ws.progressStep);
-            setSelectedWS(ws);
+            dispatch(setSelectedWS(ws));
             navigate(`/ws/${ws.workspaceId}/${stepId}`);
           }}
         >
