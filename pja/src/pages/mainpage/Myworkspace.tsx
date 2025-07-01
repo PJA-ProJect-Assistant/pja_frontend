@@ -297,8 +297,10 @@ export function Myworkspace() {
     <div className="workspace-container">
       <div className="ws-container-2">
         <p className="wstitle">진행 중인 워크스페이스</p>
-        <div className="workspace-scroll" ref={activeRef} {...activeHandlers}>
-          {renderCards(processWorkspaces)}
+        <div className="workspace-active-container">
+          <div className="workspace-scroll" ref={activeRef} {...activeHandlers}>
+            {renderCards(processWorkspaces)}
+          </div>
           <button onClick={() => navigate("/addws")}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -311,6 +313,7 @@ export function Myworkspace() {
             </svg>
           </button>
         </div>
+
         <p className="wstitle">완료한 워크스페이스</p>
         <div
           className="workspace-scroll"
