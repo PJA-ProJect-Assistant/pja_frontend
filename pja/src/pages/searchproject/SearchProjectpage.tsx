@@ -7,6 +7,7 @@ import type { similarproject } from "../../types/project";
 import { getStepIdFromNumber } from "../../utils/projectSteps";
 import "./SearchProjectpage.css";
 import { BasicModal } from "../../components/modal/BasicModal";
+import { useCategoryFeatureCategory } from "../../hooks/useCategoryFeatureAction";
 
 export default function SearchProjectpage() {
   const { wsid } = useParams<{
@@ -16,12 +17,12 @@ export default function SearchProjectpage() {
   const [wsName, setWsName] = useState<string>("");
   const [similarProject, setSimilarProject] = useState<similarproject[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const { setCategoryList } = useCategoryFeatureCategory();
 
   useEffect(() => {
     const getws = async () => {
       try {
         const response = await getworkspace(Number(wsid));
-
         setWsName(response.data?.projectName ?? "");
       } catch (err) {
         console.log("getworkspace 실패 : ", err);
@@ -54,6 +55,7 @@ export default function SearchProjectpage() {
           className="similarworkspace-card"
           onClick={() => {
             const stepId = getStepIdFromNumber(ws.progressStep);
+            setCategoryList([]);
             navigate(`/ws/${ws.workspaceId}/${stepId}`);
           }}
         >

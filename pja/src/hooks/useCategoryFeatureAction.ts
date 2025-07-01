@@ -68,7 +68,9 @@ interface UseCategoryFeatureCategoryReturn {
   setEditingCategoryId: React.Dispatch<React.SetStateAction<number | null>>;
   setEditingFeatureId: React.Dispatch<React.SetStateAction<number | null>>;
   setEditingActionId: React.Dispatch<React.SetStateAction<number | null>>;
-
+  setCategoryList: React.Dispatch<
+    React.SetStateAction<feature_category[] | []>
+  >;
   handleCompleteClick: (categoryId: number) => void;
   cgToggleClick: (categoryId: number, close?: boolean) => void;
   ftToggleClick: (id: number) => void;
@@ -1115,6 +1117,7 @@ export function useCategoryFeatureCategory(): UseCategoryFeatureCategoryReturn {
     completePg,
     aiList,
 
+    setCategoryList,
     toggleTestCheckCg,
     toggleTestCheckFt,
     toggleTestCheckAc,
