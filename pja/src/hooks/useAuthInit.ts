@@ -63,6 +63,7 @@ export function useAuthInit() {
         const token = localStorage.getItem("accessToken");
 
         if (!token || isTokenExpired(token)) {
+          //토큰이 없거나 유효기간이 만료되면 실행
           const response = await withTimeout(refreshAccessToken(), TIMEOUT_MS); //새 토큰 요청
           const accessToken = response.data?.accessToken;
           if (!accessToken) {
