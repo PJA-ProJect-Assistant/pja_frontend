@@ -2,11 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { useCategoryFeatureCategory } from "../../../../hooks/useCategoryFeatureAction";
 import type { Status } from "../../../../types/list";
 import { statusLabels, statusColors } from "../../../../constants/statecolor";
+import {
+  PointerSensor,
+  useSensor,
+  DndContext,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
 
 import "./KanbanPage.css";
 export default function KanbanPage() {
   const navigate = useNavigate();
-  const { categoryList, workspaceId } = useCategoryFeatureCategory();
+  const { categoryList, workspaceId, updateStatus } =
+    useCategoryFeatureCategory();
 
   const statusBgColors: Record<Status, string> = {
     BEFORE: "rgba(217, 217, 214, 0.2)",
@@ -33,29 +41,59 @@ export default function KanbanPage() {
     return `D+${Math.abs(diffDays)}`;
   };
 
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    // active.id는 actionId (string)
+    // over.id는 statusKey (string)
+    if (active.id !== over.id) {
+      const actionId = Number(active.id);
+      const newStatus = over.id as Status;
+
+      // 액션이 속한 categoryId, featureId 찾기
+      let categoryId = 0;
+      let featureId = 0;
+
+      outer: for (const cg of categoryList) {
+        for (const ft of cg.features) {
+          if (ft.actions.find((ac) => ac.actionId === actionId)) {
+            categoryId = cg.featureCategoryId;
+            featureId = ft.featureId;
+            break outer;
+          }
+        }
+      }
+
+      if (categoryId && featureId && actionId) {
+        updateStatus(categoryId, featureId, actionId, newStatus);
+      }
+    }
+  };
+
   const renderKanbanCards = (statusKey: Status) => {
     return categoryList.flatMap((cg) =>
-      cg.features.flatMap((ft) => {
-        const filteredActions = ft.actions.filter(
-          (ac) => ac.state === statusKey
-        );
-        if (filteredActions.length === 0) return [];
-
-        return (
-          <div
-            className="kanban-category"
-            key={`${cg.featureCategoryId}-${ft.featureId}`}
-          >
+      cg.features.flatMap((ft) =>
+        ft.actions
+          .filter((ac) => ac.state === statusKey)
+          .map((ac) => (
             <div
-              className="category-title"
-              style={{ backgroundColor: statusColors[statusKey] }}
+              className="kanban-category"
+              key={`${cg.featureCategoryId}-${ft.featureId}-${ac.actionId}`}
+              draggable
             >
-              {cg.name}
-            </div>
+              <div
+                className="category-title"
+                style={{ backgroundColor: statusColors[statusKey] }}
+              >
+                {cg.name}
+              </div>
 
-            <div className="feature-block">
-              <div className="feature-title">{ft.name}</div>
-              {filteredActions.map((ac) => (
+              <div className="feature-block">
+                <div className="feature-title">{ft.name}</div>
+                {/* 액션 하나만 있으므로 바로 액션 카드 */}
                 <div className="kanban-action-card" key={ac.actionId}>
                   <div className="kanban-action-title">
                     <span
@@ -93,19 +131,21 @@ export default function KanbanPage() {
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-        );
-      })
+          ))
+      )
     );
   };
 
   return (
-    <div className="kanban-board">
-      {(["BEFORE", "IN_PROGRESS", "DONE", "PENDING", "DELETE"] as Status[]).map(
-        (statusKey) => (
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <div className="kanban-board">
+        {(
+          ["BEFORE", "IN_PROGRESS", "DONE", "PENDING", "DELETE"] as Status[]
+        ).map((statusKey) => (
           <div
+            id={statusKey}
             className="kanban-column"
             key={statusKey}
             style={{ backgroundColor: statusBgColors[statusKey] }}
@@ -113,8 +153,8 @@ export default function KanbanPage() {
             <div className="kanban-column-title">{statusLabels[statusKey]}</div>
             {renderKanbanCards(statusKey)}
           </div>
-        )
-      )}
-    </div>
+        ))}
+      </div>
+    </DndContext>
   );
 }
