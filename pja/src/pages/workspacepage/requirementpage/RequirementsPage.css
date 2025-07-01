@@ -203,8 +203,15 @@
   margin-top: 5px;
 }
 
+.reqtext {
+  font-size: var(--font-size-base);
+}
+
 .require-list input {
   width: 100%;
+  border: none;
+  outline: none;
+  font-size: var(--font-size-base);
 }
 
 .require-list li {

@@ -293,6 +293,7 @@ export default function RequirementsPage() {
                       value={editText}
                       autoFocus
                       onChange={(e) => setEditText(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
                       onFocus={() => {
                         startEditing(type, req.requirementId.toString());
                       }}
@@ -304,7 +305,7 @@ export default function RequirementsPage() {
                     />
                   ) : (
                     <>
-                      <span>{req.content}</span>
+                      <span className="reqtext">{req.content}</span>
                       {!requireDone && CanEdit && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -490,7 +491,7 @@ export default function RequirementsPage() {
         <BasicModal
           modalTitle="저장할 수 없습니다"
           modalDescription="기능·성능 요구사항이 최소 1개 이상 있어야 합니다"
-          Close={() => setIsFailed(false)}
+          Close={() => setNoRequire(false)}
         />
       )}
       {error && (
