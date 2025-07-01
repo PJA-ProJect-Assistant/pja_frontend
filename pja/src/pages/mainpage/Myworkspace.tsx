@@ -148,29 +148,37 @@ export function Myworkspace() {
   // 드래그 로직 재사용 함수
   const useDragScroll = (ref: React.RefObject<HTMLDivElement | null>) => {
     const isDragging = useRef(false);
+    const moved = useRef(false);
     const startX = useRef(0);
     const scrollLeft = useRef(0);
 
     const handleMouseDown = (e: React.MouseEvent) => {
       isDragging.current = true;
+      moved.current = false;
       startX.current = e.pageX - (ref.current?.offsetLeft ?? 0);
       scrollLeft.current = ref.current?.scrollLeft ?? 0;
     };
 
+    const handleMouseMove = (e: React.MouseEvent) => {
+      if (!isDragging.current || !ref.current) return;
+      const x = e.pageX - ref.current.offsetLeft;
+      const walk = x - startX.current;
+      //마우스를 눌렀을 때가 아닌 드래그 했을 때만 드래그로 판단
+      if (Math.abs(walk) > 0) {
+        moved.current = true; // 이동했다고 간주
+        ref.current.scrollLeft = scrollLeft.current - walk;
+      }
+    };
+
     const handleMouseLeave = () => {
       isDragging.current = false;
+      moved.current = false;
+      ref.current?.classList.remove("dragging");
     };
 
     const handleMouseUp = () => {
       isDragging.current = false;
-    };
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-      if (!isDragging.current || !ref.current) return;
-      e.preventDefault();
-      const x = e.pageX - ref.current.offsetLeft;
-      const walk = x - startX.current;
-      ref.current.scrollLeft = scrollLeft.current - walk;
+      ref.current?.classList.remove("dragging");
     };
 
     useEffect(() => {
@@ -183,7 +191,6 @@ export function Myworkspace() {
           el.scrollLeft += e.deltaY;
         }
       };
-
       el.addEventListener("wheel", handleWheel, { passive: false });
       return () => el.removeEventListener("wheel", handleWheel);
     }, [ref]);
@@ -193,18 +200,27 @@ export function Myworkspace() {
       onMouseLeave: handleMouseLeave,
       onMouseUp: handleMouseUp,
       onMouseMove: handleMouseMove,
+      isMoved: () => moved.current,
     };
   };
 
   const activeHandlers = useDragScroll(activeRef);
   const completeHandlers = useDragScroll(completeRef);
 
-  const renderCards = (data: workspace[]) =>
+  const renderCards = (
+    data: workspace[],
+    dragHandlers: ReturnType<typeof useDragScroll>
+  ) =>
     data.map((ws) => (
       <div
         key={ws.workspaceId}
         className="workspace-card"
-        onDoubleClick={() => handleClickWS(ws)}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest(".workspace-more")) return;
+          if (!dragHandlers.isMoved()) {
+            handleClickWS(ws);
+          } // 드래그가 아니었을 경우만 진입
+        }}
       >
         <div>
           <div
@@ -313,8 +329,15 @@ export function Myworkspace() {
       <div className="ws-container-2">
         <p className="wstitle">진행 중인 워크스페이스</p>
         <div className="workspace-active-container">
-          <div className="workspace-scroll" ref={activeRef} {...activeHandlers}>
-            {renderCards(processWorkspaces)}
+          <div
+            className="workspace-scroll"
+            ref={activeRef}
+            onMouseDown={activeHandlers.onMouseDown}
+            onMouseMove={activeHandlers.onMouseMove}
+            onMouseUp={activeHandlers.onMouseUp}
+            onMouseLeave={activeHandlers.onMouseLeave}
+          >
+            {renderCards(processWorkspaces, activeHandlers)}
           </div>
           <button onClick={() => navigate("/addws")}>
             <svg
@@ -333,9 +356,12 @@ export function Myworkspace() {
         <div
           className="workspace-scroll"
           ref={completeRef}
-          {...completeHandlers}
+          onMouseDown={completeHandlers.onMouseDown}
+          onMouseMove={completeHandlers.onMouseMove}
+          onMouseUp={completeHandlers.onMouseUp}
+          onMouseLeave={completeHandlers.onMouseLeave}
         >
-          {renderCards(completeWorkspaces)}
+          {renderCards(completeWorkspaces, completeHandlers)}
         </div>
       </div>
       {forbiddenModal && (
