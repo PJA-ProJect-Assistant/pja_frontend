@@ -16,10 +16,10 @@ export interface getproject extends setproject {
   projectInfoId: number;
 }
 export interface similarproject {
-  workspaceId: number,
-  projectName: string,
-  teamName: string,
-  isPublic: boolean,
-  ownerId: number,
-  progressStep: Step
+  workspaceId: number;
+  projectName: string;
+  teamName: string;
+  isPublic: boolean;
+  ownerId: number;
+  progressStep: Step;
 }
