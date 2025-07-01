@@ -7,14 +7,21 @@ import {
   useSensor,
   DndContext,
   useSensors,
+  useDraggable,
+  useDroppable,
   type DragEndEvent,
 } from "@dnd-kit/core";
 
 import "./KanbanPage.css";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../../store/store";
 export default function KanbanPage() {
   const navigate = useNavigate();
   const { categoryList, workspaceId, updateStatus } =
     useCategoryFeatureCategory();
+
+  const Role = useSelector((state: RootState) => state.user.userRole);
+  const CanEdit: boolean = Role === "OWNER" || Role === "MEMBER";
 
   const statusBgColors: Record<Status, string> = {
     BEFORE: "rgba(217, 217, 214, 0.2)",
@@ -43,17 +50,77 @@ export default function KanbanPage() {
 
   const sensors = useSensors(useSensor(PointerSensor));
 
+  function DraggableAction({
+    actionId,
+    children,
+    canEdit,
+  }: {
+    actionId: number;
+    children: React.ReactNode;
+    canEdit: boolean;
+  }) {
+    if (!canEdit) {
+      // 드래그 비활성화된 유저는 그냥 감싸기만
+      return <div>{children}</div>;
+    }
+
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+      id: actionId.toString(),
+    });
+
+    const style: React.CSSProperties | undefined = transform
+      ? {
+          transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+          zIndex: 999,
+          position: "relative",
+          cursor: "grab",
+        }
+      : undefined;
+
+    return (
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        style={{ cursor: "grab", ...style }}
+      >
+        {children}
+      </div>
+    );
+  }
+
+  function DroppableColumn({
+    status,
+    children,
+  }: {
+    status: Status;
+    children: React.ReactNode;
+  }) {
+    const { setNodeRef } = useDroppable({
+      id: status,
+    });
+
+    return (
+      <div
+        ref={setNodeRef}
+        id={status}
+        className="kanban-column"
+        style={{ backgroundColor: statusBgColors[status] }}
+      >
+        <div className="kanban-column-title">{statusLabels[status]}</div>
+        {children}
+      </div>
+    );
+  }
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
 
-    // active.id는 actionId (string)
-    // over.id는 statusKey (string)
     if (active.id !== over.id) {
       const actionId = Number(active.id);
       const newStatus = over.id as Status;
 
-      // 액션이 속한 categoryId, featureId 찾기
       let categoryId = 0;
       let featureId = 0;
 
@@ -79,60 +146,62 @@ export default function KanbanPage() {
         ft.actions
           .filter((ac) => ac.state === statusKey)
           .map((ac) => (
-            <div
-              className="kanban-category"
+            <DraggableAction
               key={`${cg.featureCategoryId}-${ft.featureId}-${ac.actionId}`}
-              draggable
+              actionId={ac.actionId}
+              canEdit={CanEdit}
             >
-              <div
-                className="category-title"
-                style={{ backgroundColor: statusColors[statusKey] }}
-              >
-                {cg.name}
-              </div>
+              <div className="kanban-category">
+                <div
+                  className="category-title"
+                  style={{ backgroundColor: statusColors[statusKey] }}
+                >
+                  {cg.name}
+                </div>
 
-              <div className="feature-block">
-                <div className="feature-title">{ft.name}</div>
-                {/* 액션 하나만 있으므로 바로 액션 카드 */}
-                <div className="kanban-action-card" key={ac.actionId}>
-                  <div className="kanban-action-title">
-                    <span
-                      onClick={() =>
-                        navigate(
-                          `/ws/${workspaceId}/post/action/${ac.actionId}/${ac.actionPostId}`
-                        )
-                      }
-                    >
-                      {ac.name}
-                    </span>
-                    <p>{getRemainingDays(ac.endDate ?? undefined)}</p>
-                  </div>
-                  <div className="kanban-action-card-content">
-                    <div className="kanban-parti">
-                      {ac.participants?.map((member) =>
-                        member?.profileImage ? (
-                          <img
-                            key={member.memberId}
-                            src={member.profileImage}
-                            alt={member.username}
-                            className="listprofile-img"
-                            title={member.username}
-                          />
-                        ) : (
-                          <div
-                            key={member.memberId}
-                            className="listprofile-none"
-                            title={member.username}
-                          >
-                            {member.username.charAt(0)}
-                          </div>
-                        )
-                      )}
+                <div className="feature-block">
+                  <div className="feature-title">{ft.name}</div>
+                  {/* 액션 하나만 있으므로 바로 액션 카드 */}
+                  <div className="kanban-action-card" key={ac.actionId}>
+                    <div className="kanban-action-title">
+                      <span
+                        onClick={() =>
+                          navigate(
+                            `/ws/${workspaceId}/post/action/${ac.actionId}/${ac.actionPostId}`
+                          )
+                        }
+                      >
+                        {ac.name}
+                      </span>
+                      <p>{getRemainingDays(ac.endDate ?? undefined)}</p>
+                    </div>
+                    <div className="kanban-action-card-content">
+                      <div className="kanban-parti">
+                        {ac.participants?.map((member) =>
+                          member?.profileImage ? (
+                            <img
+                              key={member.memberId}
+                              src={member.profileImage}
+                              alt={member.username}
+                              className="listprofile-img"
+                              title={member.username}
+                            />
+                          ) : (
+                            <div
+                              key={member.memberId}
+                              className="listprofile-none"
+                              title={member.username}
+                            >
+                              {member.username.charAt(0)}
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </DraggableAction>
           ))
       )
     );
@@ -144,15 +213,9 @@ export default function KanbanPage() {
         {(
           ["BEFORE", "IN_PROGRESS", "DONE", "PENDING", "DELETE"] as Status[]
         ).map((statusKey) => (
-          <div
-            id={statusKey}
-            className="kanban-column"
-            key={statusKey}
-            style={{ backgroundColor: statusBgColors[statusKey] }}
-          >
-            <div className="kanban-column-title">{statusLabels[statusKey]}</div>
+          <DroppableColumn status={statusKey} key={statusKey}>
             {renderKanbanCards(statusKey)}
-          </div>
+          </DroppableColumn>
         ))}
       </div>
     </DndContext>
