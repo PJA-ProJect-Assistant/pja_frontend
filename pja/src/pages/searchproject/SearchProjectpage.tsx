@@ -52,7 +52,7 @@ export default function SearchProjectpage() {
         <div
           key={ws.workspaceId}
           className="similarworkspace-card"
-          onDoubleClick={() => {
+          onClick={() => {
             const stepId = getStepIdFromNumber(ws.progressStep);
             navigate(`/ws/${ws.workspaceId}/${stepId}`);
           }}
