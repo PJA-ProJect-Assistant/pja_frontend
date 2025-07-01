@@ -226,27 +226,27 @@ export default function ProjectSummaryPage() {
             <div>
               서비스 대상 :
               <ul>
-                {targetUsers.map((target, index) =>
-                  editingField === `target-${index}` ? (
-                    <li key={index}>
-                      <input
-                        autoFocus
-                        value={target}
-                        onChange={(e) => {
-                          const updated = [...targetUsers];
-                          updated[index] = e.target.value;
-                          setTargetUsers(updated);
-                        }}
-                        onBlur={() => {
-                          !summaryDone && setEditingField(null);
-                        }}
-                        onKeyDown={(e) =>
-                          handleKeyDown(e, () => setEditingField(null))
-                        }
-                      />
-                    </li>
-                  ) : (
-                    <div className="summary-contentlist">
+                {targetUsers.map((target, index) => (
+                  <div className="summary-contentlist">
+                    {editingField === `target-${index}` ? (
+                      <li key={index}>
+                        <input
+                          autoFocus
+                          value={target}
+                          onChange={(e) => {
+                            const updated = [...targetUsers];
+                            updated[index] = e.target.value;
+                            setTargetUsers(updated);
+                          }}
+                          onBlur={() => {
+                            !summaryDone && setEditingField(null);
+                          }}
+                          onKeyDown={(e) =>
+                            handleKeyDown(e, () => setEditingField(null))
+                          }
+                        />
+                      </li>
+                    ) : (
                       <li
                         key={index}
                         onClick={() => {
@@ -273,9 +273,9 @@ export default function ProjectSummaryPage() {
                           </svg>
                         )}
                       </li>
-                    </div>
-                  )
-                )}
+                    )}
+                  </div>
+                ))}
               </ul>
               {!summaryDone && (
                 <button
@@ -290,25 +290,25 @@ export default function ProjectSummaryPage() {
             <div>
               확정된 기술 스택 :
               <ul>
-                {technologyStack.map((tech, index) =>
-                  editingField === `tech-${index}` ? (
-                    <li key={index}>
-                      <input
-                        autoFocus
-                        value={tech}
-                        onChange={(e) => {
-                          const updated = [...technologyStack];
-                          updated[index] = e.target.value;
-                          setTechnologyStack(updated);
-                        }}
-                        onBlur={() => setEditingField(null)}
-                        onKeyDown={(e) =>
-                          handleKeyDown(e, () => setEditingField(null))
-                        }
-                      />
-                    </li>
-                  ) : (
-                    <div className="summary-contentlist">
+                {technologyStack.map((tech, index) => (
+                  <div className="summary-contentlist">
+                    {editingField === `tech-${index}` ? (
+                      <li key={index}>
+                        <input
+                          autoFocus
+                          value={tech}
+                          onChange={(e) => {
+                            const updated = [...technologyStack];
+                            updated[index] = e.target.value;
+                            setTechnologyStack(updated);
+                          }}
+                          onBlur={() => setEditingField(null)}
+                          onKeyDown={(e) =>
+                            handleKeyDown(e, () => setEditingField(null))
+                          }
+                        />
+                      </li>
+                    ) : (
                       <li
                         key={index}
                         onClick={() => {
@@ -335,9 +335,9 @@ export default function ProjectSummaryPage() {
                           </svg>
                         )}
                       </li>
-                    </div>
-                  )
-                )}
+                    )}
+                  </div>
+                ))}
               </ul>
               {!summaryDone && (
                 <button
@@ -352,25 +352,25 @@ export default function ProjectSummaryPage() {
             <div>
               메인 기능 :
               <ul>
-                {coreFeatures.map((feature, index) =>
-                  editingField === `feature-${index}` ? (
-                    <li key={index}>
-                      <input
-                        autoFocus
-                        value={feature}
-                        onChange={(e) => {
-                          const updated = [...coreFeatures];
-                          updated[index] = e.target.value;
-                          setCoreFeatures(updated);
-                        }}
-                        onBlur={() => setEditingField(null)}
-                        onKeyDown={(e) =>
-                          handleKeyDown(e, () => setEditingField(null))
-                        }
-                      />
-                    </li>
-                  ) : (
-                    <div className="summary-contentlist">
+                {coreFeatures.map((feature, index) => (
+                  <div className="summary-contentlist">
+                    {editingField === `feature-${index}` ? (
+                      <li key={index}>
+                        <input
+                          autoFocus
+                          value={feature}
+                          onChange={(e) => {
+                            const updated = [...coreFeatures];
+                            updated[index] = e.target.value;
+                            setCoreFeatures(updated);
+                          }}
+                          onBlur={() => setEditingField(null)}
+                          onKeyDown={(e) =>
+                            handleKeyDown(e, () => setEditingField(null))
+                          }
+                        />
+                      </li>
+                    ) : (
                       <li
                         key={index}
                         onClick={() => {
@@ -397,9 +397,9 @@ export default function ProjectSummaryPage() {
                           </svg>
                         )}
                       </li>
-                    </div>
-                  )
-                )}
+                    )}
+                  </div>
+                ))}
               </ul>
               {!summaryDone && (
                 <button
@@ -455,25 +455,25 @@ export default function ProjectSummaryPage() {
             <div>
               기대 효과 :
               <ul>
-                {expectedBenefits.map((benefit, index) =>
-                  editingField === `benefit-${index}` ? (
-                    <li key={index}>
-                      <input
-                        autoFocus
-                        value={benefit}
-                        onChange={(e) => {
-                          const updated = [...expectedBenefits];
-                          updated[index] = e.target.value;
-                          setExpectedBenefits(updated);
-                        }}
-                        onBlur={() => setEditingField(null)}
-                        onKeyDown={(e) =>
-                          handleKeyDown(e, () => setEditingField(null))
-                        }
-                      />
-                    </li>
-                  ) : (
-                    <div className="summary-contentlist">
+                {expectedBenefits.map((benefit, index) => (
+                  <div className="summary-contentlist">
+                    {editingField === `benefit-${index}` ? (
+                      <li key={index}>
+                        <input
+                          autoFocus
+                          value={benefit}
+                          onChange={(e) => {
+                            const updated = [...expectedBenefits];
+                            updated[index] = e.target.value;
+                            setExpectedBenefits(updated);
+                          }}
+                          onBlur={() => setEditingField(null)}
+                          onKeyDown={(e) =>
+                            handleKeyDown(e, () => setEditingField(null))
+                          }
+                        />
+                      </li>
+                    ) : (
                       <li
                         key={index}
                         onClick={() => {
@@ -500,9 +500,9 @@ export default function ProjectSummaryPage() {
                           </svg>
                         )}
                       </li>
-                    </div>
-                  )
-                )}
+                    )}
+                  </div>
+                ))}
               </ul>
               {!summaryDone && (
                 <button

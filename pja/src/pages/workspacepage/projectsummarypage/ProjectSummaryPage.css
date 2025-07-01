@@ -38,23 +38,37 @@
   padding: 5px 10px;
   gap: 5px;
 }
-
 .projectsummary-content input {
-  width: 75%;
+  width: 80%;
   height: 30px;
+  border: none;
+  outline: none;
+  font-size: var(--font-size-lg);
+}
+.summary-contentlist input {
+  width: 100%;
+  height: 30px;
+  border: none;
+  outline: none;
   font-size: var(--font-size-lg);
 }
 
 .projectsummary-content textarea {
   width: 100%;
-  height: 60px;
+  min-height: 60px;
+  border: none;
+  outline: none;
+  resize: none;
   font-size: var(--font-size-lg);
+  font-family: "MinSans-Regular", sans-serif;
 }
 
 .solutionidea-textarea {
   width: 100%;
-  height: 150px !important;
+  min-height: 150px !important;
+  resize: none;
   font-size: var(--font-size-lg);
+  font-family: "MinSans-Regular", sans-serif;
 }
 
 .projectsummary-content div {
@@ -70,7 +84,7 @@
 }
 
 .projectsummary-content ul {
-  margin: 5px 0;
+  margin: 0;
   font-weight: 400;
 }
 
