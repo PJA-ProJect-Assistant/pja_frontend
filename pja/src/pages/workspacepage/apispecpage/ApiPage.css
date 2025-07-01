@@ -105,6 +105,10 @@
   white-space: normal;
   word-break: break-all;
   overflow-wrap: break-word;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
 
 /*아코디언*/
@@ -168,9 +172,12 @@
   /* 부모(td)의 너비를 꽉 채우도록 명시 */
   box-sizing: border-box;
   padding: 16px;
-
   max-width: 100%;
   overflow: hidden;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
 
 .accordion-two-box {
