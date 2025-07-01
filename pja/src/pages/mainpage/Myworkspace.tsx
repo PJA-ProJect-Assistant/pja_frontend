@@ -223,7 +223,10 @@ export function Myworkspace() {
         <div>
           <div
             className="workspace-more"
-            onClick={() => toggleMenu(ws.workspaceId)}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleMenu(ws.workspaceId);
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -238,7 +241,8 @@ export function Myworkspace() {
           {wsMenuOpenId === ws.workspaceId && Number(ws.progressStep) < 6 && (
             <div ref={wsMenuRef} className="workspace-menu">
               <div
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleComplete(ws.workspaceId, ws.progressStep);
                   // : (setMenuModalOpen(true), setWsMenuOpenId(null));
                 }}
@@ -255,7 +259,8 @@ export function Myworkspace() {
                 <p>워크스페이스 완료</p>
               </div>
               <div
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleClickDelete(ws.workspaceId);
                 }}
               >
@@ -275,7 +280,8 @@ export function Myworkspace() {
           {wsMenuOpenId === ws.workspaceId && ws.progressStep === "6" && (
             <div ref={wsMenuRef} className="workspace-menu">
               <div
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleComplete(ws.workspaceId, ws.progressStep);
                 }}
               >
@@ -291,7 +297,8 @@ export function Myworkspace() {
                 <p>완료 취소</p>
               </div>
               <div
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleClickDelete(ws.workspaceId);
                 }}
               >
