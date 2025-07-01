@@ -173,6 +173,21 @@ export function Myworkspace() {
       ref.current.scrollLeft = scrollLeft.current - walk;
     };
 
+    useEffect(() => {
+      const el = ref.current;
+      if (!el) return;
+
+      const handleWheel = (e: WheelEvent) => {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          el.scrollLeft += e.deltaY;
+        }
+      };
+
+      el.addEventListener("wheel", handleWheel, { passive: false });
+      return () => el.removeEventListener("wheel", handleWheel);
+    }, [ref]);
+
     return {
       onMouseDown: handleMouseDown,
       onMouseLeave: handleMouseLeave,
