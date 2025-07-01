@@ -2,7 +2,6 @@ import api from "../lib/axios";
 import type { ApiResponse } from "../types/common";
 import type {
   ERDData,
-  geterd,
   getcolumn,
   ERDField,
   gettable,
