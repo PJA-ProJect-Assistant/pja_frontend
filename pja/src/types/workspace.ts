@@ -7,7 +7,7 @@ export interface workspace {
   ownerId: number;
   progressStep: Step;
   isPublic: boolean;
-  githubUrl: string | null;
+  githubUrl?: string | null;
 }
 
 export interface setworkspace {
