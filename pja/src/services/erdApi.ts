@@ -2,7 +2,6 @@ import api from "../lib/axios";
 import type { ApiResponse } from "../types/common";
 import type {
   ERDData,
-  geterd,
   getcolumn,
   ERDField,
   gettable,
@@ -20,30 +19,6 @@ export const postErdAI = async (workspaceId: number) => {
     console.log("erd ai 생성 :");
   } catch (error: any) {
     console.error("🔴 [postErdAI] Erd AI 생성 실패:", error);
-
-    if (error.response) {
-      console.error("응답 상태코드:", error.response.status);
-      console.error("서버 status:", error.response.data?.status);
-      console.error("서버 message:", error.response.data?.message);
-    } else if (error.request) {
-      console.error("요청은 보냈지만 응답 없음:", error.request);
-    } else {
-      console.error("요청 설정 중 에러 발생:", error.message);
-    }
-    throw error;
-  }
-};
-
-//erd 생성
-export const postErd = async (
-  workspaceId: number
-): Promise<ApiResponse<geterd>> => {
-  try {
-    const response = await api.post(`/workspaces/${workspaceId}/erd`);
-    console.log("erd 생성 :", response);
-    return response.data;
-  } catch (error: any) {
-    console.error("🔴 [postErd] Erd 생성 실패:", error);
 
     if (error.response) {
       console.error("응답 상태코드:", error.response.status);

@@ -3,6 +3,7 @@ import workspaceReducer from "./workspaceSlice";
 import authReducer from "./authSlice";
 import erdReducer from "./erdSlice";
 import userReducer from "./userSlice";
+import devPageReducer from "./devPageSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     erd: erdReducer,
     user: userReducer,
+    devPage: devPageReducer,
   },
 });
 

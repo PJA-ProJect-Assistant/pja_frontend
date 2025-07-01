@@ -50,14 +50,6 @@ export interface ERDData {
   relations: ERDRelation[];
 }
 
-//erd 생성 시 받는 response 구조
-export interface geterd {
-  erdId: number;
-  createAt: Date;
-  workspaceId: number;
-  tables?: ERDTable;
-}
-
 //erd table 생성 후 성공 응답
 export interface gettable {
   erdId: number;

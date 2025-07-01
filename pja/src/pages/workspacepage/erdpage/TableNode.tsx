@@ -26,8 +26,9 @@ const TableNode: React.FC<NodeProps<ERDTable>> = ({ data }) => (
             {field.primary && <span>🔑</span>}
             {field.foreign && <span>🔗</span>}
             <p
-              className={`field-name ${field.primary ? "font-bold" : ""} ${field.foreign ? "text-foreign" : ""
-                }`}
+              className={`field-name ${field.primary ? "font-bold" : ""} ${
+                field.foreign ? "text-foreign" : ""
+              }`}
             >
               {field.name}
             </p>
@@ -113,12 +114,10 @@ const EditableTableNode: React.FC<
         <input
           className="table-name-input"
           value={editId === "tablename" ? tempName : tableData.tableName}
-          onClick={() => {
-            setTempName(tableData.tableName);
-            setEditId("tablename");
-          }}
           onChange={(e) => setTempName(e.target.value)}
           onFocus={() => {
+            setTempName(tableData.tableName);
+            setEditId("tablename");
             startEditing(tableData.tableName, tableData.id);
           }}
           onBlur={() => {
@@ -193,12 +192,10 @@ const EditableTableNode: React.FC<
                 value={
                   editId === `${field.id}-fieldname` ? tempName : field.name
                 }
-                onClick={() => {
-                  setTempName(field.name);
-                  setEditId(`${field.id}-fieldname`);
-                }}
                 onChange={(e) => setTempName(e.target.value)}
                 onFocus={() => {
+                  setTempName(field.name);
+                  setEditId(`${field.id}-fieldname`);
                   startEditing(tableData.tableName, tableData.id);
                 }}
                 onBlur={() => {
@@ -218,12 +215,10 @@ const EditableTableNode: React.FC<
                     ? tempName
                     : field.type ?? ""
                 }
-                onClick={() => {
-                  setTempName(field.type ?? "");
-                  setEditId(`${field.id}-fieldtype`);
-                }}
                 onChange={(e) => setTempName(e.target.value)}
                 onFocus={() => {
+                  setTempName(field.type ?? "");
+                  setEditId(`${field.id}-fieldtype`);
                   startEditing(tableData.tableName, tableData.id);
                 }}
                 onBlur={() => {

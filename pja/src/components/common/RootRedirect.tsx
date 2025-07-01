@@ -12,7 +12,6 @@ const RootRedirect = () => {
   // 초기화가 완료되지 않았으면 로딩
   if (!authInitialized) {
     return <LoadingSpinner />;
-    // 나중에 여기에 로딩 페이지 만들게....
   }
 
   if (!token) {
