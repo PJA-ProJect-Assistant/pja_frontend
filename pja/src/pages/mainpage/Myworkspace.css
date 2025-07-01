@@ -176,11 +176,6 @@
   display: none;
 }
 
-.workspace-scroll.dragging {
-  user-select: none;
-  cursor: grabbing;
-}
-
 .workspace-active-container button {
   position: absolute;
   display: flex;

@@ -173,12 +173,10 @@ export function Myworkspace() {
     const handleMouseLeave = () => {
       isDragging.current = false;
       moved.current = false;
-      ref.current?.classList.remove("dragging");
     };
 
     const handleMouseUp = () => {
       isDragging.current = false;
-      ref.current?.classList.remove("dragging");
     };
 
     useEffect(() => {
