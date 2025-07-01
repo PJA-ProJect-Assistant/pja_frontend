@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import type { getproject, setproject } from "../../../types/project";
 import { getProject, putProject } from "../../../services/projectApi";
 import { WSHeader } from "../../../components/header/WSHeader";
-import { postErd, postErdAI } from "../../../services/erdApi";
+import { postErdAI } from "../../../services/erdApi";
 import Loading from "../../loadingpage/Loading";
 import { useEditLock } from "../../../hooks/useEditLock";
 import type { LockedUser } from "../../../types/edit";
